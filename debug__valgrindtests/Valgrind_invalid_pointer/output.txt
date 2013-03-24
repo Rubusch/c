@@ -1,0 +1,73 @@
+user@machine:~$ ./Valgrind_invalid_pointer 
+init pointer to 10 char's
+assign '7' to pText, index "10" - Dangerous, 
+only 10 elements allocated, last index is 9!
+
+user@machine:~$ valgrind --tool=memcheck ./Valgrind_invalid_pointer 
+==3305== Memcheck, a memory error detector.
+==3305== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3305== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3305== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3305== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3305== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3305== For more details, rerun with: -v
+==3305== 
+init pointer to 10 char's
+assign '7' to pText, index "10" - Dangerous, 
+only 10 elements allocated, last index is 9!
+
+==3305== Invalid write of size 1
+==3305==    at 0x804842C: main (Valgrind_invalid_pointer.c:21)
+==3305==  Address 0x41a7032 is 0 bytes after a block of size 10 alloc'd
+==3305==    at 0x4024AB8: malloc (vg_replace_malloc.c:207)
+==3305==    by 0x8048401: main (Valgrind_invalid_pointer.c:17)
+==3305== 
+==3305== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3305== malloc/free: in use at exit: 10 bytes in 1 blocks.
+==3305== malloc/free: 1 allocs, 0 frees, 10 bytes allocated.
+==3305== For counts of detected errors, rerun with: -v
+==3305== searching for pointers to 1 not-freed blocks.
+==3305== checked 67,452 bytes.
+==3305== 
+==3305== LEAK SUMMARY:
+==3305==    definitely lost: 10 bytes in 1 blocks.
+==3305==      possibly lost: 0 bytes in 0 blocks.
+==3305==    still reachable: 0 bytes in 0 blocks.
+==3305==         suppressed: 0 bytes in 0 blocks.
+==3305== Rerun with --leak-check=full to see details of leaked memory.
+user@machine:~$ valgrind --tool=memcheck --leak-check=full ./Valgrind_invalid_pointer 
+==3306== Memcheck, a memory error detector.
+==3306== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3306== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3306== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3306== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3306== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3306== For more details, rerun with: -v
+==3306== 
+init pointer to 10 char's
+assign '7' to pText, index "10" - Dangerous, 
+only 10 elements allocated, last index is 9!
+
+==3306== Invalid write of size 1
+==3306==    at 0x804842C: main (Valgrind_invalid_pointer.c:21)
+==3306==  Address 0x41a7032 is 0 bytes after a block of size 10 alloc'd
+==3306==    at 0x4024AB8: malloc (vg_replace_malloc.c:207)
+==3306==    by 0x8048401: main (Valgrind_invalid_pointer.c:17)
+==3306== 
+==3306== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3306== malloc/free: in use at exit: 10 bytes in 1 blocks.
+==3306== malloc/free: 1 allocs, 0 frees, 10 bytes allocated.
+==3306== For counts of detected errors, rerun with: -v
+==3306== searching for pointers to 1 not-freed blocks.
+==3306== checked 67,452 bytes.
+==3306== 
+==3306== 
+==3306== 10 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==3306==    at 0x4024AB8: malloc (vg_replace_malloc.c:207)
+==3306==    by 0x8048401: main (Valgrind_invalid_pointer.c:17)
+==3306== 
+==3306== LEAK SUMMARY:
+==3306==    definitely lost: 10 bytes in 1 blocks.
+==3306==      possibly lost: 0 bytes in 0 blocks.
+==3306==    still reachable: 0 bytes in 0 blocks.
+==3306==         suppressed: 0 bytes in 0 blocks.

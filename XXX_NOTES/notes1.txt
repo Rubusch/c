@@ -1,0 +1,28 @@
+Error: invalid type of `->'
+
+gcc output:
+list_item.c:37: error: invalid type argument of `->'
+
+
+Code:
+   // ...
+   if((*first)->next != NULL){
+   // ...
+
+
+The structure is:
+struct list_item{
+   struct list_item* next;
+   // ...
+   };
+   struct list_item* first = NULL;
+
+
+To connect a new list item the following is necessary:
+   (*first)->next = malloc(sizeof(list_item));
+   
+But to test against NULL, this is one dereferenciation too much:
+    if(first->next != NULL){
+    // ...
+
+..will do the job.

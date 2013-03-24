@@ -1,0 +1,194 @@
+// tree.txt
+
+
+tree - v1:
+
+tree level
+     0     1     2         idx_row    path      paint
+  +---------------------+
+ 0|             175 \n\0|     0        1 1       0 0 0 0 1
+ 1|           |     \n\0|     1        1 1       0 0 0 1 0
+ 2|       150       \n\0|     2        1 x       0 0 1 0 0
+ 3|     |     |     \n\0|     3        1 0       0 1 0 1 0
+ 4|     |       125 \n\0|     4        1 0       0 1 0 0 1
+ 5| 100             \n\0|     5        x x       1 0 0 0 0
+ 6|     |        75 \n\0|     6        0 1       0 1 0 0 1
+ 7|     |     |     \n\0|     7        0 1       0 1 0 1 0
+ 8|        50       \n\0|     8        0 x       0 0 1 0 0
+ 9|           |     \n\0|     9        0 0       0 0 0 1 0
+10|              25 \n\0|     10       0 0       0 0 0 0 1
+  +---------------------+
+idx: 0  1  2  3  4  \0                 0 1 \0    0 1 2 3 4 \0
+                             interval: 5 2
+
+paint:
+	even idx: elements/data
+	1 - entry
+	0 - no entry
+
+	odd idx: '|' symbol
+	1 - entry
+	0 - no entry
+
+
+idx_row_max:	10
+idx_col_max:	4 (always even!)
+
+path_size:	3   ('\0')
+path_len:	2
+
+paint_size:	6   (= idx_col_max + 2),  ('\0')
+paint_len:	5
+
+data_size:	6   ('\0')
+data_len:	5
+
+line_size:	19  ('\n\0')
+line_len:	17
+
+
+Debugging:
+	1. check above constants (max, size, len)
+	2. check path mask
+	3. check paint mask
+	4. check correct values
+	5. check correct setting of '|'s
+
+
+-------------------------------------
+
+tree v.2
+
+       0     1     2     3    (tree_level)
+          0     1     2     (path_level)
+       0  1  2  3  4  5  6 (idx_col)    0 1 2 \0 - path_size: 4
+    +---------------------------+            
+  0 |  s++              xxx \n\0|       1 1 1     0 0 0 0 0  0 1 
+  1 |  h+         xxx <     \n\0|       1 1 x     0 0 0 0 1  1 0 
+  2 |  i+       |       xxx \n\0|       1 1 0     0 0 0 1 0  0 1     2 
+  3 |  f++  xxx             \n\0|       1 x x     0 0 1 0 0  0 0     1
+  4 |  t  | i   |       xxx \n\0|       1 0 1     0 1 0 1 0  0 1  4  4
+  5 |     | n   o xxx <     \n\0|       1 0 x     0 1 0 0 1  1 0  1
+  6 |     | t           xxx \n\0|       1 0 0     0 1 0 0 0  0 1  1
+  7 | xxx   e               \n\0|       x x x     1 0 0 0 0  0 0  1
+  8 |     | r           xxx \n\0|       0 1 1     0 1 0 0 0  0 1  1
+  9 |     | v     xxx <     \n\0|       0 1 x     0 1 0 0 1  1 0  1 
+ 10 |     | a   |       xxx \n\0|       0 1 0     0 1 0 1 0  0 1 
+ 11 |     + lxx             \n\0|       0 x x     0 0 1 0 0  0 0     1
+ 12 |           |       xxx \n\0|       0 0 1     0 0 0 1 0  0 1     12
+ 13 |             xxx <     \n\0|       0 0 x     0 0 0 0 1  1 0
+ 14 |                   xxx \n\0|       0 0 0     0 0 0 0 0  0 1
+    +---------------------------+                   x   y    z
+(idx_row) 
+
+
+
+
+      0     1     2     (tree level)   path      paint
+      0  1  2  3  4  \0   (idx_col)   0 1 \0    0 1 2 3 4 \0
+   +---------------------+  
+ 0 |             175 \n\0|            1 1 \0    0 0 0 0 1
+ 1 |       150 <     \n\0|            1   \0    0 0 1 1 0
+ 2 |     /       125 \n\0|            1 0 \0    0 1 0 0 1
+ 3 | 100             \n\0|                \0    1 0 0 0 0
+ 4 |     \        75 \n\0|            0 1 \0    0 1 0 0 1
+ 5 |        50 <     \n\0|            0   \0    0 0 1 1 0
+ 6 |              25 \n\0|            0 0 \0    0 0 0 0 1
+   +---------------------+                        x   x
+ (idx_row)                 
+
+                            interval: 3 1
+
+paint:
+	even idx: elements/data
+	1 - entry
+	0 - no entry
+
+	odd idx: '|' symbol
+	1 - entry
+	0 - no entry
+
+
+idx_row_max:	6
+idx_col_max:	4 (always even!)
+
+path_size:	3   ('\0')
+path_len:	2
+
+paint_size:	6   (= idx_col_max + 2),  ('\0')
+paint_len:	5
+
+data_size:	6   ('\0')
+data_len:	5
+
+line_size:	19  ('\n\0')
+line_len:	17
+
+
+Debugging:
+	1. check above constants (max, size, len)
+	2. check path mask
+	3. check paint mask
+	4. check correct values
+	5. check correct setting of '|'s
+
+
+
+write an entry at:
+1. shift_size =  idx_max_rows+2 / (1 << tree_level)        
+2. (idx_row >= (shift_size/2-1)) && (0 == (idx_row+1 - (shift_size / 2)) % shift_size)
+
+  0  1  2  3  4  5  6  7  8       (idx_col)
+     0     1     2     3        (idx_path)
+     3     2     1     0      (idx_reverse_path)
+  0     1     2     3     4 (tree_level)
+-----------------------------------idx--path--------mask---------------
+                                                    0 1 2 3 4 5 6  7 8 9
+                                                      |   |   |    <
+                         xxx \n\0   0   1 1 1 1     0 0 0 0 0 0 0  0 1 \0 
+                   xxx <     \n\0   1   1 1 1 x     0 0 0 0 0 0 1  1 0 
+                 |       xxx \n\0   2   1 1 1 0     0 0 0 0 0 1 0  0 1    
+             xxx             \n\0   3   1 1 x x     0 0 0 0 1 0 0  0 0   
+           |     |       xxx \n\0   4   1 1 0 1     0 0 0 1 0 1 0  0 1 
+           |       xxx <     \n\0   5   1 1 0 x     0 0 0 1 0 0 1  1 0 
+           |             xxx \n\0   6   1 1 0 0     0 0 0 1 0 0 0  0 1 
+       xxx                   \n\0   7   1 x x x     0 0 1 0 0 0 0  0 0	
+     |     |             xxx \n\0   8   1 0 1 1     0 1 0 1 0 0 0  0 1 
+     |     |       xxx <     \n\0   9   1 0 1 x     0 1 0 1 0 0 1  1 0 
+     |     |     |       xxx \n\0  10   1 0 1 0     0 1 0 1 0 1 0  0 1 
+     |       xxx             \n\0  11   1 0 x x     0 1 0 0 1 0 0  0 0 
+     |           |       xxx \n\0  12   1 0 0 1     0 1 0 0 0 1 0  0 1 
+     |             xxx <     \n\0  13   1 0 0 x     0 1 0 0 0 0 1  1 0
+     |                   xxx \n\0  14   1 0 0 0     0 1 0 0 0 0 0  0 1
+ xxx                         \n\0  15   x x x x     1 0 0 0 0 0 0  0 0 
+     |                   xxx \n\0  16   0 1 1 1     0 1 0 0 0 0 0  0 1 
+     |             xxx <     \n\0  17   0 1 1 x     0 1 0 0 0 0 1  1 0 
+     |           |       xxx \n\0  18   0 1 1 0     0 1 0 0 0 1 0  0 1    
+     |       xxx             \n\0  19   0 1 x x     0 1 0 0 1 0 0  0 0   
+     |     |     |       xxx \n\0  20   0 1 0 1     0 1 0 1 0 1 0  0 1 
+     |     |       xxx <     \n\0  21   0 1 0 x     0 1 0 1 0 0 1  1 0 
+     |     |             xxx \n\0  22   0 1 0 0     0 1 0 1 0 0 0  0 1 
+       xxx                   \n\0  23   0 x x x     0 0 1 0 0 0 0  0 0	
+           |             xxx \n\0  24   0 0 1 1     0 0 0 1 0 0 0  0 1 
+           |       xxx <     \n\0  25   0 0 1 x     0 0 0 1 0 0 1  1 0 
+           |     |       xxx \n\0  26   0 0 1 0     0 0 0 1 0 1 0  0 1 
+             xxx             \n\0  27   0 0 x x     0 0 0 0 1 0 0  0 0 
+                 |       xxx \n\0  28   0 0 0 1     0 0 0 0 0 1 0  0 1 
+                   xxx <     \n\0  29   0 0 0 x     0 0 0 0 0 0 1  1 0
+                         xxx \n\0  30   0 0 0 0     0 0 0 0 0 0 0  0 1
+
+interval = idx_row_max / (2 << idx_path)              15  7   3    1
+shift    = (idx_row_max - 1) / 2
+idx	 = idx_col - shift
+
+// set connection
+if((idx_row != interval - 1) && ((idx % (2 * interval)) < interval))
+	    
+
+interval
+    32  16 8  4
+
+shift
+    16  8  4  2
+ 
+ 	

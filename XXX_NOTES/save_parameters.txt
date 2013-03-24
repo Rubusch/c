@@ -1,0 +1,53 @@
+Save Parameters
+
+Given: void func(???), char* str, int str_length
+
+	A char* "str" in main(), allocated on 80 char's in main() - 79 char's and one '\0', and a func(char*)
+
+
+
+Writing into "str": 
+
+	    func(char** str, int *str_length)
+
+	func(char*) writes into "str" - it will be necessary to pass the size of "str", to avoid writing into
+	un-allocated memory. An allocation in func() to "str" is risky. To allocate more memory, func() will 
+	need an char** and the size also passed as pointer to keep track of the size in main() 
+
+	int func(char** str, int* str_length)
+	{ 
+  	  //... 
+	  int new_size;
+	  if(...){ 	    
+	    *str = realloc(*str, new_size); 
+	    *str_length = new_size; 
+	  } 
+          //... 
+	} 
+
+	int main() 
+	{ 
+	  // ...
+	  // get the basic length 
+  	  int data_len = BASIC_LENGTH;
+  	  char* data = malloc(data_len); 
+	  // ...
+  	  func(&data, &data_len); 
+  	  // ... 
+	} 
+
+
+Reading: 
+	 
+	    func(char* str) 
+	    or 
+	    func(char* str, int str_length)	
+
+	Reading from "str" stops at the '\0' character, if it is set. If the whole system respects the rule of
+	setting a '\0' there will be no problem. strlen() is able to figure out the length of "str" (strlen() 
+	doesn't read the '\0' - it only returns the space used for the characters until a '\0'!!!). Though it 
+	is safer to pass the length of the allocated space, too. sizeof(str)/sizeof(char) doesn't work because 
+	it is only used for arrays like e.g. char arr[].
+
+
+

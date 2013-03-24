@@ -1,0 +1,109 @@
+STACKDUMP 
+
+
+Typical Stackdumps on Cygwin on an x86:
+
+
+
+
+The Error:
+
+...
+    14884 [main] Strtok 2604 _cygtls::handle_exceptions: Error while dumping state
+    (probably corrupted stack)
+    Segmentation fault (core dumped)
+
+
+
+
+The xxx.exe.Stackdump:
+
+    pt104496@pt1w194c /cygdrive/f/programming/TODO_Strtok
+    $ cat Strtok.exe.stackdump
+    Exception: STATUS_ACCESS_VIOLATION at eip=004013B6
+    eax=00000000 ebx=FFFFFFFF ecx=006606E0 edx=00003E48 esi=006606C0 edi=0022CC45
+    ebp=0022CCA8 esp=0022CC30 program=f:\programming\TODO_Strtok\Strtok.exe, pid 260
+    4, thread main
+    cs=001B ds=0023 es=0023 fs=003B gs=0000 ss=0023
+    Stack trace:
+    Frame     Function  Args
+    0022CCA8  004013B6  (00660590, 00000038, 006606A0, 00000002)
+    0022CCE8  0040122D  (00000001, 61169690, 00660090, 0022CC70)
+    0022CD98  61006198  (00000000, 0022CDD0, 61005510, 0022CDD0)
+    61005510  61004416  (0000009C, A02404C7, E8611001, FFFFFF48)
+    14884 [main] Strtok 2604 _cygtls::handle_exceptions: Error while dumping state
+    (probably corrupted stack)
+
+
+
+
+Explanation:
+
+14884		- ???
+2604 		- ???
+
+STATUS_ACCESS_VIOLATION at eip=004013B6
+	The error message and process id (???)
+
+
+Main Registers (x86 arch - can also be combined for bigger values, 
+each has 8bit for e.g. "eah" (high, left) and 8 bit for e.g. "eal" (low, right) 
+-> 16 bit for e.g. "eax":
+    eax=00000000 	- Accumulator Register  - *, /, +, -
+    ebx=FFFFFFFF 	- Base Register		- primary storage (RAM)
+    ecx=006606E0 	- Cout Register		- loops
+    edx=00003E48 	- Data Register		- 32bit (x86), *, /
+
+
+Pointer and Index Registers 
+    [eip                 - Instruction Pointer   - not accessable! Commands]
+
+    esi=006606C0 	- Source-Index		- used by the segment registers
+    edi=0022CC45	- Destination-Index	- used by the segment registers
+
+    ebp=0022CCA8 	- Base-Pointer		- Stackframe for e.g. local variables of a function, see stack trace
+    esp=0022CC30	- Stack-Pointer		- 
+
+
+Segment Registers (x86 arch):
+    cs=001B             - Code-Segment          - commands; fetch address, used by eip (pointer and index registers)
+    ds=0023             - Data-Segment          - data; start address, used by esi and edi (pointer and index registers) as well as ebx 
+                                                  (Main Registers)
+    es=0023             - Extra-Segment         - copy address, compare address, search for address, 
+                                                  used by esi and edi (pointer and index registers) as well as ebx (Main Registers)
+    fs=003B             - ???                   - ???
+    gs=0000             - ???                   - ???
+    ss=0023             - Stack-Segment         - stack, used by ebp and esp (pointer and index registers)
+
+
+Stack trace:	
+Frame:		Function:	Args:
+xxxxxxxx	yyyyyyyy	(aaaaaaaa	bbbbbbbb	cccccccc	dddddddd)
+
+
+
+
+Stack trace
+	up to down, each line represents one "call" of the function (line) above, hence not 
+	directly a temporal order
+
+Frame / xxxxxxxx
+	the address of the segfault (variable, see ebp register)
+
+Function / yyyyyyyy
+	the callback address of the function
+
+Args 
+	???
+
+aaaaaaaa 	- ???
+bbbbbbbb 	- ???
+cccccccc 	- ???
+dddddddd 	- ???
+
+
+
+
+Further information:
+http://de.wikipedia.org/wiki/Register_%28Computer%29
+Assembler/Strukturierte Einfuehrung (x86), R. Backer

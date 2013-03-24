@@ -1,0 +1,259 @@
+GNU C99 BOOTCAMP ON 'NIX
+
+
+
+This is NOT meant to be another C course, but rather as a quick
+reference guide to C, to extend or to reenter into C basics on
+preferably Linux. If things are unclear I hardly recommend to
+read the links and do the exercises. The best reference is always the
+standard and this imo is NOT just best effort. Enjoy.
+
+
+Content: 
+Basics
+ - pointers
+ - strings
+ - I/O
+ - preprocessor
+ - IPC
+ - threads (POSIX)
+ - datastructures 
+ - algorithms
+ - sockets
+ - tools
+ 
+
+Pointers
+
+Each value has a address in the memory, usually a long value. C
+destinguishes between ADDRESS and the VALUE. Given the following:
+// variables
+    int var_a = 0, var_b = 0;
+
+// pointers
+    int *ptr_a = NULL, *ptr_b = NULL;
+
+A variable has a address in memory and a value, by default its value
+is random (exceptional static variables or globals). 
+Therefore it should always be initialized, e.g. with 0 (style)!
+
+address:  &var
+value:    var
+ 
+A pointer has an address of itself, an address to where it points to and
+the content stored to where it points to. By default it points to
+somewhere in memory, therefore it should always be initialized by NULL
+(style, too)!!
+
+address of a pointer:  &ptr
+address pointed to:    ptr
+content poitned to:    *ptr
+
+The destination of a pointer either needs to be allocated to be set or
+needs to be set to an already allocated memory. It also can be set to
+an address of a variable on the stack (=static memory - this is NOT
+meant by the code word 'static'!). The difference is that allocated
+variables have space on the heap and need always to be freed afterwards!
+
+The C compiler distinguishes strictly between address and value
+especially at parameter pass in functions (a wrongly passed address
+results in a warning and bogus results, a wrongly passed value instead
+of a requested pointer segfaults - this can be debugged by reading the
+warnings and usage of the gdb).
+
+
+
+Pointer of a pointer
+
+This is the same for a pointer of a pointer structure, e.g. a dynamic
+array of strings with variable length (I'll use an int** here, though):
+
+int **pptr
+
+address of itself:                          &pptr
+address pointed to by the first pointer:    *pptr
+value refered by the first pointer (long):  pptr
+address of the second pointer:              *&pptr
+value refered by the second pointer:        **pptr
+
+The priority of the '&' is high, very high, it is higher than the
+brackets!!! 
+
+BTW: This is the reason why you have to typedef an address like this
+(char*) &variable and this doesn't work &((char) variable). The '&'
+only can have valid lvalues!!
+
+
+
+Arrays
+
+A sequence of Elements is called an array. An array can be generated
+in static memory (stack) or allocated in dynamic memory (heap). The
+size referes to the number of elements, the indexes start with 0. So
+the last element is size-1. The array identifier can also be used as
+pointer. 
+
+Only arrays on the stack can be counted by sizeof():
+number of elements = sizeof(arr) / sizeof(element);
+When it is passed to a function with no fixed size it has become a
+"normal" pointer. Since only char[] have a delimiter '\0' there is NO
+delimiter in other type of arrays.
+
+
+Allocation
+A pointer needs to point to somewhere, either it gets initialized with
+the address of a variable already allocated/in the static memory
+(stack), or it needs to have allocated some space that can be
+initialized with a value.
+
+
+
+Initialization
+TODO
+
+
+Typedef-ing
+TODO
+
+
+Pointer operations
+Incrementing or decrementing a pointer's address moves the pointer by
+the value of it's type in bits in the memory.
+
+char *ptr = NULL;
+// ptr initialized, in case allocated before!
+++ptr; // moves the pointer one "char" further
+
+Incrementing or decrementing a pointer's value increments or
+decrements the value pointed to at that address by one.
+int *ptr = NULL;
+// pointer initialized with a value, in case before allocated
+--ptr; // now it has one less
+
+
+
+Function pass of a pointer
+
+// given:
+int var = 0;
+int *ptr = NULL;
+void passByValue(int);
+void passByReference(int*)
+
+Passing a variable or a pointer to a function can be done in two ways:
+pass-by-value - means, passing only the content. The instance within
+the function is at a different address (debugging: control of the
+address of a variable before and after a pass to a function!). Changes
+within the function body to the value are gone when the function scope
+ends (= the function returns). 
+
+Pass by value of a variable:
+passByValue(var);
+
+Pass by value of a pointer's content:
+passByValue(*ptr);
+
+Pass-by-reference - means passing directly the address of a variable
+(&var is also called a "reference" to var). Hence, the address of the
+variable before or the address pointed to by a pointer before,
+respectively, remains the same within the function scope. Changes to
+that variable will remain after the function returns. 
+
+Pass by reference of a variable:
+passByReference(&var);
+
+Pass by reference of a pointer's content:
+passByReference(ptr);
+
+Pass by reference of a pointer itself:
+passByReference(&ptr);
+
+Why pointers? The size of a pointer is only the size of the address
+refered to (which it stores) - at that address can be a single int
+value as also a complete instance of a struct, so passing a pointer to
+such a structure is passing fewer data and thus more effective and
+therefore the big advantage of passing a pointer instead of passing
+the instance directly.
+
+When we pass a value that should not be modified, it should be declared
+as "const" in the function paramenter type (style)!
+
+
+
+
+
+Terms used:
+size
+	number of elements in an array
+
+len(th)     
+	number of characters in a zero terminated char[]
+
+type        
+        int, char, double, etc are types or a typedef-ed struct
+
+structure
+	well, a struct
+
+static memory  
+        memory on the STACK, not meant by the keyword "static"
+
+dynamic memory 
+        memory on the HEAP, allocated space, need to be freed!!
+
+pass-by-value
+	pass of the content of a variable or the content a pointer
+	points to (dereferenced pointer)
+
+pass-by-reference
+	pass of the address of a value (reference) or the address a
+	pointer points to
+
+reference
+	the address of a value
+
+dereferenced pointer
+	the content a pointer points to
+
+function call
+	the call of a defined function within the program code
+
+declaration
+	the declaration of the name and types, e.g. in a .h file, in
+	case of a variable it is its name (e.g. in case of "extern"),
+	in case of a function it's is name, return value and parameter types
+
+definition
+	the code of a function or the type and name of a variable, in
+	case, the stuff that should be in a .c file
+
+extern declaration
+        declaration of e.g. a funciton that is defined externally,
+        meaning not part of the included .h files
+
+header file
+        contains declarations and ends in C with .h
+
+code file
+        contains definitions and ends in C with .c
+
+
+TODO
+Linux tools
+ - vi
+ - emacs
+ - grep
+ - find
+ - screen
+ - gcc
+ - gdb
+ - valgrind
+ - console
+
+Kernel
+ - architecture
+ - modules
+ - device drivers
+ - tools
+
+

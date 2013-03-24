@@ -1,0 +1,188 @@
+user@machine:~$ ./Valgrind_uninitialized_var 
+define but no init..
+if(0 == 0)
+        TRUE - Just by chance!
+
+if(0 == 1)
+        FALSE - By chance not!
+
+if(0 == 2)
+        FALSE - By chance not!
+
+if(0 == 3)
+        FALSE - By chance not!
+
+if(0 == 4)
+        FALSE - By chance not!
+
+if(0 == 5)
+        FALSE - By chance not!
+
+if(0 == 6)
+        FALSE - By chance not!
+
+if(0 == 7)
+        FALSE - By chance not!
+
+if(0 == 8)
+        FALSE - By chance not!
+
+if(0 == 9)
+        FALSE - By chance not!
+
+user@machine:~$ valgrind --tool=memcheck ./Valgrind_uninitialized_var 
+==3455== Memcheck, a memory error detector.
+==3455== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3455== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3455== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3455== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3455== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3455== For more details, rerun with: -v
+==3455== 
+define but no init..
+if(0 == 0)
+        TRUE - Just by chance!
+
+if(0 == 1)
+        FALSE - By chance not!
+
+if(0 == 2)
+        FALSE - By chance not!
+
+if(0 == 3)
+        FALSE - By chance not!
+
+if(0 == 4)
+        FALSE - By chance not!
+
+if(0 == 5)
+        FALSE - By chance not!
+
+if(0 == 6)
+        FALSE - By chance not!
+
+if(0 == 7)
+        FALSE - By chance not!
+
+if(0 == 8)
+        FALSE - By chance not!
+
+if(0 == 9)
+        FALSE - By chance not!
+
+==3455== 
+==3455== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 1)
+==3455== malloc/free: in use at exit: 0 bytes in 0 blocks.
+==3455== malloc/free: 0 allocs, 0 frees, 0 bytes allocated.
+==3455== For counts of detected errors, rerun with: -v
+==3455== All heap blocks were freed -- no leaks are possible.
+user@machine:~$ valgrind --tool=memcheck -v ./Valgrind_uninitialized_var 
+==3456== Memcheck, a memory error detector.
+==3456== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3456== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3456== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3456== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3456== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3456== 
+--3456-- Command line
+--3456--    ./Valgrind_uninitialized_var
+--3456-- Startup, with flags:
+--3456--    --tool=memcheck
+--3456--    -v
+--3456-- Contents of /proc/version:
+--3456--   Linux version 2.6.18-x31v5 (2.6.18-x31v5-10.00.Custom) (root@machine) (gcc version 4.2.3 20071014 (prerelease) (Debian 4.2.2-3)) #1 PREEMPT Mon Nov 26 22:18:53 WET 2007
+--3456-- Arch and hwcaps: X86, x86-sse1-sse2
+--3456-- Page sizes: currently 4096, max supported 4096
+--3456-- Valgrind library directory: /usr/local/lib/valgrind
+--3456-- Reading syms from /lib/ld-2.7.so (0x4000000)
+--3456-- Reading debug info from /lib/ld-2.7.so...
+--3456-- ... CRC mismatch (computed d696698d wanted 041fec65)
+--3456--    object doesn't have a symbol table
+--3456-- Reading syms from /home/user/Valgrind_uninitialized_var (0x8048000)
+--3456-- Reading syms from /usr/local/lib/valgrind/x86-linux/memcheck (0x38000000)
+--3456--    object doesn't have a dynamic symbol table
+--3456-- Reading suppressions file: /usr/local/lib/valgrind/default.supp
+--3456-- Reading syms from /usr/local/lib/valgrind/x86-linux/vgpreload_core.so (0x4020000)
+--3456-- Reading syms from /usr/local/lib/valgrind/x86-linux/vgpreload_memcheck.so (0x4022000)
+--3456-- Reading syms from /lib/i686/cmov/libm-2.7.so (0x4034000)
+--3456-- Reading debug info from /lib/i686/cmov/libm-2.7.so...
+--3456-- ... CRC mismatch (computed 47c8d770 wanted 503cff7b)
+--3456--    object doesn't have a symbol table
+--3456-- Reading syms from /lib/i686/cmov/libc-2.7.so (0x4059000)
+--3456-- Reading debug info from /lib/i686/cmov/libc-2.7.so...
+--3456-- ... CRC mismatch (computed fccb8db7 wanted 529807ba)
+--3456--    object doesn't have a symbol table
+--3456-- REDIR: 0x40cb2d0 (rindex) redirected to 0x4025710 (rindex)
+--3456-- REDIR: 0x40caf00 (strlen) redirected to 0x40259d0 (strlen)
+define but no init..
+--3456-- REDIR: 0x40cd050 (strchrnul) redirected to 0x4025df0 (strchrnul)
+if(0 == 0)
+--3456-- REDIR: 0x40cc1c0 (mempcpy) redirected to 0x4026490 (mempcpy)
+        TRUE - Just by chance!
+
+if(0 == 1)
+        FALSE - By chance not!
+
+if(0 == 2)
+        FALSE - By chance not!
+
+if(0 == 3)
+        FALSE - By chance not!
+
+if(0 == 4)
+        FALSE - By chance not!
+
+if(0 == 5)
+        FALSE - By chance not!
+
+if(0 == 6)
+        FALSE - By chance not!
+
+if(0 == 7)
+        FALSE - By chance not!
+
+if(0 == 8)
+        FALSE - By chance not!
+
+if(0 == 9)
+        FALSE - By chance not!
+
+--3456-- REDIR: 0x40c8110 (free) redirected to 0x40245f0 (free)
+--3456-- REDIR: 0x40cc160 (memset) redirected to 0x4025d50 (memset)
+==3456== 
+==3456== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 1)
+--3456-- 
+--3456-- supp:     13 dl-hack3-1
+==3456== malloc/free: in use at exit: 0 bytes in 0 blocks.
+==3456== malloc/free: 0 allocs, 0 frees, 0 bytes allocated.
+==3456== 
+==3456== All heap blocks were freed -- no leaks are possible.
+--3456--  memcheck: sanity checks: 0 cheap, 1 expensive
+--3456--  memcheck: auxmaps: 0 auxmap entries (0k, 0M) in use
+--3456--  memcheck: auxmaps_L1: 0 searches, 0 cmps, ratio 0:10
+--3456--  memcheck: auxmaps_L2: 0 searches, 0 nodes
+--3456--  memcheck: SMs: n_issued      = 8 (128k, 0M)
+--3456--  memcheck: SMs: n_deissued    = 0 (0k, 0M)
+--3456--  memcheck: SMs: max_noaccess  = 65535 (1048560k, 1023M)
+--3456--  memcheck: SMs: max_undefined = 0 (0k, 0M)
+--3456--  memcheck: SMs: max_defined   = 22 (352k, 0M)
+--3456--  memcheck: SMs: max_non_DSM   = 8 (128k, 0M)
+--3456--  memcheck: max sec V bit nodes:    0 (0k, 0M)
+--3456--  memcheck: set_sec_vbits8 calls: 0 (new: 0, updates: 0)
+--3456--  memcheck: max shadow mem size:   432k, 0M
+--3456-- translate:            fast SP updates identified: 1,807 ( 90.8%)
+--3456-- translate:   generic_known SP updates identified: 93 (  4.6%)
+--3456-- translate: generic_unknown SP updates identified: 90 (  4.5%)
+--3456--     tt/tc: 3,718 tt lookups requiring 3,763 probes
+--3456--     tt/tc: 3,718 fast-cache updates, 2 flushes
+--3456--  transtab: new        1,853 (38,813 -> 564,327; ratio 145:10) [0 scs]
+--3456--  transtab: dumped     0 (0 -> ??)
+--3456--  transtab: discarded  0 (0 -> ??)
+--3456-- scheduler: 30,674 jumps (bb entries).
+--3456-- scheduler: 0/1,942 major/minor sched events.
+--3456--    sanity: 1 cheap, 1 expensive checks.
+--3456--    exectx: 769 lists, 6 contexts (avg 0 per list)
+--3456--    exectx: 13 searches, 7 full compares (538 per 1000)
+--3456--    exectx: 0 cmp2, 30 cmp4, 0 cmpAll
+--3456--  errormgr: 6 supplist searches, 6 comparisons during search
+--3456--  errormgr: 13 errlist searches, 30 comparisons during search

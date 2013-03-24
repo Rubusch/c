@@ -1,0 +1,170 @@
+user@machine:~$ ./Valgrind_mem_leak02
+init a variable and hang up..
+user@machine:~$ valgrind --tool=memcheck ./Valgrind_mem_leak02
+==3435== Memcheck, a memory error detector.
+==3435== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3435== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3435== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3435== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3435== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3435== For more details, rerun with: -v
+==3435== 
+init a variable and hang up..
+==3435== 
+==3435== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 1)
+==3435== malloc/free: in use at exit: 123,450 bytes in 10 blocks.
+==3435== malloc/free: 10 allocs, 0 frees, 123,450 bytes allocated.
+==3435== For counts of detected errors, rerun with: -v
+==3435== searching for pointers to 10 not-freed blocks.
+==3435== checked 67,452 bytes.
+==3435== 
+==3435== LEAK SUMMARY:
+==3435==    definitely lost: 123,450 bytes in 10 blocks.
+==3435==      possibly lost: 0 bytes in 0 blocks.
+==3435==    still reachable: 0 bytes in 0 blocks.
+==3435==         suppressed: 0 bytes in 0 blocks.
+==3435== Rerun with --leak-check=full to see details of leaked memory.
+user@machine:~$ valgrind --tool=memcheck --leak-check=yes ./Valgrind_mem_leak02
+==3436== Memcheck, a memory error detector.
+==3436== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3436== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3436== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3436== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3436== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3436== For more details, rerun with: -v
+==3436== 
+init a variable and hang up..
+==3436== 
+==3436== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 1)
+==3436== malloc/free: in use at exit: 123,450 bytes in 10 blocks.
+==3436== malloc/free: 10 allocs, 0 frees, 123,450 bytes allocated.
+==3436== For counts of detected errors, rerun with: -v
+==3436== searching for pointers to 10 not-freed blocks.
+==3436== checked 67,452 bytes.
+==3436== 
+==3436== 123,450 bytes in 10 blocks are definitely lost in loss record 1 of 1
+==3436==    at 0x4024AB8: malloc (vg_replace_malloc.c:207)
+==3436==    by 0x80483E5: func (Valgrind_mem_leak.c:14)
+==3436==    by 0x8048414: main (Valgrind_mem_leak.c:24)
+==3436== 
+==3436== LEAK SUMMARY:
+==3436==    definitely lost: 123,450 bytes in 10 blocks.
+==3436==      possibly lost: 0 bytes in 0 blocks.
+==3436==    still reachable: 0 bytes in 0 blocks.
+==3436==         suppressed: 0 bytes in 0 blocks.
+user@machine:~$ valgrind --tool=memcheck --leak-check=full ./Valgrind_mem_leak02
+==3447== Memcheck, a memory error detector.
+==3447== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3447== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3447== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3447== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3447== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3447== For more details, rerun with: -v
+==3447== 
+init a variable and hang up..
+==3447== 
+==3447== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 1)
+==3447== malloc/free: in use at exit: 123,450 bytes in 10 blocks.
+==3447== malloc/free: 10 allocs, 0 frees, 123,450 bytes allocated.
+==3447== For counts of detected errors, rerun with: -v
+==3447== searching for pointers to 10 not-freed blocks.
+==3447== checked 67,452 bytes.
+==3447== 
+==3447== 123,450 bytes in 10 blocks are definitely lost in loss record 1 of 1
+==3447==    at 0x4024AB8: malloc (vg_replace_malloc.c:207)
+==3447==    by 0x80483E5: func (Valgrind_mem_leak.c:14)
+==3447==    by 0x8048414: main (Valgrind_mem_leak.c:24)
+==3447== 
+==3447== LEAK SUMMARY:
+==3447==    definitely lost: 123,450 bytes in 10 blocks.
+==3447==      possibly lost: 0 bytes in 0 blocks.
+==3447==    still reachable: 0 bytes in 0 blocks.
+==3447==         suppressed: 0 bytes in 0 blocks.
+
+user@machine:~$ valgrind --tool=memcheck -v ./Valgrind_mem_leak02
+==3448== Memcheck, a memory error detector.
+==3448== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3448== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3448== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3448== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3448== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3448== 
+--3448-- Command line
+--3448--    ./Valgrind_mem_leak02
+--3448-- Startup, with flags:
+--3448--    --tool=memcheck
+--3448--    -v
+--3448-- Contents of /proc/version:
+--3448--   Linux version 2.6.18-x31v5 (2.6.18-x31v5-10.00.Custom) (root@machine) (gcc version 4.2.3 20071014 (prerelease) (Debian 4.2.2-3)) #1 PREEMPT Mon Nov 26 22:18:53 WET 2007
+--3448-- Arch and hwcaps: X86, x86-sse1-sse2
+--3448-- Page sizes: currently 4096, max supported 4096
+--3448-- Valgrind library directory: /usr/local/lib/valgrind
+--3448-- Reading syms from /lib/ld-2.7.so (0x4000000)
+--3448-- Reading debug info from /lib/ld-2.7.so...
+--3448-- ... CRC mismatch (computed d696698d wanted 041fec65)
+--3448--    object doesn't have a symbol table
+--3448-- Reading syms from /home/user/Valgrind_mem_leak02 (0x8048000)
+--3448-- Reading syms from /usr/local/lib/valgrind/x86-linux/memcheck (0x38000000)
+--3448--    object doesn't have a dynamic symbol table
+--3448-- Reading suppressions file: /usr/local/lib/valgrind/default.supp
+--3448-- Reading syms from /usr/local/lib/valgrind/x86-linux/vgpreload_core.so (0x4020000)
+--3448-- Reading syms from /usr/local/lib/valgrind/x86-linux/vgpreload_memcheck.so (0x4022000)
+--3448-- Reading syms from /lib/i686/cmov/libm-2.7.so (0x4034000)
+--3448-- Reading debug info from /lib/i686/cmov/libm-2.7.so...
+--3448-- ... CRC mismatch (computed 47c8d770 wanted 503cff7b)
+--3448--    object doesn't have a symbol table
+--3448-- Reading syms from /lib/i686/cmov/libc-2.7.so (0x4059000)
+--3448-- Reading debug info from /lib/i686/cmov/libc-2.7.so...
+--3448-- ... CRC mismatch (computed fccb8db7 wanted 529807ba)
+--3448--    object doesn't have a symbol table
+--3448-- REDIR: 0x40cb2d0 (rindex) redirected to 0x4025710 (rindex)
+--3448-- REDIR: 0x40caf00 (strlen) redirected to 0x40259d0 (strlen)
+init a variable and hang up..
+--3448-- REDIR: 0x40c68d0 (malloc) redirected to 0x4024a50 (malloc)
+--3448-- REDIR: 0x40c8110 (free) redirected to 0x40245f0 (free)
+--3448-- REDIR: 0x40cc160 (memset) redirected to 0x4025d50 (memset)
+==3448== 
+==3448== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 1)
+--3448-- 
+--3448-- supp:     13 dl-hack3-1
+==3448== malloc/free: in use at exit: 123,450 bytes in 10 blocks.
+==3448== malloc/free: 10 allocs, 0 frees, 123,450 bytes allocated.
+==3448== 
+==3448== searching for pointers to 10 not-freed blocks.
+==3448== checked 67,452 bytes.
+==3448== 
+==3448== LEAK SUMMARY:
+==3448==    definitely lost: 123,450 bytes in 10 blocks.
+==3448==      possibly lost: 0 bytes in 0 blocks.
+==3448==    still reachable: 0 bytes in 0 blocks.
+==3448==         suppressed: 0 bytes in 0 blocks.
+==3448== Rerun with --leak-check=full to see details of leaked memory.
+--3448--  memcheck: sanity checks: 0 cheap, 1 expensive
+--3448--  memcheck: auxmaps: 0 auxmap entries (0k, 0M) in use
+--3448--  memcheck: auxmaps_L1: 0 searches, 0 cmps, ratio 0:10
+--3448--  memcheck: auxmaps_L2: 0 searches, 0 nodes
+--3448--  memcheck: SMs: n_issued      = 10 (160k, 0M)
+--3448--  memcheck: SMs: n_deissued    = 0 (0k, 0M)
+--3448--  memcheck: SMs: max_noaccess  = 65535 (1048560k, 1023M)
+--3448--  memcheck: SMs: max_undefined = 0 (0k, 0M)
+--3448--  memcheck: SMs: max_defined   = 22 (352k, 0M)
+--3448--  memcheck: SMs: max_non_DSM   = 10 (160k, 0M)
+--3448--  memcheck: max sec V bit nodes:    0 (0k, 0M)
+--3448--  memcheck: set_sec_vbits8 calls: 0 (new: 0, updates: 0)
+--3448--  memcheck: max shadow mem size:   464k, 0M
+--3448-- translate:            fast SP updates identified: 1,739 ( 90.7%)
+--3448-- translate:   generic_known SP updates identified: 88 (  4.5%)
+--3448-- translate: generic_unknown SP updates identified: 89 (  4.6%)
+--3448--     tt/tc: 3,500 tt lookups requiring 3,531 probes
+--3448--     tt/tc: 3,500 fast-cache updates, 2 flushes
+--3448--  transtab: new        1,744 (36,545 -> 533,235; ratio 145:10) [0 scs]
+--3448--  transtab: dumped     0 (0 -> ??)
+--3448--  transtab: discarded  0 (0 -> ??)
+--3448-- scheduler: 26,844 jumps (bb entries).
+--3448-- scheduler: 0/1,813 major/minor sched events.
+--3448--    sanity: 1 cheap, 1 expensive checks.
+--3448--    exectx: 769 lists, 7 contexts (avg 0 per list)
+--3448--    exectx: 23 searches, 16 full compares (695 per 1000)
+--3448--    exectx: 0 cmp2, 30 cmp4, 0 cmpAll
+--3448--  errormgr: 6 supplist searches, 6 comparisons during search
+--3448--  errormgr: 13 errlist searches, 30 comparisons during search

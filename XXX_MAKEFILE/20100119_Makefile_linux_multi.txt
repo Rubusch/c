@@ -1,0 +1,23 @@
+# Makefile
+#
+# .h and .c files
+
+SOURCE = main.c sourcefilename.c
+HEADERS = headername.h
+OBJECTS = $(SOURCE:%.c=%.o)
+CC = gcc
+CFLAGS += -g -Wall -std=c99 -pedantic
+RM = rm
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $<
+
+name.exe: $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS) -lm
+
+all:	name.exe
+
+clean:
+	$(RM) $(OBJECTS) name.exe *~
+
+.PHONY: all clean

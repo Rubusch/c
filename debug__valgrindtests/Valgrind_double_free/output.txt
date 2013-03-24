@@ -1,0 +1,195 @@
+user@machine:~$ ./Valgrind_double_free 
+My text is "foo"
+First free()
+Second free() - Ouch!!!
+
+*** glibc detected *** ./Valgrind_double_free: double free or corruption (fasttop): 0x0804a008 ***
+======= Backtrace: =========
+/lib/i686/cmov/libc.so.6[0xb7e61735]
+/lib/i686/cmov/libc.so.6(cfree+0x90)[0xb7e651a0]
+./Valgrind_double_free[0x80484af]
+/lib/i686/cmov/libc.so.6(__libc_start_main+0xe0)[0xb7e0c450]
+./Valgrind_double_free[0x80483e1]
+======= Memory map: ========
+08048000-08049000 r-xp 00000000 03:06 16736      /home/user/Valgrind_double_free
+08049000-0804a000 rw-p 00000000 03:06 16736      /home/user/Valgrind_double_free
+0804a000-0806b000 rw-p 0804a000 00:00 0          [heap]
+b7c00000-b7c21000 rw-p b7c00000 00:00 0 
+b7c21000-b7d00000 ---p b7c21000 00:00 0 
+b7ddf000-b7de9000 r-xp 00000000 03:03 211794     /lib/libgcc_s.so.1
+b7de9000-b7dea000 rw-p 00009000 03:03 211794     /lib/libgcc_s.so.1
+b7df5000-b7df6000 rw-p b7df5000 00:00 0 
+b7df6000-b7f3d000 r-xp 00000000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f3d000-b7f3e000 r--p 00147000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f3e000-b7f40000 rw-p 00148000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f40000-b7f43000 rw-p b7f40000 00:00 0 
+b7f43000-b7f66000 r-xp 00000000 03:03 212033     /lib/i686/cmov/libm-2.7.so
+b7f66000-b7f68000 rw-p 00023000 03:03 212033     /lib/i686/cmov/libm-2.7.so
+b7f72000-b7f75000 rw-p b7f72000 00:00 0 
+b7f75000-b7f76000 r-xp b7f75000 00:00 0          [vdso]
+b7f76000-b7f92000 r-xp 00000000 03:03 212001     /lib/ld-2.7.so
+b7f92000-b7f94000 rw-p 0001b000 03:03 212001     /lib/ld-2.7.so
+bfbd4000-bfbe9000 rw-p bfbd4000 00:00 0          [stack]
+Abortado
+user@machine:~$ valgrind --tool=memcheck Valgrind_double_free 
+valgrind: Valgrind_double_free: command not found
+user@machine:~$ ./Valgrind_double_free 
+
+My text is "foo"
+First free()
+Second free() - Ouch!!!
+
+*** glibc detected *** ./Valgrind_double_free: double free or corruption (fasttop): 0x0804a008 ***
+======= Backtrace: =========
+/lib/i686/cmov/libc.so.6[0xb7eb7735]
+/lib/i686/cmov/libc.so.6(cfree+0x90)[0xb7ebb1a0]
+./Valgrind_double_free[0x80484af]
+/lib/i686/cmov/libc.so.6(__libc_start_main+0xe0)[0xb7e62450]
+./Valgrind_double_free[0x80483e1]
+======= Memory map: ========
+08048000-08049000 r-xp 00000000 03:06 16736      /home/user/Valgrind_double_free
+08049000-0804a000 rw-p 00000000 03:06 16736      /home/user/Valgrind_double_free
+0804a000-0806b000 rw-p 0804a000 00:00 0          [heap]
+b7d00000-b7d21000 rw-p b7d00000 00:00 0 
+b7d21000-b7e00000 ---p b7d21000 00:00 0 
+b7e35000-b7e3f000 r-xp 00000000 03:03 211794     /lib/libgcc_s.so.1
+b7e3f000-b7e40000 rw-p 00009000 03:03 211794     /lib/libgcc_s.so.1
+b7e4b000-b7e4c000 rw-p b7e4b000 00:00 0 
+b7e4c000-b7f93000 r-xp 00000000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f93000-b7f94000 r--p 00147000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f94000-b7f96000 rw-p 00148000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f96000-b7f99000 rw-p b7f96000 00:00 0 
+b7f99000-b7fbc000 r-xp 00000000 03:03 212033     /lib/i686/cmov/libm-2.7.so
+b7fbc000-b7fbe000 rw-p 00023000 03:03 212033     /lib/i686/cmov/libm-2.7.so
+b7fc8000-b7fcb000 rw-p b7fc8000 00:00 0 
+b7fcb000-b7fcc000 r-xp b7fcb000 00:00 0          [vdso]
+b7fcc000-b7fe8000 r-xp 00000000 03:03 212001     /lib/ld-2.7.so
+b7fe8000-b7fea000 rw-p 0001b000 03:03 212001     /lib/ld-2.7.so
+bffd1000-bffe6000 rw-p bffd1000 00:00 0          [stack]
+Abortado
+user@machine:~$ valgrind --tool=memcheck ./Valgrind_double_free 
+==3315== Memcheck, a memory error detector.
+==3315== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3315== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3315== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3315== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3315== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3315== For more details, rerun with: -v
+==3315== 
+My text is "foo"
+First free()
+Second free() - Ouch!!!
+
+==3315== Invalid free() / delete / delete[]
+==3315==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3315==    by 0x80484AE: main (Valgrind_double_free.c:27)
+==3315==  Address 0x41a7028 is 0 bytes inside a block of size 4 free'd
+==3315==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3315==    by 0x804849A: main (Valgrind_double_free.c:24)
+==3315== 
+==3315== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3315== malloc/free: in use at exit: 0 bytes in 0 blocks.
+==3315== malloc/free: 1 allocs, 2 frees, 4 bytes allocated.
+==3315== For counts of detected errors, rerun with: -v
+==3315== All heap blocks were freed -- no leaks are possible.
+user@machine:~$ valgrind --tool=memcheck -v ./Valgrind_double_free 
+==3316== Memcheck, a memory error detector.
+==3316== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3316== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3316== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3316== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3316== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3316== 
+--3316-- Command line
+--3316--    ./Valgrind_double_free
+--3316-- Startup, with flags:
+--3316--    --tool=memcheck
+--3316--    -v
+--3316-- Contents of /proc/version:
+--3316--   Linux version 2.6.18-x31v5 (2.6.18-x31v5-10.00.Custom) (root@machine) (gcc version 4.2.3 20071014 (prerelease) (Debian 4.2.2-3)) #1 PREEMPT Mon Nov 26 22:18:53 WET 2007
+--3316-- Arch and hwcaps: X86, x86-sse1-sse2
+--3316-- Page sizes: currently 4096, max supported 4096
+--3316-- Valgrind library directory: /usr/local/lib/valgrind
+--3316-- Reading syms from /lib/ld-2.7.so (0x4000000)
+--3316-- Reading debug info from /lib/ld-2.7.so...
+--3316-- ... CRC mismatch (computed d696698d wanted 041fec65)
+--3316--    object doesn't have a symbol table
+--3316-- Reading syms from /home/user/Valgrind_double_free (0x8048000)
+--3316-- Reading syms from /usr/local/lib/valgrind/x86-linux/memcheck (0x38000000)
+--3316--    object doesn't have a dynamic symbol table
+--3316-- Reading suppressions file: /usr/local/lib/valgrind/default.supp
+--3316-- Reading syms from /usr/local/lib/valgrind/x86-linux/vgpreload_core.so (0x4020000)
+--3316-- Reading syms from /usr/local/lib/valgrind/x86-linux/vgpreload_memcheck.so (0x4022000)
+--3316-- Reading syms from /lib/i686/cmov/libm-2.7.so (0x4034000)
+--3316-- Reading debug info from /lib/i686/cmov/libm-2.7.so...
+--3316-- ... CRC mismatch (computed 47c8d770 wanted 503cff7b)
+--3316--    object doesn't have a symbol table
+--3316-- Reading syms from /lib/i686/cmov/libc-2.7.so (0x4059000)
+--3316-- Reading debug info from /lib/i686/cmov/libc-2.7.so...
+--3316-- ... CRC mismatch (computed fccb8db7 wanted 529807ba)
+--3316--    object doesn't have a symbol table
+--3316-- REDIR: 0x40cb2d0 (rindex) redirected to 0x4025710 (rindex)
+--3316-- REDIR: 0x40c68d0 (malloc) redirected to 0x4024a50 (malloc)
+--3316-- REDIR: 0x40cd050 (strchrnul) redirected to 0x4025df0 (strchrnul)
+--3316-- REDIR: 0x40caf00 (strlen) redirected to 0x40259d0 (strlen)
+My text is "foo"
+First free()
+--3316-- REDIR: 0x40c8110 (free) redirected to 0x40245f0 (free)
+--3316-- REDIR: 0x40cc1c0 (mempcpy) redirected to 0x4026490 (mempcpy)
+Second free() - Ouch!!!
+
+==3316== Invalid free() / delete / delete[]
+==3316==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3316==    by 0x80484AE: main (Valgrind_double_free.c:27)
+==3316==  Address 0x41a7028 is 0 bytes inside a block of size 4 free'd
+==3316==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3316==    by 0x804849A: main (Valgrind_double_free.c:24)
+--3316-- REDIR: 0x40cc160 (memset) redirected to 0x4025d50 (memset)
+==3316== 
+==3316== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3316== 
+==3316== 1 errors in context 1 of 1:
+==3316== Invalid free() / delete / delete[]
+==3316==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3316==    by 0x80484AE: main (Valgrind_double_free.c:27)
+==3316==  Address 0x41a7028 is 0 bytes inside a block of size 4 free'd
+==3316==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3316==    by 0x804849A: main (Valgrind_double_free.c:24)
+--3316-- 
+--3316-- supp:     13 dl-hack3-1
+==3316== 
+==3316== IN SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3316== 
+==3316== malloc/free: in use at exit: 0 bytes in 0 blocks.
+==3316== malloc/free: 1 allocs, 2 frees, 4 bytes allocated.
+==3316== 
+==3316== All heap blocks were freed -- no leaks are possible.
+--3316--  memcheck: sanity checks: 0 cheap, 1 expensive
+--3316--  memcheck: auxmaps: 0 auxmap entries (0k, 0M) in use
+--3316--  memcheck: auxmaps_L1: 0 searches, 0 cmps, ratio 0:10
+--3316--  memcheck: auxmaps_L2: 0 searches, 0 nodes
+--3316--  memcheck: SMs: n_issued      = 8 (128k, 0M)
+--3316--  memcheck: SMs: n_deissued    = 0 (0k, 0M)
+--3316--  memcheck: SMs: max_noaccess  = 65535 (1048560k, 1023M)
+--3316--  memcheck: SMs: max_undefined = 0 (0k, 0M)
+--3316--  memcheck: SMs: max_defined   = 22 (352k, 0M)
+--3316--  memcheck: SMs: max_non_DSM   = 8 (128k, 0M)
+--3316--  memcheck: max sec V bit nodes:    0 (0k, 0M)
+--3316--  memcheck: set_sec_vbits8 calls: 0 (new: 0, updates: 0)
+--3316--  memcheck: max shadow mem size:   432k, 0M
+--3316-- translate:            fast SP updates identified: 1,782 ( 90.6%)
+--3316-- translate:   generic_known SP updates identified: 92 (  4.6%)
+--3316-- translate: generic_unknown SP updates identified: 91 (  4.6%)
+--3316--     tt/tc: 3,662 tt lookups requiring 3,699 probes
+--3316--     tt/tc: 3,662 fast-cache updates, 2 flushes
+--3316--  transtab: new        1,825 (38,311 -> 555,998; ratio 145:10) [0 scs]
+--3316--  transtab: dumped     0 (0 -> ??)
+--3316--  transtab: discarded  0 (0 -> ??)
+--3316-- scheduler: 27,275 jumps (bb entries).
+--3316-- scheduler: 0/1,890 major/minor sched events.
+--3316--    sanity: 1 cheap, 1 expensive checks.
+--3316--    exectx: 769 lists, 9 contexts (avg 0 per list)
+--3316--    exectx: 16 searches, 7 full compares (437 per 1000)
+--3316--    exectx: 0 cmp2, 30 cmp4, 0 cmpAll
+--3316--  errormgr: 7 supplist searches, 48 comparisons during search
+--3316--  errormgr: 14 errlist searches, 36 comparisons during search

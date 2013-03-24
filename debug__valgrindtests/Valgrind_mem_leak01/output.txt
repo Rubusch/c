@@ -1,0 +1,112 @@
+user@machine:~$ ./Valgrind_mem_leak01
+init vars
+*a = 5
+*b = 3
+a = b
+free(a)
+free(b) - Oups!
+
+*** glibc detected *** ./Valgrind_mem_leak01: double free or corruption (fasttop): 0x0804a018 ***
+======= Backtrace: =========
+/lib/i686/cmov/libc.so.6[0xb7e50735]
+/lib/i686/cmov/libc.so.6(cfree+0x90)[0xb7e541a0]
+./Valgrind_mem_leak01[0x80484a5]
+/lib/i686/cmov/libc.so.6(__libc_start_main+0xe0)[0xb7dfb450]
+./Valgrind_mem_leak01[0x80483a1]
+======= Memory map: ========
+08048000-08049000 r-xp 00000000 03:06 16735      /home/user/Valgrind_mem_leak01
+08049000-0804a000 rw-p 00000000 03:06 16735      /home/user/Valgrind_mem_leak01
+0804a000-0806b000 rw-p 0804a000 00:00 0          [heap]
+b7c00000-b7c21000 rw-p b7c00000 00:00 0 
+b7c21000-b7d00000 ---p b7c21000 00:00 0 
+b7dce000-b7dd8000 r-xp 00000000 03:03 211794     /lib/libgcc_s.so.1
+b7dd8000-b7dd9000 rw-p 00009000 03:03 211794     /lib/libgcc_s.so.1
+b7de4000-b7de5000 rw-p b7de4000 00:00 0 
+b7de5000-b7f2c000 r-xp 00000000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f2c000-b7f2d000 r--p 00147000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f2d000-b7f2f000 rw-p 00148000 03:03 212029     /lib/i686/cmov/libc-2.7.so
+b7f2f000-b7f32000 rw-p b7f2f000 00:00 0 
+b7f32000-b7f55000 r-xp 00000000 03:03 212033     /lib/i686/cmov/libm-2.7.so
+b7f55000-b7f57000 rw-p 00023000 03:03 212033     /lib/i686/cmov/libm-2.7.so
+b7f61000-b7f64000 rw-p b7f61000 00:00 0 
+b7f64000-b7f65000 r-xp b7f64000 00:00 0          [vdso]
+b7f65000-b7f81000 r-xp 00000000 03:03 212001     /lib/ld-2.7.so
+b7f81000-b7f83000 rw-p 0001b000 03:03 212001     /lib/ld-2.7.so
+bfd21000-bfd37000 rw-p bfd21000 00:00 0          [stack]
+Abortado
+user@machine:~$ valgrind --tool=memcheck ./Valgrind_mem_leak01
+==3325== Memcheck, a memory error detector.
+==3325== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3325== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3325== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3325== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3325== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3325== For more details, rerun with: -v
+==3325== 
+init vars
+*a = 5
+*b = 3
+a = b
+free(a)
+free(b) - Oups!
+
+==3325== Invalid free() / delete / delete[]
+==3325==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3325==    by 0x80484A4: main (Valgrind_mem_leak.c:36)
+==3325==  Address 0x41a7060 is 0 bytes inside a block of size 4 free'd
+==3325==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3325==    by 0x8048490: main (Valgrind_mem_leak.c:32)
+==3325== 
+==3325== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3325== malloc/free: in use at exit: 4 bytes in 1 blocks.
+==3325== malloc/free: 2 allocs, 2 frees, 8 bytes allocated.
+==3325== For counts of detected errors, rerun with: -v
+==3325== searching for pointers to 1 not-freed blocks.
+==3325== checked 67,452 bytes.
+==3325== 
+==3325== LEAK SUMMARY:
+==3325==    definitely lost: 4 bytes in 1 blocks.
+==3325==      possibly lost: 0 bytes in 0 blocks.
+==3325==    still reachable: 0 bytes in 0 blocks.
+==3325==         suppressed: 0 bytes in 0 blocks.
+==3325== Rerun with --leak-check=full to see details of leaked memory.
+user@machine:~$ valgrind --tool=memcheck --leak-check=full ./Valgrind_mem_leak01
+==3326== Memcheck, a memory error detector.
+==3326== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==3326== Using LibVEX rev 1804, a library for dynamic binary translation.
+==3326== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==3326== Using valgrind-3.3.0, a dynamic binary instrumentation framework.
+==3326== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==3326== For more details, rerun with: -v
+==3326== 
+init vars
+*a = 5
+*b = 3
+a = b
+free(a)
+free(b) - Oups!
+
+==3326== Invalid free() / delete / delete[]
+==3326==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3326==    by 0x80484A4: main (Valgrind_mem_leak.c:36)
+==3326==  Address 0x41a7060 is 0 bytes inside a block of size 4 free'd
+==3326==    at 0x402465C: free (vg_replace_malloc.c:323)
+==3326==    by 0x8048490: main (Valgrind_mem_leak.c:32)
+==3326== 
+==3326== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 13 from 1)
+==3326== malloc/free: in use at exit: 4 bytes in 1 blocks.
+==3326== malloc/free: 2 allocs, 2 frees, 8 bytes allocated.
+==3326== For counts of detected errors, rerun with: -v
+==3326== searching for pointers to 1 not-freed blocks.
+==3326== checked 67,452 bytes.
+==3326== 
+==3326== 
+==3326== 4 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==3326==    at 0x4024AB8: malloc (vg_replace_malloc.c:207)
+==3326==    by 0x8048434: main (Valgrind_mem_leak.c:17)
+==3326== 
+==3326== LEAK SUMMARY:
+==3326==    definitely lost: 4 bytes in 1 blocks.
+==3326==      possibly lost: 0 bytes in 0 blocks.
+==3326==    still reachable: 0 bytes in 0 blocks.
+==3326==         suppressed: 0 bytes in 0 blocks.

@@ -1,0 +1,23 @@
+Error: 'for' loop initial declaration used outside C99 mode
+
+gcc output:
+list_item.c:89: error: 'for' loop initial declaration used outside C99 mode
+
+
+Code:
+   // ...
+   for(int cnt=0; cnt < LENGTH_MAX; ++cnt){
+   // ...
+
+
+Declaring the loop counter (in this case i) inside the for loop is only 
+allowed in C++ files unless you tell GCC to use the C99 standard.
+
+
+Solution:
+   // ...
+   int cnt = 0;
+   for(cnt=0; cnt < LENGTH_MAX; ++cnt){
+   // ... 
+
+

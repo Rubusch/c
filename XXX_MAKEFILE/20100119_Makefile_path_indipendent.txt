@@ -1,0 +1,23 @@
+# Makefile (simple)
+#
+# use -O, -O1, -O2 for optimization 
+
+TARGET = name.exe
+SRC = name.c
+OBJ = $(SRC:%.c=%.o)
+CC = gcc
+CFLAGS += -g -Wall
+RM = rm -f
+
+%.c: %.o
+	$(CC) $(CFLAGS) -c $<
+
+$(TARGET): $(OBJ)
+	$(CC) -o $@ $(OBJ) -lm -pthread
+
+all: $(TARGET)
+
+clean: 
+	$(RM) $(OBJ) name.exe *~
+
+.PHONY: clean all

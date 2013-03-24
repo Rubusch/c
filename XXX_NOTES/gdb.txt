@@ -1,0 +1,60 @@
+GDB Quick reference
+
+
+
+
+General:
+
+
+file <name>		load a program (needs gcc -g)
+
+bt			print a stacktrace (as mentioned above)
+
+print <expression>	print the value of the specified expression
+
+quit			quit gdb
+
+help			gdb online help
+
+
+
+
+
+Breakpoints:
+
+run			run the program until breakpoint
+
+stop			stop the program
+
+break <argument>	set breakpoints, i.e. make the application stop <argument> can be 
+			e.g. name of function or a linenumber in a file: 
+			"break filename.c:50" breaks at line 50 at "filename.c"
+
+c			continue running the application
+
+s			single step though the application
+
+watch expression	set a watchpoint, i.e. stop if expression has changed
+
+
+
+
+
+Others:
+
+
+electric fence		malloc debugger, helps to catch typical memory management bugs 
+			like accessing already freed memory, buffer overflows, ...
+
+strace			print a log of all (or selected) system calls some application performes
+			One common programming mistake is missing error handling, not checking 
+			the return value of system calls for example. Instead of notifying the 
+			user with a message like "opening file foo failed with error bar" applications 
+			simply assume that opening the file worked and just crash later if it 
+			didn't. That kind of bug often can easily be found with strace because 
+			you'll see the system call return values in the strace log. Of course 
+			strace is useful for alot of other purposes too.
+
+
+
+Tipps:
