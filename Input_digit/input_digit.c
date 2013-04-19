@@ -35,8 +35,8 @@ void readdigit(unsigned int* iVal, const char* comment)
 
     // read
     fgets(cChr, 3, stdin);
-   
-    // check stdin and clean in case input exceeded the 
+
+    // check stdin and clean in case input exceeded the
     if('\n' == cChr[1]){
       // ok - do nothing here
 
