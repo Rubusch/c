@@ -15,6 +15,7 @@
 #define REPEAT    33
 
 #define EMPTY     -1
+#define MAX       255
 
 /*
   states
@@ -98,6 +99,11 @@ void remote_control( char *rc5_command )
 
                 if( EMPTY != command_intermediate[command_idx] ){
                         puts( "\tfurther digits");  
+                        if( MAX / 10 < command_intermediate[command_idx]){
+                                puts("ERROR: overrun");
+                                command_idx = -1;
+                                return;
+                        }
                         command_intermediate[command_idx] = 10 * command_intermediate[command_idx];
                 }else{
                         puts( "\tfirst digit" );  
