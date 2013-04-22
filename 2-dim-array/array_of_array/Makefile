@@ -1,6 +1,9 @@
 # Makefile
 #
-#
+# @author: Lothar Rubusch
+# @email: L.Rubusch@gmx.ch
+# @license: GPLv3
+
 
 SOURCE = 2-dim-array.c
 OBJECTS = ${SOURCE:.c=.o}
@@ -18,7 +21,7 @@ RM = rm -f
 
 all: 2-dim-array.exe
 
-clean: 
+clean:
 	${RM} 2-dim-array.exe *~ *.o core
 
 
