@@ -1,5 +1,10 @@
 // fo.c
- 
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ */
 /**************************************************************************
 
   implementations of some common file operations
@@ -18,7 +23,7 @@
 
 extern char *strcpy(char*, const char*);
 extern char* strncat(char*, const char*, size_t);
-extern size_t strlen(const char*); 
+extern size_t strlen(const char*);
 extern char* strstr(const char*, const char*);
 extern void* memset(void*, const void*, size_t);
 
@@ -41,7 +46,7 @@ int get_read_write_file_pointer(FILE** fp, char filename[FILENAME_MAX])
     fprintf(stderr, "fo::get_read_write_file_pointer(FILE**, char[]) - Failed!\n");
     return -1;
   }
-  return 0;  
+  return 0;
 }
 
 
@@ -76,7 +81,7 @@ int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
     return -1;
   }
 
-  return 0;  
+  return 0;
 
 
 
@@ -101,7 +106,7 @@ int get_append_file_pointer(FILE **fp, char filename[FILENAME_MAX])
 /***
 
     read from a FILE*
- 
+
 ***/
 
 
@@ -112,7 +117,7 @@ int read_char(FILE* fp, char** content, unsigned long int* content_size)
 {
   if(fp == NULL) return -1;
   if(*content_size == 0) return -1;
-  int c = 0; 
+  int c = 0;
   unsigned long int idx = 0;
   const unsigned long int INITIAL_SIZE = *content_size;
 
@@ -141,10 +146,10 @@ int read_char(FILE* fp, char** content, unsigned long int* content_size)
   Therefore the magic number of e.g. 128 tokens is necessary here!!!
 //*/
 int read_without_spaces(FILE* fp, char** content, unsigned long int* content_size)
-{    
+{
   if(fp == NULL) return -1;
   char pBuf[128]; // uses magic number ;-)
-  strcpy(pBuf, "\0"); 
+  strcpy(pBuf, "\0");
   const unsigned long int INITIAL_SIZE = *content_size;
   unsigned long int idx = 1; // for the '\0' token
   while((fscanf(fp, "%127s", pBuf)) != EOF){
@@ -192,7 +197,7 @@ int read_linewise(FILE* fp, char** content, unsigned long int* content_size)
 	exit(EXIT_FAILURE);
       }
     }
-    strncat( *content, *gptr, strlen(*gptr)); 
+    strncat( *content, *gptr, strlen(*gptr));
   }
   *content_size = strlen(*content) + 1;
 
@@ -231,7 +236,7 @@ int read_blockwise(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
 
   unsigned int count = fread(content, sizeof(*content), CONTENT_SIZE, fp);
   if(count > CONTENT_SIZE) return -1;
-  content[count] = '\0';  
+  content[count] = '\0';
 
   return 0;
 }
@@ -269,8 +274,8 @@ int write_char(FILE* fp, char* content, const unsigned long int CONTENT_SIZE)
 
 /*
   writes formated (using printf) into FILE* from char*
-  - unsafe, no fixed length - 
-  - needs fixed formatting (hardcoded!) - 
+  - unsafe, no fixed length -
+  - needs fixed formatting (hardcoded!) -
 //*/
 int write_formated(FILE* fp, char* content)
 {
@@ -293,13 +298,13 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
   if(content == NULL) return -1;
 
   char bufLine[BUFSIZ];
-  int idxLine = 0;  
+  int idxLine = 0;
   int idxContent = 0;
   char *pData = &content[0];
   strcpy(bufLine, "");
 
   while((idxLine < BUFSIZ)
-	&& (idxContent < CONTENT_SIZE) 
+	&& (idxContent < CONTENT_SIZE)
 	&& ((bufLine[idxLine] = *(pData++)) != '\0')){
 
     if (idxLine >= BUFSIZ){
@@ -307,7 +312,7 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
       return -1;
     }
 
-    if( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n')) 
+    if( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
 	|| (*(pData+1) == '\0' )){
       bufLine[idxLine+1] = '\0';
       fputs(bufLine, fp); // write line
@@ -343,7 +348,7 @@ int create_file(const char* filename, const unsigned long int SIZE)
   FILE* fp = fopen(filename, "wb");
   if(fp==NULL){
     fprintf(stderr, "fo::create_file(const char*, const unsigned long int) - Failed!\n");
-    return -1;  
+    return -1;
   }
   fseek(fp, SIZE-1, SEEK_SET);
   putc('x', fp);
@@ -488,7 +493,7 @@ int copy_characterwise_buffered(const char* src, const char* dest, const unsigne
 
 
 /***
-    
+
     temp file operations
 
 ***/
@@ -574,15 +579,15 @@ int close_stream(FILE** fp)
 
   return iRes;
 }
-	
+
 
 /*
-  reads the size of the file into an unsigned long int*, 
+  reads the size of the file into an unsigned long int*,
   returns -1 in case of error, else 0
 //*/
 int filesize( FILE* fp, unsigned long int* size)
 {
-  if(size == NULL) return -1;  
+  if(size == NULL) return -1;
   fseek(fp, 0L, SEEK_END);
   *size = ftell(fp);
   return 0;
@@ -590,7 +595,7 @@ int filesize( FILE* fp, unsigned long int* size)
 
 
 /*
-  checks for EOF - returns 1 if no EOF is found, 
+  checks for EOF - returns 1 if no EOF is found,
   else 0, and -1 if the file pointer was corrupt
 //*/
 int check_eof(FILE* fp)
@@ -657,7 +662,7 @@ int read_nth_line(FILE* fp,  char* line, const unsigned long int LINE_SIZE, cons
   char temp[LINE_SIZE];
   int cnt=0;
   for(cnt = 0; cnt < LINE_NUMBER - 1; ++cnt)
-    if(fgets(temp, LINE_SIZE, fp) == NULL) return -1; 
+    if(fgets(temp, LINE_SIZE, fp) == NULL) return -1;
   if(fgets(temp, LINE_SIZE, fp) == NULL) return -1;
   strncat(line, temp, LINE_SIZE);
 

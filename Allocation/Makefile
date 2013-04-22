@@ -1,6 +1,8 @@
 # Makefile
 #
-#
+# @author: Lothar Rubusch
+# @email: L.Rubusch@gmx.ch
+# @license: GPLv3
 
 SOURCE = allocation.c
 OBJECTS = ${SOURCE:.c=.o}
@@ -18,7 +20,7 @@ Allocation.exe: ${OBJECTS}
 
 all: Allocation.exe
 
-clean: 
+clean:
 	${RM} Allocation.exe *~ *.o core
 
 

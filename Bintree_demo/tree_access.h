@@ -1,6 +1,10 @@
 // tree_access.h
 /*
-  functions to be modified due to the tree implementation 
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * functions to be modified due to the tree implementation
 //*/
 
 #ifndef TREE_ACCESS
@@ -31,7 +35,7 @@ int find_element(leaf*, leaf*, const unsigned int);
 int delete_element(leaf*, unsigned int*, const unsigned int);
 int delete_tree(leaf**, unsigned int*);
 int write_tree(leaf*);
- 
+
 // generating tree to write to file
 int get_max_level(leaf*, unsigned int);
 int data_to_string(char*, const unsigned int, const unsigned int);

@@ -1,6 +1,10 @@
 // tree_access.c
 /*
-  Adapter functions for the frontend to handle the a tree in the background
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * Adapter functions for the frontend to handle the a tree in the background
 //*/
 
 #include "tree_access.h"
@@ -75,7 +79,7 @@ int populate_tree(leaf* first, unsigned int* elements, const unsigned int number
 
   unsigned int data=0;
   leaf *lf = NULL;
-  
+
   register unsigned int idx=0;
   register unsigned int cnt_new_elements=0;
   for(idx=0; (number > cnt_new_elements) && (MAX_NODES > number) && (MAX_NODES > idx); ++idx){
@@ -88,7 +92,7 @@ int populate_tree(leaf* first, unsigned int* elements, const unsigned int number
     }
 
     if(0 > insert(first, lf)){
-      fprintf(stderr, "populate_tree() - %d containted in the tree? Not inserted!\n", lf->data); 
+      fprintf(stderr, "populate_tree() - %d containted in the tree? Not inserted!\n", lf->data);
       if(NULL != lf) free(lf);
     }else{
       ++cnt_new_elements;
@@ -143,7 +147,7 @@ int add_element(leaf* first, unsigned int* number, const unsigned int data)
   set's the pointer found to it
 //*/
 int find_element(leaf* first, leaf* found, const unsigned int data)
-{  
+{
   if(NULL == first){
     fprintf(stderr, "ERROR: find_element() - first is NULL\n");
     return -1;
@@ -192,7 +196,7 @@ int delete_element(leaf* first, unsigned int* number, const unsigned int data)
   if(0 > delete(&delnode, first)){ // first here is predecessor!
     return -1;
   }
-  
+
   --(*number);
 
   return 0;
@@ -202,7 +206,7 @@ int delete_element(leaf* first, unsigned int* number, const unsigned int data)
 /*
   delete_tree()
 
-  deletes the entier tree 
+  deletes the entier tree
   refreshes the elements counter
 //*/
 int delete_tree(leaf** first, unsigned int* number)
@@ -219,7 +223,7 @@ int delete_tree(leaf** first, unsigned int* number)
   if(0 > delete_nodes(first)){
     return -1;
   }
-  
+
   *number = 0;
   return 0;
 }
@@ -258,10 +262,10 @@ int get_max_level(leaf* node, unsigned int level)
 
 /*
   data_to_string()
-  
+
   transform a data value to string "element",
   add leading and tailing ' '
-  if the int doesn't fit the size append ' ' 
+  if the int doesn't fit the size append ' '
 
   the space of element needs to be allocated before!
 //*/
@@ -271,9 +275,9 @@ int data_to_string(char* str, const unsigned int str_size, const unsigned int da
 
   // leading
   strncat(str, " ", 1);
- 
+
   // convert data
-  register unsigned int num = 0; 
+  register unsigned int num = 0;
   if(0 > (num = sprintf((++str), "%3d", data))){
     perror("ERROR: data_to_string() failed somehow");
     return -1;
@@ -308,19 +312,19 @@ int init_path(char* path, const unsigned int idx_row, const unsigned int path_si
 
    register unsigned int idx = 0;
    for(idx=0; idx < path_size-1; ++idx){
-   
+
      // no path to set
      if(path_size == 0) return 0;
-     
+
      // check for 'x' before -> 'x' next
      if((0 < idx) && (path[idx - 1] == 'x')){
        path[idx] = 'x';
      }
-     
+
      // get interval size:  2-1=1, 4-1=3, 8-1=7,...
      interval = (1 << ((path_size - 1) - idx)) - 1;
      result = idx_row % (2 * (interval+ 1));
-     
+
      if(result == interval){
        // set 'x'
        path[idx] = 'x';
@@ -328,7 +332,7 @@ int init_path(char* path, const unsigned int idx_row, const unsigned int path_si
      }else if(result < interval){
        // set '1'
        path[idx] = '1';
-       
+
      }else{
        // set '0'
        path[idx] = '0';
@@ -378,21 +382,21 @@ int get_data_by_path(leaf* first, char* data, const unsigned int data_len
     }else{
       break;
     }
-  } 
+  }
 
-  // check if NULL, if so set rest of path to 'x' 
+  // check if NULL, if so set rest of path to 'x'
   // and set data to an empty string of data_len (spaceholder)
   if(element == NULL){
     for(; idx_path < path_size; ++idx_path)
       path[idx_path] = 'x';
-    strncpy(data, " N/A ", data_len); 
+    strncpy(data, " N/A ", data_len);
     data[data_len] = '\0';
-    
+
  }else{
     // convert to string
     data_to_string(data, (data_len+1), element->data);
   }
-  
+
   //  fprintf(stderr, "data: #%s#\n", data); // XXX
 
   return 0;
@@ -406,8 +410,8 @@ int get_data_by_path(leaf* first, char* data, const unsigned int data_len
 //*/
 int get_paint_mask_per_row(char* paint, const unsigned int paint_size
 		  , const unsigned int idx_row_max, const unsigned int idx_row)
-{  
-  register unsigned int tree_level = 0; 
+{
+  register unsigned int tree_level = 0;
   register unsigned int shift_data = 0;
   register unsigned int interval = 0;
   register unsigned int shift_connect = 0;
@@ -417,7 +421,7 @@ int get_paint_mask_per_row(char* paint, const unsigned int paint_size
   for(idx_col = 0; idx_col < paint_size-1; ++idx_col){
     if(idx_col % 2 == 0){
       // elements
-      tree_level = idx_col / 2; 
+      tree_level = idx_col / 2;
       shift_data = (idx_row_max + 2) / (1 << tree_level);
 
       if((idx_row >= (shift_data / 2 - 1)) && (0 == (idx_row + 1 - (shift_data / 2)) % shift_data)){
@@ -425,7 +429,7 @@ int get_paint_mask_per_row(char* paint, const unsigned int paint_size
       }else{
 	paint[idx_col] = '0';
       }
-      
+
     }else{
       // connectors
       interval = 1 + idx_row_max / (2 << ((idx_col-1) / 2));
@@ -439,7 +443,7 @@ int get_paint_mask_per_row(char* paint, const unsigned int paint_size
 	}
       }else if((idx_row >= shift_connect) && (idx_row <= idx_row_max - shift_connect)){
 	idx_row_shifted = idx_row - shift_connect;
-	if( (idx_row + 1 != interval) && ((idx_row_shifted % (2 * interval)) < (interval - 1)) 
+	if( (idx_row + 1 != interval) && ((idx_row_shifted % (2 * interval)) < (interval - 1))
 	    && (paint[idx_col - 1] != '1')){
 	  paint[idx_col] = '1';
 	}else{
@@ -458,8 +462,8 @@ int get_paint_mask_per_row(char* paint, const unsigned int paint_size
 /*
   write_tree()
 
-  creates lines to write, 
-  works line by line and doesn't store 
+  creates lines to write,
+  works line by line and doesn't store
   an array based template!
 
     path
@@ -471,11 +475,11 @@ int get_paint_mask_per_row(char* paint, const unsigned int paint_size
     even idexes:
     0 - no element
     1 - element
-    
+
     odd indexes:
     0 - not set
     1 - set
-    
+
   returns -1 in case of errors
 //*/
 int write_tree(leaf* first)
@@ -483,7 +487,7 @@ int write_tree(leaf* first)
   //  puts("write_tree()"); // XXX
 
   // idx_col
-  register unsigned int idx_col = 0; 
+  register unsigned int idx_col = 0;
 
   // idx_col_max
   const unsigned int idx_col_max = 2 * get_max_level(first, 0);
@@ -499,7 +503,7 @@ int write_tree(leaf* first)
 
   // idx_row_max
   unsigned int idx_row_max = 2 * (1 << (idx_col_max/2)) - 2;
-  
+
   // paint currently - TODO: use bitmask
   char paint_curr[idx_col_max + 1];
   memset(paint_curr, '\0', idx_col_max+1);
@@ -510,7 +514,7 @@ int write_tree(leaf* first)
   path[idx_col_max/2] = '\0';
 
 
-  // data - length of data: ' ' + data + ' ' 
+  // data - length of data: ' ' + data + ' '
   const unsigned int data_len = DATA_DIGITS + 2;
 
   // data field
@@ -537,7 +541,7 @@ int write_tree(leaf* first)
     LOOP per row
   //*/
   for(idx_row = 0; idx_row <= idx_row_max; ++idx_row){
-    
+
     // reset row_write index
     memset(curr_line, '\0', line_size);
 
@@ -557,12 +561,12 @@ int write_tree(leaf* first)
       LOOP per col in line: write curr_line col by col
     //*/
     for(idx_col=0; (idx_col <= idx_col_max); ++idx_col){
-      
+
       // current row has an element->data line?
       memset(data, '\0', data_len+1);
 
 
-      if(idx_col % 2 == 0){  
+      if(idx_col % 2 == 0){
 	if(paint_curr[idx_col] == '1'){
 	  // row to write data
 	  get_data_by_path(first, data, data_len, path, idx_col_max/2 + 1, idx_col);
@@ -574,7 +578,7 @@ int write_tree(leaf* first)
 	}
 
       }else{
-	
+
 	if(paint_curr[idx_col] == '1'){
 	  // connector
 	  if(idx_col == idx_col_max - 1){
@@ -617,7 +621,7 @@ int write_tree(leaf* first)
       perror("ERROR: write_tree() - writing linewise failed");
       return -1;
     }
-  }  
+  }
 
 
   /*
@@ -651,7 +655,7 @@ int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
     return -1;
   }
 
-  return 0;  
+  return 0;
 }
 
 
@@ -664,13 +668,13 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
   if(content == NULL) return -1;
 
   char bufLine[BUFSIZ];
-  int idxLine = 0;  
+  int idxLine = 0;
   int idxContent = 0;
   char *pData = &content[0];
   strcpy(bufLine, "");
 
   while((idxLine < BUFSIZ)
-	&& (idxContent < CONTENT_SIZE) 
+	&& (idxContent < CONTENT_SIZE)
 	&& ((bufLine[idxLine] = *(pData++)) != '\0')){
 
     if (idxLine >= BUFSIZ){
@@ -678,7 +682,7 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
       return -1;
     }
 
-    if( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n')) 
+    if( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
 	|| (*(pData+1) == '\0' )){
       bufLine[idxLine+1] = '\0';
       fputs(bufLine, fp); // write line
@@ -708,4 +712,4 @@ int close_stream(FILE** fp)
 
   return iRes;
 }
-	
+

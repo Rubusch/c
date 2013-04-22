@@ -1,7 +1,11 @@
 // xtoi.c
 /*
-  convert a string into int and transform the int number into a 
-  char (stored) number
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * convert a string into int and transform the int number into a char (stored)
+ * number
 //*/
 
 #include <stdlib.h>
@@ -24,7 +28,7 @@ int xtoi(const char* origin, unsigned int* result)
     if(szlen > 8) return 0;
     *result = 0;
     factor = 1;
-    
+
     for(idx = szlen-1; idx >= 0; --idx){
       if(isxdigit( *(origin+idx))){
 	if( *(origin + idx) >= 97){
@@ -49,16 +53,16 @@ int xtoi(const char* origin, unsigned int* result)
 int main(int argc, char** argv)
 {
   char source[3] = "ff";
-  
+
   puts("convert a string stored number to a char stored numerical value");
 
   puts("1. converto to int");
   printf("\tsource: %s\n", source);
 
   unsigned int tmp=0;
-  xtoi(source, &tmp);  
+  xtoi(source, &tmp);
   printf("\tatoi() output: %i\n", tmp);
-  
+
   puts("2. converto int to char");
   unsigned char destination=0;
   /*
@@ -73,5 +77,5 @@ int main(int argc, char** argv)
   printf("\tresult: %i\n", destination);
 
   puts("READY.");
-  exit(EXIT_SUCCESS);  
+  exit(EXIT_SUCCESS);
 }

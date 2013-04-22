@@ -1,6 +1,10 @@
 // argumentlist.c
 /*
-  demonstrates the use of an argument list with variable size
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * demonstrates the use of an argument list with variable size
 //*/
 
 #include <stdio.h>
@@ -19,10 +23,10 @@ int main(int argc, char** argv)
 double sum(int numberOfArguments, ...)
 {
   double result = 0.0, temp = 0.0;
- 
+
   // define va_list
   va_list argumentpointer;
-  
+
   // initialize argumentpointer
   va_start(argumentpointer, numberOfArguments);
 
@@ -31,7 +35,7 @@ double sum(int numberOfArguments, ...)
   for(cnt=0; cnt<numberOfArguments; ++cnt){
     result += va_arg(argumentpointer, double);
   }
-  
+
   // over and out
   va_end(argumentpointer);
 

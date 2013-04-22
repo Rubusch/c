@@ -1,7 +1,10 @@
 /*
-  mathtools
-
-  some code to simplify the life in C
+ * mathtools
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * some code to simplify the life in C
 //*/
 
 #ifndef MATHTOOLS

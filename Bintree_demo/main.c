@@ -1,6 +1,10 @@
 // main.c
 /*
-  main and CLI to work on trees
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * main and CLI to work on trees
 //*/
 // FIXME: populate inserts 3 instead of 2 elements, when 2 were selected!!!
 
@@ -54,17 +58,17 @@ int main(int argc, char** argv)
     if(3 == argc){
       // generate root
       fprintf(stderr, "tree %d root generated\n", atoi(argv[1]));
-      init_root(&root, &number_of_nodes, atoi(argv[1]));      
+      init_root(&root, &number_of_nodes, atoi(argv[1]));
 
       // populate
       fprintf(stderr, "tree with %d nodes generated\n", atoi(argv[2]));
-      populate_tree(root, &number_of_nodes, atoi(argv[2]));      
+      populate_tree(root, &number_of_nodes, atoi(argv[2]));
 
       // write
       puts("write tree to file..");
       write_tree(root);
       puts("done.");
-      
+
       // deleteall
       quit(&root, &number_of_nodes);
     }else{

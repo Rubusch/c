@@ -1,5 +1,9 @@
 // atoi01.c
-
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,7 +20,7 @@ int main(char** argv, int argc)
   printf("Arrays: %s, %s and %s\n", arr1, arr2, arr3);
 
   // strings
-  printf("\twithout atoi:\n"); 
+  printf("\twithout atoi:\n");
   output(&arr1[0], &arr2[0], &arr3[0]);
   printf("\n");
 
@@ -44,9 +48,9 @@ int main(char** argv, int argc)
   printf("\t%s\n", arr4);            // f       - character under ASCII
   printf("\t%i\n", atoi(arr4));      // 0       - 'f' is not a representation of a dec number
   printf("\n");
-  
+
   // presentation of the first character of arr4 - 'f'
-  printf("presentation of arr4[0] - \'f\'\n"); 
+  printf("presentation of arr4[0] - \'f\'\n");
   printf("\t%c\n", &arr4[0]);        // U
   printf("\t%lu\n", &arr4[0]);        // 2280666
   printf("\t%lu\n", (unsigned long) &arr4[0]);  // 2280666

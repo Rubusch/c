@@ -1,6 +1,10 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
+## Makefile (simple)
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
+## use -O, -O1, -O2 for optimization
 
 TARGET = name.exe
 SRC = name.c
@@ -17,7 +21,7 @@ $(TARGET): $(OBJ)
 
 all: $(TARGET)
 
-clean: 
+clean:
 	$(RM) $(OBJ) name.exe *~
 
 .PHONY: clean all

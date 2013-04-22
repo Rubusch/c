@@ -1,6 +1,9 @@
-# Makefile
-#
-#
+## Makefile
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
 
 SOURCE = xtoi.c
 OBJECTS = ${SOURCE:.c =.o}
@@ -18,7 +21,7 @@ xtoi: ${OBJECTS}
 
 all: xtoi
 
-clean: 
+clean:
 	-${RM} xtoi *.o core
 
 

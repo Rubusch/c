@@ -1,6 +1,6 @@
 ## C Makefile for linux
 ##
-## version: http://c-plusplus.de/forum/viewtopic-var-t-is-88418.html
+## @author: http://c-plusplus.de/forum/viewtopic-var-t-is-88418.html
 ##
 ##
 

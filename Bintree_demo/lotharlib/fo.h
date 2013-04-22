@@ -1,5 +1,9 @@
 // fo.h
-
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ */
 
 #ifndef FILEOPERATIONS
 #define FILEOPERATIONS
@@ -28,10 +32,10 @@ int get_append_file_pointer(FILE**, char[]);
 int close_stream(FILE**);
 
 // reading from a file stream
-int read_char(FILE*, char**, unsigned long int*); 
+int read_char(FILE*, char**, unsigned long int*);
 int read_without_spaces(FILE*, char**, unsigned long int*);
 int read_linewise(FILE*, char**, unsigned long int*);
- int read_blockwise(FILE*, char*, const unsigned int);
+int read_blockwise(FILE*, char*, const unsigned int);
 
 // write to a file stream
 int write_char(FILE*, char*, const unsigned long int);

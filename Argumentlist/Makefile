@@ -1,6 +1,10 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
+## Makefile (simple)
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
+## use -O, -O1, -O2 for optimization
 SOURCE = argumentlist.c
 OBJECTS = ${SOURCE:%.c=%.o}
 CC = gcc
@@ -15,7 +19,7 @@ argumentlist.exe: ${OBJECTS}
 
 all: argumentlist.exe
 
-clean: 
+clean:
 	${RM} $(OBJECTS) argumentlist.exe *~
 
 .PHONY: all clean

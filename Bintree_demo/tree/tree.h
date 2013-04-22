@@ -14,7 +14,7 @@
 
 typedef struct tree_leaf{
 
-  // ptr: lhs 
+  // ptr: lhs
   struct tree_leaf* left;
 
   // ptr: rhs
@@ -35,9 +35,9 @@ int deleteall(leaf**, leaf*);
 
 // tree tool methods - to be modified, depending on the tree
 leaf* find_node(leaf*, const unsigned int);
-int get_left_node(leaf**); 
-int get_right_node(leaf**); 
+int get_left_node(leaf**);
+int get_right_node(leaf**);
 int init_node(leaf**, const unsigned int);
-int delete_nodes(leaf**); 
+int delete_nodes(leaf**);
 
 #endif

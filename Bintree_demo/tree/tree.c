@@ -1,7 +1,11 @@
 // tree.c
 /*
-  tree order
-  0 < nodes < max
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * tree order
+ * 0 < nodes < max
 //*/
 
 #include "tree.h"
@@ -81,7 +85,7 @@ int delete(leaf** item, leaf* predecessor)
   }
 
   if(NULL != *item) free(*item);
-  
+
   return 0;
 }
 
@@ -99,11 +103,11 @@ leaf* find(leaf* first, leaf** predecessor, const unsigned int data)
   }
 
   leaf* item = NULL;
-  leaf* tmp = NULL; 
+  leaf* tmp = NULL;
 
   item = first;
   while(1){
-    tmp = item; 
+    tmp = item;
     if(item->data > data){
       if(0 > get_left_node(&item)){
 	*predecessor = tmp;
@@ -119,7 +123,7 @@ leaf* find(leaf* first, leaf** predecessor, const unsigned int data)
       }else{
 	*predecessor = tmp;
       }
-      
+
     }else if(item->data == data){
       return item;
     }
@@ -194,11 +198,11 @@ leaf* find_node(leaf* first, const unsigned int data)
 
 /*
   get_left_node()
-  
+
   checks if lf is NULL
-  avances the passed param to the left side 
+  avances the passed param to the left side
   returns -1 in case lf is NULL then
-//*/  
+//*/
 int get_left_node(leaf** item)
 {
   if(NULL == *item){
@@ -209,7 +213,7 @@ int get_left_node(leaf** item)
   if(NULL == (*item)->left){
     return -1;
   }else{
-    *item = (*item)->left; 
+    *item = (*item)->left;
     return 0;
   }
 }
@@ -217,11 +221,11 @@ int get_left_node(leaf** item)
 
 /*
   get_right_node()
-  
+
   checks if lf is NULL
-  avances the passed param to the right side 
+  avances the passed param to the right side
   returns -1 in case lf is NULL then
-//*/  
+//*/
 int get_right_node(leaf** item)
 {
   if(NULL == *item){

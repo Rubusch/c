@@ -1,6 +1,10 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
+## Makefile (simple)
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
+## use -O, -O1, -O2 for optimization
 
 
 SOURCE = name.c
@@ -17,7 +21,7 @@ name.exe: $(OBJECTS)
 
 all: name.exe
 
-clean: 
+clean:
 	$(RM) $(OBJECTS) name.exe *~
 
 .PHONY: clean all

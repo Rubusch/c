@@ -1,6 +1,9 @@
-# Makefile
-#
-#
+## Makefile
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
 
 SOURCE = atoi01.c
 OBJECTS = ${SOURCE:.c =.o}
@@ -18,7 +21,7 @@ atoi01: ${OBJECTS}
 
 all: atoi01
 
-clean: 
+clean:
 	-${RM} atoi01 *.o core
 
 
