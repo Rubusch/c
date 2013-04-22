@@ -1,22 +1,29 @@
 /*
   2-dim-array
 
-  a real 2 dimensional array is an array (statical) of an array (statical)! It's a 
-  statical data structure and every array refered by in the first array has the SAME size!
+  @author: Lothar Rubusch
+  @email: L.Rubusch@gmx.ch
+  @license: GPLv3
+
+  a real 2 dimensional array is an array (statical) of an array (statical)! It's
+  a statical data structure and every array refered by in the first array has
+  the SAME size!
 
   number of elements:
-  {number of all emlements} == {number of elements in array A} x {number of elements in B}
+  {number of all emlements} == {number of elements in array A} x {number of
+  elements in B}
 
-  A pointer doesn't know if it points to an array of elements or, respectively, to more 
-  elements of allocated memory. A pointer only knows that address it points to AND the size 
-  of the value that is stored there (=the type of the pointer).
+  A pointer doesn't know if it points to an array of elements or, respectively,
+  to more elements of allocated memory. A pointer only knows that address it
+  points to AND the size of the value that is stored there (=the type of the
+  pointer).
 
   Example:
-  if a char* ptr get's initialized, it points to an address where one 'char' (=8 bit) are 
-  stored, therefore it's a pointer to 'char'.
+  if a char* ptr get's initialized, it points to an address where one 'char'
+  (=8 bit) are stored, therefore it's a pointer to 'char'.
 
-  An array of an array, is - thought in pointer - a pointer to another pointer (and both 
-  pointing to static memory, means not allocated). 
+  An array of an array, is - thought in pointer - a pointer to another pointer
+  (and both pointing to static memory, means not allocated).
 //*/
 
 
@@ -26,12 +33,13 @@
 #include <string.h>
 
 
-// allways avoid "magic numbers in code" and try to define "constant" values (in c these are "defines")
+// allways avoid "magic numbers in code" and try to define "constant" values (in
+// c these are "defines")
 #define ELEMENT_COUNT 12
 #define ELEMENT_LENGTH 10
 
- 
-// Forward declaration of the output function 
+
+// Forward declaration of the output function
 // Attention: the size of the second pointer has to be specified already here!
 void output(char[][ELEMENT_LENGTH]);
 
@@ -66,7 +74,7 @@ void output(char arr[][ELEMENT_LENGTH])
   for(idx = 0; idx < ELEMENT_COUNT; ++idx){
     printf("%i. element:\t", idx);
     for(jdx = 0; jdx < (strlen(arr[idx])+1); ++jdx){
-      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")) , arr[idx][jdx]); 
+      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")) , arr[idx][jdx]);
     }
     printf("\n");
   }
