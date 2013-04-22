@@ -1,6 +1,10 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
+## Makefile (simple)
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
+## use -O, -O1, -O2 for optimization
 
 
 SOURCE = select.c
@@ -14,12 +18,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-select: ${OBJECTS}
+select.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: select
+all: select.exe
 
-clean: 
-	${RM} $(OBJECTS) select *~ core
+clean:
+	${RM} $(OBJECTS) select.exe *~ core
 
 

@@ -1,33 +1,33 @@
 // select.c
 /*
-  int select(int nfds, fd_set* readfds, fd_set* writefds, 
-      fd_set* exceptfds, struct timeval* timeout);
-  
-  uses a "struct timeval timeout" (ms) which can be updated 
-  and has no sigmask
-  
-
-  int pSelect(int nfds, fd_set* readfds, fd_set* writefds, 
-      fd_set* exceptfds, const struct timespec* timeout,
-      const sigset_t* sigmask);
-  
-  uses a "struct timespec timeout" (ns) which cannot be 
-  updated, furthermore it has a sigmask
-
-
-  The select functions allow a program to monitor multiple 
-  file descriptors ("set" of handles), waiting until one or 
-  more of the file descriptors become "ready" for some class 
-  of I/O operation (e.g. input possible). A file descriptor 
-  is considered ready if it is possible to perform the 
-  corresponding I/O operation (e.g. read()) without blocking.
-
-  Macros:
-  void FD_CLR(int fd, fd_set* set)     - remove fd from set   
-  int FD_ISSET(int fd, fd_set* set)    - fd is part of a set?
-  void FD_SET(int fd, fd_set* set)     - add fd to a set
-  void FD_ZERO(fd_set* set)            - clear set
-
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * int select(int nfds, fd_set* readfds, fd_set* writefds,
+ *     fd_set* exceptfds, struct timeval* timeout);
+ *
+ * uses a "struct timeval timeout" (ms) which can be updated and has no sigmask
+ *
+ * int pSelect(int nfds, fd_set* readfds, fd_set* writefds,
+ *     fd_set* exceptfds, const struct timespec* timeout,
+ *     const sigset_t* sigmask);
+ *
+ * uses a "struct timespec timeout" (ns) which cannot be updated, furthermore it
+ * has a sigmask
+ *
+ * The select functions allow a program to monitor multiple file descriptors
+ * ("set" of handles), waiting until one or more of the file descriptors become
+ * "ready" for some class of I/O operation (e.g. input possible). A file
+ * descriptor is considered ready if it is possible to perform the corresponding
+ * I/O operation (e.g. read()) without blocking.
+ *
+ * Macros:
+ * void FD_CLR(int fd, fd_set* set)     - remove fd from set
+ * int FD_ISSET(int fd, fd_set* set)    - fd is part of a set?
+ * void FD_SET(int fd, fd_set* set)     - add fd to a set
+ * void FD_ZERO(fd_set* set)            - clear set
+ *
 //*/
 
 
@@ -83,7 +83,7 @@ int add_client(struct list_type* list, int hSocket)
   entry->next = list->data;
   list->data = entry;
   list->count++;
-  
+
   return 0;
 }
 
@@ -111,7 +111,7 @@ int remove_client(struct list_type* list, int hSocket)
 
 int fill_set(fd_set* set, struct list_type* list)
 {
-  int max = 0; 
+  int max = 0;
   struct list_entry* pElement;
 
   for(pElement = list->data; pElement; pElement = pElement->next){
@@ -127,7 +127,7 @@ int fill_set(fd_set* set, struct list_type* list)
 
 int get_sender(fd_set* set)
 {
-  int idx = 0; 
+  int idx = 0;
 
   while(!FD_ISSET(idx, set)) ++idx;
 
@@ -162,17 +162,16 @@ int main_loop(int hSocket)
   char buf[BUF_SIZ];
   init_list(&list);
   add_client(&list, STDIN_FILENO);
-  
-  
+
   while(1){
     FD_ZERO(&set);
     max = fill_set(&set, &list);
     FD_SET(hSocket, &set);
 
     if(hSocket > max) max = hSocket;
-    
+
     select(max + 1, &set, NULL, NULL, NULL); // S E L E C T ( ... )
-    
+
     if(FD_ISSET(hSocket,  &set)){
       hClient = accept(hSocket, NULL, 0);
       add_client(&list, hClient);
@@ -190,20 +189,20 @@ int main(void)
 {
   int hSocket;
   struct sockaddr_in addrServer;
-  
+
   if(-1 == (hSocket = socket(PF_INET, SOCK_STREAM, 0))) quit("socket() failed");
-  
+
   addrServer.sin_addr.s_addr = INADDR_ANY;
   addrServer.sin_family = AF_INET;
   addrServer.sin_port = htons(PORT);
 
-  if(-1 == (bind(hSocket, (struct sockaddr*) &addrServer, sizeof(addrServer)))) 
+  if(-1 == (bind(hSocket, (struct sockaddr*) &addrServer, sizeof(addrServer))))
     quit("bind failed");
 
-  if(-1 == (listen(hSocket, 3))) 
+  if(-1 == (listen(hSocket, 3)))
     quit("listen failed");
 
   return main_loop(hSocket);
 }
 
-    
+
