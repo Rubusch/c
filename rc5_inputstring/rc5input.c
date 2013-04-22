@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ID        7
+#define ID        77                                         
 
 #define START     16
 #define STOP      17
@@ -128,7 +128,8 @@ int main( int argc, char** argv )
           y_next  = 4
         */
 // CAUTION: id = 7
-        char input[] = {16, 7, 32, 1, 32, 2, 32, 3, 32, 4, 17 };
+//  char input[] = {16, 7, 32, 1, 32, 2, 32, 3, 32, 4, 17 };
+//  char input[] = {16, 7, 32, 1, 32, 2, 32, 3, 32, 4, 17 };
 
         /*
           id      = 77
@@ -137,7 +138,7 @@ int main( int argc, char** argv )
           x_next  = 33
           y_next  = 44
         */
-//        char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 4, 17 };
+//  char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 4, 17 };
 
         /*
           id      = 77
@@ -146,7 +147,7 @@ int main( int argc, char** argv )
           x_next  = 33
           y_next  = -44
         */
-//        char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17 };
+        char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17 };
 
 
 
