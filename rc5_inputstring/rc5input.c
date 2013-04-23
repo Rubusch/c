@@ -33,20 +33,21 @@ void remote_control( char *rc5_command )
         printf("\nremote control says: %i\n", *rc5_command);
         while( 1 ){
                 if( START == *rc5_command ){
-                        puts("START");  
+//                        puts("START");  
                         command_idx = 0;
                         command_signed = 1;
                         break;
-                }
+                } 
 
                 // listening not enabled
                 if( (-1 == command_idx) || (5 < command_idx) ){
-                        puts("BREAK - listen not enabled");  
+//                        puts("BREAK - listen not enabled");  
+                        command_idx = -1;
                         break;
-                }
+                } 
 
                 if( STOP == *rc5_command ){
-                        puts("STOP");  
+//                        puts("STOP");  
                         if( 4 == command_idx ){
                                 for( idx=0; idx<5; ++idx ){
                                         command_sequence[idx] = command_input[idx];
@@ -60,18 +61,18 @@ void remote_control( char *rc5_command )
                                 command_input[idx] = EMPTY;
                         }
                         break;
-                }
+                } 
 
-                if( SEPARATOR == *rc5_command ){
-                        puts("SEPARATOR");  
+                if( SEPARATOR == *rc5_command ){   
+//                        puts("SEPARATOR");  
                         command_signed = 1;
 
                         // id check
                         if( 0 == command_idx ){
-                                puts("ID check");
+//                                puts("ID check");
                                 // if fully parsed ID is not correct, stop listening
-                                printf( "id %i\n", ID ); 
-                                printf( "command_input[0] %i\n", command_input[0] ); 
+//                                printf( "id %i\n", ID ); 
+//                                printf( "command_input[0] %i\n", command_input[0] ); 
                                 if( ID != command_input[0] ){
                                         perror("INFO: wrong id");  
                                         command_idx = -1;
@@ -85,20 +86,21 @@ void remote_control( char *rc5_command )
                                 command_idx = -1;
                                 break;
                         }
+
                         command_idx += 1;
                         break;
-                }
+                } 
 
                 if( NEGATIVE == *rc5_command ){
-                        puts("NEGATIVE");  
+//                        puts("NEGATIVE");  
                         if( (-1 == command_signed) || (command_input[command_idx] != EMPTY ) ){
-                                puts("ERROR: pressed negative more than once");  
+                                perror("ERROR: pressed negative more than once");  
                                 command_idx = -1;
                                 break;
                         }
                         command_signed = -1;
                         break;
-                }
+                } 
 
                 if( (0 == *rc5_command)
                     || (1 == *rc5_command)
@@ -110,36 +112,30 @@ void remote_control( char *rc5_command )
                     || (7 == *rc5_command)
                     || (8 == *rc5_command)
                     || (9 == *rc5_command) ){
-                        puts("READ OUT NUMBER");  
+//                        puts("READ OUT NUMBER");  
                         if( EMPTY != command_input[command_idx] ){
-                                puts( "\tfurther digits");  
-// TODO check max value!
-//*
+//                                puts( "\tfurther digits");  
 
-                                if( MAX/10 < command_input[command_idx]){   
-                                        puts("ERROR: overrun by dimension of MAX");
-
-printf( "%d - command_idx\n", command_idx );  
-                                        printf( "%d - MAX/10\n", MAX/10 );
-                                        printf( "%d - command_input[command_idx]\n", command_input[command_idx] );
+                                if( MAX/10 < command_input[command_idx]){
+                                        perror("ERROR: overrun by dimension of MAX");
                                         command_idx = -1;
                                         break;
 
                                 }else if (MAX/10 == command_input[command_idx]){
                                         // extract last digit of MAX 
                                         if((MAX % (MAX/10 )) < (*rc5_command) ){
-                                                puts("ERROR: overrun by number of MAX");
+                                                perror("ERROR: overrun by number of MAX");
                                                 command_idx = -1;
                                                 break;
                                         }
                                 }
-//*/
+
                                 command_input[command_idx] = 10 * command_input[command_idx];
                         }else{
-                                puts( "\tfirst digit" );  
+//                                puts( "\tfirst digit" );  
                                 command_input[command_idx] = 0;
                         }
-                        puts( "\tadd new reading and multiply with signedness" );  
+//                        puts( "\tadd new reading and multiply with signedness" );  
                         command_input[command_idx] += command_signed * (*rc5_command);
                 }else{
                         puts("ERROR: wrong key pressed");  
