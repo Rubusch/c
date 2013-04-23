@@ -15,7 +15,8 @@
 #define REPEAT    33
 
 #define EMPTY     -1
-#define MAX       102
+// <= MAX value
+#define MAX       100
 
 /*
   states
@@ -171,7 +172,7 @@ int main( int argc, char** argv )
           x_next  = 33
           y_next  = 44
         */
-  char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 4, 17 };
+//  char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 4, 17 };
 
         /*
           id      = 77
@@ -180,7 +181,7 @@ int main( int argc, char** argv )
           x_next  = 33
           y_next  = -44
         */
-//        char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17 };
+        char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17 };
 
 // FAIL - negative in between
 //        char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 33, 4, 17, 1 };
@@ -201,8 +202,6 @@ int main( int argc, char** argv )
 // 110 - FAIL
 //        char input[] = {16, 7, 7, 32, 1,1,0, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
 
-// TODO error in signedness (more than one, within number, etc)
-// TODO error not having 17 at end
 
         int idx=0;
         char *rc5_command = input;
