@@ -15,7 +15,7 @@
 #define REPEAT    33
 
 #define EMPTY     -1
-#define MAX       200
+#define MAX       102
 
 /*
   states
@@ -99,17 +99,32 @@ void remote_control( char *rc5_command )
             || (9 == *rc5_command) ){
                 puts("READ OUT NUMBER");  
 
-                printf( "EMPTY %d\n", EMPTY );  
-                printf( "command_input[command_idx] %d\n", command_input[command_idx] );  
+//                printf( "EMPTY %d\n", EMPTY );  
+//                printf( "command_input[command_idx] %d\n", command_input[command_idx] );  
 
                 if( EMPTY != command_input[command_idx] ){
                         puts( "\tfurther digits");  
 // TODO check max value!
-/*
-                        if( MAX < command_input[command_idx]){
-                                puts("ERROR: overrun");
+//*
+
+//                        printf( "XXX MAX %d\n", MAX );
+//                        printf( "XXX input %d\n", command_input[command_idx]);
+                        if( MAX/10 < command_input[command_idx]){   
+                                puts("ERROR: overrun dimension of max");
                                 command_idx = -1;
                                 return;
+
+                        }else if (MAX/10 == command_input[command_idx]){
+                                // extract last digit of MAX 
+                                printf("XXX - ENTERED:\n");
+                                printf("(MAX % (MAX/10 )) is %d\n", (MAX % (MAX/10 )));   
+                                printf("input is %d\n", command_input[command_idx] );   
+                                printf("(*rc5_command) is %d\n", (*rc5_command) );   
+                                if((MAX % (MAX/10 )) < (*rc5_command) ){
+                                        puts("ERROR: overrun number of max");
+                                        command_idx = -1;
+                                        return;
+                                }
                         }
 //*/
                         command_input[command_idx] = 10 * command_input[command_idx];
@@ -163,7 +178,15 @@ int main( int argc, char** argv )
 // FAIL - number too short
 //        char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 17 };
 
-        char input[] = {16, 7, 7, 32, 1,9,9, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
+// LIMIT = 100
+// 99
+//        char input[] = {16, 7, 7, 32, 9,9, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
+// 100 - ???
+//        char input[] = {16, 7, 7, 32, 1,0,0, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
+// 101 - FAIL
+        char input[] = {16, 7, 7, 32, 1,0,3, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
+// 110 - FAIL
+//        char input[] = {16, 7, 7, 32, 1,1,0, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
 
 // TODO error in signedness (more than one, within number, etc)
 // TODO error not having 17 at end
