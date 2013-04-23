@@ -1,9 +1,15 @@
 // endian.c
-
 /*
-  checks if the system is a little or a big endian
-  22  CC  DD  EE    -    little endian
-  EE  CC  DD  22    -    big endian
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * checks if the system is a little or a big endian
+ * AA  BB  CC  DD    -    little endian
+ * EE  FF  11  22
+ *
+ * EE  CC  DD  22    -    big endian
+ * 22  22  FF  EE
 //*/
 
 #include <stdio.h>

@@ -1,4 +1,9 @@
 // main.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ */
 
 #include <stdio.h>
 #include <stdlib.h>

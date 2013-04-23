@@ -1,5 +1,9 @@
 // bintree_item.c
-
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ */
 #include "bintree_item.h"
 //#define DEBUG
 
@@ -18,7 +22,7 @@ item* findItem(char[]);
 
 void generateTree(char content[])
 {
-  root = getNewItem(content);  
+  root = getNewItem(content);
 }
 
 
@@ -29,7 +33,7 @@ static item* getNewItem(char content[])
     fprintf(stderr, "bintree_item::getNewItem() - Bad allocation!\n");
     exit(8);
   }
- 
+
   pItem->lhs = NULL;
   pItem->rhs = NULL;
   strcpy(getContent(pItem), content);
@@ -84,18 +88,18 @@ void addItemSorted(char content[])
   while(!bAdded){
     cnt = 0;
     while( (cnt < strlen(content)) && (cnt < strlen(getContent(pItem)))){
-      if((cnt < strlen(content)-1) && (cnt < strlen(getContent(pItem))-1) 
+      if((cnt < strlen(content)-1) && (cnt < strlen(getContent(pItem))-1)
 	 && (content[cnt] == getContent(pItem)[cnt]) ){
 	++cnt;
 	continue;
-      
+
       }else if( (content[cnt] < getContent(pItem)[cnt])
 	    || (islower( content[cnt]) && isupper( getContent(pItem)[cnt])) ){
 #ifdef DEBUG
 	printf("content (\'%c\'=%i of \'%s\') < pItem->content (\'%c\'=%i of \'%s\')\t\t/\n", content[cnt], content[cnt], content, getContent(pItem)[cnt], getContent(pItem)[cnt], getContent(pItem)); // XXX
 #endif
 
-	  if(getLeftItem(pItem) == NULL){ 
+	  if(getLeftItem(pItem) == NULL){
 	    addLeftItem(pItem, content);
 	    bAdded = 1;
 #ifdef DEBUG
@@ -103,14 +107,14 @@ void addItemSorted(char content[])
 #endif
 	    break;
 	  }else{
-	    pItem = getLeftItem(pItem); 
+	    pItem = getLeftItem(pItem);
 	    cnt = 0;
 	  }
 
       }else if( (content[cnt] > getContent(pItem)[cnt])
 		|| (isupper( content[cnt]) && islower( getContent(pItem)[cnt])) ){
 #ifdef DEBUG
-	printf("content (\'%c\'=%i of \'%s\') > pItem->content (\'%c\'=%i of \'%s\')\t\t\\\n", content[cnt], content[cnt], content, getContent(pItem)[cnt], getContent(pItem)[cnt], getContent(pItem)); // XXX 
+	printf("content (\'%c\'=%i of \'%s\') > pItem->content (\'%c\'=%i of \'%s\')\t\t\\\n", content[cnt], content[cnt], content, getContent(pItem)[cnt], getContent(pItem)[cnt], getContent(pItem)); // XXX
 #endif
 	if(getRightItem(pItem) == NULL){
 	  addRightItem(pItem, content);
@@ -119,20 +123,20 @@ void addItemSorted(char content[])
 	  printf("\t\'%s\' added.\n", content); // XXX
 #endif
 	  break;
-	}else{ 
+	}else{
 	  pItem = getRightItem(pItem);
 	  cnt = 0;
 	}
 
       }else{ // strings are equal or at least equal to the first part of the other string
 #ifdef DEBUG
-	printf("ELSE - strings \'%s\' and \'%s\' are equal\n", content, getContent(pItem));// XXX 
+	printf("ELSE - strings \'%s\' and \'%s\' are equal\n", content, getContent(pItem));// XXX
 #endif
 	if(strcmp(content, getContent(pItem)) >= 0){
 #ifdef DEBUG
 	  printf("\t\'%s\' is bigger than \'%s\'\t\t\\\n", content, getContent(pItem)); // XXX
 #endif
-	  if(pItem->rhs == NULL){ 
+	  if(pItem->rhs == NULL){
 	    addRightItem(pItem, content);
 	    bAdded = 1;
 #ifdef DEBUG
@@ -147,7 +151,7 @@ void addItemSorted(char content[])
 #ifdef DEBUG
 	  printf("\t\'%s\' is smaller or equal than \'%s\'\t\t/\n", content, getContent(pItem)); // XXX
 #endif
-	  if(pItem->lhs == NULL){ 
+	  if(pItem->lhs == NULL){
 	    addLeftItem(pItem, content);
 	    bAdded = 1;
 #ifdef DEBUG

@@ -1,6 +1,10 @@
-# Makefile
-#
-# .h and .c files
+## Makefile
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
+## .h and .c files
 
 SOURCE = main.c console_input.c
 HEADERS = console_input.h

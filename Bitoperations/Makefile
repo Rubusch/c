@@ -1,6 +1,10 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
+## Makefile (simple)
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+##
+## use -O, -O1, -O2 for optimization
 
 
 SOURCE = bitoperations.c lotharlib/console_input.c
@@ -15,12 +19,12 @@ RM = rm -f
 .c.o:
 	${CC} -o $@ -c ${CFLAGS} $<
 
-bitoperations: ${OBJECTS}
+bitoperations.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: bitoperations
+all: bitoperations.exe
 
-clean: 
-	${RM} $(OBJECTS) bitoperations *~ core
+clean:
+	${RM} $(OBJECTS) bitoperations.exe *~ core
 
 

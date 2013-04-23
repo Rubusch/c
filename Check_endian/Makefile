@@ -1,6 +1,8 @@
-# Makefile
-#
-#
+## Makefile
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
 
 SOURCE = endian.c
 OBJECTS = ${SOURCE:.c=.o}
@@ -18,7 +20,7 @@ checkEndian: ${OBJECTS}
 
 all: checkEndian
 
-clean: 
+clean:
 	${RM} checkEndian.exe *~ *.o core
 
 

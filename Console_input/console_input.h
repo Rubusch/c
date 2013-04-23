@@ -1,6 +1,10 @@
 // console_input.h
 /*
-  console input functions
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * console input functions
 //*/
 
 #ifndef CONSOLE_INPUT

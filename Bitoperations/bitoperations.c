@@ -1,6 +1,10 @@
 // bitoperations.c
 /*
-  bitoperations and bitoperations
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * bitoperations and bitoperations
 //*/
 
 #include <stdlib.h>
@@ -49,7 +53,7 @@ int main(int argc, char** argv)
   unsigned int intA=0;
   unsigned int intB=0;
   unsigned long int iResult;
-  
+
   puts("Value A");
   getVal(&intA);
   puts("\n");
@@ -57,11 +61,11 @@ int main(int argc, char** argv)
   puts("Value B");
   getVal(&intB);
   puts("\n");
-  
-  unsigned int outSize = 1 + ((sizeof(int)*8)) / 2; 
+
+  unsigned int outSize = 1 + ((sizeof(int)*8)) / 2;
   fprintf(stderr, "digits: %d\n", outSize-1);
 
-  char outA[outSize]; 
+  char outA[outSize];
   memset(outA, '\0', outSize);
 
   char outB[outSize];
@@ -84,35 +88,35 @@ int main(int argc, char** argv)
   // Exponent: 2 << 2
   bit_print_int((intA << intB), outResult, outSize);
   iResult = intA << intB;
-  iResult = ((iResult > 0) && (iResult < INT_MAX)) ? iResult : 0;  
+  iResult = ((iResult > 0) && (iResult < INT_MAX)) ? iResult : 0;
   fprintf(stderr, "\t%s = %d\n<<\t%s = %d\n%s\n \t%s = %ld\n"
-	  , outA, intA, outB, intB, outSeparator, outResult, iResult); 
+	  , outA, intA, outB, intB, outSeparator, outResult, iResult);
   puts("\n");
 
-  // Divide by 2: 2 >> 2 
+  // Divide by 2: 2 >> 2
   bit_print_int((intA >> intB), outResult, outSize);
   iResult = intA >> intB;
   iResult = ((iResult > 0) && (iResult < INT_MAX)) ? iResult : 0;
   fprintf(stderr, "\t%s = %d\n>>\t%s = %d\n%s\n\t%s = %ld\n"
-	  , outA, intA, outB, intB, outSeparator, outResult, iResult); 
+	  , outA, intA, outB, intB, outSeparator, outResult, iResult);
   puts("\n");
 
   // EX OR: 2^2
   bit_print_int((intA ^ intB), outResult, outSize);
   fprintf(stderr, "\t%s = %d\n^\t%s = %d\n%s\n\t%s = %d\n"
-	  , outA, intA, outB, intB, outSeparator, outResult, (unsigned int) (intA ^ intB)); 
+	  , outA, intA, outB, intB, outSeparator, outResult, (unsigned int) (intA ^ intB));
   puts("\n");
 
   // bitmask: OR
   bit_print_int((intA & intB), outResult, outSize);
   fprintf(stderr, "\t%s = %d\n&\t%s = %d\n%s\n\t%s = %d\n"
-	  , outA, intA, outB, intB, outSeparator, outResult, (unsigned int) (intA & intB)); 
+	  , outA, intA, outB, intB, outSeparator, outResult, (unsigned int) (intA & intB));
   puts("\n");
 
   // bitmask: AND
-  bit_print_int((intA | intB), outResult, outSize);  
+  bit_print_int((intA | intB), outResult, outSize);
   fprintf(stderr, "\t%s = %d\n|\t%s = %d\n%s\n\t%s = %d\n"
-	  , outA, intA, outB, intB, outSeparator, outResult, (unsigned int) (intA | intB)); 
+	  , outA, intA, outB, intB, outSeparator, outResult, (unsigned int) (intA | intB));
   puts("\n");
 
   exit(EXIT_SUCCESS);

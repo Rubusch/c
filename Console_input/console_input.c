@@ -1,6 +1,10 @@
 // console_input.c
 /*
-  console input functions - implementation
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ *
+ * console input functions - implementation
 //*/
 
 #include "console_input.h"
@@ -45,8 +49,8 @@ void readstring(char* cTxt, const unsigned int txtSize, const char* comment)
     register unsigned int c;
     register unsigned int idx=0;
 
-    // in case of exceeding the size of the variable - put a '\0' at the end 
-    // and read until '\n', but don't store the characters for cleaning the 
+    // in case of exceeding the size of the variable - put a '\0' at the end
+    // and read until '\n', but don't store the characters for cleaning the
     // stream
     for(idx=0; ('\n' != (c = fgetc(stdin))); ++idx){
       if((txtSize-1) > idx) cTxt[idx] = c;
@@ -72,8 +76,8 @@ void readdigit(unsigned int* iVal, const char* comment)
 
     // read
     fgets(cChr, 3, stdin);
-   
-    // check stdin and clean in case input exceeded the 
+
+    // check stdin and clean in case input exceeded the
     if('\n' == cChr[1]){
       // ok - do nothing here
 
@@ -121,8 +125,8 @@ void readnumber(unsigned int* iVal, const unsigned int digits, const char* comme
     register unsigned int c;
     register unsigned int idx=0;
 
-    // in case of exceeding the size of the variable - put a '\0' at the end 
-    // and read until '\n', but don't store the characters for cleaning the 
+    // in case of exceeding the size of the variable - put a '\0' at the end
+    // and read until '\n', but don't store the characters for cleaning the
     // stream
     for(idx=0; ('\n' != (c = fgetc(stdin))); ++idx){
       if((size-1) > idx) cTxt[idx] = c;
@@ -160,8 +164,8 @@ void readlongnumber(unsigned long int* iVal, const unsigned int digits, const ch
     register unsigned int c;
     register unsigned int idx=0;
 
-    // in case of exceeding the size of the variable - put a '\0' at the end 
-    // and read until '\n', but don't store the characters for cleaning the 
+    // in case of exceeding the size of the variable - put a '\0' at the end
+    // and read until '\n', but don't store the characters for cleaning the
     // stream
     for(idx=0; ('\n' != (c = fgetc(stdin))); ++idx){
       if((size-1) > idx) cTxt[idx] = c;

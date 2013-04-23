@@ -1,5 +1,9 @@
 // bintree_item.h
-
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ */
 #ifndef BINTREE_ITEM
 #define BINTREE_ITEM
 

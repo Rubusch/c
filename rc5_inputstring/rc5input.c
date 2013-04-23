@@ -15,14 +15,14 @@
 #define REPEAT    33
 
 #define EMPTY     -1
-#define MAX       255
+#define MAX       200
 
 /*
   states
  */
 char command_idx = -1;
-char command_intermediate[5];
-char command_final[5];
+char command_input[5];
+char command_sequence[5];
 char command_signed = 1;
 
 void remote_control( char *rc5_command )
@@ -45,10 +45,15 @@ void remote_control( char *rc5_command )
 
         if( STOP == *rc5_command ){
                 puts("STOP");  
+                if( 4 == command_idx ){
+                        for( idx=0; idx<5; ++idx ){
+                                command_sequence[idx] = command_input[idx];
+                        }
+                }
                 command_idx = -1;
                 command_signed = 1;
                 for( idx=0; idx<5; ++idx ){
-                        command_final[idx] = command_intermediate[idx];
+                        command_input[idx] = EMPTY;
                 }
                 return;
         }
@@ -60,8 +65,8 @@ void remote_control( char *rc5_command )
                         puts("ID check");
                         // if fully parsed ID is not correct, stop listening
                         printf( "id %i\n", ID ); 
-                        printf( "command_intermediate[0] %i\n", command_intermediate[0] ); 
-                        if( ID != command_intermediate[0] ){
+                        printf( "command_input[0] %i\n", command_input[0] ); 
+                        if( ID != command_input[0] ){
                                 perror("ERROR: wrong id");  
                                 command_idx = -1;
                                 return;
@@ -73,7 +78,7 @@ void remote_control( char *rc5_command )
 
         if( NEGATIVE == *rc5_command ){
                 puts("NEGATIVE");  
-                if( (-1 == command_signed) || (command_intermediate[command_idx] != EMPTY ) ){
+                if( (-1 == command_signed) || (command_input[command_idx] != EMPTY ) ){
                         puts("ERROR: pressed negative more than once");  
                         command_idx = -1;
                         return;
@@ -95,22 +100,25 @@ void remote_control( char *rc5_command )
                 puts("READ OUT NUMBER");  
 
                 printf( "EMPTY %d\n", EMPTY );  
-                printf( "command_intermediate[command_idx] %d\n", command_intermediate[command_idx] );  
+                printf( "command_input[command_idx] %d\n", command_input[command_idx] );  
 
-                if( EMPTY != command_intermediate[command_idx] ){
+                if( EMPTY != command_input[command_idx] ){
                         puts( "\tfurther digits");  
-                        if( MAX / 10 < command_intermediate[command_idx]){
+// TODO check max value!
+/*
+                        if( MAX < command_input[command_idx]){
                                 puts("ERROR: overrun");
                                 command_idx = -1;
                                 return;
                         }
-                        command_intermediate[command_idx] = 10 * command_intermediate[command_idx];
+//*/
+                        command_input[command_idx] = 10 * command_input[command_idx];
                 }else{
                         puts( "\tfirst digit" );  
-                        command_intermediate[command_idx] = 0;
+                        command_input[command_idx] = 0;
                 }
                 puts( "\tadd new reading and multiply with signedness" );  
-                command_intermediate[command_idx] += command_signed * (*rc5_command);
+                command_input[command_idx] += command_signed * (*rc5_command);
         }else{
                 puts("ERROR: wrong key pressed");  
                 command_idx = -1;
@@ -147,11 +155,15 @@ int main( int argc, char** argv )
           x_next  = 33
           y_next  = -44
         */
-        char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17 };
+//        char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17 };
 
-
-
+// FAIL - negative in between
 //        char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 33, 4, 17, 1 };
+
+// FAIL - number too short
+//        char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 17 };
+
+        char input[] = {16, 7, 7, 32, 1,9,9, 32, 2, 5, 32, 2, 5, 32, 2, 5, 17 };
 
 // TODO error in signedness (more than one, within number, etc)
 // TODO error not having 17 at end
@@ -161,8 +173,8 @@ int main( int argc, char** argv )
 
         // reset
         for( idx=0; idx<5; ++idx ){
-                command_intermediate[idx] = EMPTY;
-                command_final[idx] = EMPTY;
+                command_input[idx] = EMPTY;
+                command_sequence[idx] = EMPTY;
         }
 
         // remote control
@@ -173,8 +185,8 @@ int main( int argc, char** argv )
 
         // evaluation
         printf("result:\n");
-        for( idx=0; idx<sizeof(command_final); ++idx){
-                printf("%i\n", command_final[idx] );
+        for( idx=0; idx<sizeof(command_sequence); ++idx){
+                printf("%i\n", command_sequence[idx] );
         }
 
         printf("READY.\n");
