@@ -1,6 +1,8 @@
 # Makefile
-#
-#
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+## @date: 2013-april-28
 
 SOURCE = main.c dequeue_item.c
 HEADERS = dequeu_item.h

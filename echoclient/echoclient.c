@@ -1,4 +1,10 @@
 // echoclient.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -15,7 +21,7 @@
 #define MAXSIZE 4096
 
 
-int 
+int
 main( int argc, char** argv )
 {
   int sockfd;
@@ -39,11 +45,11 @@ main( int argc, char** argv )
     exit( EXIT_FAILURE );
   }
 
-  memset( &serveraddr, 0, sizeof( serveraddr ) ); 
+  memset( &serveraddr, 0, sizeof( serveraddr ) );
   serveraddr.sin_family = AF_INET; // AF_INET for addresses
   serveraddr.sin_addr.s_addr = inet_addr( server_ip );
   serveraddr.sin_port = htons( atoi(server_port) );
-  
+
   puts("conect()");
   if( 0 > connect( sockfd, (struct sockaddr*) &serveraddr, sizeof( serveraddr ) ) ){
     perror( "connect() failed" );

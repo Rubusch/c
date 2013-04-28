@@ -1,5 +1,11 @@
 // main.c
 /*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
+/*
   Implementation of a single linked dequeue
  */
 #include <stdio.h>

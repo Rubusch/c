@@ -1,5 +1,10 @@
 // dequeue_item.c
-
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 #include "dequeue_item.h"
 
 static item* first;
@@ -24,11 +29,11 @@ item* getNewItem(char content[])
 
 void addItem(char content[])
 {
-  if(first == NULL){ 
+  if(first == NULL){
     last = getNewItem(content);
     first = last;
   }else{
-    item* pItem = getNewItem(content); 
+    item* pItem = getNewItem(content);
     last->next = pItem;
     pItem->prev = last;
     last = last->next;
@@ -52,9 +57,9 @@ void removeItemAt(int idx)
   if((pBefore != NULL) || (pAfter != NULL)){
     pBefore->next = pAfter;
     pAfter->prev = pBefore;
-  }else if(pBefore == NULL){ 
+  }else if(pBefore == NULL){
     first = getNextItem(first);
-    first->prev = NULL;    
+    first->prev = NULL;
   }else if(pAfter == NULL){
     last = getPrevItem(last);
     last->next = NULL;
@@ -67,11 +72,11 @@ void removeItemAt(int idx)
 
 void insertItemAt(int idx, char content[])
 {
-  item* pItem = getNewItem(content);  
+  item* pItem = getNewItem(content);
   if(idx <= 0){
     pItem->next = first;
     first->prev = pItem;
-    first = pItem; 
+    first = pItem;
     return;
   }
 
@@ -108,7 +113,6 @@ item* getItemAt(int idx)
 {
   int size = dequeueSize();
   if((idx >= size) || (idx < 0)) return NULL;
-  
 
   item* pItem = NULL;
   if(idx+1 <= size/2){
@@ -146,7 +150,7 @@ int find(char content[], int length)
       int i=0;
       for(i=0; i<length; ++i)
 	if(pItem->content[i] != content[i]) break;
-      
+
       if(i == length) return cnt;
     }
     pItem = pItem->next;

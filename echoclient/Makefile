@@ -1,4 +1,8 @@
-# Makefile
+## Makefile
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3
+## @date: 2013-april-28
 
 SRC = echoclient.c
 OBJ = $(SRC:.c=.o)

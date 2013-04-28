@@ -1,5 +1,10 @@
 // dequeue_item.h
-
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 #ifndef DEQUEUE
 #define DEQUEUE
 
