@@ -1,4 +1,10 @@
 // Valgrind_mem_leak.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 
 /*
   Demo: causes a "Memory Leak" situation - to be checked with Valgrind/memcheck.
@@ -11,7 +17,7 @@
 int func()
 {
   char* pText = NULL;
-  if( (pText = (char*) malloc(12345 * sizeof(char))) == NULL) return -1;  
+  if( (pText = (char*) malloc(12345 * sizeof(char))) == NULL) return -1;
   return 0;
 }
 

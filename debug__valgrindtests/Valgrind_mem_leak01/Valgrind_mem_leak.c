@@ -1,4 +1,10 @@
 // Valgrind_mem_leak.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 
 /*
   Demo: causes a "Memory Leak" situation - to be checked with Valgrind/memcheck.
@@ -16,18 +22,18 @@ int main(void)
   int *a=NULL, *b=NULL;
   if( (a = (int*) malloc(sizeof(int))) == NULL) return EXIT_FAILURE;
   if( (b= (int*) malloc(sizeof(int))) == NULL) return EXIT_FAILURE;
-  
+
   // assignment
   printf("*a = 5\n");
   *a = 5;
 
   printf("*b = 3\n");
   *b = 3;
-  
+
   // Caution: no more pointer points to a!!
   printf("a = b\n");
-  a = b; 
-  
+  a = b;
+
   printf("free(a)\n");
   free(b);
 

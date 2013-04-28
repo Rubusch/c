@@ -1,4 +1,10 @@
 // Valgrind_double_free.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 
 /*
   Demo: causes a "Double Free" situation - to be checked with Valgrind/memcheck.
@@ -25,7 +31,7 @@ int main(int argc, char** argv)
 
   printf("Second free() - Ouch!!!\n\n");
   free(pText);
-  
+
   return EXIT_SUCCESS;
 }
 

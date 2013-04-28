@@ -1,4 +1,10 @@
 // Valgrind_uninitialized_var.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 
 /*
   Demo: causes a "Uninitialized Variable" situation - to be checked with Valgrind/memcheck.
@@ -21,7 +27,7 @@ void func(int iVar)
 int main(int argc, char** argv)
 {
   printf("define but no init..\n");
-  unsigned int iVar; // allways initialize varibles! 
+  unsigned int iVar; // allways initialize varibles!
   // A "gcc -Wall" already warns from this!
 
   int cnt;

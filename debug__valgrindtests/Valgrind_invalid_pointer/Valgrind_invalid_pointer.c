@@ -1,4 +1,10 @@
 // Valgrind_invalid_pointer.c
+/*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+ */
 
 /*
   Demo: causes a "Invalid Pointer" situation - to be checked with Valgrind/memcheck.
@@ -19,7 +25,7 @@ int main(int argc, char** argv)
 
   printf("assign \'7\' to pText, index \"10\" - Dangerous, \nonly 10 elements allocated, last index is 9!\n\n");
   pText[10] = '7'; // Jackpot!!!
- 
+
   return EXIT_SUCCESS;
 }
 
