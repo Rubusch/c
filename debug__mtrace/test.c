@@ -1,4 +1,9 @@
 /*
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
+
   debugging malloc allocations
 
   ressource: http://en.wikipedia.org/wiki/Mtrace

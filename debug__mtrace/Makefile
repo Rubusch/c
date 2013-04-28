@@ -17,6 +17,6 @@ test.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
 clean:
-	${RM} ${OBJECTS}; ${RM} *~
+	${RM} test.exe ${OBJECTS} *~
 
 
