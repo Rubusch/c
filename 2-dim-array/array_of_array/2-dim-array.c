@@ -4,6 +4,7 @@
   @author: Lothar Rubusch
   @email: L.Rubusch@gmx.ch
   @license: GPLv3
+  @2013-May-01
 
   a real 2 dimensional array is an array (statical) of an array (statical)! It's
   a statical data structure and every array refered by in the first array has
