@@ -1,5 +1,10 @@
 // input_string.c
 /*
+  @author: Lothar Rubusch
+  @email: L.Rubusch@gmx.ch
+  @license: GPLv3
+  @2013-May-01
+
   demonstrates reading in a string
 //*/
 
@@ -19,7 +24,7 @@ int main(int argc, char** argv)
     perror("allocation failed");
     return EXIT_FAILURE;
   }
-  unsigned int messageLen = 0; 
+  unsigned int messageLen = 0;
 
   puts("TEST STRING INPUT");
   do{
@@ -34,9 +39,9 @@ int main(int argc, char** argv)
     // print out
     fprintf(stderr, "the entered text was:\n\"%s\"\n", message);
 
-  }while((strlen("quit") != strlen(message)) 
+  }while((strlen("quit") != strlen(message))
 	 || (0 != strncmp(message, "quit", messageLen)));
-	 
+
   puts("READY.");
   if(NULL != message) free(message);
   return EXIT_SUCCESS;
@@ -64,8 +69,8 @@ void readstring(char* cTxt, const unsigned int txtSize, const char* comment)
     unsigned int c;
     unsigned int idx=0;
 
-    // in case of exceeding the size of the variable - put a '\0' at the end 
-    // and read until '\n', but don't store the characters for cleaning the 
+    // in case of exceeding the size of the variable - put a '\0' at the end
+    // and read until '\n', but don't store the characters for cleaning the
     // stream
     for(idx=0; ('\n' != (c = fgetc(stdin))); ++idx){
       if((txtSize-1) > idx) cTxt[idx] = c;

@@ -1,6 +1,11 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# @author: Lothar Rubusch
+# @email: L.Rubusch@gmx.ch
+# @license: GPLv3
+# @2013-May-01
+#
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = input_number_normal.c
@@ -19,7 +24,7 @@ input.exe: ${OBJECTS}
 
 all: input.exe
 
-clean: 
+clean:
 	${RM} $(OBJECTS) input.exe *~ core
 
 

@@ -1,6 +1,11 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# @author: Lothar Rubusch
+# @email: L.Rubusch@gmx.ch
+# @license: GPLv3
+# @2013-May-01
+#
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = input_string.c
@@ -14,12 +19,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-input: ${OBJECTS}
+input.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: input
+all: input.exe
 
-clean: 
-	${RM} $(OBJECTS) input *~ core
+clean:
+	${RM} $(OBJECTS) input.exe *~ core
 
 
