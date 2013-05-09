@@ -1,6 +1,11 @@
 // input_number_normal.c
 /*
-  demonstrates the reading from the console, it reads a text and turns 
+  @author: Lothar Rubusch
+  @email: L.Rubusch@gmx.ch
+  @license: GPLv3
+  @2013-May-01
+
+  demonstrates the reading from the console, it reads a text and turns
   it into a valid integer value or continues asking
 //*/
 
@@ -22,7 +27,7 @@ int main(int argc, char** argv)
   unsigned int iTxt1 = 0;
   readnumber(&iTxt1, TXT_SIZE, "enter a number up to 10 digits");
   printf("the number was '%d'\n", iTxt1);
-     
+
   puts("READY.");
   exit(EXIT_SUCCESS);
 }
@@ -71,8 +76,8 @@ void readnumber(unsigned int* iVal, const unsigned int digits, const char* comme
     unsigned int c;
     unsigned int idx=0;
 
-    // in case of exceeding the size of the variable - put a '\0' at the end 
-    // and read until '\n', but don't store the characters for cleaning the 
+    // in case of exceeding the size of the variable - put a '\0' at the end
+    // and read until '\n', but don't store the characters for cleaning the
     // stream
     for(idx=0; ('\n' != (c = fgetc(stdin))); ++idx){
       if((size-1) > idx) cTxt[idx] = c;

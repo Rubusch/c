@@ -1,5 +1,10 @@
 // input_number_alternative.c
 /*
+  @author: Lothar Rubusch
+  @email: L.Rubusch@gmx.ch
+  @license: GPLv3
+  @2013-May-01
+
   demonstrates the reading from the console, it reads a text and turns 
   it into a valid integer value or continues asking
 
