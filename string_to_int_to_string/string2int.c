@@ -1,6 +1,9 @@
 /*
-  string to int and back int to string
-*/
+ * @author: Lothar Rubusch
+ * @date: 2013-May-24
+ *
+ * string to int and back int to string
+ */
 
 #include <stdlib.h> // atoi()
 #include <stdio.h>
