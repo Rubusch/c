@@ -8,7 +8,7 @@
   arg
       a list of argumentes to the program to execute
 
-  Executes a new programm from out of this program. 
+  Executes a new programm from out of this program.
   The function returns an error code (0=Ok / -1=Fail)
 //*/
 

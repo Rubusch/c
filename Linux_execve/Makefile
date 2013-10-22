@@ -1,6 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = execve.c
@@ -19,7 +19,7 @@ execve.exe: ${OBJECTS}
 
 all: execve.exe
 
-clean: 
+clean:
 	${RM} $(OBJECTS) execve.exe *~ core
 
 
