@@ -4,11 +4,11 @@
 # use -O, -O1, -O2 for optimization
 
 
-SOURCE = debugger.c
+SOURCE = debugger.c rabbit.c
 OBJECTS = ${SOURCE:.c=.o}
 
-DEBUGSOURCE = rabbit.c
-DEBUGOBJECTS = ${DEBUGSOURCE:.c=.o}
+#DEBUGSOURCE = rabbit.c
+#DEBUGOBJECTS = ${DEBUGSOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
@@ -18,17 +18,19 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-debugger.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+debugger.exe: debugger.o
+	${CC} -o $@ debugger.o -lm
 
-rabbit.exe: ${DEBUGOBJECTS}
-	${CC} -o $@ ${DEBUGOBJECTS} -lm
+rabbit.exe: rabbit.o
+	${CC} -o $@ rabbit.o -lm
 
 all: debugger.exe rabbit.exe
 
-clean: 
+
+clean:
 	${RM} $(OBJECTS) $(DEBUGOBJECTS) *~ core
 
-uninstall:
+uninstall: clean
 	${RM} debugger.exe rabbit.exe
 
+.PHONY: all clean uninstall

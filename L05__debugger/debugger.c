@@ -85,7 +85,7 @@
 #define IDENTIFIER_SIZE 20
 #define BUF_SIZ 1024
 
-
+/*
 int readFile(char filename[FILENAME_MAX],  char*** listOfEnvVars, int* numberOfEnvVars)
 {
 	if(0 == strlen(filename)) return -1;
@@ -158,7 +158,7 @@ int readFile(char filename[FILENAME_MAX],  char*** listOfEnvVars, int* numberOfE
 	*numberOfEnvVars = numberOfElements;
 	return 0;
 }
-
+//*/
 
 void printError(int errnum)
 {
@@ -264,11 +264,14 @@ void freeMemory(char*** ppList, const unsigned int size)
 
 void cleanup(){
 	perror("cleanup() - so far, do nothing..");
+	
+	// TODO
 }
 
 
 int main()
 {
+/*
 	char envFile[] = "environmental_variables.conf";
 	char **listOfEnvVars = NULL;
 	int sizeOfEnvVars = 0;
@@ -276,7 +279,7 @@ int main()
 		perror("readFile() failed");
 		exit(EXIT_FAILURE);
 	}
-
+//*/
 
 	char* identifier = NULL;
 	if(NULL == (identifier = calloc(IDENTIFIER_SIZE
@@ -290,7 +293,7 @@ int main()
 
 	
 	// command
-	char *listOfArgs[] = {"./rabbit.exe", (char*) 0};
+//	char *listOfArgs[] = {"./rabbit.exe", (char*) 0};
 	
 
 	// fork()
@@ -307,17 +310,18 @@ int main()
 		printf("%ssleeps\r\n", identifier);
 		sleep(5);
 		
-		int execReturn = execve(listOfArgs[0], listOfArgs, listOfEnvVars);
+//		int execReturn = execve(listOfArgs[0], listOfArgs, listOfEnvVars);
+		// simple exec
+		char* flags[] = { (char*) 0 };
+		int execReturn = execvp( "./rabbit.exe", flags );    
 
 		// function call to execve() does not return, else failure
 		perror("Failure! Child EXEC call returned.");
 		printError(execReturn);
-		freeMemory(&listOfEnvVars, sizeOfEnvVars);
-		cleanup();
+//		cleanup();  
 		exit(EXIT_FAILURE);
 
                 
-                // TODO start rabbit / execve()
 
                 // TODO signal listener
 
@@ -338,8 +342,7 @@ int main()
 
 	}else{
 		// parent code
-		freeMemory(&listOfEnvVars, sizeOfEnvVars);
-
+//		cleanup();  
 		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));
 		printf("%swaiting on pid %i\r\n", identifier, pid);
 

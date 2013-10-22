@@ -23,6 +23,8 @@
   e.g. char* env[] = {"USER=user", "PATH=/usr/bin:/bin:/opt/bin", (char*) 0};
 
   The function returns an error code (0=Ok / -1=Fail).
+
+FIXME: realloc seems broken
 //*/
 
 #include <stdlib.h>
