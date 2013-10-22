@@ -14,12 +14,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-wait: ${OBJECTS}
+wait.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: wait
+all: wait.exe
 
 clean: 
-	${RM} $(OBJECTS) wait *~ core
+	${RM} $(OBJECTS) wait.exe *~ core
 
 
