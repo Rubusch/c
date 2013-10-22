@@ -14,12 +14,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-waitpid: ${OBJECTS}
+waitpid.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: waitpid
+all: waitpid.exe
 
 clean: 
-	${RM} $(OBJECTS) waitpid *~ core
+	${RM} $(OBJECTS) waitpid.exe *~ core
 
 
