@@ -83,87 +83,11 @@
 #define PARENT_TXT "parent - "
 #define CHILD_TXT "\tchild - "
 #define IDENTIFIER_SIZE 20
-#define BUF_SIZ 1024
 
-/*
-int readFile(char filename[FILENAME_MAX],  char*** listOfEnvVars, int* numberOfEnvVars)
-{
-	if(0 == strlen(filename)) return -1;
 
-	// init
-	FILE* fp = NULL;
-	unsigned int alloc_size = BUF_SIZ;
-	unsigned int idxStr = 0, numberOfElements;
-	char** tmpList;
-	char* tmpStr = NULL;
-
-	if(NULL == (tmpStr = calloc(alloc_size, sizeof(*tmpStr)))){
-		perror("calloc() failed");
-		return -1;
-	}
-	memset(tmpStr, '\0', alloc_size);
-
-	// read file
-	if(NULL == (fp = fopen(filename, "r"))){
-		perror("fopen() failed");
-		return -1;
-	}
-	int c=0;
-	while( EOF != (c = fgetc(fp))){
-		// separate element
-		if((c == '\n') || (c == '\0')){
-			tmpStr[idxStr] = '\0';
-			tmpList = NULL;
-			if(NULL == (tmpList = realloc(*listOfEnvVars, (numberOfElements + 1)))){
-				if(NULL != tmpList) free(tmpList);
-				tmpList = NULL;
-				perror("realloc() failed");
-				return -1;
-			}
-			*listOfEnvVars = tmpList;
-			(*listOfEnvVars)[numberOfElements] = tmpStr;
-			++numberOfElements; // here size!
-
-			// reset tmpStr here
-			tmpStr = NULL;
-			if(NULL == (tmpStr = calloc(BUF_SIZ, sizeof(*tmpStr)))){
-				perror("calloc() failed");
-				return -1;
-			}
-			memset(tmpStr, '\0', BUF_SIZ);
-			idxStr = 0;
-
-		}else{
-			tmpStr[idxStr] = c;
-
-			// increment
-			++idxStr;
-
-			// realloc
-			if(idxStr >= alloc_size-2){
-				char* tmp = NULL;
-				if(NULL == (tmp = realloc(tmpStr, (idxStr + 1 + BUF_SIZ)))){
-					if(NULL != tmp) free(tmp);
-					tmp = NULL;
-					perror("realloc() failed");
-					return -1;
-				}
-				tmpStr = tmp;
-				++alloc_size;
-				alloc_size += BUF_SIZ;
-			}
-		}
-	}
-	fclose(fp);
-	*numberOfEnvVars = numberOfElements;
-	return 0;
-}
-//*/
 
 void printError(int errnum)
 {
-//	puts("error handling");
-
 	switch(errnum){
 #ifdef EACCES
 	case EACCES:
@@ -265,61 +189,25 @@ void freeMemory(char*** ppList, const unsigned int size)
 void cleanup(){
 	perror("cleanup() - so far, do nothing..");
 	
-	// TODO
+	// TODO, dealloc
 }
 
 
-int main()
-{
-/*
-	char envFile[] = "environmental_variables.conf";
-	char **listOfEnvVars = NULL;
-	int sizeOfEnvVars = 0;
-	if(0 != readFile(envFile, &listOfEnvVars, &sizeOfEnvVars)){
-		perror("readFile() failed");
-		exit(EXIT_FAILURE);
-	}
-//*/
 
-	char* identifier = NULL;
-	if(NULL == (identifier = calloc(IDENTIFIER_SIZE
-					, sizeof(*identifier)))){
-		perror("calloc() failed");
-		exit(EXIT_FAILURE);
-	}
-	memset(identifier, '\0', IDENTIFIER_SIZE);
-	pid_t pid=0, pid_parent=getpid();
+void child( char* identifier, pid_t pid_parent ){
+	printf("child pid: %i, parent: %i\r\n"
+	       , getpid(), pid_parent);
 
+//      int execReturn = execve(listOfArgs[0], listOfArgs, listOfEnvVars);
+	// simple exec
+	char* flags[] = { (char*) 0 };
+	int execReturn = execvp( "./rabbit.exe", flags );    
 
-	
-	// command
-//	char *listOfArgs[] = {"./rabbit.exe", (char*) 0};
-	
-
-	// fork()
-	if(0 > (pid = fork())){
-		perror("fork failed");
-		exit(EXIT_FAILURE);
-
-	}else if(pid == 0){
-		// child code
-		strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT));
-
-		printf("%schild pid: %i, parent: %i\r\n"
-		       , identifier, getpid(), pid_parent);
-		printf("%ssleeps\r\n", identifier);
-		sleep(5);
-		
-//		int execReturn = execve(listOfArgs[0], listOfArgs, listOfEnvVars);
-		// simple exec
-		char* flags[] = { (char*) 0 };
-		int execReturn = execvp( "./rabbit.exe", flags );    
-
-		// function call to execve() does not return, else failure
-		perror("Failure! Child EXEC call returned.");
-		printError(execReturn);
-//		cleanup();  
-		exit(EXIT_FAILURE);
+	// function call to execve() does not return, else failure
+	perror("Failure! Child EXEC call returned.");
+	printError(execReturn);
+//	cleanup();  
+	exit(EXIT_FAILURE);
 
                 
 
@@ -340,9 +228,42 @@ int main()
   process forcefully).
 */
 
+}
+
+
+int main()
+{
+/*
+  // in case reading of settings file
+	char envFile[] = "environmental_variables.conf";
+	char **listOfEnvVars = NULL;
+	int sizeOfEnvVars = 0;
+	if(0 != readFile(envFile, &listOfEnvVars, &sizeOfEnvVars)){
+		perror("readFile() failed");
+		exit(EXIT_FAILURE);
+	}
+//*/
+
+	char* identifier = NULL;
+	if(NULL == (identifier = calloc(IDENTIFIER_SIZE
+					, sizeof(*identifier)))){
+		perror("calloc() failed");
+		exit(EXIT_FAILURE);
+	}
+	memset(identifier, '\0', IDENTIFIER_SIZE);
+	pid_t pid=0, pid_parent=getpid();
+
+
+	// fork()
+	if(0 > (pid = fork())){
+		perror("fork failed");
+		exit(EXIT_FAILURE);
+
+	}else if(pid == 0){
+		// child code
+		child( identifier, pid_parent );
 	}else{
 		// parent code
-//		cleanup();  
 		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));
 		printf("%swaiting on pid %i\r\n", identifier, pid);
 
