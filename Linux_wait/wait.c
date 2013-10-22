@@ -1,5 +1,10 @@
 // wait.c - part 1
 /*
+  @author: Lothar Rubusch
+  @email: L.Rubusch@gmx.ch
+  @license: GPLv3
+  @2013-September-27
+
   #include <sys/wait.h>
   pid_t wait(int* status);
 
