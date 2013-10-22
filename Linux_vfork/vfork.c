@@ -1,30 +1,27 @@
 // vfork.c
 /*
-  vfork() is DEPRECATED and shouldn't be used - use pthreads instead!
+  vfork() is DEPRECATED and shouldn't be used - use pthreads/fork instead!
 
   #include <sys/types.h>
   #include <unistd.h>
   pid_t vfork();
-  
+
   Create a child process and block the parent.
 
-  Works similar to fork(), but it does not make a copy of the 
-  address space. The memory is shared reducing the overhead of 
-  spawning a new process with a unique copy of all memory.
-  This is typically used when using fork() to exec() a process 
-  and terminate. The vfork() function also executes the child 
-  process first and resumes the parent process when the child 
-  terminates. 
-  The child terminates when the parent terminates!
-  The variables are shared between parent and child using vfork!
+  Works similar to fork(), but it does not make a copy of the address space. The
+  memory is shared reducing the overhead of spawning a new process with a unique
+  copy of all memory.
+  This is typically used when using fork() to exec() a process and terminate.
+  The vfork() function also executes the child process first and resumes the
+  parent process when the child terminates. The child terminates when the parent
+  terminates! The variables are shared between parent and child using vfork!
 
-  Returns 0 to the parent and the pid of the child to the child, 
-  if ok, else returns -1.
+  Returns 0 to the parent and the pid of the child to the child, if ok, else
+  returns -1.
 
   Pitfall:
-  Deadlock: if the child doesn't terminate, the parent process 
-  will not proceed as well. _exit() terminates the current 
-  process again.
+  Deadlock: if the child doesn't terminate, the parent process will not proceed
+  as well. _exit() terminates the current process again.
 //*/
 
 #include <stdlib.h>
