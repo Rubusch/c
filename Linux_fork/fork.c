@@ -73,19 +73,19 @@ int main()
   //*/
 
   // try to generate child
-  if(0 > (pid = fork())){     
-    // fork failed 
+  if(0 > (pid = fork())){
+    // fork failed
     perror("fork() failed");
     exit(1);
-    
+
   }else if(pid == 0){
-    // code only executed by CHILD process 
+    // code only executed by CHILD process
     strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT) + 1);
     ++varGlobal;
     ++varStack;
     my_pid = getpid(); // sets pid of child
-    
-  }else{    
+
+  }else{
     // code only executed by PARENT process
     strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT) + 1);
   }
