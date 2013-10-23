@@ -249,8 +249,6 @@ void child( char* identifier, pid_t pid_parent )
 */
 
 
-
-
 	// function call to execve() does not return, else failure
 	perror("Failure! Child EXEC call returned.");
 	printError(execReturn);
@@ -284,7 +282,7 @@ int main()
 
 
 	// fork()
-	if(0 > (pid = fork())){
+	if(0 > (pid = fork())){ // TODO in case checkout vfork(), but actually deprecated
 		perror("fork failed");
 		exit(EXIT_FAILURE);
 
@@ -297,14 +295,18 @@ int main()
 		printf("%swaiting on pid %i\r\n", identifier, pid);
 
 		
-
-		
 		// resurrection testing grounds
 		sleep(3);
+		fprintf(stderr, "%ssuspend child\n", PARENT_TXT);
 		kill(pid, SIGTSTP );
 		sleep(5);
+		fprintf(stderr, "%sresume child\n", PARENT_TXT);
 		kill(pid, SIGCONT );
+		sleep(5);
+		fprintf(stderr, "%sstop child completely\n", PARENT_TXT);
+		kill(pid, SIGTERM );
 		
+
 
 		/*
 		  wait on error state to return
@@ -323,7 +325,7 @@ int main()
 		pid_wait = pid;
 		while(0 == waitpid( pid_wait, &childExitStatus, 0))
 			;
-		printf("%swaiting done\r\n", identifier);
+		fprintf(stderr, "%swaiting done\r\n", identifier);
 
 		/*
 		  in case: 4. evaluation of term conditions of the child
