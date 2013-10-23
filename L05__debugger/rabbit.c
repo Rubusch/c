@@ -5,12 +5,12 @@
 
 #define TRUE 1
 
-
-
 int main( int argc, char** argv){
+	int cnt = 0;
 	while( TRUE ){
-		puts("Hello World");
-		sleep(3);
+		printf("RABBIT: '%d'\n", cnt );
+		cnt++;
+		sleep(1);
 	}
 	exit( EXIT_SUCCESS );
 }

@@ -1,6 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = sigmask.c
@@ -14,12 +14,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-sigmask: ${OBJECTS}
+sigmask.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: sigmask
+all: sigmask.exe
 
-clean: 
-	${RM} $(OBJECTS) sigmask *~ core
+clean:
+	${RM} $(OBJECTS) sigmask.exe *~ core
 
 

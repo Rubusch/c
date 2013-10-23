@@ -1,6 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = timer.c
@@ -14,12 +14,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-timer: ${OBJECTS}
+timer.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: timer
+all: timer.exe
 
-clean: 
-	${RM} $(OBJECTS) timer *~ core
+clean:
+	${RM} $(OBJECTS) timer.exe *~ core
 
 

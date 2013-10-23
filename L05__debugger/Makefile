@@ -7,12 +7,10 @@
 SOURCE = debugger.c rabbit.c
 OBJECTS = ${SOURCE:.c=.o}
 
-#DEBUGSOURCE = rabbit.c
-#DEBUGOBJECTS = ${DEBUGSOURCE:.c=.o}
-
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+#CFLAGS = -g -Wall -std=c99 -pedantic # doesn't work with sigaction
+CFLAGS = -g -Wall
 RM = rm -f
 
 .c.o:

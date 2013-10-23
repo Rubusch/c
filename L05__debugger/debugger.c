@@ -72,6 +72,8 @@
   EINTR          func was interrupted by a signal
 //*/
 
+#include <signal.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -79,6 +81,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
+
 
 #define PARENT_TXT "parent - "
 #define CHILD_TXT "\tchild - "
@@ -193,25 +196,42 @@ void cleanup(){
 }
 
 
+void suspend_handler(int signum)
+{
+	puts("child: suspend_handler called");
+}
 
-void child( char* identifier, pid_t pid_parent ){
+void resume_handler(int signum)
+{
+	puts("child: resume_handler");
+}
+
+void child( char* identifier, pid_t pid_parent )
+{
 	printf("child pid: %i, parent: %i\r\n"
 	       , getpid(), pid_parent);
 
-//      int execReturn = execve(listOfArgs[0], listOfArgs, listOfEnvVars);
+	// signal handler, suspend
+	struct sigaction sa;
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = &suspend_handler;
+	sigaction( SIGTSTP, &sa, NULL);
+
+	// signal handler, resume
+	struct sigaction sb;
+	memset(&sb, 0, sizeof(sb));
+	sb.sa_handler = &resume_handler;
+	sigaction( SIGCONT, &sb, NULL);
+
+	
 	// simple exec
 	char* flags[] = { (char*) 0 };
 	int execReturn = execvp( "./rabbit.exe", flags );    
+	
 
-	// function call to execve() does not return, else failure
-	perror("Failure! Child EXEC call returned.");
-	printError(execReturn);
-//	cleanup();  
-	exit(EXIT_FAILURE);
 
-                
 
-                // TODO signal listener
+	// TODO signal listener
 
 /*
   how to suspend / awake child processes?
@@ -227,6 +247,15 @@ void child( char* identifier, pid_t pid_parent ){
   to ignore SIGSTOP as it is for it to ignore SIGKILL (the latter kills the
   process forcefully).
 */
+
+
+
+
+	// function call to execve() does not return, else failure
+	perror("Failure! Child EXEC call returned.");
+	printError(execReturn);
+//	cleanup();  
+	exit(EXIT_FAILURE);
 
 }
 
@@ -266,6 +295,16 @@ int main()
 		// parent code
 		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));
 		printf("%swaiting on pid %i\r\n", identifier, pid);
+
+		
+
+		
+		// resurrection testing grounds
+		sleep(3);
+		kill(pid, SIGTSTP );
+		sleep(5);
+		kill(pid, SIGCONT );
+		
 
 		/*
 		  wait on error state to return
@@ -316,4 +355,5 @@ int main()
 		printf("%sdone\r\n", identifier);
 		exit(EXIT_SUCCESS);
 	}
+	exit(EXIT_SUCCESS);
 }

@@ -1,43 +1,49 @@
 // sigmask.c
 /*
-The program asks if the user really wants to end the prgs, counts
-the CTRL+C's and ends on a SIGKILL.
-
-
-Demonstrates the use of signal masks to block further incoming signals
-and avoid race conditions.
-
-
-
-How to set up a signal mask
-
-// define a new mask set
-sigset_t mask_set;
-
-// first clear the set (i.e. make it contain no signal numbers)
-sigemtpyset(&mask_set);
-
-// lets add the TSTP and INT signals to our mask set
-sigaddset(&mask_set, SIGTSTP);
-sigaddset(&mask_set, SIGINT);
-
-// and just for fun, lets remove the TSTP signal from the set
-sigdelset(&mask_set, SIGTSTP);
-
-// finally, lets check if the INT signal is defined in our set
-if( sigismember(&mask_set, SIGINT)){
-  printf("signal INT is in our set\n");
-}else{
-  printf("signal INT is not in our set - how strange...\n");
-}
-
-// finally lets make the set contain ALL signals available on our system
-sigfillset(&mask_set);
+  @author: Lothar Rubusch
+  @email: L.Rubusch@gmx.ch
+  @license: EPL
+  @2013-october-22
 
 
 
-Problem: race conditions are still possible, better to use diretly
-sigaction() or on older systems sigvec()
+  The program asks if the user really wants to end the prgs, counts the CTRL+C's
+  and ends on a SIGKILL.
+
+
+  Demonstrates the use of signal masks to block further incoming signals and
+  avoid race conditions.
+
+
+  How to set up a signal mask
+
+  // define a new mask set
+  sigset_t mask_set;
+
+  // first clear the set (i.e. make it contain no signal numbers)
+  sigemtpyset(&mask_set);
+
+  // lets add the TSTP and INT signals to our mask set
+  sigaddset(&mask_set, SIGTSTP);
+  sigaddset(&mask_set, SIGINT);
+
+  // and just for fun, lets remove the TSTP signal from the set
+  sigdelset(&mask_set, SIGTSTP);
+
+  // finally, lets check if the INT signal is defined in our set
+  if( sigismember(&mask_set, SIGINT)){
+    printf("signal INT is in our set\n");
+  }else{
+    printf("signal INT is not in our set - how strange...\n");
+  }
+
+  // finally lets make the set contain ALL signals available on our system
+  // sigfillset(&mask_set);
+
+
+
+  Problem: race conditions are still possible, better to use diretly
+  sigaction() or on older systems sigvec()
 //*/
 
 
