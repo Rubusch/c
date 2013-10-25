@@ -8,24 +8,13 @@
 
   NOTES
 
-  pid_t  waitpid(pid_t pid, int* status, int options)
-
-  WIFEXITED() - true if child exited due to exit() or _exit()
-  WEXITSTSTUS() - contains the exit code in case of exit() or _exit()
-  WIFSIGNALED() - true, if child exited due to a signal
-  WIFTERMSIG() - contains the signal number in case of a signal
-  WIFSTOPPED() - contains if child stopped (signal)
-
-
   #include <sys/wait.h>
   pid_t waitpid(pid_t pid, int* status, int options);
 
   As wait(), but wait's on a particular child process (pid) which doesn't need
   to be the first one.
 
-
-  PARAMS
-
+  PARAMS of waitpid:
   pid - pid of the child process
   status - ???
   options - 3 possibilities:
@@ -45,25 +34,32 @@
 
   WIFEXITED()    evaluates to a non-zero value if "status" was returned for a
                  child process that terminated normally
+                 => true if child exited due to exit() or _exit()
 
   WEXITSTATUS()  if the value is non-zero, this macro evaluates to the low-order
                  8 bits of "status" that the child process passed to _exit() or
                  exit(), or the value the child pid returned from main()
+                 => contains the exit code in case of exit() or _exit()
 
   WIFSIGNALED()  evaluates to a non-zero value of "status"was returned for a
                  child process that terminated due to the receipt of a signal
                  that was not caught
+                 => true, if child exited due to a signal
 
   WTERMSIG()     if WIFSIGNALED is non-zero, this macro evaluates to the number
                  of the signal that caused the termination of the child pid
+                 => contains the signal number in case of a signal
 
   WIFSTOPPED()   evaluates the value of WFISTOPPED is non-zero, this macro
                  evaluates to the number of the signal that caused the child
 		 process to stop
+                 => contains if child stopped (signal)
 
   WSTOPSIG()     if the value of WIFSTOPPED is non-zero, this macro evaluates
                  to the number of the signal that caused the child process to
 		 stop
+
+
 
   ERRORs
 
@@ -91,6 +87,7 @@
 
 void printError(int errnum)
 {
+	// evaluating errno 
 	switch(errnum){
 #ifdef EACCES
 	case EACCES:
