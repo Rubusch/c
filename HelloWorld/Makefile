@@ -8,15 +8,15 @@ OBJECTS = ${SOURCE:.c=.o}
 .PREFIXES = .c .o
 CC = gcc
 CFLAGS = -g -Wall -pedantic
-RM = rm
+RM = rm -f
 
 .c.o:
 	${CC} -c ${CFLAGS} $<
 	
-Test: ${OBJECTS}
+Test.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
 clean:
-	${RM} ${OBJECTS} && ${RM} *~
+	${RM} ${OBJECTS} Test.exe *~
 
 
