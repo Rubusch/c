@@ -2,7 +2,7 @@
 #
 #
 
-SOURCE = test.c
+SOURCE = Hello.c
 OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
@@ -13,10 +13,10 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 	
-Test.exe: ${OBJECTS}
+Hello.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
 clean:
-	${RM} ${OBJECTS} Test.exe *~
+	${RM} ${OBJECTS} Hello.exe *~
 
 
