@@ -11,9 +11,6 @@ OBJECTS = ${SOURCE:.c=.o}
 CC = gcc
 #CFLAGS = -g -Wall -std=c99 -pedantic # doesn't work with sigaction
 CFLAGS = -g -Wall
-## gcov support
-# FIXME fails for some reason?!                            
-#CFLAGS = -g -fprofile-arcs -ftest-coverage
 RM = rm -f
 
 .c.o:
