@@ -340,11 +340,22 @@ void resume_handler(int signum)
 	puts("child: resume_handler");
 }
 
-void child( char* identifier, pid_t pid_parent )
+void
+child( char* identifier, pid_t pid_parent
+       , void (*traceme_fun) (void) )
 {
 	printf("child pid: %i, parent: %i\r\n"
 	       , getpid(), pid_parent);
 
+// TODO tty setup, omitted
+
+	// call function
+	(*traceme_fun) ();
+
+// TODO see if environment needs to be stored
+
+/*
+// TODO check if needed
 	// signal handler, suspend
 	struct sigaction sa;
 	memset(&sa, 0, sizeof(sa));
@@ -356,9 +367,11 @@ void child( char* identifier, pid_t pid_parent )
 	memset(&sb, 0, sizeof(sb));
 	sb.sa_handler = &resume_handler;
 	sigaction( SIGCONT, &sb, NULL);
+//*/
 
 	
-	// simple exec
+	// simple execvp
+// TODO is execvp in fact used?
 	char* flags[] = { (char*) 0 };
 	int execReturn = execvp( "./rabbit.exe", flags );    
 	
@@ -386,24 +399,26 @@ void child( char* identifier, pid_t pid_parent )
 	// function call to execve() does not return, else failure
 	perror("Failure! Child EXEC call returned.");
 	printError(execReturn);
+
+
 //	cleanup();  
 	exit(EXIT_FAILURE);
-
 }
 
 
-int main()
+static void
+inf_trace_me(){
+	;  
+//	ptrace( PT_TRACE_ME, 0, (PTRACE_TYPE_ARG3)0, 0 );
+// TODO figure out correct values for macros
+}
+
+
+pid_t
+fork_inferior( void (*traceme_fun) (void) )
 {
-/*
-  // in case reading of settings file
-	char envFile[] = "environmental_variables.conf";
-	char **listOfEnvVars = NULL;
-	int sizeOfEnvVars = 0;
-	if(0 != readFile(envFile, &listOfEnvVars, &sizeOfEnvVars)){
-		perror("readFile() failed");
-		exit(EXIT_FAILURE);
-	}
-//*/
+	// omitting tty checks here
+
 
 	char* identifier = NULL;
 	if(NULL == (identifier = calloc(IDENTIFIER_SIZE
@@ -422,11 +437,17 @@ int main()
 
 	}else if(pid == 0){
 		// child code
-		child( identifier, pid_parent );
+		child( identifier, pid_parent, inf_trace_me ); // terminates
+
 	}else{
 		// parent code
 		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));
 		printf("%swaiting on pid %i\r\n", identifier, pid);
+
+// TODO new tty postfork
+
+// TODO add thread silent (needed?)
+
 
 		
 		// resurrection testing grounds
@@ -489,7 +510,52 @@ int main()
 		}
 
 		printf("%sdone\r\n", identifier);
-		exit(EXIT_SUCCESS);
+		return pid;
+
 	}
-	exit(EXIT_SUCCESS);
+	return pid;
+}
+
+
+void
+startup_inferior( int ntraps )
+{
+// TODO initialization of target_waitstatus struct, based on wait read out syscalls for traces (is that possible?)
+	; 
+}
+
+void
+inf_ptrace_mourn_inferior()
+{
+
+	;
+// TODO handle params, and check if they are valid
+//	waitpid (ptid_get_pid (inferior_ptid), &status, 0);
+
+// TODO generic_mourn_inferior()
+}
+
+
+
+static void
+inf_ptrace_create_inferior( ) // omitting further params
+{
+	// ommitting stack handling here
+
+	fork_inferior( inf_trace_me );
+
+// TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED
+	startup_inferior( 7 ); 
+
+	inf_ptrace_mourn_inferior(); // TODO params target_ops ptr
+}
+
+
+int
+main( int argc, char** args )
+{
+	// just some starting point
+	inf_ptrace_create_inferior( );
+
+	exit( EXIT_SUCCESS );
 }
