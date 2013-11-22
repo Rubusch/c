@@ -18,5 +18,8 @@
 int
 main( int argc, char** argv )
 {
-	
+	pid_t child;
+	long orig_eax, eax;
+	long params[3];
+
 }
