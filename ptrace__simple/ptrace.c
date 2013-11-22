@@ -30,7 +30,7 @@ main( int argc, char** argv )
 	}else{
 		wait( NULL ); // wait call
 		orig_eax=ptrace( PTRACE_PEEKUSER, child, 4*ORIG_EAX, NULL ); // ptrace, fetch data (parent)
-		fprintf( stderr, "parent: systemcall by child %ld\n", orig_eax );
+		fprintf( stderr, "parent: systemcall %ld by child\n", orig_eax );
 		ptrace( PTRACE_CONT, child, NULL, NULL ); // ptrace, let child continue (parent)
 	}
 	puts("parent: READY.");
