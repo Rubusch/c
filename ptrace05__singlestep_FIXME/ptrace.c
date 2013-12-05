@@ -49,11 +49,12 @@ main( int argc, char** argv )
 	pid_t child;
 	const int long_size = sizeof(long);
 	child = fork();
-	if(child == 0) {
+	if (child == 0) {
+		/* mark child PTRACE_TRACEME, and exec external program */
 		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 		execl("./dummy1", "dummy1", NULL);
-	}
-	else {
+
+	} else {
 		int status;
 		union u {
 			long val;
@@ -63,27 +64,31 @@ main( int argc, char** argv )
 		int start = 0;
 		long ins;
 		while(1) {
+			/* child still alive */
 			wait(&status);
-			if(WIFEXITED(status))
+			if (WIFEXITED(status)) {
 				break;
-			ptrace(PTRACE_GETREGS,
-			       child, NULL, &regs);
-			if(start == 1) {
-				ins = ptrace(PTRACE_PEEKTEXT,
-					     child, regs.eip,
-					     NULL);
-				printf("EIP: %lx Instruction "
-				       "executed: %lx\n",
-				       regs.eip, ins);
 			}
-			if(regs.orig_eax == SYS_write) {
+
+			/* read out registers -> regs for instruction pointer */
+			ptrace(PTRACE_GETREGS,child, NULL, &regs);
+
+			/* when start - fetch executed instruction by PTRACE_PEEKTEXT */
+			if (start == 1) {
+				/* get ins by regs.eip */
+				ins = ptrace(PTRACE_PEEKTEXT,child,regs.eip,NULL);
+				printf("EIP: %lx Instruction executed: %lx\n",regs.eip,ins);
+			}
+
+			/* start step-by-step at write syscall */
+			if (regs.orig_eax == SYS_write) {
 				start = 1;
-				ptrace(PTRACE_SINGLESTEP, child,
-				       NULL, NULL);
+				/* turn on PTRACE_SINGLESTEP */
+				ptrace(PTRACE_SINGLESTEP,child,NULL,NULL);
+			} else {
+				/* for other syscall PTRACE_SYSCALL */
+				ptrace(PTRACE_SYSCALL,child,NULL,NULL);
 			}
-			else
-				ptrace(PTRACE_SYSCALL, child,
-				       NULL, NULL);
 		}
 	}
 	return 0;
