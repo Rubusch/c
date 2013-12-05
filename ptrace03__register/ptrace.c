@@ -4,9 +4,18 @@
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
 
-  using the user_regs_struct to handle register values directly,
+  tracking system calls - when a write syscall was caught in the child, ptrace
+  reads out child's registers %ebx, %ecx and %edx one by one, else it prints
+  the %eax register for other syscalls
 
-  [example based on Linux Journal (Oct 31, 2002 By Pradeep Padala) ]
+  reading out registers one by one at syscall can be cumbersome, getregs fetches
+  all registers at a single call
+
+
+  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
+
+  author: Lothar Rubusch
+  email: L.Rubusch@gmx.ch
 */
 
 #include <sys/ptrace.h>

@@ -1,6 +1,11 @@
 /*
   ptrace example
 
+  set up child with PTRACE_TRACEME, in parent then PTRACE_PEEK for the registers
+  and PTRACE_CONT to continue
+
+  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
+
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
 */

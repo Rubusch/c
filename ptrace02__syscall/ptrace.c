@@ -1,6 +1,13 @@
 /*
   ptrace example
 
+  tracking system calls - when a write syscall was caught in the child, ptrace
+  reads out child's registers %ebx, %ecx and %edx one by one, else it prints
+  the %eax register for other syscalls
+
+
+  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
+
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
 */
@@ -10,6 +17,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
+//#include <sys/user.h>
 #include <sys/syscall.h> /* SYS_write */
 
 #include <stdlib.h>
@@ -20,7 +28,7 @@ main( int argc, char** argv)
 {
 	pid_t child;
 	long orig_eax, eax;
-	long params[3];
+	long args[3];
 	int status;
 	int insyscall = 0;
 
@@ -53,10 +61,10 @@ main( int argc, char** argv)
 					   PTRACE_PEEKUSER looks into the arguments of the child
 					 */
 					insyscall = 1;
-					params[0] = ptrace( PTRACE_PEEKUSER, child, 4 * EBX, NULL );
-					params[1] = ptrace( PTRACE_PEEKUSER, child, 4 * ECX, NULL );
-					params[2] = ptrace( PTRACE_PEEKUSER, child, 4 * EDX, NULL );
-					fprintf( stderr, "parent: write called with %lu, %lu, %lu\n", params[0], params[1], params[2]);
+					args[0] = ptrace( PTRACE_PEEKUSER, child, 4 * EBX, NULL );
+					args[1] = ptrace( PTRACE_PEEKUSER, child, 4 * ECX, NULL );
+					args[2] = ptrace( PTRACE_PEEKUSER, child, 4 * EDX, NULL );
+					fprintf( stderr, "parent: write called with %lu, %lu, %lu\n", args[0], args[1], args[2]);
 				}else{
 					/* syscall exit */
 					eax = ptrace( PTRACE_PEEKUSER, child, 4 * EAX, NULL );
