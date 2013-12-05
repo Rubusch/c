@@ -31,6 +31,7 @@ getdata( pid_t child, long addr, char* str, int len )
 {
 	char *laddr;
 	int i, j;
+        /* data structure for reversing the string */
 	union u {
 		long val;
 		char chars[long_size];
@@ -40,10 +41,10 @@ getdata( pid_t child, long addr, char* str, int len )
 	j = len / long_size;
 	laddr=str;
 	while( i < j ){
-		/* get data 'val' */
+		/* get 'val' for data */
 		data.val = ptrace( PTRACE_PEEKDATA, child, addr + i * 4, NULL );
 
-		/* copy over 'chars' */
+		/* copy over to 'chars' */
 		memcpy( laddr, data.chars, long_size );
 
 		/* increment read index */
@@ -52,7 +53,8 @@ getdata( pid_t child, long addr, char* str, int len )
 		/* increment write position - move pointer */
 		laddr+=long_size;
 	}
-// TODO
+
+        /* copy over remaining characters to 'chars' */
 	j = len % long_size;
 	if( j!=0 ){
 		data.val = ptrace( PTRACE_PEEKDATA, child, addr + i * 4, NULL );
@@ -92,7 +94,7 @@ putdata( pid_t child, long addr, char* str, int len )
 		/* copy 'chars' */
 		memcpy( data.chars, laddr, long_size );
 
-		/* write to val */
+		/* write from 'val' */
 		ptrace( PTRACE_POKEDATA, child, addr + i * 4, data.val );
 
 		/* next to read */
@@ -102,8 +104,8 @@ putdata( pid_t child, long addr, char* str, int len )
 		laddr += long_size;
 	}
 
+        /* remaining characters... */
 	j = len % long_size;
-
 	if( j != 0 ){
 		/* copy value to 'chars' */
 		memcpy( data.chars, laddr, j );
@@ -123,6 +125,7 @@ main( int argc, char** argv )
 	}else if( 0 == child ){
 		ptrace( PTRACE_TRACEME, 0, NULL, NULL );
 		execl( "/bin/pwd", "pwd", NULL );
+//		execl( "/bin/ls", "ls", NULL );
 	}else{
 		long orig_eax;
 		long params[3];
@@ -140,7 +143,10 @@ main( int argc, char** argv )
 			orig_eax = ptrace( PTRACE_PEEKUSER, child, 4 * ORIG_EAX, NULL );
 			if( SYS_write == orig_eax ){
 				if( 0 == toggle ){
+
+					/* turn peek-reverse-poke off */
 					toggle=1;
+
 					params[0] = ptrace( PTRACE_PEEKUSER, child, 4 * EBX, NULL );
 					params[1] = ptrace( PTRACE_PEEKUSER, child, 4 * ECX, NULL );
 					params[2] = ptrace( PTRACE_PEEKUSER, child, 4 * EDX, NULL );
@@ -158,7 +164,11 @@ main( int argc, char** argv )
 					putdata( child, params[1], str, params[2] );
 
 				}else{
+					/* turn on peek-reverse-poke of this if-cluase */
 					toggle=0;
+
+					/* append linefeed */
+					puts("");
 				}
 			}
 			ptrace( PTRACE_SYSCALL, child, NULL, NULL );
