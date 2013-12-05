@@ -3,11 +3,10 @@
 
 
 
-  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-
+  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
 */
 
 #include <sys/ptrace.h>
