@@ -8,6 +8,7 @@
 
 
 SOURCE = ptrace.c
+ASMSOURCE = dummy1.s
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
 CFLAGS += -g -Wall #-std=c99 -pedantic
@@ -16,12 +17,17 @@ RM = rm -f
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
+
+all: ptrace.exe dummy1.exe
+
 ptrace.exe: $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm
 
-all: ptrace.exe
+dummy1.exe:
+	${CC} -o $@ $(ASMSOURCE)
+
 
 clean:
-	$(RM) $(OBJECTS) ptrace.exe *~
+	$(RM) $(OBJECTS) ptrace.exe dummy1.exe *~
 
-.PHONY: clean all
+.PHONY: clean all things

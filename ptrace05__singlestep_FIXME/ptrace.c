@@ -7,7 +7,7 @@
   single step through the code
 
   listing for dummy1.s written in assembly language and compiled as
-  gcc -o dummy1 dummy1.s:
+  gcc -o dummy1 dummy1.s
 
 
 .data

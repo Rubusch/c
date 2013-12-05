@@ -16,13 +16,14 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
+
+all: debugger.exe rabbit.exe
+
 debugger.exe: debugger.o
 	${CC} -o $@ debugger.o -lm
 
 rabbit.exe: rabbit.o
 	${CC} -o $@ rabbit.o -lm
-
-all: debugger.exe rabbit.exe
 
 
 clean:

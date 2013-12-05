@@ -12,3 +12,4 @@ main:
             xorl    %ebx, %ebx
             int     $0x80
             ret
+
