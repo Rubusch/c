@@ -19,10 +19,6 @@ RM = rm -f
 
 all: ptrace.exe rabbit.exe
 
-# TODO rm
-#ptrace.exe: $(OBJECTS)
-#	$(CC) -o $@ $(OBJECTS) -lm
-
 ptrace.exe: $(OBJECTS)
 	$(CC) -o $@ ptrace.o -lm
 

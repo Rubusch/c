@@ -16,6 +16,10 @@
   2) start ptracer with obtained pid
   $ ./ptrace.exe 14204
 
+  ptrace.exe prints the next instruction, currently having been executed
+  then detaches and exits; since rabbit.exe did not stop, but contains
+  quite some sleeps, still continues running
+
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
