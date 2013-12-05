@@ -30,4 +30,4 @@ dummy1.exe:
 clean:
 	$(RM) $(OBJECTS) ptrace.exe dummy1.exe *~
 
-.PHONY: clean all things
+.PHONY: clean all

@@ -4,10 +4,10 @@
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
 
-  single step through the code
+  single step through the instructions of an external program
 
   listing for dummy1.s written in assembly language and compiled as
-  gcc -o dummy1 dummy1.s
+  gcc -o dummy1.exe dummy1.s
 
 
 .data
@@ -47,19 +47,15 @@ int
 main( int argc, char** argv )
 {
 	pid_t child;
-	const int long_size = sizeof(long);
+
 	child = fork();
 	if (child == 0) {
 		/* mark child PTRACE_TRACEME, and exec external program */
 		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-		execl("./dummy1", "dummy1", NULL);
+		execl("./dummy1.exe", "dummy1.exe", NULL);
 
 	} else {
 		int status;
-		union u {
-			long val;
-			char chars[long_size];
-		}data;
 		struct user_regs_struct regs;
 		int start = 0;
 		long ins;
