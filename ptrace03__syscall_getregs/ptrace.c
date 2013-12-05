@@ -1,9 +1,6 @@
 /*
   ptrace example
 
-  author: Lothar Rubusch
-  email: L.Rubusch@gmx.ch
-
   tracking system calls - when a write syscall was caught in the child, ptrace
   reads out child's registers %ebx, %ecx and %edx one by one, else it prints
   the %eax register for other syscalls
