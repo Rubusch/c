@@ -1,28 +1,28 @@
 /*
-  hello.c - simple hello world demo
+  hello world example to figure out the injection code for a ptracer
+
+  compile:
+  $ gcc -o hello.exe hello.c
+
+  run
+  gdb hello.exe
+  (gdb) disassemble hello.exe
+TODO                  
  */
-
-
-
-void
-main(int argc, char** argv)
+void main()
 {
-__asm__("
-        jmp forward
-backward:
-        popl %esi          # get addr of hellow world string
-        movl $4, %eax       # do 'write' sys call
-        movl $2, %ebx
-        movl %esi, %ecx
-        movl $12, %edx
-        int  $0x80
-        int3                # breakpoint - here the program
-                            # will stop and give control back
-                            # to parent
-forward:
-        call backward
-        .string \"hello world\\n\"
-"
-	);
+  __asm__("\
+         jmp forward\n\
+backward:\n\
+         popl   %esi\n\
+         movl   $4, %eax\n\
+         movl   $2, %ebx\n\
+         movl   %esi, %ecx\n\
+         movl   $12, %edx\n\
+         int    $0x80\n\
+         int3\n\
+forward:\n\
+         call   backward\n\
+         .string \"Hello World\\n\"\n\
+       ");
 }
-
