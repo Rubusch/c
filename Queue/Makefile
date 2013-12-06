@@ -9,17 +9,19 @@ OBJECTS = ${SOURCE:.c=.o}
 .PREFIXES = .c .o
 CC = gcc
 CFLAGS = -g -Wall -std=c99 -pedantic
-RM = rm
+RM = rm -f
 
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-Queue: 	${OBJECTS}
+
+all:	Queue.exe
+
+Queue.exe: 	${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all:	Queue
 
 clean:
-	${RM} ${OBJECTS} *~ core
+	${RM} ${OBJECTS} Queue.exe *~ core
 
 
