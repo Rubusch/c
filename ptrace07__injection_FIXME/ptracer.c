@@ -7,12 +7,15 @@
   when done, detaches with PTRACE_DETACH
 
   usage:
-  1) start dummy
+  1) start rabbit
   $ ./rabbit.exe &
   [1] 14204
 
   2) start ptracer with obtained pid
   $ ./ptrace.exe 14204
+
+  the program inserts a stop and the program will stop after looping
+TODO check if this is correct behavior
 
 
   author: Lothar Rubusch
@@ -86,13 +89,13 @@ int
 main(int argc, char **argv)
 {
 	pid_t traced_process;
-	struct user_regs_struct regs, newregs;
-	long ins;
+	struct user_regs_struct regs; //, newregs;
+// TODO rm
+//	long ins;
 
 /* TODO
 
    int 0x80, int3
-
 
 */
 	char code[] = {0xcd, 0x80, 0xcc, 0};

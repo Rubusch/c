@@ -14,6 +14,8 @@
   2) start ptracer with obtained pid
   $ ./ptrace.exe 14204
 
+TODO            
+
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
@@ -86,9 +88,13 @@ put_data(pid_t child, long addr, char *str, int len)
 
 int main(int argc, char *argv[])
 {   pid_t traced_process;
-	struct user_regs_struct regs, newregs;
-	long ins;
+// TODO rm
+	struct user_regs_struct regs;// , newregs;
+// TODO rm
+//	long ins;
 	int len = 41;
+
+// TODO figure out correct sequence...
 	char insertcode[] =
 		"\xeb\x15\x5e\xb8\x04\x00"
 		"\x00\x00\xbb\x02\x00\x00\x00\x89\xf1\xba"
