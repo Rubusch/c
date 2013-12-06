@@ -7,7 +7,7 @@
 ## use -O, -O1, -O2 for optimization
 
 
-SOURCE = ptrace.c rabbit.c
+SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
 CFLAGS += -g -Wall #-std=c99 -pedantic
@@ -17,15 +17,16 @@ RM = rm -f
 	$(CC) -c $(CFLAGS) $<
 
 
-all: ptrace.exe rabbit.exe
+all: ptracer.exe rabbit.exe
 
-ptrace.exe: $(OBJECTS)
-	$(CC) -o $@ ptrace.o -lm
+ptracer.exe: $(OBJECTS)
+	$(CC) -o $@ ptracer.o -lm
 
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
 
+
 clean:
-	$(RM) $(OBJECTS) ptrace.exe rabbit.exe *~
+	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~
 
 .PHONY: clean all

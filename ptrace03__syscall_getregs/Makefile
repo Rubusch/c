@@ -7,7 +7,7 @@
 ## use -O, -O1, -O2 for optimization
 
 
-SOURCE = ptrace.c
+SOURCE = ptracer.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
 CFLAGS += -g -Wall #-std=c99 -pedantic
@@ -16,12 +16,12 @@ RM = rm -f
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
-ptrace.exe: $(OBJECTS)
+ptracer.exe: $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm
 
-all: ptrace.exe
+all: ptracer.exe
 
 clean:
-	$(RM) $(OBJECTS) ptrace.exe *~
+	$(RM) $(OBJECTS) ptracer.exe *~
 
 .PHONY: clean all
