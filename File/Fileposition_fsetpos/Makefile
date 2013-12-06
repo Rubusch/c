@@ -13,10 +13,10 @@ RM = rm -f
 .c.o: 
 	${CC} -c ${CFLAGS} $<
 
-fsetposition: ${OBJECTS}
+fsetposition.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: fsetposition
+all: fsetposition.exe
 
 clean:
-	${RM} fileposition.exe *~ *.o core
+	${RM} fsetposition.exe *~ *.o core
