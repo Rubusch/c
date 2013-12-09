@@ -61,7 +61,7 @@ main( int argc, char** argv )
 			}
 
 			/* read out registers -> regs for instruction pointer */
-			ptrace(PTRACE_GETREGS,child, NULL, &regs);
+			ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
 			/* when start - fetch executed instruction by PTRACE_PEEKTEXT */
 			if (start == 1) {
