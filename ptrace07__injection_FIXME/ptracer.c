@@ -12,11 +12,9 @@
   the replaced instruction needs to be stored and reinjected again, when
   continuing
 
+  use as described when called w/o parameter
 
-TODO check if this is correct behavior
-
-
-  usage:
+  or do the alternative usage:
   1) start rabbit
   $ ./rabbit.exe &
   [1] 14204
@@ -25,11 +23,11 @@ TODO check if this is correct behavior
   $ ./ptrace.exe 14204
 
 
-
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
   original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
 */
+// FIXME child process resumes with segmentations fault
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
