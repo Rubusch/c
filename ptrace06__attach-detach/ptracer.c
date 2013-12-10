@@ -1,27 +1,22 @@
 /*
   attaching and detaching
 
-  init the child with PTRACE_TRACEME and start external program,
-  then attach a parent process by declaring PTRACE_ATTACH,
-  it requests registers and instruction, prints it and,
-  when done, detaches with PTRACE_DETACH
+  attaching (PTRACE_ATTACH) to some external process, a parent requests
+  registers and instruction, prints it and, when done, detaches with
+  PTRACE_DETACH
 
-  usage:
-  1) start dummy
-  $ ./rabbit.exe &
-  [1] 14204
+  usage: compile it (Makefile) and in one shell window run
+  $ ./rabbit.exe
 
-  2) start ptracer with obtained pid
-  $ ./ptrace.exe 14204
+  in another shell window run, within 10 sec
+  $ ./ptracer.exe `pidof rabbit.exe`
 
-  ptrace.exe prints the next instruction, currently having been executed
-  then detaches and exits; since rabbit.exe did not stop, but contains
-  quite some sleeps, still continues running
+  ptrace.exe prints the next instruction
 
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>

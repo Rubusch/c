@@ -1,10 +1,14 @@
 /*
-  ptrace example
+  ptrace example: "do something funny"
+
+  take the output string of a child process (PTRACE_TRACEME), using
+  PTRACE_PEEKDATA, revert it, and inject the reverted back into the child with
+  PTRACE_POKEDATA
 
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -19,12 +23,10 @@
 #include <stdio.h>
 #include <string.h>
 
-// TODO comments
-
 const int long_size = sizeof( long );
 
 void
-getdata( pid_t child, long addr, char* str, int len )
+get_data( pid_t child, long addr, char* str, int len )
 {
 	char *laddr;
 	int i, j;
@@ -71,11 +73,10 @@ reverse( char *str )
 		str[i] = str[j];
 		str[j] = temp;
 	}
-//	str[strlen(str)-1] = "\n"; // TODO
 }
 
 void
-putdata( pid_t child, long addr, char* str, int len )
+put_data( pid_t child, long addr, char* str, int len )
 {
 	char *laddr;
 	int i, j;
@@ -119,10 +120,12 @@ main( int argc, char** argv )
 	pid_t child;
 	if( 0 > (child = fork()) ){
 		perror( "fork() failed" );
+
 	}else if( 0 == child ){
+		/* declare traceme, for being able to read out data of the child process */
 		ptrace( PTRACE_TRACEME, 0, NULL, NULL );
 		execl( "/bin/pwd", "pwd", NULL );
-//		execl( "/bin/ls", "ls", NULL );
+
 	}else{
 		long orig_eax;
 		long params[3];
@@ -152,13 +155,13 @@ main( int argc, char** argv )
 					str = (char*) calloc( (params[2]+1), sizeof(char) );
 
 					/* get data */
-					getdata( child, params[1], str, params[2] );
+					get_data( child, params[1], str, params[2] );
 
 					/* reverse */
 					reverse( str );
 
 					/* print data */
-					putdata( child, params[1], str, params[2] );
+					put_data( child, params[1], str, params[2] );
 
 				}else{
 					/* turn on peek-reverse-poke of this if-cluase */

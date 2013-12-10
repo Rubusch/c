@@ -1,16 +1,19 @@
 /*
   setting breakpoints
 
-  init the child with PTRACE_TRACEME and start external program,
-  then attach a parent process by declaring PTRACE_ATTACH,
-  it requests registers and instruction, prints it and,
+  attach an external process by declaring PTRACE_ATTACH;
+
+  request its instruction (PTRACE_PEEKDATA) from process's registers
+  (PTRACE_GETREGS), backup instruction and inject (PTRACE_POKEDATA) a trap;
+
+  let the process continue (PTRACE_CONT) and let it run into the trap
+
+  in the tracer wait for "hit ENTER" - when enter is hit, replace the injected
+  trap in the process by the former, backuped code (PTRACE_POKEDATA), and inject
+  it into process's registers (PTRACE_SETREGS)
+
   when done, detaches with PTRACE_DETACH
 
-  setting a breakpoint is replacing the specified instruction by a trap
-  instruction, e.g. 0xcc
-
-  the replaced instruction needs to be stored and reinjected again, when
-  continuing
 
   usage: compile it (Makefile) and in one shell window run
   $ ./rabbit.exe
@@ -21,9 +24,9 @@
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
-// FIXME child process resumes with segmentations fault
+// FIXME process resumes with segmentations fault      
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -123,19 +126,23 @@ main(int argc, char **argv)
 // TODO check if len is correct?
 	get_data(traced_process, regs.eip, backup, 3);  
 
-	/* put breakpoint */
+	/* put trap into child */
 // TODO check if len is correct?
 	put_data(traced_process, regs.eip, code, 3);  
 
-	/* let process continue, and execute int3 instruction */
+// TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?   
+
+	/* let child continue, run into trap, and execute int3 instruction */
 	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
 	wait(NULL);
 
 	printf("the process stopped, restoring the original instructions\n");
-// TODO actually the process does not stop if not attached successfully - test with external window, probably not controllable since it is neither a child, nor declares PTRACE_TRACEME
+// TODO actually the process does not stop if not attached successfully - test with external window, probably not controllable since it is neither a child, nor declares PTRACE_TRACEME    
 	printf("press ENTER\n");
 	getchar();
+
+        /* restore the backuped code */
 	put_data(traced_process, regs.eip, backup, 3);
 
 	/* setting the eip back to the original instruction, and let process continue */

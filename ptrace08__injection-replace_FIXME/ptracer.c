@@ -1,28 +1,36 @@
 /*
-  setting breakpoints
+  inject "hello world"
 
-  init the child with PTRACE_TRACEME and start external program,
-  then attach a parent process by declaring PTRACE_ATTACH,
-  it requests registers and instruction, prints it and,
+  attach an external process by declaring PTRACE_ATTACH;
+
+  request its instruction (PTRACE_PEEKDATA) from process's registers
+  (PTRACE_GETREGS), backup instructions and inject (PTRACE_POKEDATA) a "hello
+  world" sequence as hex;
+
+  write to instruction (PTRACE_POKEDATA) and set registers (PTRACE_SETREGS)
+
+  continue the process (PTRACE_CONT) and let it run into the trap
+
+  in the tracer wait, then replace the injected "hello world" in the process by
+  the former, backuped, code (PTRACE_POKEDATA), and inject it into process's
+  registers (PTRACE_SETREGS)
+
   when done, detaches with PTRACE_DETACH
 
 
-  use as described when called w/o parameter
+  usage: compile it (Makefile) and in one shell window run
+  $ ./rabbit.exe
 
-  or do the alternative usage:
-  1) start rabbit
-  $ ./rabbit.exe &
-  [1] 14204
+  in another shell window run, within 10 sec
+  $ ./ptracer.exe `pidof rabbit.exe`
 
-  2) start ptracer with obtained pid
-  $ ./ptrace.exe 14204
-
+  the result should inject code to print "Hello world" in the controlled process
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
-// FIXME child process resumes with segmentations fault
+// FIXME process resumes with segmentations fault
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -113,18 +121,39 @@ int main(int argc, char *argv[])
 	}
 
 	traced_process = atoi(argv[1]);
+
+        /* attach process */
 	ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
 	wait(NULL);
+
+        /* get registers */
 	ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
+
+        /* backup instructions */
 	get_data(traced_process, regs.eip, backup, len);
+
+        /* inject new instructions */
 	put_data(traced_process, regs.eip, insertcode, len);
+
+        /* restore registers */
 	ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+
+        /* continue process */
 	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
+
 	wait(NULL);
+
 	printf("The process stopped, Putting back the original instructions\n");
+
+        /* put back backuped instructions */
 	put_data(traced_process, regs.eip, backup, len);
+
+        /* set registers */
 	ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+
 	printf("Letting it continue with original flow\n");
+
+        /* detach process */
 	ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
 
 	return 0;

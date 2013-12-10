@@ -8,7 +8,7 @@
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -16,7 +16,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
-//#include <sys/user.h>
 #include <sys/syscall.h> /* SYS_write */
 
 #include <stdlib.h>
