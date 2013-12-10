@@ -19,6 +19,7 @@
 
 //#include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */ 
 //#include <sys/syscall.h> 
+// TODO is there a way to get the syscall in text by hex code of instruction?
 #include <sys/user.h> /* struct user_regs_struct */
 
 #include <errno.h>
@@ -28,7 +29,8 @@ int
 main(void)
 {
 	struct user_regs_struct regs;  /* read out registers */
-	long long counter = 0;     /*  machine instruction counter */
+	long long counter = 0;         /*  machine instruction counter */
+	long ins;                      /* current instruction */
 	
 	int status;                    /*  child's return value        */
 	int pid;                       /*  child's process id          */
@@ -67,10 +69,21 @@ main(void)
 // TODO check val 1407                                         
 		while (status == 1407 ) {
 			counter++;
+//*
+// TODO explain the behavior, what does this PTRACE_SINGLESTEP exactly?
+// PTRACE_SINGLESTEP stops and resumes one step
 			if (ptrace(PTRACE_SINGLESTEP, pid, 0, 0) != 0){
 				perror("ptrace");
 			}
-//			fprintf(stderr, "xxx\n");    
+//*/
+// TODO ok, while wait status is 1407, increment a counter - what does the PTRACE_SINGLESTEP actually, is this _really_ singlestepping through instructions? the following will always reutrn just 0xfffffffff - invalid
+/*
+			ptrace(PTRACE_GETREGS, pid, NULL, &regs); 
+			if (ins != 0xffffffff) {
+				ins = ptrace(PTRACE_PEEKTEXT, pid, regs.eip, NULL); 
+				fprintf( stderr, "EIP: %lx instruction executed: %lx\n", regs.eip, ins); 
+			}
+//*/
 			/*
 			 *   switch to singlestep tracing and
 			 *   release child
