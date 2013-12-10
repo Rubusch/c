@@ -10,7 +10,6 @@
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-#CFLAGS += -g -Wall #-std=c99 -pedantic
 CFLAGS += -W -Wall -O3 -fomit-frame-pointer
 RM = rm -f
 
@@ -21,11 +20,9 @@ RM = rm -f
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-#	$(CC) -o $@ ptracer.o -lm
 	$(CC) $(CFLAGS) -o $@ ptracer.o
 
 rabbit.exe: $(OBJECTS)
-#	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
 	$(CC) $(CFLAGS) -o $@ rabbit.o -pthread
 
 clean:

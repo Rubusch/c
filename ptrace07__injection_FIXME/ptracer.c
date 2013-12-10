@@ -6,6 +6,16 @@
   it requests registers and instruction, prints it and,
   when done, detaches with PTRACE_DETACH
 
+  setting a breakpoint is replacing the specified instruction by a trap
+  instruction, e.g. 0xcc
+
+  the replaced instruction needs to be stored and reinjected again, when
+  continuing
+
+
+TODO check if this is correct behavior
+
+
   usage:
   1) start rabbit
   $ ./rabbit.exe &
@@ -14,8 +24,6 @@
   2) start ptracer with obtained pid
   $ ./ptrace.exe 14204
 
-  the program inserts a stop and the program will stop after looping
-TODO check if this is correct behavior
 
 
   author: Lothar Rubusch
@@ -47,9 +55,9 @@ get_data(pid_t child, long addr, char *str, int len)
 	i=0;
 	j=len/long_size;
 	laddr=str;
-	while(i<j){
-		data.val=ptrace(PTRACE_PEEKDATA,child,addr+i*4,NULL);
-		memcpy(laddr,data.chars,long_size);
+	while (i<j){
+		data.val=ptrace(PTRACE_PEEKDATA, child, addr+i*4, NULL);
+		memcpy(laddr, data.chars, long_size);
 		++i;
 		laddr+=long_size;
 	}
@@ -94,9 +102,7 @@ main(int argc, char **argv)
 //	long ins;
 
 /* TODO
-
    int 0x80, int3
-
 */
 	char code[] = {0xcd, 0x80, 0xcc, 0};
 	

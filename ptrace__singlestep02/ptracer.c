@@ -1,5 +1,6 @@
 /*
   example of debugging multithreaded application
+  [example was taken from forum post, and slightly adapted]
 
 
   Compile both using e.g.
@@ -23,9 +24,12 @@
   $ kill -STOP 24275
 
 
-  author:
-  email:
-  original: stackoverflow, http://stackoverflow.com/questions/18577956/how-to-use-ptrace-to-get-a-consistent-view-of-multiple-threads, Nominal Animal
+  author: Lothar Rubusch
+  email: L.Rubusch@gmx.ch
+
+  original version: adapted from stackoverflow,
+     http://stackoverflow.com/questions/18577956/how-to-use-ptrace-to-get-a-consistent-view-of-multiple-threads
+     By "Nominal Animal" - original author
 */
 
 
@@ -219,10 +223,8 @@ void show_registers(FILE *const out, pid_t tid, const char *const note)
 	}
 #elif (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 32
 	if (note && *note) {
-//		fprintf(out, "Task %d: EIP=0x%08xx, ESP=0x%08x. %s\n", (int)tid, regs.eip, regs.rsp, note);
 		fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx. %s\n", (int)tid, regs.eip, regs.esp, note);
 	} else {
-//		fprintf(out, "Task %d: EIP=0x%08xx, ESP=0x%08x.\n", (int)tid, regs.eip, regs.rsp);
 		fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx.\n", (int)tid, regs.eip, regs.esp);
 	}
 #endif
