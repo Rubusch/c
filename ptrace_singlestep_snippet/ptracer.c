@@ -1,6 +1,8 @@
 /*
   example of single stepping through code using ptrace
 
+  this code snipped is somehow broken, rather a SNIPPET, applying some alternative writings
+
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
   original: Linux Gazette, http://linuxgazette.net/issue81/sandeep.html, By Sandeep S, sk_nellayi@rediffmail.com

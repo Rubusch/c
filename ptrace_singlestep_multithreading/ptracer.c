@@ -2,6 +2,10 @@
   example of debugging multithreaded application
   [example was taken from forum post, and slightly adapted]
 
+  
+  this nice piece of ptrace usage is trying to apply ptrace on a thread basis
+  for multithreaded programs
+  
 
   Compile both using e.g.
 
