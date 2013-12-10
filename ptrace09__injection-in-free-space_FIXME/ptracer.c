@@ -115,9 +115,10 @@ long freespaceaddr(pid_t pid)
 	if (fp == NULL) {
 		exit(EXIT_FAILURE);
 	}
-	while (fgets(line, 85, fp) != NULL) {
-		sscanf(line, "%lx-%*lx %*s %*s %s", &addr,
-		       str, str, str, str);
+//	while (fgets(line, 85, fp) != NULL) {
+	while (NULL != (str = fgets(line, 85, fp))) {  
+// TODO str is actually never set?!  
+		sscanf(line, "%lx-%*lx %*s %*s %s", &addr, str, str, str, str);
 		if (strcmp(str, "00:00") == 0) {
 			break;
 		}
