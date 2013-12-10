@@ -14,12 +14,11 @@
   where it falls into trap and cannot end
   only when ptracer.exe receives enter, it leaves the attached rabbit.exe
 
-TODO check                  
   Note: rabbit.exe was stopped, w/o being a child, nor having declared PTRACE_TRACEME explicitely!
 
   ---
 
-  disassembling
+  disassembling - how to obtain the "hello world" instructions
 
   compile it run it in gdb and extract the ASM sequence for the trap as hex
 
