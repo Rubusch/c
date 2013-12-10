@@ -12,15 +12,11 @@
   the replaced instruction needs to be stored and reinjected again, when
   continuing
 
-  use as described when called w/o parameter
+  usage: compile it (Makefile) and in one shell window run
+  $ ./rabbit.exe
 
-  or do the alternative usage:
-  1) start rabbit
-  $ ./rabbit.exe &
-  [1] 14204
-
-  2) start ptracer with obtained pid
-  $ ./ptrace.exe 14204
+  in another shell window run, within 10 sec
+  $ ./ptracer.exe `pidof rabbit.exe`
 
 
   author: Lothar Rubusch
