@@ -34,7 +34,8 @@ TODO
   email: L.Rubusch@gmx.ch
   original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
-
+// FIXME does not have any effect
+// FIXME freespace warnings, and 'str' in sscanf() usage seems incomplete
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -115,8 +116,8 @@ long freespaceaddr(pid_t pid)
 	if (fp == NULL) {
 		exit(EXIT_FAILURE);
 	}
-//	while (fgets(line, 85, fp) != NULL) {
-	while (NULL != (str = fgets(line, 85, fp))) {  
+	while (fgets(line, 85, fp) != NULL) {
+//	while (NULL != (str = fgets(line, 85, fp))) {  
 // TODO str is actually never set?!  
 		sscanf(line, "%lx-%*lx %*s %*s %s", &addr, str, str, str, str);
 		if (strcmp(str, "00:00") == 0) {
