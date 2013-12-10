@@ -20,10 +20,10 @@ RM = rm -f
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ ptracer.o -lm
+	$(CC) -o $@ ptracer.o
 
 rabbit.exe: $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
+	$(CC) -o $@ rabbit.o
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~
