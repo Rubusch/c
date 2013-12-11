@@ -13,20 +13,22 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <sys/ptrace.h> 
+#include <sys/reg.h> 
+#include <sys/user.h> 
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
-
-#define PARENT_TXT "parent - "
-#define CHILD_TXT "\tchild - "
-#define IDENTIFIER_SIZE 20
+#include "ptracer.h"
 
 
-
-void printError(int errnum)
+/* debugging */
+void
+printError(int errnum)
 {
-	// evaluating errno 
+	// evaluating errno
 	switch(errnum){
 #ifdef EACCES
 	case EACCES:
@@ -114,7 +116,7 @@ void printError(int errnum)
 	}
 }
 
-
+/*
 void freeMemory(char*** ppList, const unsigned int size)
 {
 	unsigned int idx = 0;
@@ -123,13 +125,15 @@ void freeMemory(char*** ppList, const unsigned int size)
 	}
 	if(NULL != *ppList) free(*ppList);
 }
+//*/
 
-
+/*
 void cleanup(){
 	perror("cleanup() - so far, do nothing..");
 	
 	// TODO, dealloc
 }
+//*/
 
 
 void suspend_handler(int signum)
@@ -142,16 +146,14 @@ void resume_handler(int signum)
 	puts("child: resume_handler");
 }
 
+
 void
-child( char* identifier, pid_t pid_parent
-       , void (*traceme_fun) (void) )
+child( pid_t pid_parent, void (*traceme_fun) (void) )
 {
 	printf("child pid: %i, parent: %i\r\n"
 	       , getpid(), pid_parent);
 
-// TODO tty setup, omitted
-
-	// call function
+	/* call function, in case PTRACE_TRACEME */
 	(*traceme_fun) ();
 
 // TODO see if environment needs to be stored
@@ -173,7 +175,6 @@ child( char* identifier, pid_t pid_parent
 
 	
 	// simple execvp
-// TODO is execvp in fact used?
 	char* flags[] = { (char*) 0 };
 	int execReturn = execvp( "./rabbit.exe", flags );    
 	
@@ -210,7 +211,8 @@ child( char* identifier, pid_t pid_parent
 
 static void
 inf_trace_me(){
-	;  
+        kill(getpid(), SIGSTOP); // currently, stop for singlestep      
+
 //	ptrace( PT_TRACE_ME, 0, (PTRACE_TYPE_ARG3)0, 0 );
 // TODO figure out correct values for macros
 }
@@ -221,32 +223,69 @@ fork_inferior( void (*traceme_fun) (void) )
 {
 	// omitting tty checks here
 
-
+/*
 	char* identifier = NULL;
-	if(NULL == (identifier = calloc(IDENTIFIER_SIZE
-					, sizeof(*identifier)))){
+	if(NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))){
 		perror("calloc() failed");
 		exit(EXIT_FAILURE);
 	}
 	memset(identifier, '\0', IDENTIFIER_SIZE);
+//*/
 	pid_t pid=0, pid_parent=getpid();
 
-
-	// fork()
-	if(0 > (pid = fork())){ // TODO in case checkout vfork(), but actually deprecated
+	if(0 > (pid = fork())){
 		perror("fork failed");
 		exit(EXIT_FAILURE);
 
 	}else if(pid == 0){
-		// child code
-		child( identifier, pid_parent, inf_trace_me ); // terminates
+		/* child code */
+		child( pid_parent, traceme_fun );
 
 	}else{
-		// parent code
-		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));
-		printf("%swaiting on pid %i\r\n", identifier, pid);
+		/* parent code */
+// attach
+		int status;
 
-// TODO new tty postfork
+		ptrace(PTRACE_ATTACH, pid, NULL, NULL);
+
+		/* child still alive */
+//		waitpid( pid, &status, 0 ); // TODO check, should perform the same  
+		wait(&status);
+		if (WIFEXITED(status)) {
+			break;
+		}
+
+		ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACEEXIT);
+		
+
+// break at "main"
+
+// TODO check if referring to a "method name" works here as address
+		tracee_addr_t addr = main;   
+
+		if( NULL == (breakfast_t *bp = malloc(sizeof(*bp)))) {
+			perror("allocation of bp failed");
+			exit(EXIT_FAILURE);
+		}
+
+		bp->code_addr = addr;
+
+		enable(pid, bp);
+
+		breakpoint_t *fact_break = bp;
+		
+
+
+		while () {
+			
+		}
+
+
+
+                                                                               
+//		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));   
+		printf("ptracer: waiting on pid %i\r\n", pid);
+
 
 // TODO add thread silent (needed?)
 
@@ -265,53 +304,7 @@ fork_inferior( void (*traceme_fun) (void) )
 		
 
 
-		/*
-		  wait on error state to return
-		  1. set wait condition
-		*/
-		pid_t pid_wait=-1;
 
-		/*
-		  2. child exit status
-		*/
-		int childExitStatus=0;
-
-		/*
-		  3. wait on child, pid_wait = -1, wait on all childs
-		*/
-		pid_wait = pid;
-		while(0 == waitpid( pid_wait, &childExitStatus, 0))
-			;
-		fprintf(stderr, "%swaiting done\r\n", identifier);
-
-		/*
-		  in case: 4. evaluation of term conditions of the child
-		*/
-		if( WIFEXITED(childExitStatus)){
-			printf("%schild exited with exit(): %i\r\n"
-			       , identifier
-			       , WEXITSTATUS(childExitStatus));
-		}
-
-		if( WIFSIGNALED(childExitStatus)){
-			printf("%schild exited with a SIGNAL: %i\r\n"
-			       , identifier
-			       , WIFSIGNALED(childExitStatus));
-		}
-
-		if( WTERMSIG(childExitStatus)){
-			printf("%schild exited with SIGTERM: %i\r\n"
-			       , identifier
-			       , WTERMSIG(childExitStatus));
-		}
-
-		if( WIFSTOPPED(childExitStatus)){
-			printf("%schild exited with SIGSTOP: %i\r\n"
-			       , identifier
-			       , WIFSTOPPED(childExitStatus));
-		}
-
-		printf("%sdone\r\n", identifier);
 		return pid;
 
 	}
@@ -329,7 +322,6 @@ startup_inferior( int ntraps )
 void
 inf_ptrace_mourn_inferior()
 {
-
 	;
 // TODO handle params, and check if they are valid
 //	waitpid (ptid_get_pid (inferior_ptid), &status, 0);
@@ -347,11 +339,24 @@ inf_ptrace_create_inferior( ) // omitting further params
 	fork_inferior( inf_trace_me );
 
 // TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED
-	startup_inferior( 7 ); 
+	startup_inferior( 7 );
 
 	inf_ptrace_mourn_inferior(); // TODO params target_ops ptr
 }
 
+
+                                                                               
+
+static void
+enable( pid_t pid, breakpoint_t *bp)
+{
+	long orig = ptrace(PTRACE_PEEKTEXT, pid, bp->addr);
+	ptrace(PTRACE_POKETEXT, pid, bp->addr, (orig & TRAP_MASK) | TRAP_INST);
+	bp->orig_code = orig;
+}
+
+
+                                                                               
 
 int
 main( int argc, char** args )

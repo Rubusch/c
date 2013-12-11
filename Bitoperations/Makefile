@@ -19,10 +19,12 @@ RM = rm -f
 .c.o:
 	${CC} -o $@ -c ${CFLAGS} $<
 
+
+all: bitoperations.exe
+
 bitoperations.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: bitoperations.exe
 
 clean:
 	${RM} $(OBJECTS) bitoperations.exe *~ core

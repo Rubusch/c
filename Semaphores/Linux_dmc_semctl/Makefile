@@ -1,7 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
-# FIXME
+# use -O, -O1, -O2 for optimization
 
 SOURCE = semctl.c console_input.c
 HEADERS = console_input.h
@@ -15,12 +14,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-semctl: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
 
 all: semctl
 
-clean: 
+semctl: ${OBJECTS}
+	${CC} -o $@ ${OBJECTS} -lm
+
+
+clean:
 	${RM} $(OBJECTS) semctl *~ core
-
-
