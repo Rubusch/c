@@ -118,7 +118,9 @@
   "\xff\xff\x48\x65\x6c\x6c\x6f\x20\x57\x6f"
   "\x72\x6c\x64\x0a\x00"
  */
-void main()
+
+int
+main()
 {
   __asm__("\
          jmp forward\n\
@@ -134,4 +136,5 @@ forward:\n\
          call   backward\n\
          .string \"Hello World\\n\"\n\
        ");
+  return 0;
 }
