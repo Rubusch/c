@@ -27,9 +27,6 @@ rabbit.exe: rabbit.o
 
 
 clean:
-	${RM} $(OBJECTS) $(DEBUGOBJECTS) *~ core
+	${RM} $(OBJECTS) $(DEBUGOBJECTS) debugger.exe rabbit.exe *~ core
 
-mrproper: clean
-	${RM} debugger.exe rabbit.exe
-
-.PHONY: all clean uninstall
+.PHONY: all clean
