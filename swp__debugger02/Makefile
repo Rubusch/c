@@ -4,7 +4,7 @@
 # use -O, -O1, -O2 for optimization
 
 
-SOURCE = debugger.c rabbit.c
+SOURCE = ptracer.c rabbit.c
 OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
@@ -17,16 +17,16 @@ RM = rm -f
 	${CC} -c ${CFLAGS} $<
 
 
-all: debugger.exe rabbit.exe
+all: ptracer.exe rabbit.exe
 
-debugger.exe: debugger.o
-	${CC} -o $@ debugger.o -lm
+ptracer.exe: ptracer.o
+	${CC} -o $@ ptracer.o -lm
 
 rabbit.exe: rabbit.o
 	${CC} -o $@ rabbit.o -lm
 
 
 clean:
-	${RM} $(OBJECTS) $(DEBUGOBJECTS) debugger.exe rabbit.exe *~ core
+	${RM} $(OBJECTS) $(DEBUGOBJECTS) ptracer.exe rabbit.exe *~ core
 
 .PHONY: all clean

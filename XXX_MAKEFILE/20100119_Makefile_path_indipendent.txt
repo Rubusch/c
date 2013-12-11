@@ -16,10 +16,12 @@ RM = rm -f
 %.c: %.o
 	$(CC) $(CFLAGS) -c $<
 
+
+all: $(TARGET)
+
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $(OBJ) -lm -pthread
 
-all: $(TARGET)
 
 clean:
 	$(RM) $(OBJ) name.exe *~

@@ -16,10 +16,13 @@ RM = rm -f
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
+
+
+all: name.exe
+
 name.exe: $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm
 
-all: name.exe
 
 clean:
 	$(RM) $(OBJECTS) name.exe *~
