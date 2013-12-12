@@ -21,26 +21,16 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#include <dirent.h> 
+#include <string.h> 
+#include <signal.h> 
+#include <errno.h> 
+#include <stdio.h> 
+
+
 #include "ptracer.h"
 
 
-// TODO shift to header     
-/* declarations */
-struct breakpoint_t;
-
-void printError(int errnum);
-void suspend_handler(int signum); 
-void resume_handler(int signum); 
-void child( pid_t pid_parent, void (*traceme_fun) (void) );
-static void inf_trace_me();
-pid_t fork_inferior( void (*traceme_fun) (void) );
-void startup_inferior( int ntraps );
-void inf_ptrace_mourn_inferior();
-static void inf_ptrace_create_inferior( );
-static void enable( pid_t pid, breakpoint_t *bp);
-int iteration_run(pid_t pid, breakpoint_t *bp);
-static int run(pid_t pid, int cmd);
-tracee_addr_t get_main_address(pid_t pid);
 
 
 /* debugging */
@@ -168,6 +158,39 @@ resume_handler(int signum)
 }
 
 
+                                                                               
+
+// printing reginsters
+void
+show_registers(FILE *const out, pid_t pid, const char *const note)
+{
+	struct user_regs_struct regs;
+	long r;
+
+	do {
+		r = ptrace(PTRACE_GETREGS, pid, &regs, &regs);
+	} while (r == -1L && errno == ESRCH);
+	if (r == -1L)
+		return;
+
+#if (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 64
+	if (note && *note) {
+		fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx. %s\n", (int)pid, regs.rip, regs.rsp, note);
+	} else {
+		fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx.\n", (int)pid, regs.rip, regs.rsp);
+	}
+#elif (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 32
+	if (note && *note) {
+		fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx. %s\n", (int)pid, regs.eip, regs.esp, note);
+	} else {
+		fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx.\n", (int)pid, regs.eip, regs.esp);
+	}
+#endif
+}
+
+                                                                               
+
+
 void
 child( pid_t pid_parent, void (*traceme_fun) (void) )
 {
@@ -237,6 +260,261 @@ child( pid_t pid_parent, void (*traceme_fun) (void) )
 	exit(EXIT_FAILURE);
 }
 
+// version: breakfast
+/*
+int
+tracer(pid_t pid)
+{
+
+// attach
+		int status;
+		ptrace(PTRACE_ATTACH, pid, NULL, NULL);
+
+//		waitpid( pid, &status, 0 ); // TODO check, should perform the same  
+		wait(&status);
+		if (WIFEXITED(status)) {
+			perror("process ended unexpectedly");
+			return -1;
+		}
+
+		ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACEEXIT);
+
+
+// break at "main"
+		tracee_addr_t func_ip = get_main_address(pid); // TODO check if referring to a "method name" works here as address    
+//		tracee_addr_t func_ip = (tracee_addr_t) 0x0804847c;   
+
+		breakpoint_t *bp;
+		if( NULL == (bp = malloc(sizeof(*bp)))) {
+			perror("allocation of bp failed");
+			exit(EXIT_FAILURE);
+		}
+		bp->code_addr = func_ip;
+		enable(pid, bp);
+		breakpoint_t *func_break = bp;
+
+// loop
+		breakpoint_t *last_break = NULL;
+		while (iteration_run(pid, last_break)) {
+
+// TODO no wait() here?
+// iteration_getip(pid);
+			long v = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * REGISTER_IP);
+			tracee_addr_t last_ip = (tracee_addr_t) (v - TRAP_LEN);
+
+			if (last_ip == func_ip) {
+#if defined(__x86_64)
+				int arg = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RDI);
+#else
+				struct user_regs_struct regs;
+				ptrace(PTRACE_GETREGS, pid, NULL, &regs);
+				int arg = ptrace(PTRACE_PEEKDATA, pid, sizeof(long) + regs.esp);
+#endif
+				printf("break at main(%d)\n", arg);
+				last_break = func_break;
+
+
+
+//				printf("hit ENTER");
+//				getchar();
+			} else {
+				printf("DEBUG: unknown trap at '%p'\n", last_ip);
+				last_break = NULL;
+			}
+		}
+
+                                                                               
+		return 0;
+}
+//*/
+
+// version: signal handling
+/*
+int
+tracer(pid_t pid)
+{
+		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));   
+		printf("ptracer: waiting on pid %i\r\n", pid);
+
+// TODO add thread silent (needed?)
+
+		
+		// resurrection testing grounds
+		sleep(3);
+		fprintf(stderr, "%ssuspend child\n", PARENT_TXT);
+		kill(pid, SIGTSTP );
+		sleep(5);
+		fprintf(stderr, "%sresume child\n", PARENT_TXT);
+		kill(pid, SIGCONT );
+		sleep(5);
+		fprintf(stderr, "%sstop child completely\n", PARENT_TXT);
+		kill(pid, SIGTERM );
+		
+		return 0;
+}
+//*/
+
+// version: threader
+int
+tracer(pid_t pid)
+{
+	int status = 0;
+
+	while (1) {
+		/* Wait for a child event. */
+		if (wait_process(pid, &status)) {
+			break;
+		}
+
+		/* Exited? */
+		if (WIFEXITED(status) || WIFSIGNALED(status)) {
+			errno = 0;
+			break;
+		}
+
+		/* At this point, only stopped events are interesting. */
+		if (!WIFSTOPPED(status)) {
+			continue;
+		}
+
+/*
+// tids == pid
+		/ * Obtain task IDs. * /
+		tids = get_tids(&tid, &tids_max, pid);
+		if (!tids) {
+			break;
+		}
+*/
+
+		printf("Process %d has %d tasks,", (int)pid, (int)tids);
+		fflush(stdout);
+
+		/* Attach to all tasks. */
+		for (t = 0; t < tids; t++) {
+			do {
+				r = ptrace(PTRACE_ATTACH, tid[t], (void *)0, (void *)0);
+			} while (r == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+			if (r == -1L) {
+				const int saved_errno = errno;
+				while (t-->0) {
+					do {
+						r = ptrace(PTRACE_DETACH, tid[t], (void *)0, (void *)0);
+					} while (r == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+/*
+  You see, most ptrace commands are only allowed when the task is stopped.
+  However, the task is not stopped when it is still completing e.g. a
+  single-step command. Thus, using the above loop -- perhaps adding a
+  millisecond nanosleep or similar to avoid wasting CPU -- makes sure the
+  previous ptrace command has completed (and thus the task stopped) before
+  we try to supply the new one.
+ */
+				}
+				tids = 0;
+				errno = saved_errno;
+				break;
+			}
+		}
+		if (!tids) {
+			const int saved_errno = errno;
+			if (continue_process(pid, &status)) {
+				break;
+			}
+			printf(" failed to attach (%s).\n", strerror(saved_errno));
+			fflush(stdout);
+			if (WIFCONTINUED(status)) {
+				continue;
+			}
+			errno = 0;
+			break;
+		}
+
+		printf(" attached to all.\n\n");
+		fflush(stdout);
+
+		/* Dump the registers of each task. */
+		for (t = 0; t < tids; t++) {
+			show_registers(stdout, tid[t], "");
+		}
+		printf("\n");
+		fflush(stdout);
+
+		for (s = 0; s < SINGLESTEPS; s++) {
+			do {
+				r = ptrace(PTRACE_SINGLESTEP, tid[tids-1], (void *)0, (void *)0);
+			} while (r == -1L && errno == ESRCH);
+			if (!r) {
+				for (t = 0; t < tids - 1; t++)
+					show_registers(stdout, tid[t], "");
+				show_registers(stdout, tid[tids-1], "Advanced by one step.");
+				printf("\n");
+				fflush(stdout);
+			} else {
+				fprintf(stderr, "Single-step failed: %s.\n", strerror(errno));
+				fflush(stderr);
+			}
+		}
+
+		/* Detach from all tasks. */
+		for (t = 0; t < tids; t++) {
+			do {
+				r = ptrace(PTRACE_DETACH, tid[t], (void *)0, (void *)0);
+			} while (r == -1 && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+		}
+		tids = 0;
+		if (continue_process(pid, &status)) {
+			break;
+		}
+		if (WIFCONTINUED(status)) {
+			printf("Detached. Waiting for new stop events.\n\n");
+			fflush(stdout);
+			continue;
+		}
+		errno = 0;
+		break;
+	}
+	if (errno) {
+		fprintf(stderr, "Tracer: Child lost (%s)\n", strerror(errno));
+	} else {
+		if (WIFEXITED(status)) {
+			fprintf(stderr, "Tracer: Child exited (%d)\n", WEXITSTATUS(status));
+		} else {
+			if (WIFSIGNALED(status)) {
+				fprintf(stderr, "Tracer: Child died from signal %d\n", WTERMSIG(status));
+			} else {
+				fprintf(stderr, "Tracer: Child vanished\n");
+			}
+		}
+	}
+	fflush(stderr);
+
+	return status;
+
+	return 0;
+}
+
+static int
+wait_process(const pid_t pid, int *const statusptr)
+{
+	int status;
+	pid_t p;
+
+	do {
+		status = 0;
+		p = waitpid(pid, &status, WUNTRACED | WCONTINUED);
+	} while ((p == (pid_t)-1) && (errno == EINTR));
+	if (p != pid) {
+		return errno = ESRCH;
+	}
+
+	if (statusptr) {
+		*statusptr = status;
+	}
+
+	return errno = 0;
+}
+                              
+
+
 
 static void
 inf_trace_me()
@@ -270,83 +548,12 @@ fork_inferior( void (*traceme_fun) (void) )
 
 	}else if(pid == 0){
 		/* child code */
-		child( pid_parent, traceme_fun );
+		child(pid_parent, traceme_fun );
 
 	}else{
 		/* parent code */
-// attach
-		int status;
-
-		ptrace(PTRACE_ATTACH, pid, NULL, NULL);
-
-		/* child still alive */
-//		waitpid( pid, &status, 0 ); // TODO check, should perform the same  
-		wait(&status);
-		if (WIFEXITED(status)) {
-			perror("process ended unexpectedly");
-			return -1;
-		}
-
-		ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACEEXIT);
-
-
-// break at "main"
-		tracee_addr_t func_ip = get_main_address(pid); // TODO check if referring to a "method name" works here as address    
-		breakpoint_t *bp;
-		if( NULL == (bp = malloc(sizeof(*bp)))) {
-			perror("allocation of bp failed");
-			exit(EXIT_FAILURE);
-		}
-		bp->code_addr = func_ip;
-		enable(pid, bp);
-		breakpoint_t *func_break = bp;
-
-// loop
-		breakpoint_t *last_break = NULL;
-		while (iteration_run(pid, last_break)) {
-
-// TODO no wait() here?
-// iteration_getip(pid);
-			long v = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * REGISTER_IP);
-			tracee_addr_t last_ip = (tracee_addr_t) (v - TRAP_LEN);
-
-			if (last_ip == func_ip) {
-#if defined(__x86_64)
-				int arg = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RDI);
-#else
-				struct user_regs_struct s; // TODO rn regs
-				ptrace(PTRACE_GETREGS, pid, NULL, &s);
-				int arg = ptrace(PTRACE_PEEKDATA, pid, sizeof(long) + s.esp);
-#endif
-				printf("break at main(%d)\n", arg);
-				last_break = func_break;
-			} else {
-				printf("unknown trap at %p\n", last_ip);
-				last_break = NULL;
-			}
-		}
-
-                                                                               
-/*		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));   
-		printf("ptracer: waiting on pid %i\r\n", pid);
-
-
-// TODO add thread silent (needed?)
-
-
+		tracer(pid);
 		
-		// resurrection testing grounds
-		sleep(3);
-		fprintf(stderr, "%ssuspend child\n", PARENT_TXT);
-		kill(pid, SIGTSTP );
-		sleep(5);
-		fprintf(stderr, "%sresume child\n", PARENT_TXT);
-		kill(pid, SIGCONT );
-		sleep(5);
-		fprintf(stderr, "%sstop child completely\n", PARENT_TXT);
-		kill(pid, SIGTERM );
-		
-//*/
 		return pid;
 
 	}
@@ -397,9 +604,8 @@ enable( pid_t pid, breakpoint_t *bp)
 	bp->code_backup = orig;
 }
  
-// TODO
-//static int run(pid_t pid, int cmd);
-// TODO
+
+/*
 int
 iteration_run(pid_t pid, breakpoint_t *bp)
 {
@@ -418,7 +624,6 @@ iteration_run(pid_t pid, breakpoint_t *bp)
 	return run(pid, PTRACE_CONT);
 }
 
-// TODO
 static int
 run(pid_t pid, int cmd)
 {
@@ -440,6 +645,74 @@ run(pid_t pid, int cmd)
 	}
 }
 
+//*/
+int
+iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
+{
+	if (bp) {
+		ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
+
+// dissable
+		ptrace(PTRACE_POKETEXT, pid, bp->code_addr, bp->code_backup);
+//		if (!run(pid, PTRACE_SINGLESTEP)) {    
+		
+		// pid, PTRACE_CONT
+		int last_sig=0;
+		while (1) {
+			ptrace(PTRACE_SINGLESTEP, pid, NULL, last_sig);
+
+			/* still alive */
+			int status;
+			waitpid(pid, &status, 0);
+			if (WIFEXITED(status)) {
+				return 0;
+			}
+			if (WIFSTOPPED(status)) {
+				last_sig = WSTOPSIG(status);
+				if (last_sig == SIGTRAP) {
+					int event = (status >> 16) & 0xffff;
+//					return (event == PTRACE_EVENT_EXIT) ? 0 : 1;   
+					if (event == PTRACE_EVENT_EXIT) {
+						return 0;
+					}
+				}
+			}
+		}
+
+
+		
+//			return 0;
+//		}
+
+
+// enable
+// TODO replace function by code
+		enable(pid, bp);
+	}
+
+	// pid, PTRACE_CONT
+	int last_sig=0;
+	while (1) {
+		ptrace(PTRACE_CONT, pid, NULL, last_sig);
+
+		/* still alive */
+		int status;
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status)) {
+			return 0;
+		}
+		if (WIFSTOPPED(status)) {
+			last_sig = WSTOPSIG(status);
+			if (last_sig == SIGTRAP) {
+				int event = (status >> 16) & 0xffff;
+				return (event == PTRACE_EVENT_EXIT) ? 0 : 1;
+			}
+		}
+	}
+	// we never reach here: stop
+	return 0;
+}
+//*/
 
 tracee_addr_t
 get_main_address(pid_t pid)
@@ -463,6 +736,8 @@ get_main_address(pid_t pid)
 		}
 	}
 	fclose(fp);
+
+	printf("XXX addr %lx\n", addr);  
 	return (tracee_addr_t) addr;
 }
 

@@ -208,7 +208,8 @@ static int continue_process(const pid_t pid, int *const statusptr)
 	return errno = 0;
 }
 
-void show_registers(FILE *const out, pid_t tid, const char *const note)
+void
+show_registers(FILE *const out, pid_t tid, const char *const note)
 {
 	struct user_regs_struct regs;
 	long                    r;
@@ -278,7 +279,7 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "Tracer: Waiting for child (pid %d) events.\n\n", (int)child);
 	fflush(stderr);
-
+ 
 	while (1) {
 
 		/* Wait for a child event. */
