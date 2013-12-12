@@ -14,7 +14,7 @@
 
 /* technical */
 #define TRAP_INST 0xCC
-#define TRAP_LENGTH 1
+#define TRAP_LEN 1
 
 #if defined(__x86_64)
 #define REGISTER_IP RIP
