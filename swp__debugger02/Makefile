@@ -23,7 +23,8 @@ ptracer.exe: ptracer.o
 	${CC} -o $@ ptracer.o -lm
 
 rabbit.exe: rabbit.o
-	${CC} -o $@ rabbit.o -lm
+#	${CC} -o $@ rabbit.o -lm
+	${CC} -static -o $@ rabbit.o -lm
 
 
 clean:
