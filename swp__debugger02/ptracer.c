@@ -178,14 +178,7 @@ show_registers(FILE *const out, pid_t pid, const char *const note)
 	ins = ptrace(PTRACE_PEEKTEXT, pid, regs.rip, NULL);
 	fprintf(out, "instr: 0x%08lx\n", ins);
 	fprintf(out, "PID %d: EIP=0x%08lxx, ESP=0x%08lx ", (int)pid, regs.rip, regs.rsp);
-/*
-// TODO rm
-	if (note && *note) {
-		fprintf(out, "PID %d: RIP=0x%016lx, RSP=0x%016lx. %s\n", (int)pid, regs.rip, regs.rsp, note);
-	} else {
-		fprintf(out, "PID %d: RIP=0x%016lx, RSP=0x%016lx.\n", (int)pid, regs.rip, regs.rsp);
-	}
-//*/
+
 #elif (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 32
 	ins = ptrace(PTRACE_PEEKTEXT, pid, regs.eip, NULL);
 	fprintf(out, "instr: 0x%08lx\n", ins);
@@ -346,9 +339,10 @@ tracer(pid_t pid)
 				int pedantic = 1;
 				char chr[3];
 				while (pedantic) {
-					fprintf( stdout, "Process stopped, hit ENTER for next step\n> ");
-					memset(chr, '\0', 3);
-					fgets(chr, 3, stdin);
+					fprintf(stdout, "Process stopped, hit ENTER for next step\n> ");
+					fflush(stdout);
+					memset(chr, '\0', sizeof(chr));
+					fgets(chr, sizeof(chr), stdin);
 					switch (chr[0])
 					{
 					case 'c':
@@ -566,36 +560,60 @@ fork_inferior(char** prog, void (*traceme_fun) (void) )
 }
 
 
-void
-startup_inferior( int ntraps )
-{
-// TODO initialization of target_waitstatus struct, based on wait read out syscalls for traces (is that possible?)
-	; 
-}
-
-void
-inf_ptrace_mourn_inferior()
-{
-	;
-// TODO handle params, and check if they are valid
-//	waitpid (ptid_get_pid (inferior_ptid), &status, 0);
-
-// TODO generic_mourn_inferior()
-}
-
-
-
 static void
 inf_ptrace_create_inferior(char** prog) // omitting further params
 {
-	// ommitting stack handling here
 
+	char chr[16];
+// TODO allow for more digits
+	do{
+		fprintf(stdout, "Set a breakpoint address e.g. '0x0804847c', or [r]un program?\n> ");
+		fflush(stdout);
+		fflush(stdin);
+
+
+		memset(chr, '\0', sizeof(chr));
+		fgets(chr, sizeof(chr), stdin);  
+
+// TODO so far this is just a dummy
+// TODO hex check when providing a breakpoint
+
+//		puts("TODO");
+		int idx;
+		if (chr[0] == 'r' || chr[0] == 'R') {
+			break;
+		}else if (chr[0] == '0' && chr[1] == 'x'){
+			chr[sizeof(chr)-1] = '\0';
+			for (idx=0; idx<sizeof(chr); ++idx) {
+// TODO to lower case
+// TODO check valid characters
+				if ('\n' == chr[idx]) {
+					chr[idx] = '\0';
+					break;
+				}
+			}
+			printf("TODO - hex number '%s'\n", chr);    
+
+		} else {
+			printf( "TODO: help text\n" );
+		}
+// TODO take care of having remaining tokens in stdin stream.. 
+
+	} while (1);
+	
+	fprintf(stdout, "\n\nStart program '%s'\n", prog[1]);
+	fflush(stdout);
+
+
+	// ommitting stack handling here
 	fork_inferior(prog, inf_trace_me);
 
 // TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED
-	startup_inferior( 7 );
+//	startup_inferior( 7 );
 
-	inf_ptrace_mourn_inferior(); // TODO params target_ops ptr
+
+// TODO   
+//	inf_ptrace_mourn_inferior(); // TODO params target_ops ptr
 }
 
 
