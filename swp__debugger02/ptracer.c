@@ -224,23 +224,20 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 	sigaction( SIGCONT, &sb, NULL);
 //*/
 
-
 	// flush output streams
 	fflush(stdout);
 	fflush(stderr);
-
 //*	
+
+
+	// stop child
+	kill(getpid(), SIGSTOP);   
+
 	int execReturn = execvp(prog[1], prog + 1);
 
-/*/
-// passing executable as command line string
-	execvp(argv[1], argv + 1);
-        fprintf(stderr, "%s: %s.\n", argv[1], strerror(errno));
-//*/
-
-	// TODO signal listener
 
 /*
+// TODO signal listener
   how to suspend / awake child processes?
 
   The "graceful" one is SIGTSTP, and its purpose is to "nicely" ask the process,
@@ -379,6 +376,27 @@ tracer(pid_t pid)
 			continue;
 		}
 
+		
+		// stop child - done by itself
+
+		// set breakpoints
+		tracee_addr_t break_addr = 0x0804847c;
+		breakpoint_t *bp = set_breakpoint(pid, break_addr);
+		ptrace(PTRACE_CONT, pid, NULL, NULL);
+
+			// inject breakpoints
+//			if (bp) {
+//				ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
+//			}
+
+			// restore code
+//			ptrace(PTRACE_POKETEXT, pid, bp->addr, bp->orig_code);
+
+		// continue
+
+
+
+
 
 		
 		// attach to all tasks - alternatively use PTRACE_TRACEME in the child
@@ -396,6 +414,8 @@ tracer(pid_t pid)
 			break;
 		}
 //*/
+
+
 
 		while (1){
                         // user input
@@ -513,6 +533,82 @@ continue_process(const pid_t pid, int *const statusptr)
 
 	return errno = 0;
 }
+
+void
+get_data(pid_t child, long addr, char *str, int len)
+{
+	char *laddr;
+	int i, j;
+	union u{
+		long val;
+		char chars[sizeof(long)];
+	}data;
+	i = 0;
+	j = len / sizeof(long);
+	laddr=str;
+	while (i < j) {
+		data.val = ptrace(PTRACE_PEEKDATA, child, addr+i*4, NULL);
+		memcpy(laddr, data.chars, sizeof(long));
+		++i;
+		laddr += sizeof(long);
+	}
+	j = len % sizeof(long);
+	/* since long size will be 4, we always will fall into this condition for reading */
+	if (j != 0) {
+		data.val = ptrace(PTRACE_PEEKDATA, child, addr+i*4, NULL);
+		memcpy(laddr, data.chars, j);
+	}
+	str[len]='\0';
+}
+
+
+void
+put_data(pid_t child, long addr, char *str, int len)
+{
+	char *laddr;
+	int i=0, j=len/sizeof(long);
+	union u{
+		long val;
+		char chars[sizeof(long)];
+	} data;
+	laddr = str;
+	while (i < j) {
+		memcpy(data.chars, laddr, sizeof(long));
+		ptrace(PTRACE_POKEDATA, child, addr+i*4, data.val);
+		++i;
+		laddr += sizeof(long);
+	}
+	j = len % sizeof(long);
+
+	/* since long size will be 4, we always will fall into this condition for writing back */
+	if (j != 0) {
+		memcpy(data.chars, laddr, j);
+		ptrace(PTRACE_POKEDATA, child, addr+i*4, data.val);
+	}
+}
+   
+
+breakpoint_t
+*set_breakpoint(pid_t pid, tracee_addr_t addr) {
+	breakpoint_t *bp = malloc(sizeof(*bp));
+	bp->code_addr = addr;
+
+	// get register snapshot
+// TODO rm - don't need to get current registers to figure out address
+//	ptrace(PTRACE_GETREGS, pid, NULL, &regs);
+	
+
+	// backup
+	long backup = ptrace(PTRACE_PEEKTEXT, pid, bp->code_addr);
+
+	// inject breakpoint
+	ptrace(PTRACE_POKETEXT, pid, bp->code_addr, (backup & TRAP_MASK) | TRAP_INST);
+
+	bp->code_backup = backup;
+	return bp;
+}
+
+
 //*/
                               
 
