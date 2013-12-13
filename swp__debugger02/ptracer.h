@@ -58,6 +58,8 @@ static void inf_ptrace_create_inferior(char** prog);
 //int iteration_run(pid_t pid, breakpoint_t *bp);
 //tracee_addr_t get_main_address(pid_t pid);
 
+breakpoint_t* set_breakpoint(pid_t pid, tracee_addr_t addr);
+
 static int wait_process(const pid_t pid, int *const statusptr);
 static int continue_process(const pid_t pid, int *const statusptr);
 

@@ -207,8 +207,6 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 	/* call function, in case PTRACE_TRACEME */
 	(*traceme_fun) ();
 
-// TODO see if environment needs to be stored
-
 /*
 // TODO check if needed
 	// signal handler, suspend
@@ -231,7 +229,7 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 
 
 	// stop child
-	kill(getpid(), SIGSTOP);   
+//	kill(getpid(), SIGSTOP);   
 
 	int execReturn = execvp(prog[1], prog + 1);
 
@@ -259,99 +257,6 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 	exit(EXIT_FAILURE);
 }
 
-// version: breakfast
-/*
-int
-tracer(pid_t pid)
-{
-
-// attach
-		int status;
-		ptrace(PTRACE_ATTACH, pid, NULL, NULL);
-
-//		waitpid( pid, &status, 0 ); // TODO check, should perform the same  
-		wait(&status);
-		if (WIFEXITED(status)) {
-			perror("process ended unexpectedly");
-			return -1;
-		}
-
-		ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACEEXIT);
-
-
-// break at "main"
-		tracee_addr_t func_ip = get_main_address(pid); // TODO check if referring to a "method name" works here as address    
-//		tracee_addr_t func_ip = (tracee_addr_t) 0x0804847c;   
-
-		breakpoint_t *bp;
-		if( NULL == (bp = malloc(sizeof(*bp)))) {
-			perror("allocation of bp failed");
-			exit(EXIT_FAILURE);
-		}
-		bp->code_addr = func_ip;
-		enable(pid, bp);
-		breakpoint_t *func_break = bp;
-
-// loop
-		breakpoint_t *last_break = NULL;
-		while (iteration_run(pid, last_break)) {
-
-// TODO no wait() here?
-// iteration_getip(pid);
-			long v = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * REGISTER_IP);
-			tracee_addr_t last_ip = (tracee_addr_t) (v - TRAP_LEN);
-
-			if (last_ip == func_ip) {
-#if defined(__x86_64)
-				int arg = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RDI);
-#else
-				struct user_regs_struct regs;
-				ptrace(PTRACE_GETREGS, pid, NULL, &regs);
-				int arg = ptrace(PTRACE_PEEKDATA, pid, sizeof(long) + regs.esp);
-#endif
-				printf("break at main(%d)\n", arg);
-				last_break = func_break;
-
-
-
-//				printf("hit ENTER");
-//				getchar();
-			} else {
-				printf("DEBUG: unknown trap at '%p'\n", last_ip);
-				last_break = NULL;
-			}
-		}
-
-                                                                               
-		return 0;
-}
-//*/
-
-// version: signal handling
-/*
-int
-tracer(pid_t pid)
-{
-		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));   
-		printf("ptracer: waiting on pid %i\r\n", pid);
-
-// TODO add thread silent (needed?)
-
-		
-		// resurrection testing grounds
-		sleep(3);
-		fprintf(stderr, "%ssuspend child\n", PARENT_TXT);
-		kill(pid, SIGTSTP );
-		sleep(5);
-		fprintf(stderr, "%sresume child\n", PARENT_TXT);
-		kill(pid, SIGCONT );
-		sleep(5);
-		fprintf(stderr, "%sstop child completely\n", PARENT_TXT);
-		kill(pid, SIGTERM );
-		
-		return 0;
-}
-//*/
 
 // version: threader
 int
@@ -359,7 +264,10 @@ tracer(pid_t pid)
 {
 	int status = 0;
 	long ret;
-	char chr = 's';
+	int stepwise = 0;
+	int event;
+	int done = 0;
+					
 
 	while (1) {
 		// wait for a child event.
@@ -379,64 +287,116 @@ tracer(pid_t pid)
 		
 		// stop child - done by itself
 
+//*
 		// set breakpoints
-		tracee_addr_t break_addr = 0x0804847c;
+		tracee_addr_t break_addr = (tracee_addr_t)0x0804847c;              
 		breakpoint_t *bp = set_breakpoint(pid, break_addr);
-		ptrace(PTRACE_CONT, pid, NULL, NULL);
-
-			// inject breakpoints
-//			if (bp) {
-//				ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
-//			}
-
-			// restore code
-//			ptrace(PTRACE_POKETEXT, pid, bp->addr, bp->orig_code);
-
-		// continue
 
 
-
-
-
-		
-		// attach to all tasks - alternatively use PTRACE_TRACEME in the child
-/*
+		// continue until breakpoint
 		do {
-			ret = ptrace(PTRACE_ATTACH, pid, NULL, NULL);   
+			ret = ptrace(PTRACE_CONT, pid, NULL, NULL);
 		} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-		if (ret == -1L) {
-			const int saved_errno = errno;
-
-			do {
-				ret = ptrace(PTRACE_DETACH, pid, NULL, NULL);   
-			} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-			errno = saved_errno;
-			break;
-		}
 //*/
 
+		while (1) {
 
+			if (!stepwise) {
+/*
+				// breakpoint - restore orig instructions
+				int last_sig = 0;
+				ptrace(PTRACE_SINGLESTEP, pid, 0, last_sig);
+				waitpid(pid, &status, 0);
+				
+				if (WIFEXITED(status)) {
+					return 0;
+				}
 
-		while (1){
-                        // user input
-			fprintf( stdout, "Process stopped, hit ENTER for next step");
-			fflush(stdout);
-			if( 'c' == (chr = (char) getchar())){
-				break;
-			}
+				if (WIFSTOPPED(status)) {
+					last_sig = WSTOPSIG(status);
+					if (last_sig == SIGTRAP) {
+						event = (status >> 16) & 0xffff;
+//						return (event == PTRACE_EVENT_EXIT) ? 0 : 1;
+						if (event == PTRACE_EVENT_EXIT) {
+							continue;
+						}
+			
+//			do {
+						ret = ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
+//			} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
 
-			// display
-			show_registers(stdout, pid, "Advanced by one step.");
-			printf("\n");
-			fflush(stdout);
+			// set registers back
+//			do {
+						ret = ptrace(PTRACE_POKETEXT, pid, bp->code_addr, bp->code_backup);
+//			} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
 
-			// singlestep
-			do {
-				ret = ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL);
-			} while (ret == -1L && errno == ESRCH);
-			if (ret) {
-				fprintf(stderr, "Single-step failed: %s.\n", strerror(errno));
-				fflush(stderr);
+				
+						stepwise = 1;
+
+					}
+				}
+/*/
+						stepwise = 1;
+//*/
+//			while (1) {
+			} else {
+				// stepwise debugging
+
+				// user input
+				int pedantic = 1;
+				char chr[3];
+				while (pedantic) {
+					fprintf( stdout, "Process stopped, hit ENTER for next step\n> ");
+					memset(chr, '\0', 3);
+					fgets(chr, 3, stdin);
+					switch (chr[0])
+					{
+					case 'c':
+					case 'C':
+						stepwise = 0;
+						pedantic = 0;
+						done = 1;
+						break;
+					case 'q':
+					case 'Q':
+						exit(EXIT_SUCCESS);
+						break;
+					case 'n':
+					case 'N':
+					case '\n':
+						stepwise = 1;
+						pedantic = 0;
+						break;
+						// TODO next step
+					default:
+						fprintf(stdout, "\nUsage:\n");
+						fprintf(stdout, "\tq - quit\n");
+						fprintf(stdout, "\th - help\n");
+						fprintf(stdout, "\tc - continue\n");
+						fprintf(stdout, "\tn - next instruction\n");
+						fprintf(stdout, "\tENTER - last action\n"); // TODO
+						break;
+					}
+				}
+
+				// done?
+				if (done) {
+					break;
+				}
+
+				// display
+				show_registers(stdout, pid, "Advanced by one step.");
+				printf("\n");
+				fflush(stdout);
+
+				// singlestep
+				do {
+					ret = ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL);
+				} while (ret == -1L && errno == ESRCH);
+				if (ret) {
+					fprintf(stderr, "Single-step failed: %s.\n", strerror(errno));
+					fflush(stderr);
+				}
 			}
 		}
 
@@ -534,67 +494,14 @@ continue_process(const pid_t pid, int *const statusptr)
 	return errno = 0;
 }
 
-void
-get_data(pid_t child, long addr, char *str, int len)
-{
-	char *laddr;
-	int i, j;
-	union u{
-		long val;
-		char chars[sizeof(long)];
-	}data;
-	i = 0;
-	j = len / sizeof(long);
-	laddr=str;
-	while (i < j) {
-		data.val = ptrace(PTRACE_PEEKDATA, child, addr+i*4, NULL);
-		memcpy(laddr, data.chars, sizeof(long));
-		++i;
-		laddr += sizeof(long);
-	}
-	j = len % sizeof(long);
-	/* since long size will be 4, we always will fall into this condition for reading */
-	if (j != 0) {
-		data.val = ptrace(PTRACE_PEEKDATA, child, addr+i*4, NULL);
-		memcpy(laddr, data.chars, j);
-	}
-	str[len]='\0';
-}
 
-
-void
-put_data(pid_t child, long addr, char *str, int len)
-{
-	char *laddr;
-	int i=0, j=len/sizeof(long);
-	union u{
-		long val;
-		char chars[sizeof(long)];
-	} data;
-	laddr = str;
-	while (i < j) {
-		memcpy(data.chars, laddr, sizeof(long));
-		ptrace(PTRACE_POKEDATA, child, addr+i*4, data.val);
-		++i;
-		laddr += sizeof(long);
-	}
-	j = len % sizeof(long);
-
-	/* since long size will be 4, we always will fall into this condition for writing back */
-	if (j != 0) {
-		memcpy(data.chars, laddr, j);
-		ptrace(PTRACE_POKEDATA, child, addr+i*4, data.val);
-	}
-}
-   
-
-breakpoint_t
-*set_breakpoint(pid_t pid, tracee_addr_t addr) {
+breakpoint_t*
+set_breakpoint(pid_t pid, tracee_addr_t addr) {
 	breakpoint_t *bp = malloc(sizeof(*bp));
 	bp->code_addr = addr;
 
 	// get register snapshot
-// TODO rm - don't need to get current registers to figure out address
+// TODO rm - don't need to get current registers to figure out address?
 //	ptrace(PTRACE_GETREGS, pid, NULL, &regs);
 	
 
@@ -692,104 +599,6 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 }
 
 
-                                                                               
-/*
-// TODO used for scenario 2: breakfast
-
-static void
-enable( pid_t pid, breakpoint_t *bp)
-{
-	long orig = ptrace(PTRACE_PEEKTEXT, pid, bp->code_addr);
-	ptrace(PTRACE_POKETEXT, pid, bp->code_addr, (orig & TRAP_MASK) | TRAP_INST);
-	bp->code_backup = orig;
-}
-
-int
-iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
-{
-	if (bp) {
-		ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
-
-// dissable
-		ptrace(PTRACE_POKETEXT, pid, bp->code_addr, bp->code_backup);
-
-		// pid, PTRACE_CONT
-		int last_sig=0;
-		while (1) {
-			ptrace(PTRACE_SINGLESTEP, pid, NULL, last_sig);
-
-			// still alive
-			int status;
-			waitpid(pid, &status, 0);
-			if (WIFEXITED(status)) {
-				return 0;
-			}
-			if (WIFSTOPPED(status)) {
-				last_sig = WSTOPSIG(status);
-				if (last_sig == SIGTRAP) {
-					int event = (status >> 16) & 0xffff;
-					if (event == PTRACE_EVENT_EXIT) {
-						return 0;
-					}
-				}
-			}
-		}
-
-// enable
-// TODO replace function by code
-		enable(pid, bp);
-	}
-
-	// pid, PTRACE_CONT
-	int last_sig=0;
-	while (1) {
-		ptrace(PTRACE_CONT, pid, NULL, last_sig);
-
-		// still alive
-		int status;
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status)) {
-			return 0;
-		}
-		if (WIFSTOPPED(status)) {
-			last_sig = WSTOPSIG(status);
-			if (last_sig == SIGTRAP) {
-				int event = (status >> 16) & 0xffff;
-				return (event == PTRACE_EVENT_EXIT) ? 0 : 1;
-			}
-		}
-	}
-	// we never reach here: stop
-	return 0;
-}
-
-tracee_addr_t
-get_main_address(pid_t pid)
-{
-	FILE *fp;
-	char filename[30];
-	char line[85];
-	long addr;
-	char str[20];
-
-	sprintf(filename, "/proc/%d/maps", pid);
-
-	if (NULL == (fp = fopen(filename, "r"))) {
-		exit(EXIT_FAILURE);
-	}
-	while (NULL != (fgets(line, 85, fp))) {
-//		sscanf(line, "%lx-%*lx %*s %*s %s", &addr, str, str, str, str);
-		scanf(line, "%lx-%*lx %*s %*s %s", &addr, str, str, str, str);
-		if (0 == (strcmp(str, "00:00"))) { // TODO for empty region, but do for start region "main"
-			break;
-		}
-	}
-	fclose(fp);
-
-	printf("XXX addr %lx\n", addr);  
-	return (tracee_addr_t) addr;
-}
-//*/
                                                                                
 
 int

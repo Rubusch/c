@@ -21,34 +21,34 @@ int main(int argc, char** argv)
   do{
     // init
     val = 0;
-    
+
     // read
     readdigit(&val, "enter 1 or 2 ('0' to quit):");
-    
+
     switch (val){
     case 0:
       puts("'0' - exiting");
       run = 0;
       break;
-      
+
     case 1:
       puts("input was '1'");
       break;
-      
+
     case 2:
       puts("input was '2'");
       break;
-      
+
     default:
       puts("false input - try again");
       break;
     }
-    
-  }while(run);    
-  
+
+  }while(run);
+
   puts("READY.");
   exit(EXIT_SUCCESS);
-}  
+}
 
 
 // TOOL
@@ -71,7 +71,7 @@ int isnumber(const char* str, const unsigned int size)
 }
 
 
-// READ 
+// READ
 void readdigit(unsigned int* iChr, const char* comment)
 {
   char cChr[3];
@@ -82,8 +82,8 @@ void readdigit(unsigned int* iChr, const char* comment)
 
     // read
     fgets(cChr, 3, stdin);
-   
-    // check stdin and clean in case input exceeded the 
+
+    // check stdin and clean in case input exceeded the
     if('\n' == cChr[1]){
       // ok - do nothing here
 

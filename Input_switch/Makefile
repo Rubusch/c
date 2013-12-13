@@ -14,10 +14,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-input: ${OBJECTS}
+
+all: input.exe
+
+input.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: input
 
-clean: 
-	${RM} $(OBJECTS) input *~ core
+clean:
+	${RM} $(OBJECTS) input.exe *~ core
