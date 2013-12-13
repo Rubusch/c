@@ -44,17 +44,21 @@ struct breakpoint_t;
 void printError(int errnum);
 void suspend_handler(int signum); 
 void resume_handler(int signum); 
-void child( pid_t pid_parent, void (*traceme_fun) (void) );
+
+void tracee(char** prog, pid_t pid_parent, void (*traceme_fun) (void));
 int tracer(pid_t pid);
+
 static void inf_trace_me();
-pid_t fork_inferior( void (*traceme_fun) (void) );
+pid_t fork_inferior(char** prog, void (*traceme_fun) (void) );
 void startup_inferior( int ntraps );
 void inf_ptrace_mourn_inferior();
-static void inf_ptrace_create_inferior( );
-static void enable( pid_t pid, breakpoint_t *bp);
-int iteration_run(pid_t pid, breakpoint_t *bp);
-//static int run(pid_t pid, int cmd);  
-tracee_addr_t get_main_address(pid_t pid);
+static void inf_ptrace_create_inferior(char** prog);
+
+//static void enable( pid_t pid, breakpoint_t *bp);
+//int iteration_run(pid_t pid, breakpoint_t *bp);
+//tracee_addr_t get_main_address(pid_t pid);
+
 static int wait_process(const pid_t pid, int *const statusptr);
+static int continue_process(const pid_t pid, int *const statusptr);
 
 #endif /* PTRACER_H_ */

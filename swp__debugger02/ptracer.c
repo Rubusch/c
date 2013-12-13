@@ -165,37 +165,44 @@ void
 show_registers(FILE *const out, pid_t pid, const char *const note)
 {
 	struct user_regs_struct regs;
-	long r;
+	long ins;
 
 	do {
-		r = ptrace(PTRACE_GETREGS, pid, &regs, &regs);
-	} while (r == -1L && errno == ESRCH);
-	if (r == -1L)
+		ins = ptrace(PTRACE_GETREGS, pid, &regs, &regs);
+	} while (ins == -1L && errno == ESRCH);
+	if (ins == -1L) {
 		return;
+	}
 
 #if (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 64
+	ins = ptrace(PTRACE_PEEKTEXT, pid, regs.rip, NULL);
+	fprintf(out, "instr: 0x%08lx\n", ins);
+	fprintf(out, "PID %d: EIP=0x%08lxx, ESP=0x%08lx ", (int)pid, regs.rip, regs.rsp);
+/*
+// TODO rm
 	if (note && *note) {
-		fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx. %s\n", (int)pid, regs.rip, regs.rsp, note);
+		fprintf(out, "PID %d: RIP=0x%016lx, RSP=0x%016lx. %s\n", (int)pid, regs.rip, regs.rsp, note);
 	} else {
-		fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx.\n", (int)pid, regs.rip, regs.rsp);
+		fprintf(out, "PID %d: RIP=0x%016lx, RSP=0x%016lx.\n", (int)pid, regs.rip, regs.rsp);
 	}
+//*/
 #elif (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 32
-	if (note && *note) {
-		fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx. %s\n", (int)pid, regs.eip, regs.esp, note);
-	} else {
-		fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx.\n", (int)pid, regs.eip, regs.esp);
-	}
+	ins = ptrace(PTRACE_PEEKTEXT, pid, regs.eip, NULL);
+	fprintf(out, "instr: 0x%08lx\n", ins);
+	fprintf(out, "PID %d: EIP=0x%08lxx, ESP=0x%08lx ", (int)pid, regs.eip, regs.esp);
 #endif
+	if (note && *note) {
+		fprintf(out, "%s\n", note);
+	}
 }
 
                                                                                
 
 
 void
-child( pid_t pid_parent, void (*traceme_fun) (void) )
+child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 {
-	printf("child pid: %i, parent: %i\r\n"
-	       , getpid(), pid_parent);
+	printf("child pid: %i, parent: %i\r\n\n\n", getpid(), pid_parent);
 
 	/* call function, in case PTRACE_TRACEME */
 	(*traceme_fun) ();
@@ -219,14 +226,12 @@ child( pid_t pid_parent, void (*traceme_fun) (void) )
 
 
 	// flush output streams
-	fflush(stdout); 
-	fflush(stderr); 
-
+	fflush(stdout);
+	fflush(stderr);
 
 //*	
-// simple execvp
-	char* flags[] = { (char*) 0 };
-	int execReturn = execvp( "./rabbit.exe", flags );    
+	int execReturn = execvp(prog[1], prog + 1);
+
 /*/
 // passing executable as command line string
 	execvp(argv[1], argv + 1);
@@ -250,12 +255,9 @@ child( pid_t pid_parent, void (*traceme_fun) (void) )
   process forcefully).
 */
 
-
-	// function call to execve() does not return, else failure
+	// never should reach here!
 	perror("Failure! Child EXEC call returned.");
 	printError(execReturn);
-
-
 //	cleanup();  
 	exit(EXIT_FAILURE);
 }
@@ -359,109 +361,75 @@ int
 tracer(pid_t pid)
 {
 	int status = 0;
+	long ret;
+	char chr = 's';
 
 	while (1) {
-		/* Wait for a child event. */
+		// wait for a child event.
 		if (wait_process(pid, &status)) {
 			break;
 		}
-
-		/* Exited? */
+		// exited?
 		if (WIFEXITED(status) || WIFSIGNALED(status)) {
 			errno = 0;
 			break;
 		}
-
-		/* At this point, only stopped events are interesting. */
+		// at this point, only stopped events are interesting.
 		if (!WIFSTOPPED(status)) {
 			continue;
 		}
 
-/*
-// tids == pid
-		/ * Obtain task IDs. * /
-		tids = get_tids(&tid, &tids_max, pid);
-		if (!tids) {
-			break;
-		}
-*/
 
-		printf("Process %d has %d tasks,", (int)pid, (int)tids);
-		fflush(stdout);
-
-		/* Attach to all tasks. */
-		for (t = 0; t < tids; t++) {
-			do {
-				r = ptrace(PTRACE_ATTACH, tid[t], (void *)0, (void *)0);
-			} while (r == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-			if (r == -1L) {
-				const int saved_errno = errno;
-				while (t-->0) {
-					do {
-						r = ptrace(PTRACE_DETACH, tid[t], (void *)0, (void *)0);
-					} while (r == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+		
+		// attach to all tasks - alternatively use PTRACE_TRACEME in the child
 /*
-  You see, most ptrace commands are only allowed when the task is stopped.
-  However, the task is not stopped when it is still completing e.g. a
-  single-step command. Thus, using the above loop -- perhaps adding a
-  millisecond nanosleep or similar to avoid wasting CPU -- makes sure the
-  previous ptrace command has completed (and thus the task stopped) before
-  we try to supply the new one.
- */
-				}
-				tids = 0;
-				errno = saved_errno;
-				break;
-			}
-		}
-		if (!tids) {
+		do {
+			ret = ptrace(PTRACE_ATTACH, pid, NULL, NULL);   
+		} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+		if (ret == -1L) {
 			const int saved_errno = errno;
-			if (continue_process(pid, &status)) {
-				break;
-			}
-			printf(" failed to attach (%s).\n", strerror(saved_errno));
-			fflush(stdout);
-			if (WIFCONTINUED(status)) {
-				continue;
-			}
-			errno = 0;
+
+			do {
+				ret = ptrace(PTRACE_DETACH, pid, NULL, NULL);   
+			} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+			errno = saved_errno;
 			break;
 		}
+//*/
 
-		printf(" attached to all.\n\n");
-		fflush(stdout);
+		while (1){
+                        // user input
+			fprintf( stdout, "Process stopped, hit ENTER for next step");
+			fflush(stdout);
+			if( 'c' == (chr = (char) getchar())){
+				break;
+			}
 
-		/* Dump the registers of each task. */
-		for (t = 0; t < tids; t++) {
-			show_registers(stdout, tid[t], "");
-		}
-		printf("\n");
-		fflush(stdout);
+			// display
+			show_registers(stdout, pid, "Advanced by one step.");
+			printf("\n");
+			fflush(stdout);
 
-		for (s = 0; s < SINGLESTEPS; s++) {
+			// singlestep
 			do {
-				r = ptrace(PTRACE_SINGLESTEP, tid[tids-1], (void *)0, (void *)0);
-			} while (r == -1L && errno == ESRCH);
-			if (!r) {
-				for (t = 0; t < tids - 1; t++)
-					show_registers(stdout, tid[t], "");
-				show_registers(stdout, tid[tids-1], "Advanced by one step.");
-				printf("\n");
-				fflush(stdout);
-			} else {
+				ret = ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL);
+			} while (ret == -1L && errno == ESRCH);
+			if (ret) {
 				fprintf(stderr, "Single-step failed: %s.\n", strerror(errno));
 				fflush(stderr);
 			}
 		}
 
-		/* Detach from all tasks. */
-		for (t = 0; t < tids; t++) {
-			do {
-				r = ptrace(PTRACE_DETACH, tid[t], (void *)0, (void *)0);
-			} while (r == -1 && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-		}
-		tids = 0;
+//*
+                // detach
+		do {
+			ret = ptrace(PTRACE_DETACH, pid, (void *)0, (void *)0);   
+		} while (ret == -1 && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
+//*/
+
+                // get current status
 		if (continue_process(pid, &status)) {
+			fprintf(stderr, "Continue process failed...\n");
 			break;
 		}
 		if (WIFCONTINUED(status)) {
@@ -472,6 +440,8 @@ tracer(pid_t pid)
 		errno = 0;
 		break;
 	}
+
+	// continuing - status of child
 	if (errno) {
 		fprintf(stderr, "Tracer: Child lost (%s)\n", strerror(errno));
 	} else {
@@ -488,10 +458,10 @@ tracer(pid_t pid)
 	fflush(stderr);
 
 	return status;
-
-	return 0;
 }
 
+
+//*
 static int
 wait_process(const pid_t pid, int *const statusptr)
 {
@@ -512,6 +482,38 @@ wait_process(const pid_t pid, int *const statusptr)
 
 	return errno = 0;
 }
+
+static int
+continue_process(const pid_t pid, int *const statusptr)
+{
+	int   status;
+	pid_t p;
+
+	do {
+		if (kill(pid, SIGCONT) == -1) {
+			fprintf(stderr, "%s (%d): kill(pid, SIGCONT) failed", __FILE__, __LINE__);
+			return errno = ESRCH;
+		}
+
+		do {
+			status = 0;
+			p = waitpid(pid, &status, WUNTRACED | WCONTINUED);
+		} while (p == (pid_t)-1 && errno == EINTR);
+
+		if (p != pid) {
+			fprintf(stderr, "%s (%d): (p != pid)", __FILE__, __LINE__);
+			return errno = ESRCH;
+		}
+
+	} while (WIFSTOPPED(status));
+
+	if (statusptr) {
+		*statusptr = status;
+	}
+
+	return errno = 0;
+}
+//*/
                               
 
 
@@ -528,7 +530,7 @@ inf_trace_me()
 
 
 pid_t
-fork_inferior( void (*traceme_fun) (void) )
+fork_inferior(char** prog, void (*traceme_fun) (void) )
 {
 	// omitting tty checks here
 
@@ -548,7 +550,7 @@ fork_inferior( void (*traceme_fun) (void) )
 
 	}else if(pid == 0){
 		/* child code */
-		child(pid_parent, traceme_fun );
+		child(prog, pid_parent, traceme_fun );
 
 	}else{
 		/* parent code */
@@ -581,11 +583,11 @@ inf_ptrace_mourn_inferior()
 
 
 static void
-inf_ptrace_create_inferior( ) // omitting further params
+inf_ptrace_create_inferior(char** prog) // omitting further params
 {
 	// ommitting stack handling here
 
-	fork_inferior( inf_trace_me );
+	fork_inferior(prog, inf_trace_me);
 
 // TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED
 	startup_inferior( 7 );
@@ -595,6 +597,8 @@ inf_ptrace_create_inferior( ) // omitting further params
 
 
                                                                                
+/*
+// TODO used for scenario 2: breakfast
 
 static void
 enable( pid_t pid, breakpoint_t *bp)
@@ -603,49 +607,7 @@ enable( pid_t pid, breakpoint_t *bp)
 	ptrace(PTRACE_POKETEXT, pid, bp->code_addr, (orig & TRAP_MASK) | TRAP_INST);
 	bp->code_backup = orig;
 }
- 
 
-/*
-int
-iteration_run(pid_t pid, breakpoint_t *bp)
-{
-	if (bp) {
-		ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
-
-// dissable
-		ptrace(PTRACE_POKETEXT, pid, bp->code_addr, bp->code_backup);
-		if (!run(pid, PTRACE_SINGLESTEP)) {
-			return 0;
-		}
-// enable
-// TODO replace function by code
-		enable(pid, bp);
-	}
-	return run(pid, PTRACE_CONT);
-}
-
-static int
-run(pid_t pid, int cmd)
-{
-	int status, last_sig = 0, event;
-	while (1) {
-		ptrace(cmd, pid, 0, last_sig);
-		waitpid(pid, &status, 0);
-
-		if (WIFEXITED(status))
-			return 0;
-
-		if (WIFSTOPPED(status)) {
-			last_sig = WSTOPSIG(status);
-			if (last_sig == SIGTRAP) {
-				event = (status >> 16) & 0xffff;
-				return (event == PTRACE_EVENT_EXIT) ? 0 : 1;
-			}
-		}
-	}
-}
-
-//*/
 int
 iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
 {
@@ -654,14 +616,13 @@ iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
 
 // dissable
 		ptrace(PTRACE_POKETEXT, pid, bp->code_addr, bp->code_backup);
-//		if (!run(pid, PTRACE_SINGLESTEP)) {    
-		
+
 		// pid, PTRACE_CONT
 		int last_sig=0;
 		while (1) {
 			ptrace(PTRACE_SINGLESTEP, pid, NULL, last_sig);
 
-			/* still alive */
+			// still alive
 			int status;
 			waitpid(pid, &status, 0);
 			if (WIFEXITED(status)) {
@@ -671,19 +632,12 @@ iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
 				last_sig = WSTOPSIG(status);
 				if (last_sig == SIGTRAP) {
 					int event = (status >> 16) & 0xffff;
-//					return (event == PTRACE_EVENT_EXIT) ? 0 : 1;   
 					if (event == PTRACE_EVENT_EXIT) {
 						return 0;
 					}
 				}
 			}
 		}
-
-
-		
-//			return 0;
-//		}
-
 
 // enable
 // TODO replace function by code
@@ -695,7 +649,7 @@ iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
 	while (1) {
 		ptrace(PTRACE_CONT, pid, NULL, last_sig);
 
-		/* still alive */
+		// still alive
 		int status;
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status)) {
@@ -712,7 +666,6 @@ iteration_run(pid_t pid, breakpoint_t *bp) // TODO declare static
 	// we never reach here: stop
 	return 0;
 }
-//*/
 
 tracee_addr_t
 get_main_address(pid_t pid)
@@ -740,14 +693,24 @@ get_main_address(pid_t pid)
 	printf("XXX addr %lx\n", addr);  
 	return (tracee_addr_t) addr;
 }
-
+//*/
                                                                                
 
 int
-main( int argc, char** args )
+main( int argc, char** argv )
 {
+	if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
+		fprintf(stderr, "\n");
+		fprintf(stderr, "Usage: %s [ -h | --help ]\n", argv[0]);
+		fprintf(stderr, "       %s PROGRAM [ ARGS ... ]\n", argv[0]);
+		fprintf(stderr, "\n");
+		fprintf(stderr, "This program executes PROGRAM in a child process,\n");
+		fprintf(stderr, "\n");
+		return 1;
+	}
+
 	// just some starting point
-	inf_ptrace_create_inferior( );
+	inf_ptrace_create_inferior(argv);
 
 	exit( EXIT_SUCCESS );
 }
