@@ -4,6 +4,12 @@
   example to figure out the injection code for a ptracer, compile it
   run it in gdb and extract the ASM sequence for the trap as hex
 
+  the example initializes the stack with a string to print out, then calls
+         int    $0x80\n\
+  to print out to the console,
+  finally it puts a break interrupt 3 declaration, to stop the program
+         int3\n\
+
   compile:
   $ gcc -o hello.exe hello.c
 

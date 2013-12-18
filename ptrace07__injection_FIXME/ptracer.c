@@ -98,6 +98,7 @@ main(int argc, char **argv)
 {
 	pid_t traced_process;
 	struct user_regs_struct regs;
+        int len = 4;
 	char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 */
 	char backup[4];
 
@@ -116,21 +117,24 @@ main(int argc, char **argv)
 
 	/* get traced process pid, and attach */
 	traced_process = atoi(argv[1]);
-	ptrace(PTRACE_ATTACH, traced_process, NULL,NULL);
 
+        /* attach process */
+	ptrace(PTRACE_ATTACH, traced_process, NULL,NULL);
 	wait(NULL);
 
 	ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
 
 	/* backup instructions */
 // TODO check if len is correct?
-	get_data(traced_process, regs.eip, backup, 3);  
+	get_data(traced_process, regs.eip, backup, len);  
 
 	/* put trap into child */
 // TODO check if len is correct?
-	put_data(traced_process, regs.eip, code, 3);  
+	put_data(traced_process, regs.eip, code, len);  
 
 // TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?   
+	ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);                
+
 
 	/* let child continue, run into trap, and execute int3 instruction */
 	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
@@ -143,7 +147,7 @@ main(int argc, char **argv)
 	getchar();
 
         /* restore the backuped code */
-	put_data(traced_process, regs.eip, backup, 3);
+	put_data(traced_process, regs.eip, backup, len);
 
 	/* setting the eip back to the original instruction, and let process continue */
 	ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
