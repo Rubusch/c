@@ -1,0 +1,16 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#define TRUE 1
+
+int main( int argc, char** argv){
+	int cnt = 0;
+	while( TRUE ){
+		printf("RABBIT: '%d'\n", cnt );
+		cnt++;
+		sleep(1);
+	}
+	exit( EXIT_SUCCESS );
+}
