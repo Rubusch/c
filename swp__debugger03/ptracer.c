@@ -4,7 +4,7 @@
   @email: L.Rubusch@gmx.ch
 
   @license: EPL
-  @2013-october-22
+  @2013-december-20
 //*/
 
 #include <signal.h>
@@ -125,26 +125,17 @@ printError(int errnum)
 	}
 }
 
-/*
-void freeMemory(char*** ppList, const unsigned int size)
-{
-	unsigned int idx = 0;
-	for(idx=0; idx < size; ++idx){
-		if(NULL != (*ppList)[idx]) free((*ppList)[idx]);
-	}
-	if(NULL != *ppList) free(*ppList);
-}
-//*/
 
-/*
 void cleanup(){
-	perror("cleanup() - so far, do nothing..");
-	
-	// TODO, dealloc
+	;
+// TODO
+// in case trigger a cleanup process by a SIG handler to parent, who takes care
+// of child, deallocates resources, deconnects, etc.  cleanly and puts the
+// parent in a "safe" state
 }
-//*/
 
-
+/*
+// TODO rm
 void
 suspend_handler(int signum)
 {
@@ -156,11 +147,11 @@ resume_handler(int signum)
 {
 	puts("child: resume_handler");
 }
-
+//*/
 
                                                                                
 
-// printing reginsters
+/* printing reginsters */
 void
 show_registers(FILE *const out, pid_t pid, const char *const note)
 {
@@ -175,11 +166,14 @@ show_registers(FILE *const out, pid_t pid, const char *const note)
 	}
 
 #if (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 64
+        /* 64 bit */
+// TODO test thoroughly
 	ins = ptrace(PTRACE_PEEKTEXT, pid, regs.rip, NULL);
 	fprintf(out, "instr: 0x%08lx\n", ins);
 	fprintf(out, "PID %d: EIP=0x%08lxx, ESP=0x%08lx ", (int)pid, regs.rip, regs.rsp);
 
 #elif (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 32
+        /* 32 bit */
 	ins = ptrace(PTRACE_PEEKTEXT, pid, regs.eip, NULL);
 	fprintf(out, "instr: 0x%08lx\n", ins);
 	fprintf(out, "PID %d: EIP=0x%08lxx, ESP=0x%08lx ", (int)pid, regs.eip, regs.esp);
@@ -200,32 +194,13 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 	/* call function, in case PTRACE_TRACEME */
 	(*traceme_fun) ();
 
-/*
-// TODO check if needed
-	// signal handler, suspend
-	struct sigaction sa;
-	memset(&sa, 0, sizeof(sa));
-	sa.sa_handler = &suspend_handler;
-	sigaction( SIGTSTP, &sa, NULL);
+	/* stop process right away */
+        kill(getpid(), SIGSTOP); // currently, stop for singlestep      
 
-	// signal handler, resume
-	struct sigaction sb;
-	memset(&sb, 0, sizeof(sb));
-	sb.sa_handler = &resume_handler;
-	sigaction( SIGCONT, &sb, NULL);
-//*/
-
-	// flush output streams
 	fflush(stdout);
 	fflush(stderr);
-//*	
-
-
-	// stop child
-//	kill(getpid(), SIGSTOP);   
 
 	int execReturn = execvp(prog[1], prog + 1);
-
 
 /*
 // TODO signal listener
@@ -246,7 +221,7 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 	// never should reach here!
 	perror("Failure! Child EXEC call returned.");
 	printError(execReturn);
-//	cleanup();  
+	cleanup();
 	exit(EXIT_FAILURE);
 }
 
@@ -277,13 +252,14 @@ tracer(pid_t pid)
 			continue;
 		}
 
-		
+
 		// stop child - done by itself
 
 //*
 		// set breakpoints
 		tracee_addr_t break_addr = (tracee_addr_t)0x0804847c;              
 		breakpoint_t *bp = set_breakpoint(pid, break_addr);
+// TODO breakpoints so far unused                                                  
 
 
 		// continue until breakpoint
@@ -331,7 +307,7 @@ tracer(pid_t pid)
 /*/
 						stepwise = 1;
 //*/
-//			while (1) {
+
 			} else {
 				// stepwise debugging
 
@@ -357,7 +333,7 @@ tracer(pid_t pid)
 						break;
 					case 'n':
 					case 'N':
-					case '\n':
+					case '\n': // TODO for \n repeat old command
 						stepwise = 1;
 						pedantic = 0;
 						break;
@@ -435,7 +411,6 @@ tracer(pid_t pid)
 }
 
 
-//*
 static int
 wait_process(const pid_t pid, int *const statusptr)
 {
@@ -505,6 +480,8 @@ set_breakpoint(pid_t pid, tracee_addr_t addr) {
 	// inject breakpoint
 	ptrace(PTRACE_POKETEXT, pid, bp->code_addr, (backup & TRAP_MASK) | TRAP_INST);
 
+        // TODO PTRACE_SETREGS aqui
+
 	bp->code_backup = backup;
 	return bp;
 }
@@ -520,9 +497,6 @@ inf_trace_me()
 {
 	// trace from start up
 	ptrace( PT_TRACE_ME, 0, NULL, NULL );
-
-	// stop process
-        kill(getpid(), SIGSTOP); // currently, stop for singlestep      
 }
 
 
