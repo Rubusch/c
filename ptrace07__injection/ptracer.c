@@ -140,7 +140,8 @@ main(int argc, char **argv)
 	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
 
-        kill(traced_process, SIGINT);   
+        /* why does this work? */
+        kill(traced_process, SIGINT);
 	wait(NULL);
 
 	printf("the process stopped, restoring the original instructions\n");

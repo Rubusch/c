@@ -141,7 +141,10 @@ int main(int argc, char *argv[])
         /* continue process */
 	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
+
+        kill(traced_process, SIGINT);  
 	wait(NULL);
+
 
 	printf("The process stopped, Putting back the original instructions\n");
 
