@@ -139,6 +139,8 @@ main(int argc, char **argv)
 	/* let child continue, run into trap, and execute int3 instruction */
 	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
+
+        kill(traced_process, SIGINT);   
 	wait(NULL);
 
 	printf("the process stopped, restoring the original instructions\n");
