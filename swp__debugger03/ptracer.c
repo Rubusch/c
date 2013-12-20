@@ -13,19 +13,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <sys/ptrace.h> 
-#include <sys/reg.h> 
-#include <sys/user.h> 
+#include <sys/ptrace.h>
+#include <sys/reg.h>
+#include <sys/user.h>
 
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
-#include <dirent.h> 
-#include <string.h> 
-#include <signal.h> 
-#include <errno.h> 
-#include <stdio.h> 
+#include <dirent.h>
+#include <errno.h>
 
 
 #include "ptracer.h"
@@ -128,14 +125,18 @@ printError(int errnum)
 
 void cleanup(){
 	;
-// TODO
-// in case trigger a cleanup process by a SIG handler to parent, who takes care
-// of child, deallocates resources, deconnects, etc.  cleanly and puts the
-// parent in a "safe" state
+/*
+  TODO
+  in case trigger a cleanup process by a SIG handler to parent, who takes care
+  of child, deallocates resources, deconnects, etc.  cleanly and puts the
+  parent in a "safe" state
+
+  in case this is a similar function as in gdb mourn_...
+*/
 }
 
 /*
-// TODO rm
+// TODO use or rm
 void
 suspend_handler(int signum)
 {
@@ -233,7 +234,7 @@ tracer(pid_t pid)
 	int status = 0;
 	long ret;
 	int stepwise = 0;
-	int event;
+//	int event;
 	int done = 0;
 					
 
@@ -253,30 +254,55 @@ tracer(pid_t pid)
 		}
 
 
-		// stop child - done by itself
+/* initial stop - done by child */
 
-//*
-		// set breakpoints
-		tracee_addr_t break_addr = (tracee_addr_t)0x0804847c;              
+
+/* open issue: set breakpoints */
+		tracee_addr_t break_addr = (tracee_addr_t)0x0804847c;
 		breakpoint_t *bp = set_breakpoint(pid, break_addr);
-// TODO breakpoints so far unused                                                  
+/*
+  FIXME the basic idea is, to set a breakpoint to the next address, and backup
+  when the code stops the backup is re-injected replacing the 0xcc
+
+  the current problem is, it does not stop at the breakpoint..
+
+*/
+
+		
+		ptrace(PTRACE_POKEUSER, pid, sizeof(long)* REGISTER_IP, bp->code_addr);    
+		kill(pid, SIGINT);   
+		
+
+// FIXME the above breakpoints so far are unused, why?
+// TODO figure out correct address -> address shall be provided by UI
+// TODO inject 0xcc instruction at position, and backup original
+// TODO start 'r' program, but send SIGCONT until it traps, then step by step
+// TODO book keeping of set bookmarks
+
+
 
 
 		// continue until breakpoint
 		do {
 			ret = ptrace(PTRACE_CONT, pid, NULL, NULL);
 		} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-//*/
+
 
 		while (1) {
 
 			if (!stepwise) {
 /*
+  if the program is not progressing stepwise
+ */
+
+
+/*
+// TODO some code snippets
 				// breakpoint - restore orig instructions
 				int last_sig = 0;
 				ptrace(PTRACE_SINGLESTEP, pid, 0, last_sig);
 				waitpid(pid, &status, 0);
-				
+
 				if (WIFEXITED(status)) {
 					return 0;
 				}
@@ -309,9 +335,9 @@ tracer(pid_t pid)
 //*/
 
 			} else {
-				// stepwise debugging
+/* if stepwise debugging */
 
-				// user input
+/* user input, this is meant rather for debugging purposes of this code snippet */
 				int pedantic = 1;
 				char chr[3];
 				while (pedantic) {
@@ -344,12 +370,11 @@ tracer(pid_t pid)
 						fprintf(stdout, "\th - help\n");
 						fprintf(stdout, "\tc - continue\n");
 						fprintf(stdout, "\tn - next instruction\n");
-						fprintf(stdout, "\tENTER - last action\n"); // TODO
+						fprintf(stdout, "\tENTER - last action\n");
 						break;
 					}
 				}
 
-				// done?
 				if (done) {
 					break;
 				}
@@ -370,12 +395,12 @@ tracer(pid_t pid)
 			}
 		}
 
-//*
-                // detach
+
+/* detach child */
 		do {
-			ret = ptrace(PTRACE_DETACH, pid, (void *)0, (void *)0);   
+			ret = ptrace(PTRACE_DETACH, pid, (void *)0, (void *)0);
 		} while (ret == -1 && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-//*/
+
 
                 // get current status
 		if (continue_process(pid, &status)) {
@@ -469,7 +494,7 @@ set_breakpoint(pid_t pid, tracee_addr_t addr) {
 	breakpoint_t *bp = malloc(sizeof(*bp));
 	bp->code_addr = addr;
 
-	// get register snapshot
+/* obtain register snapshot */
 // TODO rm - don't need to get current registers to figure out address?
 //	ptrace(PTRACE_GETREGS, pid, NULL, &regs);
 	
@@ -539,7 +564,13 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 {
 
 	char chr[16];
-// TODO allow for more digits
+/*
+  TODO
+  since the user interface was not the principal objective, but rather a
+  possibility to navigate, it is left quite rudimentary, finally the code should
+  be connected to JNI callbacks, thus I consider this UI code anyway as
+  debug-only code which eventually will be removed again
+ */
 	do{
 		fprintf(stdout, "Set a breakpoint address e.g. '0x0804847c', or [r]un program?\n> ");
 		fflush(stdout);
@@ -548,11 +579,10 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 
 		memset(chr, '\0', sizeof(chr));
 		fgets(chr, sizeof(chr), stdin);  
-
 // TODO so far this is just a dummy
 // TODO hex check when providing a breakpoint
+// TODO size check
 
-//		puts("TODO");
 		int idx;
 		if (chr[0] == 'r' || chr[0] == 'R') {
 			break;
@@ -566,13 +596,12 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 					break;
 				}
 			}
-			printf("TODO - hex number '%s'\n", chr);    
+			printf("TODO - hex number '%s'\n", chr);
 
 		} else {
 			printf( "TODO: help text\n" );
 		}
-// TODO take care of having remaining tokens in stdin stream.. 
-
+// TODO take care of having remaining tokens in stdin stream..
 	} while (1);
 	
 	fprintf(stdout, "\n\nStart program '%s'\n", prog[1]);
@@ -582,12 +611,14 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 	// ommitting stack handling here
 	fork_inferior(prog, inf_trace_me);
 
-// TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED
+// TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED - for gdb conformity
 //	startup_inferior( 7 );
 
 
-// TODO   
+// TODO gdb uses the following function for further cleaning ups
 //	inf_ptrace_mourn_inferior(); // TODO params target_ops ptr
+
+/* TODO general gdb conformity for the current state of this code is not tested/checked */
 }
 
 
