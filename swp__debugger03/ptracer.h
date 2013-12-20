@@ -2,7 +2,7 @@
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
  */
-// TODO implementation for JNI code
+// TODO implementation for JNI code missing
 
 #ifndef PTRACER_H_
 #define PTRACER_H_

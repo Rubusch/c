@@ -30,11 +30,13 @@
 
 
 
-/* debugging */
+/*
+  error code evaluation, take care with multiple threads and errno (backup of
+  the errno value is not implemented here!!)
+*/
 void
 printError(int errnum)
 {
-	// evaluating errno
 	switch(errnum){
 #ifdef EACCES
 	case EACCES:
@@ -196,7 +198,7 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 	(*traceme_fun) ();
 
 	/* stop process right away */
-        kill(getpid(), SIGSTOP); // currently, stop for singlestep      
+        kill(getpid(), SIGSTOP);
 
 	fflush(stdout);
 	fflush(stderr);
@@ -219,7 +221,7 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
   process forcefully).
 */
 
-	// never should reach here!
+	/* never should reach here! */
 	perror("Failure! Child EXEC call returned.");
 	printError(execReturn);
 	cleanup();
@@ -227,37 +229,34 @@ child( char** prog, pid_t pid_parent, void (*traceme_fun) (void) )
 }
 
 
-// version: threader
 int
 tracer(pid_t pid)
 {
 	int status = 0;
 	long ret;
 	int stepwise = 0;
-//	int event;
 	int done = 0;
-					
 
 	while (1) {
-		// wait for a child event.
+		/* check for a child event */
 		if (wait_process(pid, &status)) {
 			break;
 		}
-		// exited?
+		/* exited? */
 		if (WIFEXITED(status) || WIFSIGNALED(status)) {
 			errno = 0;
 			break;
 		}
-		// at this point, only stopped events are interesting.
+		/* at this point, only stopped events are interesting */
 		if (!WIFSTOPPED(status)) {
 			continue;
 		}
 
 
-/* initial stop - done by child */
+		/* initial stop - done by child */
 
 
-/* open issue: set breakpoints */
+		/* open issue: set breakpoints */
 		tracee_addr_t break_addr = (tracee_addr_t)0x0804847c;
 		breakpoint_t *bp = set_breakpoint(pid, break_addr);
 /*
@@ -269,8 +268,8 @@ tracer(pid_t pid)
 */
 
 		
-		ptrace(PTRACE_POKEUSER, pid, sizeof(long)* REGISTER_IP, bp->code_addr);    
-		kill(pid, SIGINT);   
+//		ptrace(PTRACE_POKEUSER, pid, sizeof(long)* REGISTER_IP, bp->code_addr);    
+//		kill(pid, SIGINT);   
 		
 
 // FIXME the above breakpoints so far are unused, why?
@@ -291,53 +290,17 @@ tracer(pid_t pid)
 		while (1) {
 
 			if (!stepwise) {
-/*
-  if the program is not progressing stepwise
- */
-
-
-/*
-// TODO some code snippets
-				// breakpoint - restore orig instructions
-				int last_sig = 0;
-				ptrace(PTRACE_SINGLESTEP, pid, 0, last_sig);
-				waitpid(pid, &status, 0);
-
-				if (WIFEXITED(status)) {
-					return 0;
-				}
-
-				if (WIFSTOPPED(status)) {
-					last_sig = WSTOPSIG(status);
-					if (last_sig == SIGTRAP) {
-						event = (status >> 16) & 0xffff;
-//						return (event == PTRACE_EVENT_EXIT) ? 0 : 1;
-						if (event == PTRACE_EVENT_EXIT) {
-							continue;
-						}
-			
-//			do {
-						ret = ptrace(PTRACE_POKEUSER, pid, sizeof(long)*REGISTER_IP, bp->code_addr);
-//			} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-
-			// set registers back
-//			do {
-						ret = ptrace(PTRACE_POKETEXT, pid, bp->code_addr, bp->code_backup);
-//			} while (ret == -1L && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-
-				
+				/* if the program is not progressing stepwise */
+// TODO
 						stepwise = 1;
-
-					}
-				}
-/*/
-						stepwise = 1;
-//*/
 
 			} else {
-/* if stepwise debugging */
+				/* if stepwise debugging */
 
-/* user input, this is meant rather for debugging purposes of this code snippet */
+				/*
+				  user input, this is meant rather for
+				  debugging purposes of this code snippet
+				*/
 				int pedantic = 1;
 				char chr[3];
 				while (pedantic) {
@@ -347,23 +310,23 @@ tracer(pid_t pid)
 					fgets(chr, sizeof(chr), stdin);
 					switch (chr[0])
 					{
-					case 'c':
+					case 'c': /* continue */
 					case 'C':
 						stepwise = 0;
 						pedantic = 0;
 						done = 1;
 						break;
-					case 'q':
+					case 'q': /* quit */
 					case 'Q':
 						exit(EXIT_SUCCESS);
 						break;
-					case 'n':
+					case 'n': /* next iteration */
 					case 'N':
-					case '\n': // TODO for \n repeat old command
+					case '\n':
 						stepwise = 1;
 						pedantic = 0;
 						break;
-						// TODO next step
+// TODO "(n)ext step" or "(s)tep into"
 					default:
 						fprintf(stdout, "\nUsage:\n");
 						fprintf(stdout, "\tq - quit\n");
@@ -379,12 +342,12 @@ tracer(pid_t pid)
 					break;
 				}
 
-				// display
+				/* display register content */
 				show_registers(stdout, pid, "Advanced by one step.");
 				printf("\n");
 				fflush(stdout);
 
-				// singlestep
+				/* singlestep */
 				do {
 					ret = ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL);
 				} while (ret == -1L && errno == ESRCH);
@@ -396,13 +359,13 @@ tracer(pid_t pid)
 		}
 
 
-/* detach child */
+                /* detach child */
 		do {
 			ret = ptrace(PTRACE_DETACH, pid, (void *)0, (void *)0);
 		} while (ret == -1 && (errno == EBUSY || errno == EFAULT || errno == ESRCH));
 
 
-                // get current status
+                /* get current status, savety check */
 		if (continue_process(pid, &status)) {
 			fprintf(stderr, "Continue process failed...\n");
 			break;
@@ -416,7 +379,7 @@ tracer(pid_t pid)
 		break;
 	}
 
-	// continuing - status of child
+	/* continuing - status of child */
 	if (errno) {
 		fprintf(stderr, "Tracer: Child lost (%s)\n", strerror(errno));
 	} else {
@@ -494,33 +457,29 @@ set_breakpoint(pid_t pid, tracee_addr_t addr) {
 	breakpoint_t *bp = malloc(sizeof(*bp));
 	bp->code_addr = addr;
 
-/* obtain register snapshot */
-// TODO rm - don't need to get current registers to figure out address?
+	/* obtain register snapshot */
+// TODO rm - don't need to get current registers to figure out address, here
+// is it still necessary for setting it?
 //	ptrace(PTRACE_GETREGS, pid, NULL, &regs);
-	
 
-	// backup
+	/* backup */
 	long backup = ptrace(PTRACE_PEEKTEXT, pid, bp->code_addr);
 
-	// inject breakpoint
+	/* inject breakpoint */
 	ptrace(PTRACE_POKETEXT, pid, bp->code_addr, (backup & TRAP_MASK) | TRAP_INST);
 
-        // TODO PTRACE_SETREGS aqui
+// TODO PTRACE_SETREGS aqui?
 
 	bp->code_backup = backup;
 	return bp;
 }
 
 
-//*/
-                              
-
-
 
 static void
 inf_trace_me()
 {
-	// trace from start up
+	/* trace from start up */
 	ptrace( PT_TRACE_ME, 0, NULL, NULL );
 }
 
@@ -528,16 +487,6 @@ inf_trace_me()
 pid_t
 fork_inferior(char** prog, void (*traceme_fun) (void) )
 {
-	// omitting tty checks here
-
-/*
-	char* identifier = NULL;
-	if(NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))){
-		perror("calloc() failed");
-		exit(EXIT_FAILURE);
-	}
-	memset(identifier, '\0', IDENTIFIER_SIZE);
-//*/
 	pid_t pid=0, pid_parent=getpid();
 
 	if(0 > (pid = fork())){
@@ -551,8 +500,6 @@ fork_inferior(char** prog, void (*traceme_fun) (void) )
 	}else{
 		/* parent code */
 		tracer(pid);
-		
-		return pid;
 
 	}
 	return pid;
@@ -560,7 +507,7 @@ fork_inferior(char** prog, void (*traceme_fun) (void) )
 
 
 static void
-inf_ptrace_create_inferior(char** prog) // omitting further params
+inf_ptrace_create_inferior(char** prog)
 {
 
 	char chr[16];
@@ -578,7 +525,7 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 
 
 		memset(chr, '\0', sizeof(chr));
-		fgets(chr, sizeof(chr), stdin);  
+		fgets(chr, sizeof(chr), stdin);
 // TODO so far this is just a dummy
 // TODO hex check when providing a breakpoint
 // TODO size check
@@ -603,22 +550,24 @@ inf_ptrace_create_inferior(char** prog) // omitting further params
 		}
 // TODO take care of having remaining tokens in stdin stream..
 	} while (1);
-	
+
 	fprintf(stdout, "\n\nStart program '%s'\n", prog[1]);
 	fflush(stdout);
 
-
 	// ommitting stack handling here
 	fork_inferior(prog, inf_trace_me);
+
 
 // TODO check out number of ntraps: START_INFERIOR_TRAPS_EXPECTED - for gdb conformity
 //	startup_inferior( 7 );
 
 
+
 // TODO gdb uses the following function for further cleaning ups
 //	inf_ptrace_mourn_inferior(); // TODO params target_ops ptr
 
-/* TODO general gdb conformity for the current state of this code is not tested/checked */
+
+// TODO general gdb conformity for the current state of this code is not tested/checked
 }
 
 
@@ -637,7 +586,7 @@ main( int argc, char** argv )
 		return 1;
 	}
 
-	// just some starting point
+	/* just some starting point */
 	inf_ptrace_create_inferior(argv);
 
 	exit( EXIT_SUCCESS );
