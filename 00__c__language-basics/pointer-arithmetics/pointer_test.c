@@ -15,7 +15,7 @@ int show_length(char arr[44], char *pArr, char **ppArr){
   printf("~~~~~arr[]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
   printf("func()::arr[]: '%s\'\n", arr);
   printf("\n");
-  printf("sizeof(arr)/sizeof(char):\t%i\n", sizeof(arr)/sizeof(char));
+  printf("sizeof(arr)/sizeof(char):\t%i\n", sizeof((char*)arr)/sizeof(char));
   printf("strlen(arr):\t\t\t%i plus 1 token \'\\0\'\n", strlen(arr));
   printf("\n");
   printf("func()::arr:\t\t%i\taddress of the target\n", arr);
@@ -27,7 +27,7 @@ int show_length(char arr[44], char *pArr, char **ppArr){
 
   printf("~~~~~*pArr~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 
-  printf("*func()::pArr: '%s\'\n", pArr);      
+  printf("*func()::pArr: '%s\'\n", pArr);
   printf("\n");
   printf("sizeof(pArr)/sizeof(char):\t%i\n", sizeof(pArr)/sizeof(char));   // doesn't work - due to being a *ptr and no arr[]!!!
   printf("strlen(pArr):\t\t\t%i plus 1 token \'\\0\'\n", strlen(pArr));    // only this works with *ptr's!!!

@@ -13,10 +13,10 @@ RM = rm -f
 .c.o:
 	${CC} -c ${SOURCE} $<
 
-pointer: ${OBJECTS}
+pointer.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: pointer
+all: pointer.exe
 
 clean:
 	${RM} pointer.exe *.o *~ core
