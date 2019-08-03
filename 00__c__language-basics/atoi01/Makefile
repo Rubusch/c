@@ -16,12 +16,12 @@ RM = rm -f
 .c.o:
 	${CC} -o ${CFLAGS} $<
 
-atoi01: ${OBJECTS}
+atoi01.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: atoi01
+all: atoi01.exe
 
 clean:
-	-${RM} atoi01 *.o core
+	-${RM} atoi01.exe *.o core
 
 
