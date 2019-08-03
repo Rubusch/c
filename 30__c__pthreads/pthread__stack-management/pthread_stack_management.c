@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <pthread.h>
 
@@ -21,13 +22,16 @@ pthread_attr_t attr;
 void* do_work(void* thread_id)
 {
   double arr[NUM][NUM];
-  int row=0, col=0, tid=(int) thread_id;
+  int row=0, col=0;
+  unsigned long tid=(unsigned long)thread_id;
   size_t mystacksize=0;
+
+  memset(arr, 0, NUM*NUM);
 
   // get information about the stacksize
   pthread_attr_getstacksize(&attr, &mystacksize);
 
-  printf("thread %d: stack size = %i bytes\n", tid, mystacksize);
+  printf("thread %lu: stack size = %lu bytes\n", tid, mystacksize);
   for(col=0; col<NUM; ++col){
     for(row=0; row<NUM; ++row){
       arr[col][row] = ((row*col) / 3.452) + (NUM - col);
@@ -41,7 +45,8 @@ int main(int argc, char** argv)
 {
   pthread_t threads[NUM_THREADS];
   size_t stacksize=0;
-  int rc=0, cnt=0;
+  int rc=0;
+  unsigned long cnt=0;
 
   pthread_attr_init(&attr);
 
@@ -58,7 +63,7 @@ int main(int argc, char** argv)
       exit(-1);
     }
   }
-  printf("created %d threads\n", cnt);
+  printf("created %lu threads\n", cnt);
   pthread_exit(NULL);
 }
 
