@@ -274,7 +274,7 @@ int data_to_string(char* str, const unsigned int str_size, const unsigned int da
   //  puts("\tdata_to_string()");
 
   // leading
-  strncat(str, " ", 1);
+  strncat(str, " ", 2);
 
   // convert data
   register unsigned int num = 0;
@@ -284,12 +284,12 @@ int data_to_string(char* str, const unsigned int str_size, const unsigned int da
   }else if(num < DATA_DIGITS){
     register unsigned int idx=0;
     for(idx = num; idx < DATA_DIGITS; ++idx){
-      strncat(str, " ", 1);
+      strncat(str, " ", 2);
     }
   }
 
   // tailing ' '
-  strncat(str, " ", 1);
+  strncat(str, " ", 2);
 
   return 0;
 }
