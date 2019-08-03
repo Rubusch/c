@@ -1,6 +1,7 @@
 // pthread_condition_var.c
 /*
-  demonstrates the use of condition variables - using static join and static mutex-es
+  demonstrates the use of condition variables - using static join and static
+   mutex-es
 //*/
 
 #include <stdlib.h>
@@ -85,4 +86,4 @@ void* function_count2(void* dummy)
     if(count >= COUNT_DONE) pthread_exit(NULL);
   }
 }
-			 
+
