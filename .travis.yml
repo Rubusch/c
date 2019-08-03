@@ -24,7 +24,8 @@ compiler:
 
 script:
   - cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe
-
+  - cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe
+  - cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe
 # after_success:
 #   - cd ${TRAVIS_BUILD_DIR}
 #   - lcov --directory . --capture --output-file coverage.info # capture coverage info
