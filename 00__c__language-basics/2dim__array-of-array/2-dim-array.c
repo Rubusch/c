@@ -52,7 +52,7 @@ int main(int argc, char** argv){
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
   // print the size of 2-dim-array
-  printf("Size of the array is: %d, expected: %d\n", (sizeof(arr)/ELEMENT_LENGTH), ELEMENT_COUNT);
+  printf("Size of the array is: %ld, expected: %d\n", (sizeof(arr)/ELEMENT_LENGTH), ELEMENT_COUNT);
   printf("Number of elements in the array: %d x %d == %d\n", ELEMENT_COUNT, ELEMENT_LENGTH, ELEMENT_COUNT * ELEMENT_LENGTH);
 
   // Pass and call of the function with a 2-dim-array
@@ -66,8 +66,17 @@ int main(int argc, char** argv){
 // Definition of a funcion with 2-dim-array
 void output(char arr[][ELEMENT_LENGTH])
 {
+#pragma GCC diagnostic push
+  // gcc will warn about the sizeof(arr) which is clearly constant,
+  // since we have arr[][ELEMENT_LENGTH]
+  //
+  // this demo should demonstrate language-basics, though, so the
+  // warning is turned off for that purpose
+
   // CAUTION: here the "sizeof" of the static array is unknown - has to be passed as param!!!
-  printf("\nSize of the array is: %i - FAILS!\n", (sizeof(arr)/ELEMENT_LENGTH));
+#pragma GCC diagnostic ignored "-Wsizeof-array-argument"
+  printf("\nSize of the array is: %li - FAILS!\n", (sizeof(arr)/ELEMENT_LENGTH));
+#pragma GCC diagnostic pop
 
   // print out
   int idx;
