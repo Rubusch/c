@@ -30,7 +30,6 @@ script:
   - cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__mutex01 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__restaurant && make && ./*.exe && cd -
-  - cd 30__c__pthreads/pthread__manythreads && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__signalhandler01 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__hello_world && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__mutex00 && make && ./*.exe && cd -
@@ -50,6 +49,7 @@ script:
   - cd 30__c__pthreads/pthread__passing-arguments03 && make && cd -
   - cd 30__c__pthreads/pthread__six-threads && make1 && cd -
   - cd 30__c__pthreads/pthread__deadlock && make && cd -
+  - cd 30__c__pthreads/pthread__manythreads && make && cd -
 
 # after_success:
 #   - cd ${TRAVIS_BUILD_DIR}
