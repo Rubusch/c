@@ -22,32 +22,32 @@ compiler:
   - clang
 
 script:
-  - cd 30__c__pthreads/pthread__join02 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__signalhandler02 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__stack-management && make && ./*.exe
-  - cd 30__c__pthreads/pthread__six-threads && make && ./*.exe
-  - cd 30__c__pthreads/pthread__passing-arguments02 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__deadlock && make && ./*.exe
-  - cd 30__c__pthreads/pthread__create && make && ./*.exe
-  - cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__mutex01 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__restaurant && make && ./*.exe
-  - cd 30__c__pthreads/pthread__manythreads && make && ./*.exe
-  - cd 30__c__pthreads/pthread__passing-arguments01 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__signalhandler01 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__hello_world && make && ./*.exe
-  - cd 30__c__pthreads/semaphore__ipc-synchronization && make && ./*.exe
-  - cd 30__c__pthreads/pthread__mutex00 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__mutex02 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__passing-arguments03 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__producer-consumer && make && ./*.exe
-  - cd 30__c__pthreads/pthread__rwlock && make && ./*.exe
-  - cd 30__c__pthreads/pthread__join01 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__join00 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe
-  - cd 30__c__pthreads/pthread__socket-server && make && ./*.exe
-  - cd 30__c__pthreads/pthread__posix-cancellation && make && ./*.exe
+  - cd 30__c__pthreads/pthread__join02 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__signalhandler02 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__stack-management && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__six-threads && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__passing-arguments02 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__deadlock && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__create && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__mutex01 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__restaurant && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__manythreads && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__passing-arguments01 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__signalhandler01 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__hello_world && make && ./*.exe && cd -
+  - cd 30__c__pthreads/semaphore__ipc-synchronization && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__mutex00 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__mutex02 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__passing-arguments03 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__producer-consumer && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__rwlock && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__join01 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__join00 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__socket-server && make && ./*.exe && cd -
+  - cd 30__c__pthreads/pthread__posix-cancellation && make && ./*.exe && cd -
 
 # after_success:
 #   - cd ${TRAVIS_BUILD_DIR}
