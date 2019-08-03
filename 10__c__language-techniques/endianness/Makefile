@@ -15,12 +15,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-checkEndian: ${OBJECTS}
+endian.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: checkEndian
+all: endian.exe
 
 clean:
-	${RM} checkEndian.exe *~ *.o core
+	${RM} endian.exe *~ *.o core
 
 
