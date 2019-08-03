@@ -25,7 +25,6 @@ script:
   - cd 30__c__pthreads/pthread__join02 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__signalhandler02 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__stack-management && make && ./*.exe && cd -
-  - cd 30__c__pthreads/pthread__deadlock && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__create && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe && cd -
@@ -49,7 +48,8 @@ script:
   - cd 30__c__pthreads/pthread__passing-arguments01 && make && cd -
   - cd 30__c__pthreads/pthread__passing-arguments02 && make && cd -
   - cd 30__c__pthreads/pthread__passing-arguments03 && make && cd -
-  - cd 30__c__pthreads/pthread__six-threads && make && cd -
+  - cd 30__c__pthreads/pthread__six-threads && make1 && cd -
+  - cd 30__c__pthreads/pthread__deadlock && make && cd -
 
 # after_success:
 #   - cd ${TRAVIS_BUILD_DIR}
