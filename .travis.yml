@@ -43,7 +43,7 @@ script:
   - cd 30__c__pthreads/pthread__passing-arguments01 && make && cd -
   - cd 30__c__pthreads/pthread__passing-arguments02 && make && cd -
   - cd 30__c__pthreads/pthread__passing-arguments03 && make && cd -
-  - cd 30__c__pthreads/pthread__six-threads && make1 && cd -
+  - cd 30__c__pthreads/pthread__six-threads && make && cd -
   - cd 30__c__pthreads/pthread__deadlock && make && cd -
   - cd 30__c__pthreads/pthread__manythreads && make && cd -
 
