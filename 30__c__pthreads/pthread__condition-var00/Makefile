@@ -7,7 +7,7 @@ SOURCE = conditionalvariable.c
 OBJECTS = $(SOURCE:.c=.o)
 
 CC = gcc
-CFLAGS += -g -Wall
+CFLAGS += -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
