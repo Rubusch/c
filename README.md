@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/Rubusch/c.png?branch=master)](https://travis-ci.org/Rubusch/c)
+[![Build Status](https://travis-ci.com/Rubusch/c.svg?branch=master)](https://travis-ci.com/Rubusch/c)
 
 ## CONTENT
 
