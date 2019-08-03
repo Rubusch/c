@@ -6,15 +6,19 @@
 
 
   author: Lothar Rubusch
-  email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#if __x86_64__
+#include <sys/reg.h> /* on 64 bit, use this and ORIG_RAX */
+#else
 #include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -34,7 +38,11 @@ main( int argc, char** argv )
 
 	}else{
 		wait( NULL ); // wait call
-		orig_eax=ptrace( PTRACE_PEEKUSER, child, 4*ORIG_EAX, NULL ); // ptrace, fetch data (parent)
+#if __x86_64__
+		orig_eax=ptrace( PTRACE_PEEKUSER, child, 4*ORIG_RAX, NULL ); // ptrace, fetch data (parent)
+#else
+		orig_eax=ptrace( PTRACE_PEEKUSER, child, 4*ORIG_EAX, NULL );
+#endif
 		fprintf( stderr, "parent: systemcall %ld by child\n", orig_eax );
 		ptrace( PTRACE_CONT, child, NULL, NULL ); // ptrace, let child continue (parent)
 	}
