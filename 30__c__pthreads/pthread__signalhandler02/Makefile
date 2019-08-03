@@ -7,7 +7,7 @@ SOURCE = signalhandler02.c
 OBJECTS = $(SOURCE:.c=.o)
 
 CC = gcc
-CFLAGS += -g -Wall
+CFLAGS += -g -Wall -pedantic
 RM = rm -f
 
 %.o: %.c

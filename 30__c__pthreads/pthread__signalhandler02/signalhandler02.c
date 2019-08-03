@@ -13,7 +13,6 @@
  * I whipped up a real quick simple example which shows this using
  * some sleep()s to get a good simulation.
  *
- *
  * And Lothar writes:
  * ...translated into Posix :-P
  */
@@ -35,20 +34,20 @@ void ExitHandler(int);
 static pthread_t thr_one, thr_two, thr_main;
 
 // better: hanlde this states with conditional variables & mutexes!
-int first_active = 1 ; 
+int first_active = 1 ;
 int second_active = 1;
 
 
 int main()
 {
-  struct sigaction act;  
+  struct sigaction act;
   act.sa_handler = ExitHandler;
   sigemptyset(&act.sa_mask);
-  sigaction(SIGTERM, &act, NULL); 
-  
+  sigaction(SIGTERM, &act, NULL);
+
   // get own tid
   thr_main = pthread_self();
-  
+
   // create threads thr_one and thr_two
   if(0 != pthread_create(&thr_one, NULL, first_thread, NULL)){
     perror("pthread create failed");
@@ -58,7 +57,7 @@ int main()
     perror("pthread create failed");
     exit(EXIT_FAILURE);
   }
-  
+
   int idx = 0;
   for(idx = 0; idx < 10; idx++){
     fprintf(stderr, "main loop: %d\n", idx);
@@ -70,7 +69,7 @@ int main()
   pthread_kill(thr_two, SIGTERM);
   sleep(5);
   fprintf(stderr, "main exit\n");
-  
+
   puts("READY.");
   exit(EXIT_SUCCESS);
 }
@@ -82,7 +81,7 @@ int main()
 static void *first_thread()
 {
   pthread_t thr = pthread_self();
-  
+
   fprintf(stderr, "first_thread id: %lu\n", (unsigned long) thr);
 
   int idx = 0;
@@ -91,7 +90,7 @@ static void *first_thread()
     sleep(2);
   }
   fprintf(stderr, "first_thread exit\n");
-  
+
   pthread_exit(&thr);
 }
 
@@ -102,15 +101,15 @@ static void *first_thread()
 static void *second_thread()
 {
   int idx = 0;
-  
+
   fprintf(stderr, "second_thread id: %lu\n", (unsigned long) pthread_self());
-  
+
   while(second_active){
     fprintf(stderr, "second_thread: %d\n", idx++);
     sleep(3);
   }
   fprintf(stderr, "second_thread exit\n");
-  
+
   pthread_t thr = pthread_self();
   pthread_exit(&thr);
 }
@@ -121,8 +120,8 @@ static void *second_thread()
 //*/
 void ExitHandler(int sig)
 {
-  pthread_t thr = pthread_self();  
+  pthread_t thr = pthread_self();
   fprintf(stderr, "ExitHandler thread id: %lu\n", (unsigned long) thr);
 
-  pthread_exit(&thr);  
+  pthread_exit(&thr);
 }
