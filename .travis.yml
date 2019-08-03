@@ -22,6 +22,18 @@ compiler:
   - clang
 
 script:
+## 00: basics
+  - cd ./00__c__language-basics/atoi02 && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/2dim__pointer-to-pointer && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/pointer-arithmetics && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/input && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/atoi01 && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/2dim__array-of-array && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/argumentlist && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/2dim__pointer-to-array && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/allocation && make && ./*.exe && cd -
+
+## 30: pthreads
   - cd 30__c__pthreads/pthread__join02 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__signalhandler02 && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__stack-management && make && ./*.exe && cd -
