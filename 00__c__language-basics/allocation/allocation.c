@@ -111,14 +111,14 @@ int main(int argc, char** argv)
 
   // init text
   printf("%d: init text\n", init_text(&pText, "foo bar", &text_size));
-  printf("\t\"%s\", size: %d - strlen: %d + 1\n", pText, text_size, strlen(pText));
+  printf("\t\"%s\", size: %d - strlen: %ld + 1\n", pText, text_size, strlen(pText));
   printf("\n");
 
   // realloc space and append text
   unsigned int add_size = strlen(" blub ");
   printf("%d: realloc some space\n", get_more_space(&pText, &text_size, add_size));
   pText = strcat(pText, " blub ");
-  printf("\t\"%s\", size: %d - strlen: %d + 1\n", pText, text_size, strlen(pText));
+  printf("\t\"%s\", size: %d - strlen: %ld + 1\n", pText, text_size, strlen(pText));
   printf("\n");
 
   // trim text
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
   ++trim_size;
   // give one more due to '\0' in trim_size
   printf("%d: trim text\n", trim_char(&pText, trim_size+1, &text_size, trim_size+1));
-  printf("\t\"%s\", size: %d - strlen: %d + 1\n", pText, text_size, strlen(pText));
+  printf("\t\"%s\", size: %d - strlen: %ld + 1\n", pText, text_size, strlen(pText));
   printf("\n");
 
   // do something with malloc()

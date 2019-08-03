@@ -15,12 +15,12 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-Allocation.exe: ${OBJECTS}
+allocation.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: Allocation.exe
+all: allocation.exe
 
 clean:
-	${RM} Allocation.exe *~ *.o core
+	${RM} allocation.exe *~ *.o core
 
 
