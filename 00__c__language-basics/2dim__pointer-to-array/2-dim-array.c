@@ -59,7 +59,7 @@ int main(int argc, char** argv){
   }
 
   // size of a pointer to arrays
-  printf("Size of the array is: %i - FAILS due to the pointer!\n", (sizeof arr));
+  printf("Size of the array is: %li - FAILS due to the pointer!\n", (sizeof arr));
 
   // Pass and call of a function with pointer to array
   output(arr);
@@ -76,7 +76,7 @@ int main(int argc, char** argv){
 void output(char (*arr)[ELEMENT_LENGTH])
 {
   // CAUTION: here the size of the array is unknown - has to be passed as param!!!
-  printf("\nSize of the array is: %i - FAILS due to pass!\n", (sizeof arr));
+  printf("\nSize of the array is: %li - FAILS due to pass!\n", (sizeof arr));
 
   // print out
   int idx;
