@@ -13,17 +13,17 @@ OBJECTS = ${SOURCE:.c=.o}
 .PREFIXES = .c .o
 CC = gcc
 CFLAGS = -g -Wall -std=gnu99
-RM = rm
+RM = rm -f
 
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-tester: ${OBJECTS}
+input.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all:	tester
+all:	input.exe
 
 clean:
-	${RM} ${OBJECTS} tester *~
+	${RM} ${OBJECTS} input.exe *~
 
 
