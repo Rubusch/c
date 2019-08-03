@@ -106,7 +106,7 @@ void output(char** arr)
 {
   // CAUTION: here the size of the pointer to pointers is unknown - has to be
   // passed as param!!!
-  printf("\nSize of the array is: %i - FAILS!\n", (sizeof arr));
+  printf("\nSize of the array is: %lu - FAILS!\n", (sizeof arr));
 
   // print out
   int idx;
