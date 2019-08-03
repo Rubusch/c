@@ -16,12 +16,12 @@ RM = rm -f
 .c.o:
 	${CC} -o ${CFLAGS} $<
 
-xtoi: ${OBJECTS}
+xtoi.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: xtoi
+all: xtoi.exe
 
 clean:
-	-${RM} xtoi *.o core
+	-${RM} xtoi.exe *.o core
 
 
