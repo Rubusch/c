@@ -38,7 +38,7 @@ int main(int argc, char** argv){
     szStr[7] = '\0'; // avoids buffer overflow reading - stop token needs to be reset!
 
     // convert int -> string
-    sprintf(szInt, "%3d", cnt);
+    sprintf(szInt, "%d", cnt);
     szTemp = strcat(szStr, szInt);
 
     printf("\telement #%i added: %s\n", cnt, szTemp);
