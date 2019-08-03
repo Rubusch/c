@@ -37,7 +37,6 @@ script:
   - cd 30__c__pthreads/pthread__producer-consumer && make && ./*.exe ./source.txt ./destination.txt && cd -
   - cd 30__c__pthreads/pthread__rwlock && make && ./*.exe && cd -
   - cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe && cd -
-  - cd 30__c__pthreads/pthread__posix-cancellation && make && ./*.exe && cd -
   - cd 30__c__pthreads/semaphore__ipc-synchronization && make && ./*.exe && cd -
 
   ## needs command line arguments
@@ -50,6 +49,9 @@ script:
 
   ## server, thus waiting for connection
   - cd 30__c__pthreads/pthread__socket-server && make && cd -
+
+  ## thread cancellation, to be watched on top
+  - cd 30__c__pthreads/pthread__posix-cancellation && make && cd -
 
   ## travis seems to have trouble with the following, thus just compiling
   - cd 30__c__pthreads/pthread__join00 && make && cd -
