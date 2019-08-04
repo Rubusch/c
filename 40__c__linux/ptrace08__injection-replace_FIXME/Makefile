@@ -27,7 +27,7 @@ RM = rm -f
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
+	$(CC) -o $@ ptracer.o -lm
 
 ifeq ($(LONG_BIT),64)
 ifeq (, $(shell which nasm))
@@ -42,6 +42,6 @@ rabbit.exe: $(OBJECTS)
 endif
 
 clean:
-	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~
+	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~
 
 .PHONY: clean all
