@@ -4,6 +4,9 @@
   set up child with PTRACE_TRACEME, in parent then PTRACE_PEEK for the registers
   and PTRACE_CONT to continue
 
+
+  email: L.Rubusch@gmx.ch
+
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
@@ -20,8 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int
-main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	pid_t child;
 	long orig_eax;

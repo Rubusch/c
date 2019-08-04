@@ -12,6 +12,9 @@
   reads out child's registers %ebx, %ecx and %edx one by one, else it prints
   the %eax register for other syscalls
 
+
+  email: L.Rubusch@gmx.ch
+
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
