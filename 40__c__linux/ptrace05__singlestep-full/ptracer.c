@@ -21,16 +21,21 @@
       int     $0x80
       ret
 
-  author: Lothar Rubusch
+
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#if __x86_64__
+#include <sys/reg.h>
+#else
 #include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
+#endif
 #include <sys/syscall.h>
 #include <sys/user.h>
 
@@ -38,8 +43,8 @@
 #include <stdio.h>
 #include <string.h>
 
-int
-main( int argc, char** argv )
+
+int main( int argc, char** argv )
 {
 	pid_t child;
 
@@ -55,11 +60,27 @@ main( int argc, char** argv )
 		long count = 0;
 		long ins;
 		while(1) {
+#if __x86_64__
 			/* child still alive */
 			wait(&status);
-			if (WIFEXITED(status)) {
-				break;
-			}
+			if (WIFEXITED(status)) break;
+
+			/* read out registers -> regs for instruction pointer */
+			ptrace(PTRACE_GETREGS, child, NULL, &regs);
+
+			/* get ins by regs.eip */
+			ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
+			printf("%ld. RIP: %llx Instruction executed: %lx\n", count, regs.rip, ins);
+
+			/* turn on PTRACE_SINGLESTEP */
+			ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+
+			/* increment line counter */
+			count++;
+#else
+			/* child still alive */
+			wait(&status);
+			if (WIFEXITED(status)) break;
 
 			/* read out registers -> regs for instruction pointer */
 			ptrace(PTRACE_GETREGS, child, NULL, &regs);
@@ -73,6 +94,7 @@ main( int argc, char** argv )
 
 			/* increment line counter */
 			count++;
+#endif
 		}
 	}
 
