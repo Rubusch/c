@@ -19,6 +19,7 @@ CC = gcc
 CFLAGS += -g -Wall -fPIC #-std=c99 -pedantic
 RM = rm -f
 
+
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
@@ -29,6 +30,9 @@ ptracer.exe: $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm
 
 ifeq ($(LONG_BIT),64)
+ifeq (, $(shell which nasm))
+$(error "nasm is not installed, please install nasm")
+endif
 rabbit.exe:
 	nasm -f elf64 -o rabbit.o $(ASMSOURCE)
 	ld -o $@ rabbit.o
