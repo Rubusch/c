@@ -5,6 +5,8 @@
   PTRACE_PEEKDATA, revert it, and inject the reverted back into the child with
   PTRACE_POKEDATA
 
+FIXME: not working for 64 bit
+
 
   email: L.Rubusch@gmx.ch
 
