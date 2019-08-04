@@ -10,6 +10,7 @@
   the instructions, will be HEX code in the binary (ASM) address space of the
   child, thus it's not possible to print them in a different way, than either a
   hexadecimal code, or the offset to the start address of main
+
 # TODO check    
 
   listing for rabbit.s written in assembly language and compiled as
@@ -33,9 +34,10 @@
       int     $0x80
       ret
 
-  author: Lothar Rubusch
+
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
