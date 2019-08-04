@@ -27,15 +27,13 @@
   it is best to store the instructions in free space, when injecting, so this
   version searches for "free space" to inject the instructions to
 
-TODO             
 
-
-  author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
-// FIXME does not have any effect
-// FIXME freespace warnings, and 'str' in sscanf() usage seems incomplete
+// FIXME does not have any effect  
+// FIXME freespace warnings, and 'str' in sscanf() usage seems incomplete  
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -49,8 +47,7 @@ TODO
 
 const int long_size = sizeof(long);
 
-void
-get_data(pid_t child, long addr, char *str, int len)
+void get_data(pid_t child, long addr, char *str, int len)
 {
 	char *laddr;
 	int i, j;
@@ -76,8 +73,7 @@ get_data(pid_t child, long addr, char *str, int len)
 }
 
 
-void
-put_data(pid_t child, long addr, char *str, int len)
+void put_data(pid_t child, long addr, char *str, int len)
 {
 	char *laddr;
 	int i = 0, j = len / long_size;
@@ -117,8 +113,7 @@ long freespaceaddr(pid_t pid)
 		exit(EXIT_FAILURE);
 	}
 	while (fgets(line, 85, fp) != NULL) {
-//	while (NULL != (str = fgets(line, 85, fp))) {  
-// TODO str is actually never set?!  
+// TODO fix warning
 		sscanf(line, "%lx-%*lx %*s %*s %s", &addr, str, str, str, str);
 		if (strcmp(str, "00:00") == 0) {
 			break;
@@ -133,8 +128,6 @@ int main(int argc, char *argv[])
 {
 	pid_t traced_process;
 	struct user_regs_struct oldregs, regs;
-// TODO rm
-//	long ins;    
 	int len = 41;
 	char insertcode[] =
 		"\xeb\x15\x5e\xb8\x04\x00"
@@ -157,7 +150,47 @@ int main(int argc, char *argv[])
 	}
 
 	traced_process = atoi(argv[1]);
+#if __x86_64__
+	/* attach external process */
+	ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
 
+	wait(NULL);
+
+	/* get process's registers */
+	ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
+
+	/* find some free space for injection */
+	addr = freespaceaddr(traced_process);
+
+	/* get current instructions */
+	get_data(traced_process, addr, backup, len);
+
+	/* inject new instructions */
+	put_data(traced_process, addr, insertcode, len);
+
+	memcpy(&oldregs, &regs, sizeof(regs));
+	regs.rip = addr;
+
+	/* write registers back */
+	ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+
+	/* let external process continue */
+	ptrace(PTRACE_CONT, traced_process, NULL, NULL);
+
+	wait(NULL);
+	printf("The process stopped, Putting back the original instructions\n");
+
+	/* restore backuped instructions */
+	put_data(traced_process, addr, backup, len);
+
+	/* set registers */
+	ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
+
+	printf("Letting it continue with original flow\n");
+
+	/* detach process */
+	ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
+#else
 	/* attach external process */
 	ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
 
@@ -197,6 +230,7 @@ int main(int argc, char *argv[])
 
 	/* detach process */
 	ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
+#endif
 
 	return 0;
 }
