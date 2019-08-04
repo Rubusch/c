@@ -32,8 +32,6 @@
 
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
-// FIXME does not have any effect  
-// FIXME freespace warnings, and 'str' in sscanf() usage seems incomplete  
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -113,8 +111,7 @@ long freespaceaddr(pid_t pid)
 		exit(EXIT_FAILURE);
 	}
 	while (fgets(line, 85, fp) != NULL) {
-// TODO fix warning
-		sscanf(line, "%lx-%*lx %*s %*s %s", &addr, str, str, str, str);
+		sscanf(line, "%lx-%hhx %s", &addr, str, str);
 		if (strcmp(str, "00:00") == 0) {
 			break;
 		}
