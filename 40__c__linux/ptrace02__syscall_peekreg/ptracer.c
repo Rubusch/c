@@ -12,6 +12,8 @@
   reads out child's registers %ebx, %ecx and %edx one by one, else it prints
   the %eax register for other syscalls
 
+FIXME: not working for 64 bit (so far)
+
 
   email: L.Rubusch@gmx.ch
 
@@ -22,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/user.h>
 #if __x86_64__
 #include <sys/reg.h>
 #else
