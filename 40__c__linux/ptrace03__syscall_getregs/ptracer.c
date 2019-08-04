@@ -18,7 +18,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#if __x86_64__
+//#include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
+//#include <linux/ptrace.h>
+#include <sys/reg.h>
+#else
 #include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
+#endif
 #include <sys/syscall.h>
 #include <sys/user.h>
 
@@ -42,7 +48,31 @@ main( int argc, char** argv )
 		execl( "/bin/pwd", "pwd", NULL );
 	}else{
 		while( 1 ){
+#if __x86_64__
+			/* check if ptrace stopped child, or if it exited */
+			wait( &status );
+			if( WIFEXITED(status) ){
+				break;
+			}
 
+			orig_eax = ptrace( PTRACE_PEEKUSER, child, 4 * ORIG_RAX, NULL );
+			if( orig_eax == SYS_write ){
+				if( insyscall == 0 ){
+					/* syscall entry */
+					insyscall = 1;
+
+					/* PTRACE: get a handle on all registers */
+					ptrace( PTRACE_GETREGS, child, NULL, &regs );
+					fprintf( stderr, "parent: write called with %llu, %llu, %llu\n", regs.rbx, regs.rcx, regs.rdx );
+				}else{
+					/* syscall exit */
+					eax = ptrace( PTRACE_PEEKUSER, child, 4 * RAX, NULL );
+					fprintf( stderr, "parent: write returned with %lu\n", eax );
+					insyscall = 0;
+				}
+			}
+			ptrace( PTRACE_SYSCALL, child, NULL, NULL );
+#else
 			/* check if ptrace stopped child, or if it exited */
 			wait( &status );
 			if( WIFEXITED(status) ){
@@ -66,6 +96,7 @@ main( int argc, char** argv )
 				}
 			}
 			ptrace( PTRACE_SYSCALL, child, NULL, NULL );
+#endif
 		}
 	}
 	return 0;
