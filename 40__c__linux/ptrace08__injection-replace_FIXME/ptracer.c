@@ -31,7 +31,6 @@
 
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
-// FIXME process resumes with segmentations fault       
 
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -159,6 +158,7 @@ int main(int argc, char *argv[])
         /* detach process */
 	ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
 #else
+// FIXME for 32 bit, process resumes with segmentations fault       
         /* attach process */
 	ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
 	wait(NULL);
