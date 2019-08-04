@@ -8,6 +8,8 @@
   reading out registers one by one at syscall can be cumbersome, getregs fetches
   all registers at a single call
 
+FIXME: not working for 64 bit
+
 
   email: L.Rubusch@gmx.ch
 
@@ -18,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/user.h>
 #if __x86_64__
 //#include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
 //#include <linux/ptrace.h>
