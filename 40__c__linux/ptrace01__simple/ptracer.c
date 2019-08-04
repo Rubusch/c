@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/user.h>
 #if __x86_64__
 #include <sys/reg.h> /* on 64 bit, use this and ORIG_RAX */
 #else
