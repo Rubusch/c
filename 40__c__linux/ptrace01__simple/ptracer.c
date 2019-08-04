@@ -4,9 +4,6 @@
   set up child with PTRACE_TRACEME, in parent then PTRACE_PEEK for the registers
   and PTRACE_CONT to continue
 
-
-  author: Lothar Rubusch
-
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
@@ -28,15 +25,18 @@ main( int argc, char** argv )
 {
 	pid_t child;
 	long orig_eax;
-	if( 0 > (child=fork()) ){
+
+	if ( 0 > (child=fork()) ) {
 		perror("fork failed");
 
-	}else if( 0 == child ){
+	} else if ( 0 == child ) {
+		/* child */
 		ptrace( PTRACE_TRACEME, 0, NULL, NULL ); // ptrace, child
 		execl( "/bin/pwd", "ls", NULL );
 		puts("child: if we get here, something's wrong");
 
-	}else{
+	} else {
+		/* parent */
 		wait( NULL ); // wait call
 #if __x86_64__
 		orig_eax=ptrace( PTRACE_PEEKUSER, child, 4*ORIG_RAX, NULL ); // ptrace, fetch data (parent)
