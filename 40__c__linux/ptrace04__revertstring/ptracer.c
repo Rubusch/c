@@ -5,6 +5,7 @@
   PTRACE_PEEKDATA, revert it, and inject the reverted back into the child with
   PTRACE_POKEDATA
 
+
   email: L.Rubusch@gmx.ch
 
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
