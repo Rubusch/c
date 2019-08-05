@@ -35,6 +35,7 @@ script:
   - cd ./00__c__language-basics/argumentlist && make && ./*.exe && cd -
   - cd ./00__c__language-basics/2dim__pointer-to-array && make && ./*.exe && cd -
   - cd ./00__c__language-basics/allocation && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/function-pointer && make && ./*.exe && cd -
 
   ## interactive example
   - cd ./00__c__language-basics/input && make && cd -
