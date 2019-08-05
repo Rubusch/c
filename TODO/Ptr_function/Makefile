@@ -1,6 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = func_ptr.c
@@ -8,18 +8,18 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-Func_ptr: ${OBJECTS}
+funcptr.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: Func_ptr
+all: funcptr.exe
 
-clean: 
-	${RM} $(OBJECTS) Func_ptr.exe *~ core
+clean:
+	${RM} $(OBJECTS) funcptr.exe *~ core
 
 
