@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
   // pVoid -> char*
   printf("init pVoid to char*\n");
-  pVoid = (char*) pStr; 
+  pVoid = (char*) pStr;
   printf("\tpVoid = %p\tpStr = %p\n", pVoid, pStr);
   printf("\tpVoid = %s\tpStr = %s\n", (char*) pVoid, pStr);
   printf("\n");
@@ -32,14 +32,14 @@ int main(int argc, char** argv)
   // pVoid -> int
   printf("init pVoid to int:\n");
   pVoid = (int*) &iStr_size;
-  printf("\tpVoid = %p\tiStr_size = %x\n", pVoid, (unsigned int) &iStr_size);
+  printf("\tpVoid = %p\tiStr_size = %lx\n", pVoid, (unsigned long) &iStr_size);
   printf("\tpVoid = %d\tiStr_size = %d\n", *((int*) pVoid), iStr_size);
   printf("\n");
 
-  // change value for pVoid, pVoid is still int! 
+  // change value for pVoid, pVoid is still int!
   printf("change the value for pVoid (int*)\n");
   *((int*) pVoid) = 77;
-  printf("\tpVoid = %p\tiStr_size = %x\n", pVoid, (unsigned int) &iStr_size);
+  printf("\tpVoid = %p\tiStr_size = %lx\n", pVoid, (unsigned long) &iStr_size);
   printf("\tpVoid = %d\tiStr_size = %d\n", *((int*) pVoid), iStr_size);
 
 
