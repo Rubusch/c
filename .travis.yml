@@ -34,12 +34,13 @@ script:
   - cd ./00__c__language-basics/2dim__array-of-array && make && ./*.exe && cd -
   - cd ./00__c__language-basics/argumentlist && make && ./*.exe && cd -
   - cd ./00__c__language-basics/2dim__pointer-to-array && make && ./*.exe && cd -
-  - cd ./00__c__language-basics/function-pointer && make && ./*.exe && cd -
   - cd ./00__c__language-basics/void-pointer && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/allocation && make && ./*.exe && cd -
 
   ## interactive example
   - cd ./00__c__language-basics/input && make && cd -
-  - cd ./00__c__language-basics/allocation && make && cd -
+  - cd ./00__c__language-basics/function-pointer && make && cd -
+
 
 ## 10: techniques
   - cd ./10__c__language-techniques/dequeue && make && ./*.exe && cd -
