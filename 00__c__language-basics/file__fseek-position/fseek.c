@@ -29,9 +29,10 @@ int main(int argc, char** argv)
   char file[20]; memset(file, '\0', 20);
   long pos = 0;
 
-  // printf()/scanf()
   printf("Open file: ");
-  scanf("%s", file);
+  fgets(file, 20, stdin);
+  sscanf(file, "%s", file); // convert input
+
   fflush(stdin);
 
   if( (srcStream = fopen(file, "a+")) == NULL){

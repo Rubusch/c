@@ -19,4 +19,4 @@ fseek.exe: ${OBJECTS}
 all: fseek.exe
 
 clean:
-	-${RM} fseek.exe *.o *~ core
+	-${RM} fseek.exe *.o *~ core error.log
