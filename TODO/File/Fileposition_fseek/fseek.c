@@ -75,12 +75,12 @@ int main(int argc, char** argv)
   scanf("%1li", &pos); // li = long int
   fflush(stdin);
 
-  fseek(srcStream, 0L, SEEK_SET);
-  fseek(srcStream, 0L, SEEK_CUR);
+  fseek(srcStream, 0L, SEEK_SET); // same as rewind()
+  fseek(srcStream, 0L + pos, SEEK_CUR); // set to position in first line
 
   while( EOF != (c=getc(srcStream))) {
     putc(c, stdout);
   }
 
   return EXIT_SUCCESS;
-};
+}
