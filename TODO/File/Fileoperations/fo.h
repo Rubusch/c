@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <unistd.h> /* unlink */
 
 // FILE pointer to a stream
 int get_read_write_file_pointer(FILE**, char[]);

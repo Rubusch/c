@@ -233,7 +233,7 @@ int main(int argc, char** argv)
   puts("23. Temporary files - File: \"tmp.txt\"");
   char szTmp[] = "tmp.txt";
   memset(content, '\0', content_size);
-  printf("%i - Create temp file pointer (read/write): %s\n", create_tmp(&fp, szTmp), szTmp); // FIXME: tmp file?? file2???
+  printf("%i - Create temp file pointer (read/write): %s\n", create_tmp(&fp, szTmp), szTmp);
   printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text1, text1_size), szTmp);
   printf("%i - Reading from a file linewise\n", read_linewise(fp, &content, &content_size));
   printf("\tcontent:\n\'%s\'\n", content);
