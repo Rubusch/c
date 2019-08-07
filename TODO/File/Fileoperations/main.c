@@ -22,6 +22,7 @@ int main(int argc, char** argv)
   unsigned long int text2_size = sizeof(text2);
   unsigned long int text4_size = sizeof(text4);
   unsigned long int content_size = LIN_LEN;
+
   char *content = NULL;
   if( (content = calloc(content_size, sizeof(*content))) == NULL) return EXIT_FAILURE;
   strcpy(content,"");
@@ -29,7 +30,7 @@ int main(int argc, char** argv)
   printf("~~~ TEST SUITE FOR THE FILE OPERATIONS ~~~\n\n");
   printf("file1 = \'%s\'\nfile2 = \'%s\'\nfile3 = \'%s\'\ntext = %scontent = \'%s\' (empty)\n\n", file1, file2, file3, text1, content);
 
-  
+
   // write a file characterwise and create write file pointer - OK
   puts("1. write a file characterwise and create write file pointer");
   printf("%i - Get write file pointer\n", get_write_file_pointer(&fp, file1));
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
   printf("%i - Creating a new file\n", create_file(file2, LIN_LEN));
   printf("Done.\n\n");
   //*/
- 
+
   // copying unbuffered - OK
   puts("3. copying unbuffered");
   printf("%i - Copying %s to %s characterwise, unbuffered\n", copy_characterwise_unbuffered(file1, file2), file1, file2);
@@ -74,11 +75,11 @@ int main(int argc, char** argv)
   printf("%i - Close stream\n", close_stream(&fp));
   printf("Done.\n\n");
   //*/
- 
+
   //
   printf("\'%s\' contains now 3 \"lines\" more!\n\n", file2);
   //*/
-    
+
   // reading linewise and get read file pointer - 3 lines more in file2 - OK
   puts("7. reading linewise and get read file pointer - 3 lines more in file2");
   printf("%i - Get read file pointer to %s\n", get_read_file_pointer(&fp, file2), file2);
@@ -156,8 +157,9 @@ int main(int argc, char** argv)
   printf("content:\n\'%s\'\n\n", content);
   strcpy(content, "");
   printf("%i - Close stream\n", close_stream(&fp));
-  printf("Done.\n\n");  
+  printf("Done.\n\n");
   //*/
+
   /*
   // read without eof - OK
   puts("16. read without eof");
@@ -166,7 +168,7 @@ int main(int argc, char** argv)
   printf("content:\n\'%s\'\n\n", content);
   strcpy(content, "");
   printf("%i - Close stream\n", close_stream(&fp));
-  printf("Done.\n\n");  
+  printf("Done.\n\n");
   //*/
 
   //* File Data - OK
@@ -183,7 +185,7 @@ int main(int argc, char** argv)
   unsigned long file_size = 0;
   printf("Check File \"%s\"\n", file3);
   printf("%i - Get a read & write pointer\n", get_read_write_file_pointer(&fp, file3));
-  printf("%i - The file \'%s\' (function failed) ", filesize(fp, &file_size), file3);  
+  printf("%i - The file \'%s\' (function failed) ", filesize(fp, &file_size), file3);
   printf("contains %ld tokens.\n", file_size);
   printf("%i - Close stream\n", close_stream(&fp));
   printf("Done.\n\n");
@@ -205,7 +207,7 @@ int main(int argc, char** argv)
   int iError = check_error(fp);
   printf("%i - Check \'%s\' for errors:\'%s\'\n", iError, file3, ((check_error(fp) == 0)?("No errors!"):("containts errors")));
   printf("%i - Close stream\n", close_stream(&fp));
-  printf("Done.\n\n");  
+  printf("Done.\n\n");
   //*/
 
   //* Shredding file2 - OK
@@ -232,7 +234,7 @@ int main(int argc, char** argv)
   char szTmp[] = "tmp.txt";
   memset(content, '\0', content_size);
   printf("%i - Create temp file pointer (read/write): %s\n", create_tmp(&fp, szTmp), szTmp); // FIXME: tmp file?? file2???
-  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text1, text1_size), szTmp);  
+  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text1, text1_size), szTmp);
   printf("%i - Reading from a file linewise\n", read_linewise(fp, &content, &content_size));
   printf("\tcontent:\n\'%s\'\n", content);
   printf("%i - And close the \'%s\' file again\n", close_tmp(&fp), szTmp);

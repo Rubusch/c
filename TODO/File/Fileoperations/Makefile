@@ -14,11 +14,11 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-Fileoperations: ${OBJECTS}
+file.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: Fileoperations
+all: file.exe
 
 clean:
-	${RM} Fileoperations.exe ${OBJECTS} *~ *.txt core
+	${RM} file.exe.exe ${OBJECTS} *~ *.txt core
 
