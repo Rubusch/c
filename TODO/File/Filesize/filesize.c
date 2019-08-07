@@ -6,12 +6,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> /* memset() */
 
 
 int filesize(char file[FILENAME_MAX], long int* size){
   FILE* srcStream = NULL;
 
-  if( (srcStream = fopen(file, "r")) == NULL){
+  if (!size) return -1;
+
+  if( NULL == (srcStream = fopen(file, "r"))){
     fprintf(stderr, "Opening file %s failed!", file);
     return -1;
   }
@@ -26,13 +29,14 @@ int filesize(char file[FILENAME_MAX], long int* size){
 int main(int argc, char** argv)
 {
   long int size = 0;
-  char file[FILENAME_MAX];
+  char file[FILENAME_MAX]; memset(file,'\0', FILENAME_MAX);
 
   printf("Open file: ");
   scanf("%s", file);
 
-  if(filesize(file, &size))
+  if (filesize(file, &size)) {
     return EXIT_FAILURE;
+  }
 
   printf("The filesize is %ld\n", size);
 
