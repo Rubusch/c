@@ -32,10 +32,11 @@ int main(int argc, char** argv)
   char file[FILENAME_MAX]; memset(file,'\0', FILENAME_MAX);
 
   printf("open file: ");
-  if (0 != scanf("%s", file)) {
+  if (0 == scanf("%[a-zA-Z.]", file)) { // accept a-z, A-Z and also '.', e.g. enter 'text.txt' should work
     fprintf(stderr, "scanf failed!\n");
     return EXIT_FAILURE;
   }
+
 
   if (filesize(file, &size)) {
     return EXIT_FAILURE;
