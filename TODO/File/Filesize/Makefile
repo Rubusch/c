@@ -13,10 +13,10 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-file.exe: ${OBJECTS}
+filesize.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: file.exe
+all: filesize.exe
 
 clean:
-	-${RM} file.exe *~ *.o core
+	-${RM} filesize.exe *~ *.o core
