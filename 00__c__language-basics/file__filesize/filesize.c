@@ -31,14 +31,17 @@ int main(int argc, char** argv)
   long int size = 0;
   char file[FILENAME_MAX]; memset(file,'\0', FILENAME_MAX);
 
-  printf("Open file: ");
-  scanf("%s", file);
+  printf("open file: ");
+  if (0 != scanf("%s", file)) {
+    fprintf(stderr, "scanf failed!\n");
+    return EXIT_FAILURE;
+  }
 
   if (filesize(file, &size)) {
     return EXIT_FAILURE;
   }
 
-  printf("The filesize is %ld\n", size);
+  printf("the filesize is %ld\n", size);
 
   return EXIT_SUCCESS;
 }
