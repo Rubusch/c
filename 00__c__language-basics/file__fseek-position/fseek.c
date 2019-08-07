@@ -30,7 +30,10 @@ int main(int argc, char** argv)
   long pos = 0;
 
   printf("Open file: ");
-  fgets(file, 20, stdin);
+  if(NULL == fgets(file, 20, stdin)) {
+    fprintf(stderr, "input failed\n");
+    return EXIT_FAILURE;
+  }
   sscanf(file, "%s", file); // convert input
 
   fflush(stdin);
