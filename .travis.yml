@@ -36,6 +36,7 @@ script:
   - cd ./00__c__language-basics/2dim__pointer-to-array && make && ./*.exe && cd -
   - cd ./00__c__language-basics/void-pointer && make && ./*.exe && cd -
   - cd ./00__c__language-basics/allocation && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/HelloWorld && make && ./*.exe && cd -
 
   ## interactive example
   - cd ./00__c__language-basics/input && make && cd -
