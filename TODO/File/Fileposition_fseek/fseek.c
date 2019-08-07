@@ -5,12 +5,12 @@
    - scanf()/printf()
    - getc()/putc()
 
-  Pointers for the fseek() 
-   - SEEK_SET - start 
+  pointers for the fseek()
+   - SEEK_SET - start
    - SEEK_CUR - current position
    - SEEK_END - end
 
-  Position
+  position
    - 0L   - exactly this position
    - 10L  - 10 characters (Bytes) after of the pointer, e.g. SEEK_CUR
    - -10L - 10 characters (Bytes) ahead that position
@@ -19,13 +19,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> /* memset() */
 
 
 int main(int argc, char** argv)
 {
-  FILE *srcStream, *error;
-  int c;
-  char file[20];
+  FILE *srcStream=NULL, *error=NULL;
+  int c=-1;
+  char file[20]; memset(file, '\0', 20);
   long pos = 0;
 
   // printf()/scanf()
@@ -45,25 +46,28 @@ int main(int argc, char** argv)
 
   // getc()/putc() - set token '*' as end of input
   printf("Enter something, terminate with \'*\':\n");
-  while( (c=getc(stdin)) != '*')
+  while( '*' != (c=getc(stdin))) {
     putc(c, srcStream);
+  }
   printf("\n");
 
   // fseek() - set the pointer to start of file
   fseek(srcStream, 0L, SEEK_SET);
 
   // print whole file
-  while( (c=getc(srcStream)) != EOF)
+  while( EOF != (c=getc(srcStream))) {
     putc(c, stdout);
+  }
   printf("\n");
 
-  // fseek() - go 10 characters back 
+  // fseek() - go 10 characters back
   fseek(srcStream, -10L, SEEK_CUR);
- 
+
   // and re-print them on the screen
   printf("The last 10 characters where: ");
-  while( (c=getc(srcStream)) != EOF)
+  while( EOF != (c=getc(srcStream))) {
     putc(c, stdout);
+  }
   printf("\n");
 
   // set a number of characters from start to place the position
@@ -74,8 +78,9 @@ int main(int argc, char** argv)
   fseek(srcStream, 0L, SEEK_SET);
   fseek(srcStream, 0L, SEEK_CUR);
 
-  while( (c=getc(srcStream)) != EOF)
+  while( EOF != (c=getc(srcStream))) {
     putc(c, stdout);
+  }
 
   return EXIT_SUCCESS;
 };

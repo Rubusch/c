@@ -10,13 +10,13 @@ CC = gcc
 CFLAGS = -O -g -Wall -std=c99
 RM = rm -f
 
-.c.o: 
+.c.o:
 	${CC} -c ${CFLAGS} $<
 
-fseek: ${OBJECTS}
+fseek.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: fseek
+all: fseek.exe
 
 clean:
 	-${RM} fseek.exe *.o *~ core
