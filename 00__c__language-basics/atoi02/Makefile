@@ -10,7 +10,7 @@ OBJECTS = ${SOURCE:.c =.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -O2 -g -Wall -std=c99 -pedantic
+CFLAGS = -O2 -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
@@ -22,6 +22,6 @@ xtoi.exe: ${OBJECTS}
 all: xtoi.exe
 
 clean:
-	-${RM} xtoi.exe *.o core
+	-${RM} xtoi.exe *.o *~ core
 
 
