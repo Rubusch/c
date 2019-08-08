@@ -14,10 +14,10 @@ CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
 2-dim-array.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: 2-dim-array.exe
 
