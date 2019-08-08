@@ -8,7 +8,7 @@
 SOURCE = argumentlist.c
 OBJECTS = ${SOURCE:%.c=%.o}
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
