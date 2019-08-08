@@ -10,18 +10,16 @@ OBJECTS = ${SOURCE:.c =.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -O2 -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -o ${CFLAGS} $<
+	${CC} ${CFLAGS} -c ${SOURCE} $<
 
 atoi01.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: atoi01.exe
 
 clean:
 	-${RM} atoi01.exe *.o core
-
-

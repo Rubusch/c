@@ -12,7 +12,7 @@
 void output(char*, char*, char*);
 
 
-int main(char** argv, int argc)
+int main(int argc, char** argv)
 {
   char arr1[] = "foo";
   char arr2[] = "bar";
@@ -42,9 +42,9 @@ int main(char** argv, int argc)
 
   // presentation of arr4 - "f"
   printf("presentation of arr4 - \"f\"\n");
-  printf("\t%c\n", arr4);            // U
-  printf("\t%lu\n", arr4);            // 2280666 - address
-  printf("\t%lu\n", (unsigned long) arr4);      // 2280666 - same, just the adress
+  printf("\t%s\n", arr4);            // U
+  printf("\t%lX\n", (unsigned long) arr4);            // 2280666 - address
+  printf("\t%lX\n", (unsigned long) arr4);      // 2280666 - same, just the adress
   printf("\t%i\n", *arr4);           // 102     - ASCII enconding
   printf("\t%s\n", arr4);            // f       - character under ASCII
   printf("\t%i\n", atoi(arr4));      // 0       - 'f' is not a representation of a dec number
@@ -52,9 +52,9 @@ int main(char** argv, int argc)
 
   // presentation of the first character of arr4 - 'f'
   printf("presentation of arr4[0] - \'f\'\n");
-  printf("\t%c\n", &arr4[0]);        // U
-  printf("\t%lu\n", &arr4[0]);        // 2280666
-  printf("\t%lu\n", (unsigned long) &arr4[0]);  // 2280666
+  printf("\t%s\n", &arr4[0]);        // U
+  printf("\t%lX\n", (unsigned long) &arr4[0]);        // 2280666
+  printf("\t%lX\n", (unsigned long) &arr4[0]);  // 2280666
   printf("\t%i\n", arr4[0]);         // 102
   printf("\t%s\n", &arr4[0]);        // f
   printf("\t%i\n", atoi(&arr4[0]));  // 0
@@ -69,16 +69,17 @@ int main(char** argv, int argc)
   printf("READY.\n");
 
   return 0;
-};
+}
 
 
-void output(char* arr1, char* arr2, char* arr3){
-  if(arr1 > arr2) printf("\t%i. %s (%lu) > %s (%lu)\n", 1, arr1, arr1, arr2, arr2);
-  else printf("\t%i. %s (%i) <= %s (%i)\n", 1, arr1, arr1, arr2, arr2);
+void output(char* arr1, char* arr2, char* arr3)
+{
+  if(arr1 > arr2) printf("\t%i. %s (%lX) > %s (%lX)\n", 1, arr1, (unsigned long) arr1, arr2, (unsigned long) arr2);
+  else printf("\t%i. %s (%lX) <= %s (%lX)\n", 1, arr1, (unsigned long) arr1, arr2, (unsigned long) arr2);
 
-  if(arr2 > arr3) printf("\t%i. %s (%lu) > %s (%lu)\n", 2, arr2, arr2, arr3, arr3);
-  else printf("\t%i. %s (%i) <= %s (%i)\n", 2, arr2, arr2, arr3, arr3);
+  if(arr2 > arr3) printf("\t%i. %s (%lX) > %s (%lX)\n", 2, arr2, (unsigned long) arr2, arr3, (unsigned long) arr3);
+  else printf("\t%i. %s (%lX) <= %s (%lX)\n", 2, arr2, (unsigned long) arr2, arr3, (unsigned long) arr3);
 
-  if(arr1 > arr3) printf("\t%i. %s (%lu) > %s (%lu)\n", 3, arr1, arr1, arr3, arr3);
-  else printf("\t%i. %s (%i) <= %s (%i)\n", arr1, arr1, arr3, arr3);
-};
+  if(arr1 > arr3) printf("\t%i. %s (%lX) > %s (%lX)\n", 3, arr1, (unsigned long) arr1, arr3, (unsigned long) arr3);
+  else printf("\t%i. %s (%lX) <= %s (%lX)\n", 4, arr1, (unsigned long) arr1, arr3, (unsigned long) arr3);
+}
