@@ -7,11 +7,11 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -Werror -g -Wall -pedantic -std=c99
+CFLAGS = -g -Wall -Werror -pedantic -std=c99
 RM = rm -f
 
 .c.o:
-	${CC} -c ${SOURCE} $<
+	${CC} -c ${CFLAGS} ${SOURCE} $<
 
 pointer.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
