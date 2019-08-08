@@ -11,10 +11,10 @@ CFLAGS = -g -Wall -Werror -pedantic -std=c99
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} ${SOURCE} $<
+	${CC} ${CFLAGS} -c ${SOURCE} $<
 
 pointer.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: pointer.exe
 
