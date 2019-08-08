@@ -12,10 +12,10 @@ CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
 argumentlist.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: argumentlist.exe
 
