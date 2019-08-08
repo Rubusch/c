@@ -11,10 +11,10 @@ CFLAGS = -g -Wall -Werror -pedantic -std=c99
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
 Hello.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 clean:
 	${RM} ${OBJECTS} Hello.exe *~
