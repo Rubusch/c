@@ -14,10 +14,10 @@ CFLAGS = -O2 -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -o ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
 xtoi.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: xtoi.exe
 
