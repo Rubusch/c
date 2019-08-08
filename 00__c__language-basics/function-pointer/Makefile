@@ -12,10 +12,10 @@ CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
 funcptr.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: funcptr.exe
 
