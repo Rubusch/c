@@ -12,14 +12,14 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=gnu99
+CFLAGS = -g -Wall -Werror -std=gnu99
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
 input.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all:	input.exe
 
