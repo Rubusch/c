@@ -21,4 +21,4 @@ all: fseek.exe
 
 
 clean:
-	-${RM} fseek.exe *.o *~ core error.log
+	-${RM} fseek.exe *.o *~ core error.log text.txt
