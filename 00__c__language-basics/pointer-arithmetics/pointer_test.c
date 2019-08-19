@@ -20,10 +20,10 @@ void show_length(char arr[44], char *pArr, char **ppArr){
   printf("sizeof(*arr)/sizeof(char):\t%lu\n", sizeof(*arr)/sizeof(char));
   printf("strlen(arr):\t\t\t%lu plus 1 token \'\\0\'\n", strlen(arr));
   printf("\n");
-  printf("func()::arr:\t\t%lX\t\t\t\t\taddress of the content\n", (unsigned long) arr);
+  printf("func()::arr:\t\t\"%s\"\taddress of the content, interpreted as string by printf\n", arr);
   printf("&func()::arr:\t\t%lX\t\t\t\t\taddress of the poitner\n", (unsigned long) &arr);
   printf("*func()::arr:\t\t%i\t\t\t\t\t\tcontent of the pointer 'A' as int 65\n", *arr);
-  printf("&*func()::arr:\t\t\"%s\"\tsame as 'func()::arr', interpreted as string by printf\n", &*arr);
+  printf("&*func()::arr:\t\t\"%s\"\tsame as 'func()::arr'\n", &*arr);
   printf("\n");
   printf("conclusion:\t\taddress of target == address of pointer\n"); // conclusion
 
@@ -35,10 +35,10 @@ void show_length(char arr[44], char *pArr, char **ppArr){
   printf("sizeof(*pArr)/sizeof(char):\t%li\n", sizeof(*pArr)/sizeof(char));   // doesn't work - due to being a *ptr and no arr[]!!!
   printf("strlen(pArr):\t\t\t%li plus 1 token \'\\0\'\n", strlen(pArr));    // only this works with *ptr's!!!
   printf("\n");
-  printf("func()::pArr:\t\t%lX\taddress of the target\n", (unsigned long) pArr);
+  printf("func()::pArr:\t\t%s\taddress of the target, interpreted as string by printf\n", pArr);
   printf("&func()::pArr:\t\t%lX\t\t\t\t\taddress of the pointer\n", (unsigned long) &pArr);
   printf("*func()::pArr:\t\t%i\t\t\t\t\t\tcontent of the pointer as int\n", *pArr);
-  printf("&*func()::pArr:\t\t\"%s\"\tsame as 'func()::pArr', interpreted as string by printf\n", &*pArr);
+  printf("&*func()::pArr:\t\t\"%s\"\tsame as 'func()::pArr'\n", &*pArr);
   printf("\n");
   printf("conclusion:\t\taddress of pointer != address of target\n");
   printf("\t\t\tdoesn't work - due to being a *ptr and no arr[]!!!\n");
@@ -73,16 +73,18 @@ int main()
 
   printf("\n\n");
   printf("~~~~~arr[]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-  printf("arr[]:\t\t\"%s\"\n", arr);
+  printf("arr:\t\t\t\t\"%s\"\n", arr);
   printf("\n");
   printf("sizeof(arr)/sizeof(char):\t%li\n", sizeof(arr)/sizeof(char));
   printf("strlen(arr):\t\t\t%li plus 1 token \'\\0\'\n", strlen(arr));
   printf("\n");
-  printf("arr:\t\t%lX\tadress of first element, interpreted by printf\n", (unsigned long) arr);
-  printf("&arr:\t\t%lX\t\t\t\t\taddress of the pointer\n", (unsigned long) &arr);
-  printf("*arr:\t\t%i\t\t\t\t\t\tcontent of first pointer element 'A' as int '65'\n", *arr);
-  printf("&*arr:\t\t\"%s\"\tsame as 'arr'\n", &*arr);
+  printf("arr:\t\t\t\t\"%s\"\tprintf interprets a string, normally address of first character\n", arr);
+  printf("arr:\t\t\t\t%lX\t\t\t\t\taddress of the first character, same as '&arr'\n", (unsigned long) arr);
+  printf("&arr:\t\t\t\t%lX\t\t\t\t\taddress of the pointer (for array identical with content address)\n", (unsigned long) &arr);
+  printf("*arr:\t\t\t\t%i\t\t\t\t\t\tcontent of first pointer element '%c' which is as int '%i'\n", *arr, (char) *arr, *arr);
+  printf("*&arr or &*arr:\t\t\t\"%s\"\tsame as 'arr', points to %lX\n", &*arr, (unsigned long)&*arr);
 
+//*
   printf("\n\n");
   printf("~~~~~*pArr~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 
@@ -91,16 +93,18 @@ int main()
   pArr = malloc(arr_len);
   strncpy(pArr, arr, strlen(arr));
 
-  printf("*pArr:\t\t\"%s\"\n", pArr);
+  printf("*pArr:\t\t\t\t\"%s\"\n", pArr);
   printf("\n");
   printf("sizeof(*pArr)/sizeof(char):\t%li\n", sizeof(*pArr)/sizeof(char)); // doesn't work - due to being a *ptr and no arr[]!!!
   printf("strlen(pArr):\t\t\t%li plus 1 token \'\\0\'\n", strlen(pArr));  // only this works with *ptr's!!!
   printf("\n");
-  printf("pArr:\t\t%lX\tadress of first element, interpreted by printf\n", (unsigned long) pArr);
-  printf("&pArr:\t\t%lX\t\t\t\t\taddress of the pointer\n", (unsigned long) &pArr);
-  printf("*pArr:\t\t%i\t\t\t\t\t\tcontent of first pointer element 'A' as int '65'\n", *pArr);
-  printf("&*pArr:\t\t\"%s\"\tsame as 'pArr'\n", &*pArr);
+  printf("pArr:\t\t\t\t\"%s\"\tprintf interprets a string, normally address of first character\n", pArr);
+  printf("pArr:\t\t\t\t%lX\t\t\t\t\taddress of the first character, same as '&pArr'\n", (unsigned long) pArr);
+  printf("&pArr:\t\t\t\t%lX\t\t\t\t\taddress of the pointer\n", (unsigned long) &pArr);
+  printf("*pArr:\t\t\t\t%i\t\t\t\t\t\tcontent of first pointer element '%c' as int '%i'\n", *pArr, (char) *pArr, *pArr);
+  printf("*&pArr or &*pArr:\t\t\"%s\"\tsame as 'pArr', points to %lX\n", &*pArr, (unsigned long) &*pArr);
 
+/*
   printf("\n\n");
   printf("~~~~~**ppArr~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 
@@ -122,17 +126,19 @@ int main()
   printf("**ppArr:\t%i\t\t\t\t\t\tcontent of the pointer to char, \'A\' as int\n", **ppArr);
   printf("&**ppArr:\t\"%s\"\tcontent of the pointer to char (printf interpreted), referenced by the pointer to long int\n", &**ppArr);
   //*/
-  //*
+
+  /*
   printf("\n\n\n\n\n###1#show_length(arr)#########################\n\n\n\n\n");
   //  show_length(&arr, &arr, &arr); // TODO: test
   printf("Doesn't work - a variable can not be referenced as pointer to pointer\n"); // XXX
   //*/
 
-  //*
+  /*
   printf("\n\n\n\n\n###2#show_length(pArr)#########################\n\n\n\n\n");
   show_length(pArr, pArr, &pArr);
   //*/
 
+  /*
   printf("\n\n");
   printf("~~~3~show_length(ppArr)~~~~~~~~~~~~~~~~~~~~~~~~\n");
   show_length(*ppArr, *ppArr, ppArr);
