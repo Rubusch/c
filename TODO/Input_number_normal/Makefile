@@ -8,7 +8,7 @@
 # use -O, -O1, -O2 for optimization
 
 
-SOURCE = input_number_normal.c
+SOURCE = input.c
 OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
