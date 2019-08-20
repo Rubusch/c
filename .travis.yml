@@ -37,27 +37,29 @@ script:
   - cd ./00__c__language-basics/void-pointer && make && ./*.exe && cd -
   - cd ./00__c__language-basics/allocation && make && ./*.exe && cd -
   - cd ./00__c__language-basics/HelloWorld && make && ./*.exe && cd -
-  - cd ./00__c__language-basics/file__operations && make && ./*.exe && cd -
 
   ## interactive example
-  - cd ./00__c__language-basics/input && make && cd -
-  - cd ./00__c__language-basics/input__digit && make && cd -
-  - cd ./00__c__language-basics/input__number-fgets && make && cd -
-  - cd ./00__c__language-basics/input__number-fgetc && make && cd -
-  - cd ./00__c__language-basics/input__string && make && cd -
   - cd ./00__c__language-basics/function-pointer && make && cd -
-  - cd ./00__c__language-basics/file__filesize && make && cd -
-  - cd ./00__c__language-basics/file__fseek-position && make && cd -
 
 
 ## 10: techniques
   - cd ./10__c__language-techniques/dequeue && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/endianness && make && ./*.exe && cd -
+  - cd ./10__c__language-techniques/file__operations && make && ./*.exe && cd -
 
   ## interactive and/or need fixes
   - cd ./10__c__language-techniques/bintree__demo-TODO && make && cd -
   - cd ./10__c__language-techniques/bintree__single-linked-TODO && make && cd -
   - cd ./10__c__language-techniques/bitoperations-FIXME && make && cd -
+  - cd ./10__c__language-techniques/input && make && cd -
+  - cd ./10__c__language-techniques/input__digit && make && cd -
+  - cd ./10__c__language-techniques/input__number-fgets && make && cd -
+  - cd ./10__c__language-techniques/input__number-fgetc && make && cd -
+  - cd ./10__c__language-techniques/input__string && make && cd -
+  - cd ./10__c__language-techniques/input__choice && make && cd -
+  - cd ./10__c__language-techniques/file__filesize && make && cd -
+  - cd ./10__c__language-techniques/file__fseek-position && make && cd -
+
 
 
 ## 30: pthreads
