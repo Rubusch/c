@@ -41,6 +41,7 @@ script:
 
   ## interactive example
   - cd ./00__c__language-basics/input && make && cd -
+  - cd ./00__c__language-basics/input__digit && make && cd -
   - cd ./00__c__language-basics/function-pointer && make && cd -
   - cd ./00__c__language-basics/file__filesize && make && cd -
   - cd ./00__c__language-basics/file__fseek-position && make && cd -
