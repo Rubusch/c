@@ -25,9 +25,14 @@ void readnumber_fgets(unsigned int*, const unsigned int, const char*);
 
 
 // TOOL
+// returns
+// 0 == is number
+// 1 == is not a number
 int isnumber(const char* str, const unsigned int size)
 {
   char arr[size];
+
+  if (0 == size) return 1; // number was too long, thus size was zero
   memset(arr, '\0', size);
   strncpy(arr, str, size);
   arr[size-1] = '\0';
@@ -74,10 +79,7 @@ void readnumber_fgets(unsigned int* iVal, const unsigned int digits, const char*
     // input didn't contain '\n' - clean stdin and reset input
     if((size-1) <= idx){
       puts("input too long - will be reset");
-                                
-      printf("XXX '%s'\n", cTxt);   // XXX
-//      memset(cTxt, '\0', 1);// FIXME: segfaults                 
-
+      memset(cTxt, '\0', size);
       while('\n' != fgetc(stdin));
     }
 
