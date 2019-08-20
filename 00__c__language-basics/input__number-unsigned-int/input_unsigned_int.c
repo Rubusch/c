@@ -32,7 +32,7 @@ int isnumber(const char* str, const unsigned int size)
 {
   char arr[size];
 
-  if (0 == size) return 1; // number was too long, thus size was zero
+  if (0 == size) return 0; // number was too long, thus size was zero
   memset(arr, '\0', size);
   strncpy(arr, str, size);
   arr[size-1] = '\0';
