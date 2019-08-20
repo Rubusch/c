@@ -3,7 +3,7 @@
 # use -O, -O1, -O2 for optimization
 
 
-SOURCE = input_unsigned_int.c
+SOURCE = input.c
 OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
