@@ -1,6 +1,8 @@
-// input_switch.c
+// input.c
 /*
   demonstrates a switched input
+
+  @author: Lothar Rubusch
 //*/
 
 #include <stdio.h>
@@ -12,49 +14,11 @@ int isnumber(const char*, const unsigned int);
 void readdigit(unsigned int*, const char*);
 
 
-int main(int argc, char** argv)
-{
-  puts("READ A DIGIT FOR A SWITCH CASE SITUATION");
-
-  unsigned int run = 1;
-  unsigned int val = 0;
-  do{
-    // init
-    val = 0;
-
-    // read
-    readdigit(&val, "enter 1 or 2 ('0' to quit):");
-
-    switch (val){
-    case 0:
-      puts("'0' - exiting");
-      run = 0;
-      break;
-
-    case 1:
-      puts("input was '1'");
-      break;
-
-    case 2:
-      puts("input was '2'");
-      break;
-
-    default:
-      puts("false input - try again");
-      break;
-    }
-
-  }while(run);
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
-}
-
-
 // TOOL
 int isnumber(const char* str, const unsigned int size)
 {
   char arr[size];
+  if (0 == size) return 0;
   memset(arr, '\0', size);
   strncpy(arr, str, size);
   arr[size-1] = '\0';
@@ -93,6 +57,10 @@ void readdigit(unsigned int* iChr, const char* comment)
 
     }else{
       // '\n' still in stdin - clean up
+      if (-1 == fgetc(stdin)) {
+        perror("input was control character");
+        exit(EXIT_FAILURE); // EOT, ENQ, ...
+      }
       puts("input too long - will reset");
       memset(cChr, '\0', 3);
       while('\n' != fgetc(stdin));
@@ -106,4 +74,43 @@ void readdigit(unsigned int* iChr, const char* comment)
 
   // transform
   *iChr = atoi(cChr);
+}
+
+
+int main(int argc, char** argv)
+{
+  puts("READ A DIGIT FOR A SWITCH CASE SITUATION");
+
+  unsigned int run = 1;
+  unsigned int val = 0;
+  do{
+    // init
+    val = 0;
+
+    // read
+    readdigit(&val, "enter 1 or 2 ('0' to quit):");
+
+    switch (val){
+    case 0:
+      puts("'0' - exiting");
+      run = 0;
+      break;
+
+    case 1:
+      puts("input was '1'");
+      break;
+
+    case 2:
+      puts("input was '2'");
+      break;
+
+    default:
+      puts("false input - try again");
+      break;
+    }
+
+  }while(run);
+
+  puts("READY.");
+  exit(EXIT_SUCCESS);
 }
