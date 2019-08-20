@@ -5,10 +5,10 @@
   @license: GPLv3
   @2013-May-01
 
-  demonstrates the reading from the console, it reads a text and turns 
+  demonstrates the reading from the console, it reads a text and turns
   it into a valid integer value or continues asking
 
-  an alternative method reading in from stdin by fgets, the big problem 
+  an alternative method reading in from stdin by fgets, the big problem
   here is the '\n'
 //*/
 
@@ -22,19 +22,6 @@
 
 int isnumber(const char*, const unsigned int);
 void readnumber_fgets(unsigned int*, const unsigned int, const char*);
-
-
-int main(int argc, char** argv)
-{
-  // read in string and transform it into a number: fgets()
-  puts("\nALTERNATIVE POSSIBILITY TO READ IN A STRING");
-  unsigned int iTxt2 = 0;
-  readnumber_fgets(&iTxt2, TXT_SIZE, "enter a number up to 10 digits");
-  printf("the number was '%d'\n", iTxt2);
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
-}
 
 
 // TOOL
@@ -57,7 +44,7 @@ int isnumber(const char* str, const unsigned int size)
 }
 
 
-// READ
+// READ number, several digits
 void readnumber_fgets(unsigned int* iVal, const unsigned int digits, const char* comment)
 {
   if(NULL == comment){
@@ -77,7 +64,7 @@ void readnumber_fgets(unsigned int* iVal, const unsigned int digits, const char*
     puts(comment);
 
     // read in
-    fgets(cTxt, size, stdin); 
+    fgets(cTxt, size, stdin);
 
     // check if the read numbers contain '\n'
     unsigned int idx=0;
@@ -87,7 +74,10 @@ void readnumber_fgets(unsigned int* iVal, const unsigned int digits, const char*
     // input didn't contain '\n' - clean stdin and reset input
     if((size-1) <= idx){
       puts("input too long - will be reset");
-      memset(cTxt, '\0', size);
+                                
+      printf("XXX '%s'\n", cTxt);   // XXX
+//      memset(cTxt, '\0', 1);// FIXME: segfaults                 
+
       while('\n' != fgetc(stdin));
     }
 
@@ -95,4 +85,17 @@ void readnumber_fgets(unsigned int* iVal, const unsigned int digits, const char*
     cTxt[size-1] = '\0';
   }while(!isnumber(cTxt, strlen(cTxt)));
   *iVal = atoi(cTxt);
+}
+
+
+int main(int argc, char** argv)
+{
+  // read in string and transform it into a number: fgets()
+  puts("\nALTERNATIVE POSSIBILITY TO READ IN A STRING");
+  unsigned int iTxt2 = 0;
+  readnumber_fgets(&iTxt2, TXT_SIZE, "enter a number up to 10 digits");
+  printf("the number was '%d'\n", iTxt2);
+
+  puts("READY.");
+  exit(EXIT_SUCCESS);
 }

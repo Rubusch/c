@@ -1,6 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = input_number_alternative.c
@@ -8,18 +8,16 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
-input: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+input.exe: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
-all: input
+all: input.exe
 
-clean: 
-	${RM} $(OBJECTS) input *~ core
-
-
+clean:
+	${RM} $(OBJECTS) input.exe *~ core
