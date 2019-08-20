@@ -50,7 +50,7 @@ void readdigit(unsigned int* iVal, const char* comment)
     cChr[2] = '\0';
 
     // number?
-  }while(!isdigit(cChr[0]));
+  } while (!isdigit(cChr[0]));
 
   // transform
   *iVal = atoi(cChr);
