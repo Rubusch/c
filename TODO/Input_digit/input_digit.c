@@ -16,20 +16,10 @@
 void readdigit(unsigned int*, const char*);
 
 
-int main(int argc, char** argv)
-{
-  // read in one digit and transform it into an int: fgets()
-  puts("\nSTANDARD WAY TO READ IN ONE CHARACTER");
-  unsigned int iChr = 0;
-  readdigit(&iChr, "1. enter a one digit number");
-  printf("the number of one digit was '%d'\n", iChr);
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
-}
-
-
-// READ
+// READ a dingle digit
+// check for empty i.e. '\n'
+// check for characters
+// check for length
 void readdigit(unsigned int* iVal, const char* comment)
 {
   char cChr[3];
@@ -66,3 +56,15 @@ void readdigit(unsigned int* iVal, const char* comment)
   *iVal = atoi(cChr);
 }
 
+
+int main(int argc, char** argv)
+{
+  // read in one digit and transform it into an int: fgets()
+  puts("\nSTANDARD WAY TO READ IN ONE CHARACTER");
+  unsigned int iChr = 0;
+  readdigit(&iChr, "1. enter a one digit number");
+  printf("the number of one digit was '%d'\n", iChr);
+
+  puts("READY.");
+  exit(EXIT_SUCCESS);
+}
