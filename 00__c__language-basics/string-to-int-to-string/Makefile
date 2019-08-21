@@ -5,14 +5,14 @@
 SOURCE = string2int.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -std=gnu99 
+CFLAGS += -g -Wall -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
 string2int.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 all:	string2int.exe
 

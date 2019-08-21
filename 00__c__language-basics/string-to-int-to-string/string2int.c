@@ -15,13 +15,14 @@ int main( int argc, char** argv ){
   int anotherval = 0;
   char str[32]; memset( str, '\0', 32 );
 
-  // int to string
+  // int to string: sprintf()
   sprintf(str, "%d", val);
   printf( "char str '%s'\n", str );
 
-  // string to int
+  // string to int: atoi()
   anotherval = atoi( str );
   printf( "int value '%d'\n", anotherval );
 
   puts( "READY." );
+  return EXIT_SUCCESS;
 }
