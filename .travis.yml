@@ -37,6 +37,7 @@ script:
   - cd ./00__c__language-basics/void-pointer && make && ./*.exe && cd -
   - cd ./00__c__language-basics/allocation && make && ./*.exe && cd -
   - cd ./00__c__language-basics/HelloWorld && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/string-to-int-to-string && make && ./*.exe && cd -
 
   ## interactive example
   - cd ./00__c__language-basics/function-pointer && make && cd -
