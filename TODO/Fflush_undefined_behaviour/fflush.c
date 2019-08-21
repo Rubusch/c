@@ -1,66 +1,59 @@
 // fflush.c
 /*
-fflush() can lead to undefined behaviour!!!
+  fflush() can lead to undefined behaviour!!!
 
 
-#include <stdio.h>
-int fflush(FILE *stream);
-Description
+  #include <stdio.h>
+  int fflush(FILE *stream);
 
-If stream points to an output stream or an update stream in which the most recent
-operation was not input, the fflush function causes any unwritten data for that stream
-to be delivered to the host environment to be written to the file; otherwise, the behavior is
-undefined.
+  As per C standard, using fflush(stdin) has undefined behavior, some compilers
+  provide an implementation to use it
 
-If stream is a null pointer, the fflush function performs this flushing action on all
-streams for which the behavior is defined above.
-Returns
-
-The fflush function sets the error indicator for the stream and returns EOF if a write
-error occurs, otherwise it returns zero.
+  The fflush function sets the error indicator for the stream and returns EOF if
+  a write error occurs, otherwise it returns zero.
 //*/
 
+#include <stdio.h> /* fflush() */
+#include <string.h> /* memset() */
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <unistd.h> /* sleep() */
 
-#define STR_DIGITS 3
-#define ENTER_DIGITS 7
+
+#define STRSIZ 20
 
 int main(int argc, char** argv)
 {
-  fprintf(stderr, "enter %d digits, the variable has %d\n", ENTER_DIGITS, STR_DIGITS);
-  fprintf(stderr, "hence %d - %d - 2 digits will stay in the stdin stream (the 2 is for \"\\n\\0\")\n", ENTER_DIGITS, STR_DIGITS); 
+  puts("stdin: enter some text, end with ENTER");
 
-  // read
-  char str[STR_DIGITS]; 
-  memset(str, '\0', STR_DIGITS);
-  fgets(str, STR_DIGITS, stdin); 
-
-  // in case check if '\n' was read from the input stream
-  unsigned int idx=0;
-  for(idx=0; idx<STR_DIGITS; ++idx){
-    if(str[idx] == '\n') 
-      break;
-  }
-
-  // cleaning up
-  if(idx >= STR_DIGITS){
-    puts("no '\\n' was read from stdin - flushing");
+  char str[STRSIZ]; memset(str, '\0', sizeof(str));
+  for (int idx=0; idx<2; ++idx) {
+    scanf("%[^\n]s", str); // read input, until \n
+    fprintf(stdout, "read: '%s'\n", str);
+//    fflush(stdin); // can have undefined behavior, depends on compiler
+    // alternative method:
     int c;
     while ((c = getchar()) != EOF && c != '\n');
-  }else{
-    puts("a '\\n' already was read from stdin");
+    memset(str, '\0', sizeof(str));
   }
+  puts("\n");
 
-  // finalize the string
-  str[STR_DIGITS-1] = '\0';
-   
+  puts("stdout: reversed order between buffered and unbuffered stream");
+  char buf[BUFSIZ]; memset(buf, '\0', sizeof(buf));
+  fprintf(stdout, "turn buffer on\n");
+  setvbuf(stdout, buf, _IOFBF, BUFSIZ); // setup buffer for stdout to BUFSIZ
 
-  /*
-    the next prompt for an input will wait!
-  //*/
-  
-  puts("READY.");
+  fprintf(stdout, "1. ipsum lorum primeiro\n");
+  fflush(stdout); // flush - comes at once, then the 'big task'
+
+  fprintf(stdout, "2. ipsum lorum segundo (buffered stdout)\n");
+//  fflush(stdout); // flush - turn this on, for order: 1-2-3
+
+  fprintf(stderr, "3. sleeping (message on stderr)\n");
+  sleep(5); // a 'big task'
+
+
+  // the output order will be: 1-3-2, since 3 is unbuffered and 2 will wait on
+  // the 'big task' (i.e. sleep) to finish
+
   exit(EXIT_SUCCESS);
 }
