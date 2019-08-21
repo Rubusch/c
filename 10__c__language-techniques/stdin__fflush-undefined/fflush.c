@@ -2,13 +2,6 @@
 /*
   fflush(stdin) can lead to undefined behaviour!!!
 
-
-  #include <stdio.h>
-  int fflush(FILE *stream);
-
-  As per C standard, using fflush(stdin) has undefined behavior, some compilers
-  provide an implementation to use it
-
   The fflush function sets the error indicator for the stream and returns EOF if
   a write error occurs, otherwise it returns zero.
 //*/
