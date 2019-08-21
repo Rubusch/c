@@ -52,10 +52,10 @@ script:
   - cd ./10__c__language-techniques/bintree__single-linked-TODO && make && cd -
   - cd ./10__c__language-techniques/bitoperations-FIXME && make && cd -
   - cd ./10__c__language-techniques/input && make && cd -
-  - cd ./10__c__language-techniques/input__digit && make && cd -
+  - cd ./10__c__language-techniques/input__fgets-digit && make && cd -
   - cd ./10__c__language-techniques/input__fgets-number && make && cd -
   - cd ./10__c__language-techniques/input__fgetc-number && make && cd -
-  - cd ./10__c__language-techniques/input__string && make && cd -
+  - cd ./10__c__language-techniques/input__fgetc-string && make && cd -
   - cd ./10__c__language-techniques/input__choice && make && cd -
   - cd ./10__c__language-techniques/file__filesize && make && cd -
   - cd ./10__c__language-techniques/file__fseek-position && make && cd -
