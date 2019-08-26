@@ -62,6 +62,7 @@ script:
   - cd ./10__c__language-techniques/file__filesize && make && cd -
   - cd ./10__c__language-techniques/file__fseek-position && make && cd -
   - cd ./10__c__language-techniques/stdin__fflush-undefined && make && cd -
+  - cd ./10__c__language-techniques/file__fsetpos && make && cd -
 
 
 ## 30: pthreads
