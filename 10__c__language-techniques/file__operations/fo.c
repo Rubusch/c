@@ -699,7 +699,6 @@ int create_tmp(FILE** fp, char szTmp[L_tmpnam])
 
   if(*fp != NULL) return -1;
   if(szTmp == NULL){
-
     strncpy(szTmp,"/tmp/tmpFile-XXXXXX",21);
     if( 0 > (fd = mkstemp(szTmp))) {
       fprintf(stderr, "mkstemp() - Failed!\n");

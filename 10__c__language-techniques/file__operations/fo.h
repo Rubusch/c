@@ -8,7 +8,6 @@
 
 #define _GNU_SOURCE
 #include <stddef.h>
-
 #endif
 
 #include <stdio.h>
@@ -27,7 +26,7 @@ int get_append_file_pointer(FILE**, char[]);
 int close_stream(FILE**);
 
 // reading from a file stream
-int read_char(FILE*, char**, unsigned long int*); 
+int read_char(FILE*, char**, unsigned long int*);
 int read_without_spaces(FILE*, char**, unsigned long int*);
 int read_linewise(FILE*, char**, unsigned long int*);
  int read_blockwise(FILE*, char*, const unsigned int);
