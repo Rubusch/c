@@ -7,16 +7,17 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -O -g -Wall -std=c99
+CFLAGS = -g -Wall -Werror -std=c99
 RM = rm -f
 
-.c.o: 
-	${CC} -c ${CFLAGS} $<
+.c.o:
+	${CC} ${CFLAGS} -c $<
 
 fsetposition.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+	cp -f template.txt text.txt
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
 all: fsetposition.exe
 
 clean:
-	${RM} fsetposition.exe *~ *.o core
+	${RM} fsetposition.exe *~ *.o core error.log text.txt
