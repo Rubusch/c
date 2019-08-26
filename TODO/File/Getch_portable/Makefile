@@ -7,16 +7,16 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -O -g -Wall -std=c99
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
-opengetch: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+opengetch.exe: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
-all: opengetch
+all: opengetch.exe
 
 clean:
-	-${RM} opengetch *.o *~ core
+	-${RM} opengetch.exe *.o *~ core
