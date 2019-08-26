@@ -22,6 +22,47 @@
 #include <string.h> /* memset() */
 
 
+// READ INPUT via fgetc
+void readstring(char* cTxt, const unsigned int txtSize, const char* comment)
+{
+  if(NULL == comment){
+    perror("text is NULL");
+    return;
+  }
+  if(NULL == cTxt){
+    perror("iTxt is NULL");
+    return;
+  }
+
+  do{
+    // reset
+    memset(cTxt, '\0', txtSize);
+    puts(comment);
+
+    // read in
+    unsigned int c;
+    unsigned int idx=0;
+
+    // in case of exceeding the size of the variable - put a '\0' at the end
+    // and read until '\n', but don't store the characters for cleaning the
+    // stream
+    for (idx=0; '\n' != (c = fgetc(stdin)); ++idx) {
+      if ((txtSize-1) > idx) {
+        cTxt[idx] = c;
+      } else if ((txtSize-1) == idx) {
+	puts("input too long - will be reset");
+	memset(cTxt, '\0', txtSize);
+        fflush(stdin);
+	// or cut here:
+	//cTxt[idx] = '\0';
+      } else if (-1 == c) { // EOT, ENQ, ...
+        perror("input was control character");
+        exit(EXIT_FAILURE);
+      }
+    }
+  } while (0 == strlen(cTxt));
+}
+
 int main(int argc, char** argv)
 {
   FILE *srcStream=NULL, *error=NULL;
@@ -29,14 +70,7 @@ int main(int argc, char** argv)
   char file[20]; memset(file, '\0', 20);
   long pos = 0;
 
-  printf("Open file: ");
-  if(NULL == fgets(file, 20, stdin)) {
-    fprintf(stderr, "input failed\n");
-    return EXIT_FAILURE;
-  }
-  sscanf(file, "%s", file); // convert input
-
-  fflush(stdin);
+  readstring(file, 20, "Open file: ");
 
   if( (srcStream = fopen(file, "a+")) == NULL){
     if( (error = fopen("error.log", "a+")) != NULL){
