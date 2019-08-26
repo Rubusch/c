@@ -35,6 +35,7 @@ int create_tmp(FILE** fp, char szTmp[L_tmpnam])
 int create_tmp(FILE** fp, char szTmp[L_tmpnam])
 {
   if (NULL == szTmp) {
+fprintf(stderr, "XXX szTmp was NULL\n");
     strncpy(szTmp, "/tmp/tmpFile-XXXXXX", 21); // TODO szTmp[L_tmpnam] ???
     if (0 > mkstemp(szTmp)) {
       fprintf(stderr, "mkstemp() - Failed!\n");
@@ -49,6 +50,7 @@ int create_tmp(FILE** fp, char szTmp[L_tmpnam])
     }
 
   } else {
+fprintf(stderr, "XXX szTmp was NOT NULL, '%s'\n", szTmp);
     if (NULL == (*fp = tmpfile())) {
       fprintf(stderr, "tmpfile() - Failed!\n");
       return -1;
@@ -84,7 +86,7 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
 	&& (idxContent < CONTENT_SIZE)
 	&& ((bufLine[idxLine] = *(pData++)) != '\0')) {
 
-    if (idxLine >= BUFSIZ){
+    if (idxLine >= BUFSIZ) {
       fprintf(stderr, "fo::write_linewise(FILE*, char*, const unsigned long) - Failed!\n");
       return -1;
     }
@@ -92,10 +94,12 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
     if ( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
 	|| (*(pData+1) == '\0' )) {
       bufLine[idxLine+1] = '\0';
+fprintf(stderr, "AAA fputs bufLine '%s'!\n", bufLine);            
       fputs(bufLine, fp); // write line
       break;
 
     }else if(bufLine[idxLine] == '\n'){
+fprintf(stderr, "BBB fputs bufLine '%s'!\n", bufLine);            
       fputs(bufLine, fp); // write line
       idxLine = 0;
     }else{
@@ -122,9 +126,14 @@ int read_nth_line(FILE* fp,  char* line, const unsigned long int LINE_SIZE, cons
   rewind(fp); // reset filestream
   char temp[LINE_SIZE];
   int cnt=0;
-  for(cnt = 0; cnt < LINE_NUMBER - 1; ++cnt)
-    if(fgets(temp, LINE_SIZE, fp) == NULL) return -1; 
-  if(fgets(temp, LINE_SIZE, fp) == NULL) return -1;
+  for (cnt = 0; cnt < LINE_NUMBER - 1; ++cnt) {
+    if (fgets(temp, LINE_SIZE, fp) == NULL) {
+      return -1;
+    }
+  }
+  if (fgets(temp, LINE_SIZE, fp) == NULL) {
+    return -1;
+  }
   strcat(line, temp);
 
   return 0;
@@ -153,6 +162,7 @@ int main()
 
   strcpy(content,"");
   char szTmp[] = "tmp.txt";
+//  char szTmp[] = "/tmp/tmpFile-XXXXXX";
 
   // create FILE*
   printf("%i - Create temp file pointer (read/write): %s\n", create_tmp(&fp, szTmp), szTmp);
