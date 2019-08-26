@@ -58,13 +58,7 @@ int main(int argc, char** argv)
   char file[FILENAME_MAX];
   fpos_t pos;
 
-/*
-  printf("Open file: ");
-  scanf("%s", file);
-/*/
   readstring(file, FILENAME_MAX, "Open file: ");
-// */
-
   if( (srcStream = fopen(file, "r")) == NULL){
     fprintf(stderr, "Opening %s failed!\n", file);
     return EXIT_FAILURE;
@@ -75,33 +69,27 @@ int main(int argc, char** argv)
 
   // fpos_t is not necessarily a scalar (can't be simply typedef'd to something printable)
   // the hex content is printable, though
-/*
-  printf("Position (originally): %lu\n\n", (unsigned long) pos);
-/*/
-  printf("Position (originally): 0x");
+  printf("Position (originally): \t0x");
   for (size_t idx=0; idx < sizeof(pos); ++idx) {
     printf("%02X", ((unsigned char *) &pos)[idx]);
   }
   printf("\n");
-//*/    
 
 
   while((c=getc(srcStream)) != EOF)
     putc(c, stdout);
   printf("\n");
-  printf("last position: %ld\n\n", ftell(srcStream));
+  printf("last position in file: %ld\n\n", ftell(srcStream));
 
   // fsetpos() - reset to the original position
   fsetpos(srcStream, &pos);
-/*
-  printf("Position (again): %lu\n\n", (unsigned long) pos);
-/*/
-  printf("Position (again): 0x");
+// NOTE: this is actually the same position as before
+  printf("Position (again): \t0x");
   for (size_t idx=0; idx < sizeof(pos); ++idx) {
     printf("%02X", ((unsigned char *) &pos)[idx]);
   }
   printf("\n");
-//*/    
+
 
   return EXIT_SUCCESS;
 };
