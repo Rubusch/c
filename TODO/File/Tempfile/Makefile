@@ -7,16 +7,16 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
-tf: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+tf.exe: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
-all: tf
+all: tf.exe
 
 clean:
 	${RM} tf.exe ${OBJECTS} *~ *.txt core
