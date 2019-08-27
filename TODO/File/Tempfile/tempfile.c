@@ -4,10 +4,13 @@
 #define _GNU_SOURCE
 
 #include <stdlib.h> /* mkstemp() */
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h> /* BUFSIZ = 8912 */
+#include <string.h> /* memset() */
 
 #include <unistd.h> /* unlink */
+
+//#define DEBUG 1
+
 
 /*
 // DEPRECATED!!!
@@ -70,10 +73,12 @@ int close_tmp(FILE** fp)
 }
 
 
-int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE)
+int write_linewise(FILE* fp, char* content, const unsigned long CONTENT_SIZE)
 {
   if(fp == NULL) return -1;
   if(content == NULL) return -1;
+
+fprintf(stderr, "%s( 0x%lX, '%s', %lu )\n", __func__, (unsigned long) fp, content, CONTENT_SIZE);
 
   char bufLine[BUFSIZ];
   int idxLine = 0;
@@ -94,12 +99,10 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
     if ( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
 	|| (*(pData+1) == '\0' )) {
       bufLine[idxLine+1] = '\0';
-fprintf(stderr, "AAA fputs bufLine '%s'!\n", bufLine);            
       fputs(bufLine, fp); // write line
       break;
 
     }else if(bufLine[idxLine] == '\n'){
-fprintf(stderr, "BBB fputs bufLine '%s'!\n", bufLine);            
       fputs(bufLine, fp); // write line
       idxLine = 0;
     }else{
@@ -107,7 +110,7 @@ fprintf(stderr, "BBB fputs bufLine '%s'!\n", bufLine);
     }
     ++idxContent;
   }
-  fputs("\n\0", fp); // tailing linefeed + linebreak
+//  fputs("\n\0", fp); // tailing linefeed + linebreak
   return 0;
 }
 
@@ -116,11 +119,11 @@ int read_nth_line(FILE* fp,  char* line, const unsigned long int LINE_SIZE, cons
 {
 #ifdef DEBUG
   printf("\tfo::read_nth_line(*fp, *line, LINE_SIZE, LINE_NUMBER)\n");
-  printf("\t%i - fp == NULL\n", (fp == NULL));
-  printf("\t%i - &*fp\n", &*fp);
-  printf("\t%i - line == NULL\n", (line == NULL));
-  printf("\t%i - LINE_SIZE\n", LINE_SIZE);
-  printf("\t%i - LINE_NUMBER\n", LINE_NUMBER);
+  printf("\tfp == NULL: %s\n", (fp == NULL)?"true":"false");
+  printf("\t0x%lX - &*fp\n", (unsigned long)&*fp);
+  printf("\tline == NULL: %s\n", (line == NULL)?"true":"false");
+  printf("\t%li - LINE_SIZE\n", LINE_SIZE);
+  printf("\t%li - LINE_NUMBER\n", LINE_NUMBER);
 #endif
   if(fp == NULL) return -1;
   rewind(fp); // reset filestream
@@ -149,20 +152,21 @@ int main()
 
   char text1[] = "Jack and Jill went up the hill to fetch a pail of water\n";
   char text2[] = "Jack fell down and broke his crown\nAnd Jill came tumbling after.\n";
-  char text3[] = "Up got Jack, and home did trot\nAs fast as he could caper\n";
-  char text4[] = "He went to bed and bound his head\nWith vinegar and brown paper.\n";
+//  char text3[] = "Up got Jack, and home did trot\nAs fast as he could caper\n";
+//  char text4[] = "He went to bed and bound his head\nWith vinegar and brown paper.\n";
 
   unsigned long int text1_size = sizeof(text1);
   unsigned long int text2_size = sizeof(text2);
-  unsigned long int text3_size = sizeof(text3);
-  unsigned long int text4_size = sizeof(text4);
+//  unsigned long int text3_size = sizeof(text3);
+//  unsigned long int text4_size = sizeof(text4);
   unsigned long int content_size = 2 * BUFSIZ;
 
   char *content = malloc(content_size*sizeof(char));
 
   strcpy(content,"");
-  char szTmp[] = "tmp.txt";
-//  char szTmp[] = "/tmp/tmpFile-XXXXXX";
+//  char szTmp[32]; memset(szTmp, '\0', 32);
+//  strcpy(szTmp, "tmp.txt");
+  char szTmp[] = "/tmp/tmpFile-XXXXXX";
 
   // create FILE*
   printf("%i - Create temp file pointer (read/write): %s\n", create_tmp(&fp, szTmp), szTmp);
@@ -170,13 +174,25 @@ int main()
   // write the lines
   printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text1, text1_size), szTmp);
   printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text2, text2_size), szTmp);
-  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text3, text3_size), szTmp);
-  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text4, text4_size), szTmp);
+//  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text3, text3_size), szTmp);
+//  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text4, text4_size), szTmp);
+
+
+//exit( EXIT_SUCCESS );// XXX
 
   // read the nth line
-  printf("%i - Read the %i. line (first line index: 1) of \'%s\'\n", read_nth_line(fp, content, content_size, 2), 2, szTmp); // FIXME
+//  printf("%i - Read the %i. line (first line index: 1) of \'%s\'\n", read_nth_line(fp, content, content_size, 2), 2, szTmp); // FIXME
+  printf("%i - Read the %i. line (first line index: x) of \'%s\'\n", read_nth_line(fp, content, content_size, 2), 2, szTmp); // FIXME
   printf("content:\n\'%s\'\n", content);
   strcpy(content,"");
+
+  puts("XXX");
+  for (int idx=0; idx<8; ++idx) {
+    read_nth_line(fp, content, content_size, idx);
+    fprintf(stderr, "XXX: %i:'%s'\n", idx, content);
+    strcpy(content, "");
+  }
+  puts("/XXX");
 
   // close the tmp file
   printf("%i - And close the \'%s\' file again\n", close_tmp(&fp), szTmp);
