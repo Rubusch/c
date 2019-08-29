@@ -78,7 +78,7 @@ int write_linewise(FILE* fp, char* content, const unsigned long CONTENT_SIZE)
   if(fp == NULL) return -1;
   if(content == NULL) return -1;
 
-fprintf(stderr, "%s( 0x%lX, '%s', %lu )\n", __func__, (unsigned long) fp, content, CONTENT_SIZE);
+//fprintf(stderr, "%s( 0x%lX, '%s', %lu )\n", __func__, (unsigned long) fp, content, CONTENT_SIZE);
 
   char bufLine[BUFSIZ];
   int idxLine = 0;
@@ -89,7 +89,9 @@ fprintf(stderr, "%s( 0x%lX, '%s', %lu )\n", __func__, (unsigned long) fp, conten
   rewind(fp); // reset filestream
   while ((idxLine < BUFSIZ)
 	&& (idxContent < CONTENT_SIZE)
-	&& ((bufLine[idxLine] = *(pData++)) != '\0')) {
+//	&& ((bufLine[idxLine] = *pData) != '\0')) {
+	&& ((bufLine[idxLine] = *pData++) != '\0')) {
+//	&& ((bufLine[idxLine] = *(pData++)) != '\0')) {
 
     if (idxLine >= BUFSIZ) {
       fprintf(stderr, "fo::write_linewise(FILE*, char*, const unsigned long) - Failed!\n");
@@ -98,16 +100,17 @@ fprintf(stderr, "%s( 0x%lX, '%s', %lu )\n", __func__, (unsigned long) fp, conten
 
     if ( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
 	|| (*(pData+1) == '\0' )) {
-      bufLine[idxLine+1] = '\0';
+//      bufLine[idxLine+1] = '\0';
       fputs(bufLine, fp); // write line
-      break;
+//      break;
 
-    }else if(bufLine[idxLine] == '\n'){
-      fputs(bufLine, fp); // write line
-      idxLine = 0;
+//    }else if(bufLine[idxLine] == '\n'){
+//      fputs(bufLine, fp); // write line
+//      idxLine = 0;
     }else{
       ++idxLine;
     }
+//    pData++;
     ++idxContent;
   }
 //  fputs("\n\0", fp); // tailing linefeed + linebreak
