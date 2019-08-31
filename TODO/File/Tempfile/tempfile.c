@@ -96,26 +96,21 @@ int write_linewise(FILE* fp, char* content, const unsigned long CONTENT_SIZE)
 // idxLine, idx within the line until '\n', then reset to '0'
 // idxContent, idx until end of text
 
-    if (idxLine >= BUFSIZ) {
-      fprintf(stderr, "fo::write_linewise(FILE*, char*, const unsigned long) - Failed!\n");
-      return -1;
-    }
-
-    if ( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
-	|| (*(pData+1) == '\0' )) {
+//    if ( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
+    if ( (idxContent == CONTENT_SIZE-2) || (*(pData+1) == '\0' )) {
 //      bufLine[idxLine+1] = '\0';
       bufLine[idxContent+1] = '\0';
       fputs(bufLine, fp); // write line
-      break;
+//      break;
 
-//    }else if(bufLine[idxLine] == '\n'){
-    }else if(bufLine[idxContent] == '\n'){
-      fputs(bufLine, fp); // write line
-      idxLine = 0;
-    }else{
-      ++idxLine;
+////    }else if(bufLine[idxLine] == '\n'){
+//    }else if(bufLine[idxContent] == '\n'){
+//      fputs(bufLine, fp); // write line
+//      idxLine = 0;
+//    }else{
+//      ++idxLine;
     }
-//    pData++;
+
     ++idxContent;
   }
 //  fputs("\n\0", fp); // tailing linefeed + linebreak
@@ -159,12 +154,12 @@ int main()
   fp = malloc(sizeof(FILE));
 
   char text1[] = "Jack and Jill went up the hill to fetch a pail of water\n";
-  char text2[] = "Jack fell down and broke his crown\nAnd Jill came tumbling after.\n";
+//  char text2[] = "Jack fell down and broke his crown\nAnd Jill came tumbling after.\n";
 //  char text3[] = "Up got Jack, and home did trot\nAs fast as he could caper\n";
 //  char text4[] = "He went to bed and bound his head\nWith vinegar and brown paper.\n";
 
   unsigned long int text1_size = sizeof(text1);
-  unsigned long int text2_size = sizeof(text2);
+//  unsigned long int text2_size = sizeof(text2);
 //  unsigned long int text3_size = sizeof(text3);
 //  unsigned long int text4_size = sizeof(text4);
   unsigned long int content_size = 2 * BUFSIZ;
@@ -181,7 +176,7 @@ int main()
 
   // write the lines
   printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text1, text1_size), szTmp);
-  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text2, text2_size), szTmp);
+//  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text2, text2_size), szTmp);
 //  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text3, text3_size), szTmp);
 //  printf("%i - Append some text to the \'%s\' (linewise)\n", write_linewise(fp, text4, text4_size), szTmp);
 
