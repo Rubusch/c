@@ -86,12 +86,15 @@ int write_linewise(FILE* fp, char* content, const unsigned long CONTENT_SIZE)
   char *pData = &content[0];
   strcpy(bufLine, "");
 
-  rewind(fp); // reset filestream
+//  rewind(fp); // reset filestream
+// TODO why?
   while ((idxLine < BUFSIZ)
 	&& (idxContent < CONTENT_SIZE)
-//	&& ((bufLine[idxLine] = *pData) != '\0')) {
-	&& ((bufLine[idxLine] = *pData++) != '\0')) {
-//	&& ((bufLine[idxLine] = *(pData++)) != '\0')) {
+//	&& ((bufLine[idxLine] = *pData++) != '\0')) {
+	&& ((bufLine[idxContent] = *pData++) != '\0')) {
+
+// idxLine, idx within the line until '\n', then reset to '0'
+// idxContent, idx until end of text
 
     if (idxLine >= BUFSIZ) {
       fprintf(stderr, "fo::write_linewise(FILE*, char*, const unsigned long) - Failed!\n");
@@ -101,12 +104,14 @@ int write_linewise(FILE* fp, char* content, const unsigned long CONTENT_SIZE)
     if ( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n'))
 	|| (*(pData+1) == '\0' )) {
 //      bufLine[idxLine+1] = '\0';
+      bufLine[idxContent+1] = '\0';
       fputs(bufLine, fp); // write line
-//      break;
+      break;
 
 //    }else if(bufLine[idxLine] == '\n'){
-//      fputs(bufLine, fp); // write line
-//      idxLine = 0;
+    }else if(bufLine[idxContent] == '\n'){
+      fputs(bufLine, fp); // write line
+      idxLine = 0;
     }else{
       ++idxLine;
     }
