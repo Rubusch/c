@@ -1,4 +1,4 @@
-// fo.h
+/* fo.h */
 
 
 #ifndef FILEOPERATIONS

@@ -397,8 +397,8 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
   if (NULL == content) return -1;
 
   char bufLine[BUFSIZ]; memset(bufLine, '\0', BUFSIZ);
-  int idxLine = 0;
-  int idxContent = 0;
+  int idxLine = 0; // index within one line, until '\n'
+  int idxContent = 0; // index for entire content, until '\0'
   char *pData = &content[0];
 
   while ((idxLine < BUFSIZ)
@@ -1016,8 +1016,8 @@ int get_more_space(char** str, unsigned long int* str_size, const unsigned long 
   char* tmp = NULL;
 
   // using realloc makes using strncat() here unnecessary
-  if((tmp = realloc(*str, (*str_size + how_much_more))) == NULL){
-    if(tmp!=NULL) free(tmp);
+  if (NULL == (tmp = realloc(*str, (*str_size + how_much_more)))) {
+    if (NULL != tmp) free(tmp);
     tmp = NULL;
 
     return -1;
