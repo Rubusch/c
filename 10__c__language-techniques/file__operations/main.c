@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* testing */
+#include <assert.h>
+
+
 #define LIN_LEN 2*BUFSIZ
 
 int main(int argc, char** argv)
@@ -37,7 +41,7 @@ int main(int argc, char** argv)
   printf("%i - Get write file pointer\n", get_write_file_pointer(&fp, file1));
   printf("%i - Writing file characterwise\n", write_char(fp, text1, text1_size));
   printf("%i - Close stream\n", close_stream(&fp));
-  printf("%i - fp != NULL\n", (fp != NULL));
+  printf("%s - fp == NULL\n", (fp == NULL)?"true":"false");
   printf("Done.\n\n\n");
   //*/
 
@@ -254,7 +258,236 @@ int main(int argc, char** argv)
 
   // free
   printf("free()\n");
+  shred_file(file3);
+  shred_file("Jack.txt");
+  shred_file("Jill.txt");
+//  close_tmp(&fp);
+  close_stream(&fp);
 
+
+  puts("ASSERTS...");
+
+
+  puts("ASSERT: 1. write a file characterwise and create write file pointer");
+  assert(0 == get_write_file_pointer(&fp, file1));
+  assert(0 == write_char(fp, text1, text1_size));
+  assert(0 == close_stream(&fp));
+  assert(NULL == fp);
+  printf("Done.\n\n\n");
+  //*/
+
+  //* // creating a new file - OK
+  puts("ASSERT: 2. creating a new file");
+  assert(0 == create_file(file2, LIN_LEN));
+  printf("Done.\n\n");
+  //*/
+
+  //* // copying unbuffered - OK
+  puts("ASSERT: 3. copying unbuffered");
+  assert(0 == copy_characterwise_unbuffered(file1, file2));
+  printf("Done.\n\n");
+  //*/
+
+  //* // appending a line to file2 - OK
+  puts("ASSERT: 4. appending a line to file2");
+  assert(0 == get_append_file_pointer(&fp, file2));
+  assert(0 == write_linewise(fp, text2, text2_size));
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // appending a line to file2 - OK
+  puts("ASSERT: 5. appending a line to file2");
+  assert(0 == get_append_file_pointer(&fp, file2));
+  assert(0 == write_formated(fp, text3));
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // append a line to file2 (write_char() is already tested!) - OK
+  puts("ASSERT: 6. append a line to file2 (write_char() is already tested!)");
+  assert(0 == get_append_file_pointer(&fp, file2));
+  assert(0 == write_char(fp, text4, text4_size));
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //
+  printf("\'%s\' contains now 3 \"lines\" more!\n\n", file2);
+  //*/
+
+  //* // reading linewise and get read file pointer - 3 lines more in file2 - OK
+  puts("ASSERT: 7. reading linewise and get read file pointer - 3 lines more in file2");
+  assert(0 == get_read_file_pointer(&fp, file2));
+  assert(0 == read_linewise(fp, &content, &content_size));
+  printf("content:\n\'%s\'\n", content);
+  strcpy(content,"");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // reading file characterwise - OK
+  puts("ASSERT: 8. reading file characterwise");
+  assert(0 == get_read_file_pointer(&fp, file2));
+  assert(0 == read_char(fp, &content, &content_size));
+  printf("content:\n\'%s\'\n", content);
+  strcpy(content, "");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // read blockwise - OK
+  puts("ASSERT: 9. read blockwise");
+  assert(0 == get_read_file_pointer(&fp, file2));
+  assert(0 == read_blockwise(fp, content, content_size));
+  printf("content:\n\'%s\'\n", content);
+  strcpy(content, "");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // reading out without spaces nor line feed - same, 3 lines more - OK
+  puts("ASSERT: 10. reading out without spaces nor line feed - same, 3 lines more");
+  assert(0 == get_read_file_pointer(&fp, file2));
+  assert(0 == read_without_spaces(fp, &content, &content_size));
+  printf("content:\n\'%s\'\n", content);
+  strcpy(content, "");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // copying buffered - without created file2 - OK (already done before)
+  puts("ASSERT: 11. copying buffered - without created file2 - OK (already done before)");
+  printf("Copy characterwise and buffered...\n");
+  assert(0 == copy_characterwise_buffered(file2, file3, LIN_LEN));
+  printf("Done.\n\n");
+  //*/
+
+  //* // copy characterwise and buffered
+  puts("ASSERT: 12. copy characterwise and buffered");
+  printf("Copy characterwise and unbuffered...\n");
+  assert(0 == copy_characterwise_unbuffered(file2, "Jill.txt"));
+  printf("Done.\n\n");
+  //*/
+
+  //* // renaming the file3 - OK
+  puts("ASSERT: 13. renaming the file3");
+  assert(0 == rename_file(file1, "Jack.txt"));
+  printf("Done.\n\n");
+  //*/
+
+  //* // read a single line - OK
+  puts("ASSERT: 14. read a single line");
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  assert(0 == read_nth_line(fp, content, content_size, 3));
+  printf("content:\n\'%s\'\n", content);
+  strcpy(content,"");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // read a line interval - OK
+  puts("ASSERT: 15. read a line interval");
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  assert(0 == read_lines(fp, content, content_size, 2, 4));
+  printf("content:\n\'%s\'\n\n", content);
+  strcpy(content, "");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  /* // read without eof - OK
+  puts("ASSERT: 16. read without eof");
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  assert(0 == read_without_eof(fp, content, content_size));
+  printf("content:\n\'%s\'\n\n", content);
+  strcpy(content, "");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* File Data - OK
+  puts("ASSERT: 17. File Data");
+  printf("Show temp file data:\n");
+  assert(0 < number_of_tempfiles());
+  assert(0 < number_of_characters_in_static_temp());
+  assert(0 < get_bufsize());
+  printf("Done.\n\n");
+  //*/
+
+  //* // File Size - OK
+  puts("ASSERT: 18. File Size");
+  file_size = 0;
+  printf("Check File \"%s\"\n", file3);
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  assert(0 == filesize(fp, &file_size));
+  printf("contains %ld tokens.\n", file_size);
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // Check EOF - OK
+  puts("ASSERT: 19. Check EOF");
+  printf("Check \"%s\" for EOF\n", file3);
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  assert(1 == check_eof(fp));
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // Check for Error - OK
+  puts("ASSERT: 20. Check for Error");
+  printf("Check \"%s\" for errors\n", file3);
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  iError = check_error(fp);
+  printf("%i - Check \'%s\' for errors:\'%s\'\n", iError, file3, ((check_error(fp) == 0)?("No errors!"):("containts errors")));
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // Shredding file2 - OK
+  puts("ASSERT: 21. Shredding file2");
+  assert(0 == get_read_write_file_pointer(&fp, file2));
+  assert(0 == shred_file(file2));
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // Text with pattern - OK
+  puts("ASSERT: 22. Text with pattern");
+  printf("Read text with a pattern\n");
+  memset(content, '\0', content_size);
+  assert(0 == get_read_write_file_pointer(&fp, file3));
+  assert(0 == read_lines_with_pattern(fp, content, content_size, "he"));
+  printf("\tResult (pattern):\n\"%s\"\n", content);
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  //* // Temporary files - File: "tmp.txt"
+  puts("ASSERT: 23. Temporary files - File: \"tmp.txt\"");
+  strcpy(szTmp, "tmp.txt" );
+  memset(content, '\0', content_size);
+  assert(0 == create_tmp(&fp, szTmp));
+  assert(0 == write_linewise(fp, text1, text1_size));
+  assert(0 == read_linewise(fp, &content, &content_size));
+  printf("\tcontent:\n\'%s\'\n", content);
+  assert(0 == close_tmp(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  // ########### tmp files end ###
+
+
+  /* write structs - demo
+  printf("Write blockwise \'%s\'\n", file2);
+  assert(0 == get_read_write_file_pointer(&fp, file2));
+  printf("NO TEST HERE: THE FUNCTION IS A DEMO HOW TO WRITE STRUCTS DIRECTLY!\n");
+  assert(0 == close_stream(&fp));
+  printf("Done.\n\n");
+  //*/
+
+  puts("ASSERT: OK");
 
   printf("READY.\n");
   return EXIT_SUCCESS;
