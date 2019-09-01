@@ -8,16 +8,16 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
-Struct: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+struct.exe: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
-all: Struct
+all: struct.exe
 
-clean: 
-	${RM} $(OBJECTS) Struct.exe *~ core
+clean:
+	${RM} $(OBJECTS) struct.exe *~ core
