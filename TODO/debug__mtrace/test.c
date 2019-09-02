@@ -36,7 +36,7 @@ int main()
 
   mtrace(); /* mtrace */
 
-  if( NULL == (ptr = malloc(sizeof(*ptr))) ){
+  if (NULL == (ptr = malloc(sizeof(*ptr)))) {
     perror( "Allocation failed!" );
   }
 
