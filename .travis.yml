@@ -50,6 +50,7 @@ script:
   - cd ./10__c__language-techniques/file__operations && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/file__tempfile && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/stdout__fflush-printf-order && make && ./*.exe && cd -
+  - cd ./10__c__language-techniques/debug__mtrace && make && ./*.exe && cd -
 
   ## interactive and/or need fixes
   - cd ./10__c__language-techniques/bintree__demo-TODO && make && cd -
