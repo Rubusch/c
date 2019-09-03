@@ -6,11 +6,13 @@
 ##
 ## .h and .c files
 
-SOURCE = main.c sourcefilename.c
+TARGET = NAME.exe
+
+SRC = main.c sourcefilename.c
 HEADERS = headername.h
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -std=c99 -pedantic
+CFLAGS += -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
@@ -18,13 +20,12 @@ RM = rm -f
 
 
 # all always on top!
-all:	name.exe
+all: $(TARGET)
 
-name.exe: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm
 
-
 clean:
-	$(RM) $(OBJECTS) name.exe *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: all clean
