@@ -6,27 +6,25 @@
 ##
 ## use -O, -O1, -O2 for optimization
 
+TARGET = NAME.exe
 
 SOURCE = name.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall
+CFLAGS += -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
+all: $(TARGET)
 
-all: name.exe
-
-name.exe: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm -lrt
 # linked against librt for the time.h functions -> -lrt
 
-
-
 clean:
-	$(RM) $(OBJECTS) name.exe *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: clean all
 
