@@ -5,7 +5,10 @@
   @license: GPLv3
   @2013-September-27
 
+  demonstrates the "fork()" and split of processes
 
+
+  EXPLANATION of various functions
 
   #include <unistd.h>
   int chdir(const char* path);
@@ -42,7 +45,7 @@
   #include <unistd.h>
   unsigned sleep(unsigned seconds);
 
-  Shall cause the calling thread to be suspended from execution untill either
+  Shall cause the calling process to be suspended from execution untill either
   "seconds" of realtime seconds has elapsed or a signal (e.g. SIGALARM) is
   delivered to the calling thread.
 
@@ -86,12 +89,17 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  if(pidChild == 0) start_daemon();
-  printf("child has PID %i\r\n", pidChild);
+  if(pidChild == 0) {
+    start_daemon();
+  }
 
+  // child never reaches here,
+  // this is parent code!
+  printf("child has PID %i\r\n", pidChild);
   pid_t pidParent=getpid();
   printf("Parent has (had) PID %i\r\n", pidParent);
 
+  // no error handling, if fork() fails
+
   return EXIT_SUCCESS;
 }
-
