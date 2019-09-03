@@ -32,8 +32,8 @@ void func(int iVar)
 int main(int argc, char** argv)
 {
   printf("define but no init..\n");
-  unsigned int iVar; // allways initialize varibles!
-  // A "gcc -Wall" already warns from this!
+  unsigned int iVar; // allways initialize variables
+  // A "gcc -Wall" already warns from this, "-Werror" will fail to build
 
   int cnt;
   for(cnt = 0; cnt < 10; ++cnt) func(iVar);
