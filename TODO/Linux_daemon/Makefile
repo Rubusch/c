@@ -1,6 +1,6 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = daemon.c
@@ -8,18 +8,18 @@ OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
-daemon: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+daemon.exe: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
-all: daemon
+all: daemon.exe
 
-clean: 
-	${RM} $(OBJECTS) daemon *~ core
+clean:
+	${RM} $(OBJECTS) daemon.exe *~ core
 
 
