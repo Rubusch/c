@@ -1,14 +1,14 @@
-// Valgrind_double_free.c
-/*
- * @author: Lothar Rubusch
- * @email: L.Rubusch@gmx.ch
- * @license: GPLv3
- * @date: 2013-april-28
+/* Valgrind_double_free.c
  *
  * execute
  * $ valgrind ./*.exe
  * or
  * $ valgrind -v ./*.exe
+ *
+ * @author: Lothar Rubusch
+ * @email: L.Rubusch@gmx.ch
+ * @license: GPLv3
+ * @date: 2013-april-28
  */
 
 /*

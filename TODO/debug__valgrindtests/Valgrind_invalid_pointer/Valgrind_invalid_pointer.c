@@ -1,5 +1,10 @@
-// Valgrind_invalid_pointer.c
-/*
+/* Valgrind_invalid_pointer.c
+ *
+ * execute
+ * $ valgrind ./*.exe
+ * or
+ * $ valgrind -v ./*.exe
+ *
  * @author: Lothar Rubusch
  * @email: L.Rubusch@gmx.ch
  * @license: GPLv3
