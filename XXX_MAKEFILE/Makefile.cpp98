@@ -1,11 +1,13 @@
 ## C++ Makefile
 ##
-## @author: http://c-plusplus.de/forum/viewtopic-var-t-is-88418.html
+## takes all files in BUILDDIR with EXTension .cpp to be compiled to .o
 ##
+## resource: http://c-plusplus.de/forum/viewtopic-var-t-is-88418.html
 ##
+## @author: Lothar Rubusch
 
-TARGET   := ./program
-CXXFLAGS := -g -Wextra -Wall -Wno-long-long -pedantic-errors -std=c++98
+TARGET   := PROGRAM.exe
+CXXFLAGS := -g -Werror -Wextra -Wall -Wno-long-long -pedantic-errors -std=c++98
 CXX      := g++
 LIBS     :=
 EXT      := cpp
