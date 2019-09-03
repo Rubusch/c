@@ -1,5 +1,10 @@
-// Valgrind_uninitialized_var.c
-/*
+/* Valgrind_uninitialized_var.c
+ *
+ * execute
+ * $ valgrind ./*.exe
+ * or
+ * $ valgrind -v ./*.exe
+ *
  * @author: Lothar Rubusch
  * @email: L.Rubusch@gmx.ch
  * @license: GPLv3
