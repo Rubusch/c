@@ -1,11 +1,13 @@
 ## C Makefile for linux
 ##
-## @author: http://c-plusplus.de/forum/viewtopic-var-t-is-88418.html
+## takes all in BUILDDIR with EXTension .c to be compiled to .o
 ##
+## resource: http://c-plusplus.de/forum/viewtopic-var-t-is-88418.html
 ##
+## @author: Lothar Rubusch
 
-TARGET   := ./program.exe
-CXXFLAGS += -g -Wall -std=c99 -pedantic
+TARGET   := NAME.exe
+CLAGS += -g -Wall -Werror -std=c99 -pedantic
 CXX      := gcc
 LIBS     +=
 EXT      := c
@@ -20,18 +22,18 @@ DEPS     := $(patsubst %.$(EXT), $(BUILDDIR)/%.dep, $(SOURCES))
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS) $(DEPS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
+	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS)
 endif
 
 $(OBJECTS): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep $(BUILDDIR)/.tag
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CFLAGS) -c $< -o $@
 
 $(DEPS): $(BUILDDIR)/%.dep: %.$(EXT) $(BUILDDIR)/.tag
 	mkdir -p $(dir $(@))
-	$(CXX) $(CXXFLAGS) -MM $< -MT $@ -MT $(<:.$(EXT)=.o) -o $@
+	$(CXX) $(CFLAGS) -MM $< -MT $@ -MT $(<:.$(EXT)=.o) -o $@
 
 %.tag:
 	mkdir -p $(dir $(@))
