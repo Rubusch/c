@@ -1,0 +1,27 @@
+## Makefile (simple)
+##
+## @author: Lothar Rubusch
+## @email: L.Rubusch@gmx.ch
+## @license: GPLv3 2019
+##
+## use -O, -O1, -O2 for optimization
+
+
+SOURCE = name.c
+OBJECTS = $(SOURCE:%.c=%.o)
+CC = gcc
+CFLAGS += -g -Wall -std=c99 -Werror -pedantic
+RM = rm -f
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+
+all: NAME.exe
+
+NAME.exe: $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+
+clean:
+	$(RM) $(OBJECTS) NAME.exe *~
+
+.PHONY: clean all
