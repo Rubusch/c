@@ -54,6 +54,7 @@ script:
   - cd ./10__c__language-techniques/debug__valgrind-double-free && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/debug__valgrind-invalid-pointer && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe && cd -
+  - cd ./10__c__language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe && cd -
 
   ## interactive and/or need fixes
   - cd ./10__c__language-techniques/bintree__demo-TODO && make && cd -
