@@ -39,6 +39,7 @@ script:
   - cd ./00__c__language-basics/HelloWorld && make && ./*.exe && cd -
   - cd ./00__c__language-basics/string-to-int-to-string && make && ./*.exe && cd -
   - cd ./00__c__language-basics/struct && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/pointer__assignment && make && ./*.exe && cd -
 
   ## interactive example
   - cd ./00__c__language-basics/function-pointer && make && cd -
