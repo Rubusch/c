@@ -6,24 +6,23 @@
 ##
 ## use -O, -O1, -O2 for optimization
 
-TARGET = name.exe
+TARGET = NAME.exe
 
-SRC = name.c
-OBJ = $(SRC:%.c=%.o)
+SOURCE = name.c
+OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -Werror -standard=c99 -pedantic
+CFLAGS += -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
-%.c: %.o
+%.o: %.c
 	$(CC) $(CFLAGS) -c $<
-
 
 all: $(TARGET)
 
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ) -lm 
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
 clean:
-	$(RM) $(OBJ) $(TARGET) *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: clean all
