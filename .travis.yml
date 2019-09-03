@@ -51,7 +51,7 @@ script:
   - cd ./10__c__language-techniques/file__tempfile && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/stdout__fflush-printf-order && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/debug__mtrace && make && ./*.exe && cd -
-  - cd ./10__c__language-techniques/debug__valgrind-double-free && make && ./*.exe && cd -
+#  - cd ./10__c__language-techniques/debug__valgrind-double-free && make && ./*.exe && cd - ## has to fail
   - cd ./10__c__language-techniques/debug__valgrind-invalid-pointer && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe && cd -
