@@ -1,9 +1,9 @@
 /* Valgrind_mem_leak.c
  *
  * execute
- * $ valgrind ./*.exe
+ * $ valgrind *.exe
  * or
- * $ valgrind -v ./*.exe
+ * $ valgrind -v *.exe
  *
  * @author: Lothar Rubusch
  * @email: L.Rubusch@gmx.ch
