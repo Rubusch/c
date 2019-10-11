@@ -4,7 +4,7 @@ SRC = start.c
 TARGET = $(SRC:.c=.exe)
 OBJ = $(SRC:.c=.o)
 CC = gcc
-CFLAGS = -g -Wall -Werror
+CFLAGS = -g -Wall -pedantic -Werror
 RM = rm -f
 
 %.o: %.c
