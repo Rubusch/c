@@ -124,6 +124,8 @@ script:
   - cd 40__c__linux/ptrace04__revertstring-TODO && make && cd -
   - cd 40__c__linux/ptrace03__syscall_getregs-TODO && make && cd -
   - cd 40__c__linux/fork__simple && make && cd -
+  - cd 40__c__linux/fork__cli-command && make && cd -
+  - cd 40__c__linux/start_javapr && make && cd -
 
 # after_success:
 #   - cd ${TRAVIS_BUILD_DIR}
