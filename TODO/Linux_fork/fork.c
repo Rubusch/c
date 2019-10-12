@@ -5,10 +5,9 @@
 
   pid_t fork()
 
-  The environment, resouce limits, umask, controlling terminal, 
-  current working directory, root directory, signal masks and 
-  other process resources are also duplicated from the parent 
-  in the forked child process.
+  The environment, resouce limits, umask, controlling terminal, current working
+  directory, root directory, signal masks and other process resources are also
+  duplicated from the parent in the forked child process.
 
   Returns 0 to the child and the pid of the child if everything's ok,
   returns -1 in case of an error.
@@ -22,7 +21,7 @@
 
 
   #include <stdlib.h>
-  exit(int status);  
+  exit(int status);
 
   #include <unistd.h>
   void _exit(int status);
@@ -31,13 +30,14 @@
   0  - normal
   >0 - error code
 
-  exit() calls _exit() internally, the kernel system call _exit() 
-  will cause the kernel to close descriptors and 
-  perform the kernel terminating process clean-up.
-  exit() flushes I/O buffers and performs aditional clean-up 
-  before _exit().
-  Calling exit() allows a parent process to examine a child's process
-  error state, without exit() this won't return any value.
+  exit() calls _exit() internally, the kernel system call _exit() will cause the
+  kernel to close descriptors and perform the kernel terminating process
+  clean-up.
+
+  exit() flushes I/O buffers and performs aditional clean-up before _exit().
+
+  Calling exit() allows a parent process to examine a child's process error
+  state, without exit() this won't return any value.
 
   exit() isn't equal to free() for allocated memory and its not a kind of
   garbage collection!
@@ -62,7 +62,7 @@ int main()
   int varStack = 20;
   pid_t pid=0, my_pid=getpid(); // pid of PARENT
   char* identifier=NULL;
-  if(NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))){
+  if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
     perror("malloc() failed");
     exit(1);
   }
@@ -73,19 +73,19 @@ int main()
   //*/
 
   // try to generate child
-  if(0 > (pid = fork())){
+  if (0 > (pid = fork())) {
     // fork failed
     perror("fork() failed");
     exit(1);
 
-  }else if(pid == 0){
+  } else if (pid == 0) {
     // code only executed by CHILD process
     strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT) + 1);
     ++varGlobal;
     ++varStack;
     my_pid = getpid(); // sets pid of child
 
-  }else{
+  } else {
     // code only executed by PARENT process
     strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT) + 1);
   }
