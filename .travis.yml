@@ -126,6 +126,7 @@ script:
   - cd 40__c__linux/fork__simple && make && cd -
   - cd 40__c__linux/fork__cli-command && make && cd -
   - cd 40__c__linux/fork && make && cd -
+  - cd 40__c__linux/execl && make && cd -
   - cd 40__c__linux/start_javapr && make && cd -
 
 # after_success:
