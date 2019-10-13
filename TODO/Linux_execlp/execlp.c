@@ -22,7 +22,7 @@
 
 int main()
 {
-  pritf("execute 'ls -rtl' via execlp\n");
+  printf("execute 'ls -rtl' via execlp\n");
   execlp("ls", "-r", "-t", "-l", (char *) 0);
   exit(0);
 }
