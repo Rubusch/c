@@ -13,12 +13,13 @@
 //*/
 
 #include <stdlib.h>
-
+#include <stdio.h>
 #include <unistd.h>
 
 
 int main()
 {
+  printf("the program executes 'ls -rtl'\n");
   execl("/bin/ls", "-r", "-t", "-l", (char *) 0);
   exit(0);
 }
