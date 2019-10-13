@@ -127,6 +127,7 @@ script:
   - cd 40__c__linux/fork__cli-command && make && cd -
   - cd 40__c__linux/fork && make && cd -
   - cd 40__c__linux/execl && make && cd -
+  - cd 40__c__linux/execlp && make && cd -
   - cd 40__c__linux/start_javaprg && make && cd -
 
 # after_success:
