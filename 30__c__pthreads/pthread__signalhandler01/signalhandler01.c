@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <pthread.h>
 #include <signal.h>
@@ -20,12 +21,12 @@ void *signal_handler(void *);
 int main()
 {
   sigset_t set;
-  
-  /* 
+
+  /*
      block all signals in main thread.  Any other threads that are
-     created after this will also block all signals 
-  //*/  
-  sigfillset(&set); 
+     created after this will also block all signals
+  //*/
+  sigfillset(&set);
 
 
 
@@ -35,12 +36,11 @@ int main()
     exit(EXIT_FAILURE);
   }
 
-  
-  /* 
+  /*
      create a signal handler thread.  This thread will catch all
      signals and decide what to do with them.  This will only
-     catch nondirected signals.  (I.e., if a thread causes a SIGFPE 
-     then that thread will get that signal. 
+     catch nondirected signals.  (I.e., if a thread causes a SIGFPE
+     then that thread will get that signal.
   //*/
   pthread_t thr;
   pthread_attr_t attr_thr;
@@ -78,7 +78,7 @@ int main()
 
 
 /*
-  signal handler as thread 
+  signal handler as thread
 //*/
 void *signal_handler(void *arg)
 {
@@ -87,26 +87,26 @@ void *signal_handler(void *arg)
   sigemptyset( &waitset);
   sigaddset( &waitset, SIGINT);
   //  sigprocmask( SIG_BLOCK, SIGINT);
-  
-  int sig = (int) arg;
-  
-  // catch all signals 
-  //  sigfillset(&set); 
-  
+
+  int sig = (int) (intptr_t)arg;
+
+  // catch all signals
+  //  sigfillset(&set);
+
   // wait for a signal to arrive
   while (1) {
 
     switch (sigwait( &waitset, &sig)) {
-    case 0: 
+    case 0:
       // here you would add whatever signal you needed to catch
       printf("Interrupted with signal %d, exiting...\n", sig);
-      exit(EXIT_SUCCESS); 
-      
-    default: 
-      printf("GOT A SIGNAL = %d\n", sig); 
+      exit(EXIT_SUCCESS);
+
+    default:
+      printf("GOT A SIGNAL = %d\n", sig);
     }
   }
-  
+
   //  return((void *)0);
   pthread_t thr = pthread_self();
   pthread_exit(&thr);
