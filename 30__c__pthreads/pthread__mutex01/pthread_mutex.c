@@ -9,18 +9,18 @@
   pthread_equal(thread_id1, thread_id2) - compares two thread IDs
 
   pthread_once(once_control, init_function) - executes the given init_function exactly once in a process
-      once_control is a synchronization control structure that requires initialization prior 
+      once_control is a synchronization control structure that requires initialization prior
       to calling pthread_once(), e.g.: pthread_once_t once_control = PTHREAD_ONCE_INIT;
 
-  pthread_yield() - forces the calling thread to relinquish use of its processor and to wait 
-      in the run queue before it is scheduled again 
+  pthread_yield() - forces the calling thread to relinquish use of its processor and to wait
+      in the run queue before it is scheduled again
 
   pthread_mutex_init(mutex, attr) - creates a mutex object dynamically
   pthread_mutex_destroy(mutex)    - destroys a mutex object dynamically
-  pthread_mutexattr_init(attr)    - creates a mutexattribute object dynamically 
+  pthread_mutexattr_init(attr)    - creates a mutexattribute object dynamically
   pthread_mutexattr_destroy(attr) - destroys a mutexattribute object dynamically
 
-  
+
   Mutex:
 
   1. create and initialize a mutex varable
@@ -33,42 +33,42 @@
 
   mutex variables must be declared with type pthrea_mutex_t and must be initialized
   befofe they can be used, mutex variables initially are UNLOCKED
-  
+
   - mutex variables can be declared statically
   pthread_mutex_t mymutex = PTHREAD_MUTEX_INITIALIZER;
-  
-  - mutex variables can be declared dynamically using 
-  pthread_mutex_init(attr);
-  
+
+  - mutex variables can be declared dynamically using pthread_mutex_init(attr);
+
 
   Mutexattribute:
- 
-  pthread_mutexattr_t, can be initialized by 
+
+  pthread_mutexattr_t, can be initialized by
   - NULL (defaults)
   - protocol (specifies the protocol used to prevent priority inversions for a mutex)
   - prioceiling (specifies the priority ceiling of a mutex)
   - process-shared (specifies the process sharing of a mutex)
 
 
-  pthread_mutex_lock(mutex)    - used by a thread to acquire a lock on the specified 
+  pthread_mutex_lock(mutex)    - used by a thread to acquire a lock on the specified
       mutex variable this call will block other calls for the same mutex
 
-  pthread_mutex_trylock(mutex) - if the mutex is already locked this call will return 
+  pthread_mutex_trylock(mutex) - if the mutex is already locked this call will return
       with a busy error code
-  
-  pthread_mutex_unlock(mutex)  - unlocks a mutex if called by the owner of the mutex, 
-      returns an error if the mutex is owned by another thread or if the mutex already 
+
+  pthread_mutex_unlock(mutex)  - unlocks a mutex if called by the owner of the mutex,
+      returns an error if the mutex is owned by another thread or if the mutex already
       was unlocked
 //*/
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h> /* intptr_t */
 
 #include <pthread.h>
 
 /*
-  structure contains necessary information to allow the function dotprod() to access its 
+  structure contains necessary information to allow the function dotprod() to access its
   input data and place its output into the structure
 //*/
 typedef struct{
@@ -96,22 +96,22 @@ pthread_mutex_t mutexsum;
 
 
 /*
-  the thread function, all input to this function is obtained from a structure of type 
-  DOTDATA and all output from this function is written into this structure. when a thread 
-  is created we pas a single argument to the activated function - typically this argument 
+  the thread function, all input to this function is obtained from a structure of type
+  DOTDATA and all output from this function is written into this structure. when a thread
+  is created we pas a single argument to the activated function - typically this argument
   is a thread number
 //*/
 void* dotprod(void* arg)
 {
   // local variables
-  int idx=0, 
-    start=0, 
-    end=0, 
+  int idx=0,
+    start=0,
+    end=0,
     offset=0,
     len=0;
   double mysum=0.0, *xVal=NULL, *yVal=NULL;
 
-  offset = (int) arg;
+  offset = (int) (intptr_t) arg;
   len = dotstr.veclen;
   start = offset * len;
   end = start + len;
@@ -170,7 +170,7 @@ int main(int argc, char** argv)
   dotstr.sum = 0;
 
   pthread_mutex_init(&mutexsum, NULL);
-  
+
   // creat threads to perform the dotproduct
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -179,10 +179,10 @@ int main(int argc, char** argv)
       each thread works on a different set of data, the offset is specified by idx, the
       size of data for each thread is indicated by VECLEN
     //*/
-    pthread_create( &callThd[idx], &attr, dotprod, (void*) idx);
+    pthread_create( &callThd[idx], &attr, dotprod, (void*) (intptr_t)idx);
   }
   pthread_attr_destroy(&attr);
-  
+
   /*
     wait on the other threads
   //*/
