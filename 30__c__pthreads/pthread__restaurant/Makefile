@@ -3,7 +3,7 @@
 # use -O, -O1, -O2 for optimization
 
 
-SOURCE = restaurantrestaurant.c
+SOURCE = restaurant.c
 TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
 CC = gcc
