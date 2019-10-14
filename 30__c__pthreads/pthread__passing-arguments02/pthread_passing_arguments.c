@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     // initializing the new struct to pass over
     thread_data_array[cnt].thread_id = cnt;
     thread_data_array[cnt].sum = sum;
-    strncpy(thread_data_array[cnt].message,"Hello World!", strlen("Hello World!"));
+    strncpy(thread_data_array[cnt].message,"Hello World!", strlen("Hello World!")+1); // '+1' because of string truncation (nul termination)
 
     if(0 != (return_code = pthread_create(&threads[cnt], NULL, print_hello, (void*) &thread_data_array[cnt]))){
       fprintf(stderr, "ERROR; return code from pthread_create() is %d\n", return_code);
