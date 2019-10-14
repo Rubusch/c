@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h> /* intptr_t */
 
 #include <pthread.h>
 
@@ -19,9 +20,9 @@
 
 void* print_hello(void* thread_id)
 {
-  int tid = (int) thread_id;
+  int tid = (int) (intptr_t)thread_id;
   printf("Hello World! It's me, thread #%i!\n", tid);
-  
+
   // shutdown thread
   pthread_exit(NULL);
 }
@@ -30,14 +31,14 @@ void* print_hello(void* thread_id)
 int main(int argc, char** argv)
 {
   // define array of pthreads
-  pthread_t threads[NUM_THREADS]; 
+  pthread_t threads[NUM_THREADS];
 
   int return_code=0, cnt=0;
   for(cnt=0; cnt<NUM_THREADS; ++cnt){
     printf("in main: creating thread %d\n", cnt);
 
     // create pthread and execute function
-    return_code = pthread_create(&threads[cnt], NULL, print_hello, (void*) cnt);
+    return_code = pthread_create(&threads[cnt], NULL, print_hello, (void*) (intptr_t)cnt);
 
     if(return_code){
       printf("ERROR; return code from pthread_create() is %d\n", return_code);
@@ -46,6 +47,6 @@ int main(int argc, char** argv)
   }
 
   // shutdown all threads in case of error
-  pthread_exit(NULL); 
+  pthread_exit(NULL);
 }
 
