@@ -3,7 +3,7 @@
 # use -O, -O1, -O2 for optimization
 
 SOURCE = pthreads_ipc.c
-TARGET = $(TARGET:.c=.exe)
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
 CC = gcc
 CFLAGS += -g -Wall
