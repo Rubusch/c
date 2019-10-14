@@ -1,26 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = deadlock.c
-OBJECTS = ${SOURCE:.c=.o}
-
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 CC = gcc
 CFLAGS += -g -Wall
 RM = rm -f
 
 %.o: %.c
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
-deadlock.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm -pthread
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-.PHONY: all
-all: deadlock.exe
+all: $(TARGET)
 
-.PHONY: clean
-clean: 
-	${RM} $(OBJECTS) deadlock.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 
