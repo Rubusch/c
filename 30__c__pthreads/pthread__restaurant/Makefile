@@ -1,24 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
-SOURCE = restaurant.c
+SOURCE = restaurantrestaurant.c
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
-
 CC = gcc
-CFLAGS += -g -Wall -std=c99 -pedantic 
+CFLAGS += -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-restaurant.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm -lpthread -D _XOPEN_SOURCE
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-.PHONY: all
-all: restaurant.exe
+all: $(TARGET)
 
-.PHONY: clean
-clean: 
-	$(RM) $(OBJECTS) restaurant.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
+
+

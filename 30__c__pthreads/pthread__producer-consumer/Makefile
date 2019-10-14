@@ -1,28 +1,26 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 #
 # -std=c99 -pedantic can cause problems with PTHREADS
 
 
 SOURCE = prod_cons.c
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
-
 CC = gcc
-CFLAGS += -g -Wall
+CFLAGS += -g -Wall -pedantic -Werror
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-prod_cons.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm -pthread
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-.PHONY: all
-all: prod_cons.exe
+all: $(TARGET)
 
-.PHONY: clean
-clean: 
-	$(RM) $(OBJECTS) prod_cons.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 

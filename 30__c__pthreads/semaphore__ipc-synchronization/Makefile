@@ -1,26 +1,23 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
-
+# use -O, -O1, -O2 for optimization
 
 SOURCE = pthreads_ipc.c
+TARGET = $(TARGET:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
-
 CC = gcc
 CFLAGS += -g -Wall
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-pthreads_ipc.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm -pthread
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-.PHONY: all
-all: pthreads_ipc.exe
+all: $(TARGET)
 
-.PHONY: clean
-clean: 
-	$(RM) $(OBJECTS) pthreads_ipc.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 

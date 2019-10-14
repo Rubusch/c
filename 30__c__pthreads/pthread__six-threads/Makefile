@@ -1,26 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = multithread.c
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
-
 CC = gcc
-CFLAGS += -g -Wall
+CFLAGS += -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-multithread.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm -lpthread
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-.PHONY: all
-all: multithread.exe
+all: $(TARGET)
 
-.PHONY: clean
-clean: 
-	$(RM) $(OBJECTS) multithread.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 

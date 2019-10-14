@@ -1,22 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = sock_server.c
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
-
 CC = gcc
-CFLAGS += -g -Wall
+CFLAGS += -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-sock_server.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm -lpthread
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-all: sock_server.exe
+all: $(TARGET)
 
-clean: 
-	$(RM) $(OBJECTS) sock_server.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
+
+
