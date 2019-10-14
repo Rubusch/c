@@ -12,13 +12,13 @@
 void* thread_function();
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-int counter = 0; 
+int counter = 0;
 
 int main(int argc, char** argv)
 {
   int rc1=0, rc2=0;
   pthread_t thread1, thread2;
-  
+
   // create independent threads each of which will execute the thread_function()
   if(0 != (rc1 = pthread_create(&thread1, NULL, &thread_function, NULL))){
     perror("pthread_create() failed");
