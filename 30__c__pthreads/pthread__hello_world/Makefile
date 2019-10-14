@@ -1,26 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = pthread_hello_world.c
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
-
 CC = gcc
-CFLAGS += -g -Wall -std=c99 -pedantic 
+CFLAGS += -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-pthread_hello_world.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm -pthread
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-.PHONY: all
-all: pthread_hello_world.exe
+all: $(TARGET)
 
-.PHONY: clean
-clean: 
-	$(RM) $(OBJECTS) pthread_hello_world.exe *~
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 
