@@ -135,6 +135,7 @@ script:
   - cd 40__c__linux/kill && make && cd -
   - cd 40__c__linux/killpg && make && cd -
   - cd 40__c__linux/system && make && cd -
+  - cd 40__c__linux/vfork && make && cd -
   - cd 40__c__linux/start_javaprg && make && cd -
 
 # after_success:
