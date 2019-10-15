@@ -1,25 +1,25 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = waitpid.c
-OBJECTS = ${SOURCE:.c=.o}
-
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
-waitpid.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: waitpid.exe
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) waitpid.exe *~ core
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~ core
 
 
