@@ -14,7 +14,7 @@
 #include <pthread.h>
 
 // thread function
-void* counter(void*);
+void *counter(void *);
 
 int count;
 
@@ -42,12 +42,12 @@ int main()
 
   // create thread (PTHREAD_CREATE_DETACHED)
   pthread_t tid_counter;
-  if(0 != pthread_create(&tid_counter, &attr_counter, counter,(void*) 0)){
+  if (0 != pthread_create(&tid_counter, &attr_counter, counter, ( void * )0)) {
     perror("pthread_create failed");
     exit(EXIT_FAILURE);
   }
 
-  while(1) {
+  while (1) {
     // enter a string
     puts("press ENTER");
     fgets(str, 80, stdin);
@@ -70,16 +70,16 @@ int main()
   pthread_mutex_destroy(&lock_count);
   pthread_attr_destroy(&attr_counter);
   puts("READY.");
-  return(0);
+  return (0);
 }
 
 
 /*
   thread function
 //*/
-void* counter(void* arg)
+void *counter(void *arg)
 {
-  while(1){
+  while (1) {
     // locking the mutex before "suspend"-if
     pthread_mutex_lock(&lock_count);
 
@@ -87,19 +87,20 @@ void* counter(void* arg)
     fflush(stdout);
     int idx;
 
-    if(!suspend){ // this happens with a locked mutex -> dangerous, it will end up in a dead lock after a while!
+    if (!suspend) { // this happens with a locked mutex -> dangerous, it will
+                    // end up in a dead lock after a while!
       ++count;
-      for (idx = 0; idx < 500; ++idx) // the lower the number, the easier to run into a deadlock here
-	;
+      for (idx = 0; idx < 500; ++idx) // the lower the number, the easier to run
+                                      // into a deadlock here
+        ;
 
       // unlock - only within the "suspend"-if
       pthread_mutex_unlock(&lock_count);
 
       for (idx = 0; idx < 500; ++idx) {
-	;
+        ;
       }
     }
   }
-  pthread_exit((void*) 0);
+  pthread_exit(( void * )0);
 }
-

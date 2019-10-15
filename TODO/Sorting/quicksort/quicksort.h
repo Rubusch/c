@@ -15,16 +15,16 @@
 #include <limits.h>
 
 // quicksort related
-int interchange(void**, void**);
-void quicksort(void*, void*);
+int interchange(void **, void **);
+void quicksort(void *, void *);
 
-// common 
-void sort(void**);
-int compare(void*, void*);
-int swap(void*, void*);
-int isfirstelement(void*);
-int islastelement(void*);
-void* getnextelement(void*);
-void* getprevelement(void*);
+// common
+void sort(void **);
+int compare(void *, void *);
+int swap(void *, void *);
+int isfirstelement(void *);
+int islastelement(void *);
+void *getnextelement(void *);
+void *getprevelement(void *);
 
 #endif

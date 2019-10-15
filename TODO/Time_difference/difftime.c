@@ -18,15 +18,15 @@ double using_time()
   puts("using time: system time");
 
   // counting
-  unsigned long cnt=0;
-  while( cnt != NUMBER){
+  unsigned long cnt = 0;
+  while (cnt != NUMBER) {
     printf("%ld ", cnt);
     ++cnt;
   }
 
   // stop
   stop = time(NULL);
- 
+
   // difference
   return difftime(stop, start);
 }
@@ -41,17 +41,17 @@ double using_clock()
   puts("using time: cpu clock time");
 
   // counting
-  unsigned long cnt=0;
-  while( cnt != NUMBER){
+  unsigned long cnt = 0;
+  while (cnt != NUMBER) {
     printf("%ld ", cnt);
     ++cnt;
   }
 
   // stop
   stop = clock();
- 
+
   // difference
-  return (unsigned long) (stop - start) / CLOCKS_PER_SEC;
+  return ( unsigned long )(stop - start) / CLOCKS_PER_SEC;
 }
 
 
@@ -64,8 +64,8 @@ int main()
 
   puts("\n\n\n");
   fprintf(stderr, "system time: %.0f seconds to count to %d\n", difA, NUMBER);
-  fprintf(stderr, "cpu clock time: %.0f seconds to count to %d\n", difB, NUMBER);  
+  fprintf(stderr, "cpu clock time: %.0f seconds to count to %d\n", difB,
+          NUMBER);
 
   exit(EXIT_SUCCESS);
 }
-

@@ -43,12 +43,12 @@
   int foobar;
   int* ptr = &foobar;
 
-  this pointer just points to the address of the variable "foobar", no allocation!
-  a "free(ptr)" has to lead to an error!
+  this pointer just points to the address of the variable "foobar", no
+allocation! a "free(ptr)" has to lead to an error!
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -57,10 +57,10 @@
 
   when passing a pointer to an "array" allways pass the size of the array!
 //*/
-int func(char* ptr, int size)
+int func(char *ptr, int size)
 {
   // initializing a string with "strncpy()"
-  strncpy((char *)ptr, "blabla", size);
+  strncpy(( char * )ptr, "blabla", size);
 
   // everything ok, return 0
   return 0;
@@ -70,11 +70,11 @@ int func(char* ptr, int size)
 int main()
 {
   // allways init variables!
-  char* ptr = NULL;
+  char *ptr = NULL;
   int ptr_siz = 7;
 
   // allocate some memory
-  if(NULL == (ptr = calloc( sizeof(*ptr), ptr_siz))){
+  if (NULL == (ptr = calloc(sizeof(*ptr), ptr_siz))) {
     perror("malloc failed");
     exit(EXIT_FAILURE);
   }

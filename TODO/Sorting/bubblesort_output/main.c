@@ -8,12 +8,12 @@
 /*
   print the list
 //*/
-void printlist(void* arg)
+void printlist(void *arg)
 {
-  element* tmp = (element*) arg;
+  element *tmp = ( element * )arg;
   printf("%02d ", tmp->value);
 
-  while(NULL != (tmp = tmp->next)){
+  while (NULL != (tmp = tmp->next)) {
     printf("%02d ", tmp->value);
   }
   printf("\n");
@@ -23,27 +23,27 @@ void printlist(void* arg)
 /*
   allocate elements for the list
 //*/
-void alloclist(void* start, void* end)
+void alloclist(void *start, void *end)
 {
-  element** first = (element**) start;
-  element** last = (element**) last;
+  element **first = ( element ** )start;
+  element **last = ( element ** )last;
 
-  element* tmp = NULL;
+  element *tmp = NULL;
 
-  unsigned int idx=0;
-  for(idx = 0; idx < LIST_SIZE; ++idx){ 
-    if(NULL == (tmp = malloc(sizeof(*tmp)))){
+  unsigned int idx = 0;
+  for (idx = 0; idx < LIST_SIZE; ++idx) {
+    if (NULL == (tmp = malloc(sizeof(*tmp)))) {
       perror("malloc failed!");
       exit(EXIT_FAILURE);
     }
     tmp->value = random();
     // limit to values up to 100
     tmp->value = (tmp->value % 100);
-    if(0 == idx){
+    if (0 == idx) {
       tmp->prev = NULL;
       tmp->next = NULL;
       *first = tmp;
-    }else{
+    } else {
       tmp->prev = *last;
       tmp->next = NULL;
       (*last)->next = tmp;
@@ -58,15 +58,16 @@ void alloclist(void* start, void* end)
 /*
   free the elements for the list
 //*/
-void freelist(void* init)
+void freelist(void *init)
 {
-  element** first = (element**) init;
-  if(NULL == *first) return;
+  element **first = ( element ** )init;
+  if (NULL == *first)
+    return;
 
-  element* tmp = NULL;
+  element *tmp = NULL;
 
-  register unsigned int idx=0;
-  for(idx=0; idx < LIST_SIZE; ++idx){
+  register unsigned int idx = 0;
+  for (idx = 0; idx < LIST_SIZE; ++idx) {
     tmp = *first;
     printf("%02d ", tmp->value);
     *first = tmp->next;
@@ -81,8 +82,8 @@ void freelist(void* init)
 //*/
 int main()
 {
-  element* first = NULL;
-  element* last = first;
+  element *first = NULL;
+  element *last = first;
 
   // alloc
   puts("alloc");
@@ -95,7 +96,7 @@ int main()
   printf("\n");
 
   puts("sorting");
-  sort((void*) &first);
+  sort(( void * )&first);
   printf("\n");
 
   puts("elements - after");

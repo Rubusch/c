@@ -2,8 +2,8 @@
 /*
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int main(void)
@@ -15,7 +15,7 @@ int main(void)
   char input[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   char buf[10];
   strcpy(buf, input);
-  //*/ 
+  //*/
 
   //* compiles without problems, too!
   // already on purpose overrunning the limit of 10 elements!
@@ -26,4 +26,4 @@ int main(void)
 
   puts("READY.");
   exit(EXIT_SUCCESS);
-} 
+}

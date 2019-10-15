@@ -24,8 +24,8 @@
   as well. _exit() terminates the current process again.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <sys/types.h>
@@ -43,9 +43,9 @@ int varGlobal = 2;
 int main()
 {
   int varStack = 20;
-  pid_t pid=0, my_pid=getpid(); // pid of PARENT
-  char* identifier=NULL;
-  if(NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))){
+  pid_t pid = 0, my_pid = getpid(); // pid of PARENT
+  char *identifier = NULL;
+  if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
     perror("calloc() failed");
     exit(1);
   }
@@ -55,26 +55,28 @@ int main()
     START HERE
   //*/
 
-  if(0 > (pid = vfork())){
+  if (0 > (pid = vfork())) {
     // vfork failed
     perror("fork() failed");
     exit(1); // use "big" exit()
 
-  }else if(pid == 0){
+  } else if (pid == 0) {
     // executed by CHILD process
     strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT) + 1);
     ++varGlobal;
     ++varStack;
-    printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier, varGlobal, varStack);
+    printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier,
+           varGlobal, varStack);
     _exit(0); // exit only the "blocking" child
 
-  }else{
+  } else {
     // executed by PARENT process
     identifier = PARENT_TXT;
   }
 
   // executed by BOTH
-  printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier, varGlobal, varStack);
+  printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier,
+         varGlobal, varStack);
 
   // free memory! exit() doesn't do, thus use pthreads!
   exit(0);

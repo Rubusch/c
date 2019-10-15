@@ -7,17 +7,17 @@
  */
 #include "dequeue_item.h"
 
-static item* first;
-static item* last;
+static item *first;
+static item *last;
 
-static item* getNextItem(item*);
-static item* getPrevItem(item*);
+static item *getNextItem(item *);
+static item *getPrevItem(item *);
 
 
-item* getNewItem(char content[])
+item *getNewItem(char content[])
 {
-  item* pItem = malloc(sizeof(item));
-  if(pItem == NULL){
+  item *pItem = malloc(sizeof(item));
+  if (pItem == NULL) {
     fprintf(stderr, "dequeue_item::getNewItem() - bad allocation!\n");
     exit(8);
   }
@@ -29,11 +29,11 @@ item* getNewItem(char content[])
 
 void addItem(char content[])
 {
-  if(first == NULL){
+  if (first == NULL) {
     last = getNewItem(content);
     first = last;
-  }else{
-    item* pItem = getNewItem(content);
+  } else {
+    item *pItem = getNewItem(content);
     last->next = pItem;
     pItem->prev = last;
     last = last->next;
@@ -43,24 +43,27 @@ void addItem(char content[])
 
 void removeItemAt(int idx)
 {
-  if((idx < 0) || (idx >= dequeueSize())) return;
+  if ((idx < 0) || (idx >= dequeueSize()))
+    return;
 
-  item* pItem = getItemAt(idx);
+  item *pItem = getItemAt(idx);
 
-  item* pBefore = NULL;
-  if(pItem != first) pBefore = getPrevItem(pItem);
+  item *pBefore = NULL;
+  if (pItem != first)
+    pBefore = getPrevItem(pItem);
 
-  item* pAfter = NULL;
-  if(pItem != last) pAfter = getNextItem(pItem);
+  item *pAfter = NULL;
+  if (pItem != last)
+    pAfter = getNextItem(pItem);
 
 
-  if((pBefore != NULL) || (pAfter != NULL)){
+  if ((pBefore != NULL) || (pAfter != NULL)) {
     pBefore->next = pAfter;
     pAfter->prev = pBefore;
-  }else if(pBefore == NULL){
+  } else if (pBefore == NULL) {
     first = getNextItem(first);
     first->prev = NULL;
-  }else if(pAfter == NULL){
+  } else if (pAfter == NULL) {
     last = getPrevItem(last);
     last->next = NULL;
   }
@@ -72,21 +75,21 @@ void removeItemAt(int idx)
 
 void insertItemAt(int idx, char content[])
 {
-  item* pItem = getNewItem(content);
-  if(idx <= 0){
+  item *pItem = getNewItem(content);
+  if (idx <= 0) {
     pItem->next = first;
     first->prev = pItem;
     first = pItem;
     return;
   }
 
-  if(idx >= dequeueSize()){
+  if (idx >= dequeueSize()) {
     addItem(content);
     return;
   }
 
-  item* pBefore = getItemAt(idx-1);
-  item* pAfter = getItemAt(idx);
+  item *pBefore = getItemAt(idx - 1);
+  item *pAfter = getItemAt(idx);
 
   pBefore->next = pItem;
   pItem->prev = pBefore;
@@ -98,33 +101,35 @@ void insertItemAt(int idx, char content[])
 
 int dequeueSize()
 {
-  if(first == NULL) return 0;
+  if (first == NULL)
+    return 0;
 
-  item* pItem = first;
-  int cnt=0;
-  for(cnt=0; pItem != NULL; ++cnt, pItem = pItem->next)
+  item *pItem = first;
+  int cnt = 0;
+  for (cnt = 0; pItem != NULL; ++cnt, pItem = pItem->next)
     ;
 
   return cnt;
 };
 
 
-item* getItemAt(int idx)
+item *getItemAt(int idx)
 {
   int size = dequeueSize();
-  if((idx >= size) || (idx < 0)) return NULL;
+  if ((idx >= size) || (idx < 0))
+    return NULL;
 
-  item* pItem = NULL;
-  if(idx+1 <= size/2){
+  item *pItem = NULL;
+  if (idx + 1 <= size / 2) {
     pItem = first;
     int cnt = 0;
-    for(cnt = 0; (cnt != idx) && (cnt < size); ++cnt)
+    for (cnt = 0; (cnt != idx) && (cnt < size); ++cnt)
       pItem = getNextItem(pItem);
 
-  }else{
+  } else {
     pItem = last;
-    int cnt = size-1;
-    for(cnt = size-1; (cnt != idx) && (cnt >= 0); --cnt){
+    int cnt = size - 1;
+    for (cnt = size - 1; (cnt != idx) && (cnt >= 0); --cnt) {
       pItem = getPrevItem(pItem);
     }
   }
@@ -133,25 +138,29 @@ item* getItemAt(int idx)
 };
 
 
-char* getContentAt(int idx)
+char *getContentAt(int idx)
 {
-  item* pItem = getItemAt(idx);
-  if(pItem == NULL) return NULL;
-  else return pItem->content;
+  item *pItem = getItemAt(idx);
+  if (pItem == NULL)
+    return NULL;
+  else
+    return pItem->content;
 };
 
 
 int find(char content[], int length)
 {
-  item* pItem = first;
+  item *pItem = first;
   int cnt = 0;
-  while(pItem != NULL){
-    if(!strcmp(pItem->content, content)){
-      int i=0;
-      for(i=0; i<length; ++i)
-	if(pItem->content[i] != content[i]) break;
+  while (pItem != NULL) {
+    if (!strcmp(pItem->content, content)) {
+      int i = 0;
+      for (i = 0; i < length; ++i)
+        if (pItem->content[i] != content[i])
+          break;
 
-      if(i == length) return cnt;
+      if (i == length)
+        return cnt;
     }
     pItem = pItem->next;
     ++cnt;
@@ -160,15 +169,17 @@ int find(char content[], int length)
 };
 
 
-static item* getNextItem(item* pItem)
+static item *getNextItem(item *pItem)
 {
-  if(pItem == NULL) return NULL;
+  if (pItem == NULL)
+    return NULL;
   return pItem->next;
 };
 
 
-static item* getPrevItem(item* pItem)
+static item *getPrevItem(item *pItem)
 {
-  if(pItem == NULL) return NULL;
+  if (pItem == NULL)
+    return NULL;
   return pItem->prev;
 };

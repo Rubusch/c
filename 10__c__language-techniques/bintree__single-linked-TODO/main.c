@@ -20,17 +20,18 @@ extern void outputTree();
 void outputArray(char[][CONTENT_LENGTH]);
 
 
-int main(int argc, char**argv)
+int main(int argc, char **argv)
 {
   printf("Binary Tree - Single Linked\n\n");
 
   // generate strings
   printf("Generate strings\n\n");
-  char str[ELEMENT_COUNT][CONTENT_LENGTH] = {
-    "All", "Alle", "and", "dull", "play", "makes", "Jack", "a", "dull", "boy." };
+  char str[ELEMENT_COUNT][CONTENT_LENGTH] = {"All",  "Alle",  "and",  "dull",
+                                             "play", "makes", "Jack", "a",
+                                             "dull", "boy."};
 
 #ifdef DEBUG
-  outputArray( str);
+  outputArray(str);
 #endif
 
   // generate tree root
@@ -40,8 +41,8 @@ int main(int argc, char**argv)
   // append strings
   printf("Append strings\n\n");
   {
-    int cnt=0;
-    for(cnt=1; cnt<ELEMENT_COUNT; ++cnt){
+    int cnt = 0;
+    for (cnt = 1; cnt < ELEMENT_COUNT; ++cnt) {
       addItemSorted(str[cnt]);
     }
   }
@@ -53,11 +54,9 @@ int main(int argc, char**argv)
 
 void outputArray(char str[][CONTENT_LENGTH])
 {
-  int i=0;
-  for(i=0; i < ELEMENT_COUNT; ++i)
+  int i = 0;
+  for (i = 0; i < ELEMENT_COUNT; ++i)
     printf("\t%i.: %s\n", i, str[i]);
 
   printf("\n");
 }
-
-

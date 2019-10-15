@@ -1,6 +1,7 @@
 // array.c
 /*
-  char arrays (I recommend the following - just my own termination, but is similar to e.g. strLEN())
+  char arrays (I recommend the following - just my own termination, but is
+similar to e.g. strLEN())
 
   size      the number of elements, inclusive the '\0'
 
@@ -8,8 +9,8 @@
 
   index     the index of each element, the index starts with 0
             the index of all elements starts at 0 and goes until idx < size
-            the index of all characters starts at 0 and goes until idx < size-1 
-	    or idx < length - which is the last index
+            the index of all characters starts at 0 and goes until idx < size-1
+            or idx < length - which is the last index
 
 output:
 $ ./array.exe
@@ -50,47 +51,52 @@ READY.
 
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define ARRAY_SIZ 10
 
 
-void print_content(char* arr, unsigned int arr_siz)
+void print_content(char *arr, unsigned int arr_siz)
 {
-  if(NULL == arr) return;
+  if (NULL == arr)
+    return;
 
   puts("content of the array:");
   puts("\taddress,\tindex\t\t: content");
   puts("\t------------------------------------------");
-  // do a recommendation to "register" to gain performance for "running indexes" - 
-  // only possible if the variable (here idx) won't be "referenced" (=used with a '&')
-  register unsigned int idx=0;
-  for(idx=0; idx < arr_siz; ++idx){
-    printf("\t0x%lx,\telement %d\t: \"%c\"\n", (unsigned long) &arr[idx], idx, arr[idx]);
+  // do a recommendation to "register" to gain performance for "running indexes"
+  // - only possible if the variable (here idx) won't be "referenced" (=used
+  // with a '&')
+  register unsigned int idx = 0;
+  for (idx = 0; idx < arr_siz; ++idx) {
+    printf("\t0x%lx,\telement %d\t: \"%c\"\n", ( unsigned long )&arr[idx], idx,
+           arr[idx]);
   }
 }
 
 
 int main()
-{ 
+{
   puts("arrays");
 
   // init
   char arr1[ARRAY_SIZ];
   strncpy(arr1, "tentokens", ARRAY_SIZ);
   char arr2[] = "anotherword";
-  
+
   // print length:
   puts("arr1:");
-  print_content(arr1, ARRAY_SIZ-1);
-  printf("arr1 length: %d, size: %d\n", strlen(arr1), (sizeof(arr1) / sizeof(char)));
+  print_content(arr1, ARRAY_SIZ - 1);
+  printf("arr1 length: %d, size: %d\n", strlen(arr1),
+         (sizeof(arr1) / sizeof(char)));
   puts("");
 
   puts("arr2:");
   print_content(arr2, (sizeof(arr2) / sizeof(char)) - 1);
-  printf("arr2 length: %d, size: %d\n", strlen(arr2), (sizeof(arr2) / sizeof(char)));
+  printf("arr2 length: %d, size: %d\n", strlen(arr2),
+         (sizeof(arr2) / sizeof(char)));
   puts("");
 
   puts("READY.");

@@ -15,20 +15,20 @@
 
 #define CONTENT_LENGTH 13
 
-struct dequeue_item{
-  struct dequeue_item* next;
-  struct dequeue_item* prev;
+struct dequeue_item {
+  struct dequeue_item *next;
+  struct dequeue_item *prev;
   char content[CONTENT_LENGTH];
 };
 typedef struct dequeue_item item;
 
-item* getNewItem(char[]);
+item *getNewItem(char[]);
 void addItem(char[]);
 void removeItemAt(int);
 void insertItemAt(int, char[]);
 int dequeueSize();
-item* getItemAt(int);
-char* getContentAt(int);
+item *getItemAt(int);
+char *getContentAt(int);
 int find(char[], int);
 
 #endif

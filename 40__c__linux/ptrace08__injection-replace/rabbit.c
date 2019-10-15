@@ -1,7 +1,8 @@
 /*
   fabricated hello world
 
-  example prepared for code injection for a ptracer, breakpoint will replace the following instruction:
+  example prepared for code injection for a ptracer, breakpoint will replace the
+  following instruction:
          int    $0x80\n\
 
   for running the example, compile it (Makefile) and in one shell window run
@@ -10,11 +11,12 @@
   in another shell window run, within 10 sec
   $ ./ptracer.exe `pidof rabbit.exe`
 
-  after sleeping for 10 sec the rabbit.exe is going to enter its asm instructions
-  where it falls into trap and cannot end
-  only when ptracer.exe receives enter, it leaves the attached rabbit.exe
+  after sleeping for 10 sec the rabbit.exe is going to enter its asm
+  instructions where it falls into trap and cannot end only when ptracer.exe
+  receives enter, it leaves the attached rabbit.exe
 
-  Note: rabbit.exe was stopped, w/o being a child, nor having declared PTRACE_TRACEME explicitely!
+  Note: rabbit.exe was stopped, w/o being a child, nor having declared
+  PTRACE_TRACEME explicitely!
 
   ---
 
@@ -37,7 +39,8 @@
   This GDB was configured as "i486-linux-gnu".
   For bug reporting instructions, please see:
   <http://www.gnu.org/software/gdb/bugs/>...
-  Reading symbols from /data/opt/git_c/ptrace08__injection-replace_FIXME/hello.exe...done.
+  Reading symbols from
+  /data/opt/git_c/ptrace08__injection-replace_FIXME/hello.exe...done.
 
 
   disassemble the assembly methods
@@ -122,13 +125,15 @@
   total of 41 bytes; obtain this sequence as HEX
 
   (gdb) x/40bx main+3
-  0x804841f <main+3>:     0xeb    0x15    0x5e    0xb8    0x04    0x00    0x00    0x00
-  0x8048427 <main+11>:    0xbb    0x02    0x00    0x00    0x00    0x89    0xf1    0xba
-  0x804842f <main+19>:    0x0c    0x00    0x00    0x00    0xcd    0x80    0xcc    0xe8
-  0x8048437 <forward+1>:  0xe6    0xff    0xff    0xff    0x48    0x65    0x6c    0x6c
-  0x804843f <forward+9>:  0x6f    0x20    0x57    0x6f    0x72    0x6c    0x64    0x0a
+  0x804841f <main+3>:     0xeb    0x15    0x5e    0xb8    0x04    0x00    0x00
+  0x00 0x8048427 <main+11>:    0xbb    0x02    0x00    0x00    0x00    0x89 0xf1
+  0xba 0x804842f <main+19>:    0x0c    0x00    0x00    0x00    0xcd    0x80 0xcc
+  0xe8 0x8048437 <forward+1>:  0xe6    0xff    0xff    0xff    0x48    0x65 0x6c
+  0x6c 0x804843f <forward+9>:  0x6f    0x20    0x57    0x6f    0x72    0x6c 0x64
+  0x0a
 
-  now, insert this hex instructions into the ptracer.c, this results to the following
+  now, insert this hex instructions into the ptracer.c, this results to the
+  following
 
   "\xeb\x15\x5e\xb8\x04\x00"
   "\x00\x00\xbb\x02\x00\x00\x00\x89\xf1\xba"
@@ -139,12 +144,11 @@
 
 #include <unistd.h>
 
-int
-main()
+int main()
 {
-	sleep(10);
+  sleep(10);
 
-	__asm__("\
+  __asm__("\
          jmp forward\n				\
 backward:\n					\
          popl   %esi\n				\
@@ -158,5 +162,5 @@ forward:\n					\
          call   backward\n			\
          .string \"Hello World\\n\"\n		\
        ");
-	return 0;
+  return 0;
 }

@@ -12,10 +12,10 @@
 pthread_cond_t cv_suspend;
 
 // e.g. init macro for global mutexes with default values
-pthread_mutex_t mx_suspend = PTHREAD_MUTEX_INITIALIZER; 
+pthread_mutex_t mx_suspend = PTHREAD_MUTEX_INITIALIZER;
 // ...
 
-void* thread_to_be_suspended(void*);
+void *thread_to_be_suspended(void *);
 // ...
 
 
@@ -24,12 +24,12 @@ void* thread_to_be_suspended(void*);
   // conditional variable attribute, here as local variable
   pthread_condattr_t attr_cv_suspend;
   pthread_condattr_init(&attr_cv_suspend);
-  pthread_condattr_setpshared(&attr_cv_suspend, PTHREAD_PROCESS_SHARED); 
+  pthread_condattr_setpshared(&attr_cv_suspend, PTHREAD_PROCESS_SHARED);
   pthread_cond_init(&cv_suspend, &attr_cv_suspend);
 
   // creation
   pthread_t thread_id;
-  if(0 != pthread_create(&thread_id, NULL, thread_to_be_suspended, NULL)){
+  if (0 != pthread_create(&thread_id, NULL, thread_to_be_suspended, NULL)) {
     perror("pthread_create() failed");
     break;
   }
@@ -44,11 +44,11 @@ void* thread_to_be_suspended(void*);
 }
 
 
-void* thread_to_be_suspended(void* some_arg)
+void *thread_to_be_suspended(void *some_arg)
 {
   // ...
   pthread_mutex_lock(&mx_suspend);
-  // by calling this function this thread goes to sleep, 
+  // by calling this function this thread goes to sleep,
   // the conditional variable stayes protected by mutexes
   pthread_cond_wait(&cv_suspend, &mx_suspend);
   pthread_mutex_unlock(&mx_suspend);

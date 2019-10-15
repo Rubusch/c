@@ -5,13 +5,13 @@
 #ifdef FOLDER
 #define FOLDER
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 //...
 
-void func(const char*); 
+void func(const char *);
 
 #endif

@@ -47,14 +47,13 @@
 //*/
 
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include <unistd.h>
-#include <sys/types.h>
 #include <signal.h>
-
+#include <sys/types.h>
+#include <unistd.h>
 
 
 // define the CTRL+C counter, initialize it with zero
@@ -65,7 +64,7 @@ int ctrl_c_count = 0;
 // the signal handler for CTRL+C
 void catch_int(int sig)
 {
-  sigset_t mask_set;  // used to set a signal masking set
+  sigset_t mask_set; // used to set a signal masking set
   sigset_t old_set;  // used to store the old mask set
 
   // re-set the signal handler again to catch_int, for next time -> Linux
@@ -78,7 +77,7 @@ void catch_int(int sig)
 
   // increase count and check if threshold was reached
   ++ctrl_c_count;
-  if(ctrl_c_count >= CTRL_C_THRESHOLD){
+  if (ctrl_c_count >= CTRL_C_THRESHOLD) {
     char answer[30];
 
     // prompt the user to tell us if to really exit or not
@@ -86,12 +85,12 @@ void catch_int(int sig)
     fflush(stdout);
     fgets(answer, 30, stdin);
 
-    if(answer[0] == 'y' || answer[0] == 'Y'){
+    if (answer[0] == 'y' || answer[0] == 'Y') {
       printf("\nExiting...\n");
       fflush(stdout);
       exit(0);
 
-    }else{
+    } else {
       printf("\nContinuing\n");
       fflush(stdout);
 
@@ -109,7 +108,7 @@ void catch_int(int sig)
 void catch_suspend(int sig)
 {
   sigset_t mask_set; // sig mask
-  sigset_t old_set; // restore
+  sigset_t old_set;  // restore
 
   // re-set the signal handler again to catch_suspend, for next time
   signal(SIGTSTP, catch_suspend);
@@ -129,12 +128,13 @@ void catch_suspend(int sig)
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   signal(SIGINT, catch_int);
   signal(SIGTSTP, catch_suspend);
 
-  while(1) pause();
+  while (1)
+    pause();
 
   // never executed
   exit(0);

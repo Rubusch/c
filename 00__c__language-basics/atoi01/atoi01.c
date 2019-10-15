@@ -4,15 +4,15 @@
  * @email: L.Rubusch@gmx.ch
  * @license: GPLv3
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void output(char*, char*, char*);
+void output(char *, char *, char *);
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   char arr1[] = "foo";
   char arr2[] = "bar";
@@ -42,22 +42,23 @@ int main(int argc, char** argv)
 
   // presentation of arr4 - "f"
   printf("presentation of arr4 - \"f\"\n");
-  printf("\t%s\n", arr4);            // U
-  printf("\t%lX\n", (unsigned long) arr4);            // 2280666 - address
-  printf("\t%lX\n", (unsigned long) arr4);      // 2280666 - same, just the adress
-  printf("\t%i\n", *arr4);           // 102     - ASCII enconding
-  printf("\t%s\n", arr4);            // f       - character under ASCII
-  printf("\t%i\n", atoi(arr4));      // 0       - 'f' is not a representation of a dec number
+  printf("\t%s\n", arr4);                   // U
+  printf("\t%lX\n", ( unsigned long )arr4); // 2280666 - address
+  printf("\t%lX\n", ( unsigned long )arr4); // 2280666 - same, just the adress
+  printf("\t%i\n", *arr4);                  // 102     - ASCII enconding
+  printf("\t%s\n", arr4);                   // f       - character under ASCII
+  printf("\t%i\n",
+         atoi(arr4)); // 0       - 'f' is not a representation of a dec number
   printf("\n");
 
   // presentation of the first character of arr4 - 'f'
   printf("presentation of arr4[0] - \'f\'\n");
-  printf("\t%s\n", &arr4[0]);        // U
-  printf("\t%lX\n", (unsigned long) &arr4[0]);        // 2280666
-  printf("\t%lX\n", (unsigned long) &arr4[0]);  // 2280666
-  printf("\t%i\n", arr4[0]);         // 102
-  printf("\t%s\n", &arr4[0]);        // f
-  printf("\t%i\n", atoi(&arr4[0]));  // 0
+  printf("\t%s\n", &arr4[0]);                   // U
+  printf("\t%lX\n", ( unsigned long )&arr4[0]); // 2280666
+  printf("\t%lX\n", ( unsigned long )&arr4[0]); // 2280666
+  printf("\t%i\n", arr4[0]);                    // 102
+  printf("\t%s\n", &arr4[0]);                   // f
+  printf("\t%i\n", atoi(&arr4[0]));             // 0
   printf("\n");
 
   // isupper, islower
@@ -72,14 +73,26 @@ int main(int argc, char** argv)
 }
 
 
-void output(char* arr1, char* arr2, char* arr3)
+void output(char *arr1, char *arr2, char *arr3)
 {
-  if(arr1 > arr2) printf("\t%i. %s (%lX) > %s (%lX)\n", 1, arr1, (unsigned long) arr1, arr2, (unsigned long) arr2);
-  else printf("\t%i. %s (%lX) <= %s (%lX)\n", 1, arr1, (unsigned long) arr1, arr2, (unsigned long) arr2);
+  if (arr1 > arr2)
+    printf("\t%i. %s (%lX) > %s (%lX)\n", 1, arr1, ( unsigned long )arr1, arr2,
+           ( unsigned long )arr2);
+  else
+    printf("\t%i. %s (%lX) <= %s (%lX)\n", 1, arr1, ( unsigned long )arr1, arr2,
+           ( unsigned long )arr2);
 
-  if(arr2 > arr3) printf("\t%i. %s (%lX) > %s (%lX)\n", 2, arr2, (unsigned long) arr2, arr3, (unsigned long) arr3);
-  else printf("\t%i. %s (%lX) <= %s (%lX)\n", 2, arr2, (unsigned long) arr2, arr3, (unsigned long) arr3);
+  if (arr2 > arr3)
+    printf("\t%i. %s (%lX) > %s (%lX)\n", 2, arr2, ( unsigned long )arr2, arr3,
+           ( unsigned long )arr3);
+  else
+    printf("\t%i. %s (%lX) <= %s (%lX)\n", 2, arr2, ( unsigned long )arr2, arr3,
+           ( unsigned long )arr3);
 
-  if(arr1 > arr3) printf("\t%i. %s (%lX) > %s (%lX)\n", 3, arr1, (unsigned long) arr1, arr3, (unsigned long) arr3);
-  else printf("\t%i. %s (%lX) <= %s (%lX)\n", 4, arr1, (unsigned long) arr1, arr3, (unsigned long) arr3);
+  if (arr1 > arr3)
+    printf("\t%i. %s (%lX) > %s (%lX)\n", 3, arr1, ( unsigned long )arr1, arr3,
+           ( unsigned long )arr3);
+  else
+    printf("\t%i. %s (%lX) <= %s (%lX)\n", 4, arr1, ( unsigned long )arr1, arr3,
+           ( unsigned long )arr3);
 }

@@ -7,7 +7,7 @@
   run
   gdb hello.exe
   (gdb) disassemble hello.exe
-TODO                  
+TODO
  */
 void main()
 {

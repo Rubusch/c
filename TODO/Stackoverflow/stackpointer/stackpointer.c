@@ -8,15 +8,12 @@
   prints a warning at compilation!!
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
-unsigned long sp(void)
-{
-  __asm__("movl %esp,%eax");
-}
+unsigned long sp(void) { __asm__("movl %esp,%eax"); }
 
 
 int main(void)

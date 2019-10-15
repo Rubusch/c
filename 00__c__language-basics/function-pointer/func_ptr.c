@@ -3,8 +3,8 @@
   function pointer demo
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define INPUT 0
@@ -14,12 +14,12 @@
 #define IO(x) (*ptr_arr[x])
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   printf(" *** function pointer on printf ***\n");
 
   // function pointer - definition
-  int (*ptr) (const char*, ...);
+  int (*ptr)(const char *, ...);
 
   // assign "printf(const char*, ...)" to the ptr
   ptr = printf;
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
   // func ptr array
 
   // definition and assignment
-  int (*ptr_arr[]) (const char*, ...) = {scanf, printf};
+  int (*ptr_arr[])(const char *, ...) = {scanf, printf};
   int iVal;
 
   /*

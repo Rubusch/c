@@ -2,20 +2,20 @@
 /*
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define ME "ITCHY:"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   fprintf(stderr, "%s started\n", ME);
 
   // receives through pipe as argument
-  if(argc == 2){
+  if (argc == 2) {
     fprintf(stderr, "%s received commandline argument \"%s\"\n", ME, argv[1]);
-  }else{
+  } else {
     fprintf(stderr, "%s I can't hear you!\n", ME);
   }
 

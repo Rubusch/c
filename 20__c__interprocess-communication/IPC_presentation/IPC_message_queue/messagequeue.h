@@ -5,7 +5,7 @@
 
 #define BUF_SIZE 64
 
-typedef struct msgbuf{
+typedef struct msgbuf {
   long type;
   char buf[BUF_SIZE];
 } msgbuf;

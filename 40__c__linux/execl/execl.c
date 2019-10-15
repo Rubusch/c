@@ -12,14 +12,14 @@
   The function returns an error code (0=Ok / -1=Fail)
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 
 int main()
 {
   printf("the program executes 'ls -rtl'\n");
-  execl("/bin/ls", "-r", "-t", "-l", (char *) 0);
+  execl("/bin/ls", "-r", "-t", "-l", ( char * )0);
   exit(0);
 }

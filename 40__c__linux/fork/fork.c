@@ -60,8 +60,8 @@ int varGlobal = 2;
 int main()
 {
   int varStack = 20;
-  pid_t pid=0, my_pid=getpid(); // pid of PARENT
-  char* identifier=NULL;
+  pid_t pid = 0, my_pid = getpid(); // pid of PARENT
+  char *identifier = NULL;
   if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
     perror("malloc() failed");
     exit(1);
@@ -91,7 +91,8 @@ int main()
   }
 
   // code executed by BOTH
-  printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier, varGlobal, varStack);
+  printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier,
+         varGlobal, varStack);
 
   free(identifier);
   exit(0);

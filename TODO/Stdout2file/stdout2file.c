@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  char* filename = "foobar.txt";
+  char *filename = "foobar.txt";
   printf("We open the file %s\n", file);
   freopen(filename, "a+", stdout);
   printf("All work and no play makes Jack a dull boy!\n");

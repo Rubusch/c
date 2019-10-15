@@ -15,14 +15,15 @@
   Demo: causes a "Memory Leak" situation - to be checked with Valgrind/memcheck.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int func()
 {
-  char* pText = NULL;
-  if( (pText = (char*) malloc(12345 * sizeof(char))) == NULL) return -1;
+  char *pText = NULL;
+  if ((pText = ( char * )malloc(12345 * sizeof(char))) == NULL)
+    return -1;
   return 0;
 }
 
@@ -32,7 +33,8 @@ int main(void)
   // init
   printf("init a variable and hang up..\n");
   int cnt;
-  for(cnt = 0; cnt < 10; ++cnt) func();
+  for (cnt = 0; cnt < 10; ++cnt)
+    func();
   return EXIT_SUCCESS;
 }
 

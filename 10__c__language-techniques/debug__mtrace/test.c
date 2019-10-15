@@ -26,18 +26,18 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <stdlib.h> /* mcheck */
 #include <mcheck.h> /* mcheck */
+#include <stdlib.h> /* mcheck */
 
 
 int main()
 {
-  char* ptr=NULL;
+  char *ptr = NULL;
 
   mtrace(); /* mtrace */
 
   if (NULL == (ptr = malloc(sizeof(*ptr)))) {
-    perror( "Allocation failed!" );
+    perror("Allocation failed!");
   }
 
   // free( ptr );
@@ -49,4 +49,3 @@ int main()
 
   return 0;
 }
-

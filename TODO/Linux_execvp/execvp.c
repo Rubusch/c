@@ -31,7 +31,7 @@
 
 int main()
 {
-  char* flags[] = {"-r", "-t", "-l", (char*) 0};
+  char *flags[] = {"-r", "-t", "-l", ( char * )0};
   execvp("ls", flags);
   exit(0);
 }

@@ -24,8 +24,8 @@
 
 
 // given inits
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -34,16 +34,17 @@
 
 
 // forwared declaration of a function with 2-dim-array
-void output(char(*)[ELEMENT_LENGTH]);
+void output(char (*)[ELEMENT_LENGTH]);
 
 
-int main(int argc, char** argv){
+int main(int argc, char **argv)
+{
 
   // Definition of a pointer to arrays - Attention: use parenthesis!!!
-  char (*arr)[ELEMENT_LENGTH];
+  char(*arr)[ELEMENT_LENGTH];
 
   // Allocation of a pointer to arrays
-  if( NULL == (arr = calloc(ELEMENT_COUNT, sizeof(*arr)))){
+  if (NULL == (arr = calloc(ELEMENT_COUNT, sizeof(*arr)))) {
     perror("allocation failed");
     exit(EXIT_FAILURE);
   }
@@ -51,7 +52,7 @@ int main(int argc, char** argv){
   // initialization of the pointer to arrays
   char str[6];
   int cnt;
-  for(cnt = 0; cnt < ELEMENT_COUNT; ++cnt){
+  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
     memset(str, '\0', 6);
     // adding the number to the content of str ;)
     sprintf(str, "str %1d", cnt);
@@ -59,13 +60,15 @@ int main(int argc, char** argv){
   }
 
   // size of a pointer to arrays
-  printf("Size of the array is: %li - FAILS due to the pointer!\n", (sizeof arr));
+  printf("Size of the array is: %li - FAILS due to the pointer!\n",
+         (sizeof arr));
 
   // Pass and call of a function with pointer to array
   output(arr);
 
   // free
-  if(NULL != arr) free(arr);
+  if (NULL != arr)
+    free(arr);
 
   puts("READY.\n");
   return 0;
@@ -75,16 +78,17 @@ int main(int argc, char** argv){
 // Definition of a funcion with pointer to arrays
 void output(char (*arr)[ELEMENT_LENGTH])
 {
-  // CAUTION: here the size of the array is unknown - has to be passed as param!!!
+  // CAUTION: here the size of the array is unknown - has to be passed as
+  // param!!!
   printf("\nSize of the array is: %li - FAILS due to pass!\n", (sizeof arr));
 
   // print out
   int idx;
   int jdx;
-  for(idx = 0; idx < ELEMENT_COUNT; ++idx){
+  for (idx = 0; idx < ELEMENT_COUNT; ++idx) {
     printf("%i. element:\t", idx);
-    for(jdx = 0; jdx < (strlen(arr[idx])+1); ++jdx){
-      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")) , arr[idx][jdx]);
+    for (jdx = 0; jdx < (strlen(arr[idx]) + 1); ++jdx) {
+      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")), arr[idx][jdx]);
     }
     printf("\n");
   }
@@ -113,5 +117,3 @@ void output(char (*arr)[ELEMENT_LENGTH])
   is made to indirect upon a void** value which points at something other than a
   void*.
 //*/
-
-

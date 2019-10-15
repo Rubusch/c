@@ -1,5 +1,5 @@
 // fo.c
- 
+
 /**************************************************************************
 
   implementations of some common file operations
@@ -15,11 +15,10 @@
 /***
   extern's
 //*/
-  /*
-extern char* strncat(char*, const char*, size_t); // better thant strcat(), same reason
-extern size_t strlen(const char*); 
-extern char* strstr(const char*, const char*);
-extern void* memset(void*, const void*, size_t);
+/*
+extern char* strncat(char*, const char*, size_t); // better thant strcat(), same
+reason extern size_t strlen(const char*); extern char* strstr(const char*, const
+char*); extern void* memset(void*, const void*, size_t);
 //*/
 /***
 
@@ -32,7 +31,7 @@ extern void* memset(void*, const void*, size_t);
   sets a valid read/write file pointer, 0 - ok, -1 - failed
 //*/
 // CHECKED - OK
-int get_read_write_file_pointer(FILE** fp, char filename[FILENAME_MAX])
+int get_read_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
 {
 #ifdef DEBUG
   printf("\tfo::get_read_write_file_pointer(**fp, filename[])\n");
@@ -40,16 +39,18 @@ int get_read_write_file_pointer(FILE** fp, char filename[FILENAME_MAX])
   printf("\t%i - &*fp\n", &*fp);
   printf("\t\'%s\' - filename\n", filename);
 #endif
-  if(*fp != NULL) return -1;
+  if (*fp != NULL)
+    return -1;
 
-  if(filename == NULL) return -1;
-  if( (*fp = fopen(filename, "rw")) == NULL){
-    fprintf(stderr, "fo::get_read_write_file_pointer(FILE**, char[]) - Failed!\n");
+  if (filename == NULL)
+    return -1;
+  if ((*fp = fopen(filename, "rw")) == NULL) {
+    fprintf(stderr,
+            "fo::get_read_write_file_pointer(FILE**, char[]) - Failed!\n");
     return -1;
   }
-  return 0;  
+  return 0;
 }
-
 
 
 /*
@@ -64,10 +65,12 @@ int get_read_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   printf("\t%i - &*fp\n", &*fp);
   printf("\t\'%s\' - filename\n", filename);
 #endif
-  if(*fp != NULL) return -1;
-  if(filename == NULL) return -1;
+  if (*fp != NULL)
+    return -1;
+  if (filename == NULL)
+    return -1;
 
-  if((*fp = fopen(filename, "r")) == NULL){
+  if ((*fp = fopen(filename, "r")) == NULL) {
     perror("fo::get_read_file_pointer(FILE**, char[] - Failed!");
     return -1;
   }
@@ -88,10 +91,12 @@ int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   printf("\t%i - &*fp\n", &*fp);
   printf("\t\'%s\' - filename\n", filename);
 #endif
-  if(*fp != NULL) return -1;
-  if(filename == NULL) return -1;
+  if (*fp != NULL)
+    return -1;
+  if (filename == NULL)
+    return -1;
 
-  if( (*fp = fopen(filename, "w")) == NULL){
+  if ((*fp = fopen(filename, "w")) == NULL) {
     fprintf(stderr, "fo::get_write_file_pointer(FILE**, char[]) - Failed!\n");
     return -1;
   }
@@ -100,7 +105,7 @@ int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   printf("\t%i - &*fp\n", &*fp);
 #endif
 
-  return 0;  
+  return 0;
 }
 
 
@@ -116,10 +121,12 @@ int get_append_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   printf("\t%i - &*fp\n", &*fp);
   printf("\t\'%s\' - filename\n", filename);
 #endif
-  if(*fp != NULL) return -1;
-  if(filename == NULL) return -1;
+  if (*fp != NULL)
+    return -1;
+  if (filename == NULL)
+    return -1;
 
-  if( (*fp = fopen(filename, "a")) == NULL){
+  if ((*fp = fopen(filename, "a")) == NULL) {
     fprintf(stderr, "fo::get_apprend_file_pointer(FILE**, char[]) - Failed!\n");
     return -1;
   }
@@ -128,11 +135,10 @@ int get_append_file_pointer(FILE **fp, char filename[FILENAME_MAX])
 }
 
 
-
 /***
 
     read from a FILE*
- 
+ 
 ***/
 
 
@@ -140,7 +146,7 @@ int get_append_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   read characterwise into a char*
 //*/
 // CHECKED - OK
-int read_char(FILE* fp, char** content, unsigned long int* content_size)
+int read_char(FILE *fp, char **content, unsigned long int *content_size)
 {
 #ifdef DEBUG
   printf("\tfo::read_char(*fp, **content, *content_size)\n");
@@ -149,22 +155,25 @@ int read_char(FILE* fp, char** content, unsigned long int* content_size)
   printf("\t%i - *content == NULL\n", (*content == NULL));
   printf("\t%i - *content_size\n", *content_size);
 #endif
-  if(fp == NULL) return -1;
-  if(*content_size == 0) return -1;
-  int c = 0; 
+  if (fp == NULL)
+    return -1;
+  if (*content_size == 0)
+    return -1;
+  int c = 0;
   unsigned long int idx = 0;
   const unsigned long int INITIAL_SIZE = *content_size;
 
   // if pTemp full, append and allocate new space
-  while( (c=fgetc(fp)) != EOF){
+  while ((c = fgetc(fp)) != EOF) {
 #ifdef DEBUG
-        putchar(c); // print out on screen
+    putchar(c); // print out on screen
 #endif
     (*content)[idx] = c;
-    if(idx >= (*content_size)-2){
-      if(get_more_space(content, content_size, INITIAL_SIZE) == -1){
-	fprintf(stderr, "fo::read_char(*fp, char**, unsigned long int*) - Failed!\n");
-	exit(EXIT_FAILURE);
+    if (idx >= (*content_size) - 2) {
+      if (get_more_space(content, content_size, INITIAL_SIZE) == -1) {
+        fprintf(stderr,
+                "fo::read_char(*fp, char**, unsigned long int*) - Failed!\n");
+        exit(EXIT_FAILURE);
       }
     }
     ++idx;
@@ -183,30 +192,33 @@ int read_char(FILE* fp, char** content, unsigned long int* content_size)
   Therefore the magic number of e.g. 128 tokens is necessary here!!!
 //*/
 // CHECKED - OK
-int read_without_spaces(FILE* fp, char** content, unsigned long int* content_size)
+int read_without_spaces(FILE *fp, char **content,
+                        unsigned long int *content_size)
 {
 #ifdef DEBUG
-  printf("\tfo::read_formated(*fp, **content, *content_size)\n"); 
+  printf("\tfo::read_formated(*fp, **content, *content_size)\n");
   printf("\t%i - fp == NULL\n", (fp == NULL));
   printf("\t%i - &*fp\n", &*fp);
   printf("\t%i - *content == NULL\n", (*content == NULL));
-  printf("\t%i - *content_size\n", *content_size);  
+  printf("\t%i - *content_size\n", *content_size);
 #endif
-    
-  if(fp == NULL) return -1;
+
+  if (fp == NULL)
+    return -1;
   char pBuf[128]; // uses magic number ;-)
-  //strcpy(pBuf, "\0"); 
+  // strcpy(pBuf, "\0");
   memset(pBuf, '\0', 128);
 
   const unsigned long int INITIAL_SIZE = *content_size;
   unsigned long int idx = 1; // for the '\0' token
-  while((fscanf(fp, "%127s", pBuf)) != EOF){
+  while ((fscanf(fp, "%127s", pBuf)) != EOF) {
     pBuf[128] = '\0';
     idx += strlen(pBuf);
-    if(idx >= *content_size){
-      if(get_more_space(content, content_size, INITIAL_SIZE) == -1){
-	fprintf(stderr, "fo::read_without_spaces(*fp, char**, unsigned long int*) - Failed!\n");
-	exit(EXIT_FAILURE);
+    if (idx >= *content_size) {
+      if (get_more_space(content, content_size, INITIAL_SIZE) == -1) {
+        fprintf(stderr, "fo::read_without_spaces(*fp, char**, unsigned long "
+                        "int*) - Failed!\n");
+        exit(EXIT_FAILURE);
       }
     }
     strncat(*content, pBuf, 128);
@@ -224,16 +236,17 @@ int read_without_spaces(FILE* fp, char** content, unsigned long int* content_siz
   reads the whole file linewise into a char* with a buffer of the given size
 //*/
 // CHECKED - OK
-int read_linewise(FILE* fp, char** content, unsigned long int* content_size)
+int read_linewise(FILE *fp, char **content, unsigned long int *content_size)
 {
 #ifdef DEBUG
   printf("\tfo::read_linewise(*fp, **content, *content_size)\n");
   printf("\t%i - fp == NULL\n", (fp == NULL));
   printf("\t%i - &*fp\n", &*fp);
   printf("\t%i - *content == NULL\n", (*content == NULL));
-  printf("\t%i - *content_size\n", *content_size); 
+  printf("\t%i - *content_size\n", *content_size);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
   memset(*content, '\0', *content_size);
   unsigned long idx = 0;
   const unsigned long int INITIAL_SIZE = *content_size;
@@ -252,11 +265,11 @@ int read_linewise(FILE* fp, char** content, unsigned long int* content_size)
     idx += strlen(*gptr);
     if(idx >= (*content_size-2)){
       if(get_more_space(content, content_size, INITIAL_SIZE) == -1){
-	fprintf(stderr, "fo::read_linewise(*fp, char**, unsigned long int*) - Failed!\n");
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "fo::read_linewise(*fp, char**, unsigned long int*) -
+Failed!\n"); exit(EXIT_FAILURE);
       }
     }
-    strncat( *content, *gptr, strlen(*gptr)); 
+    strncat( *content, *gptr, strlen(*gptr));
   }
   *content_size = strlen(*content) + 1;
 
@@ -266,17 +279,21 @@ int read_linewise(FILE* fp, char** content, unsigned long int* content_size)
 #endif
   //*/
   char *pBuf = NULL;
-  if( (pBuf = calloc(INITIAL_SIZE, sizeof(*pBuf))) == NULL);
+  if ((pBuf = calloc(INITIAL_SIZE, sizeof(*pBuf))) == NULL)
+    ;
   memset(pBuf, '\0', INITIAL_SIZE);
   idx = 1; // 1 because of '\0'
-  while( (fgets( pBuf, (INITIAL_SIZE), fp) != NULL) && (*pBuf != EOF)){ // EOF or EOL?
-    pBuf[INITIAL_SIZE-1] = '\0'; // fgets doesn't set '\0' (?)
+  while ((fgets(pBuf, (INITIAL_SIZE), fp) != NULL) &&
+         (*pBuf != EOF)) {         // EOF or EOL?
+    pBuf[INITIAL_SIZE - 1] = '\0'; // fgets doesn't set '\0' (?)
     idx += strlen(pBuf);
-    if(idx > *content_size){
-      if(get_more_space(content, content_size, INITIAL_SIZE) == -1){
-	fprintf(stderr, "fo::read_linewise(*fp, char**, unsigned long int*) - Failed!\n");
-	free(pBuf);
-	return -1;
+    if (idx > *content_size) {
+      if (get_more_space(content, content_size, INITIAL_SIZE) == -1) {
+        fprintf(
+            stderr,
+            "fo::read_linewise(*fp, char**, unsigned long int*) - Failed!\n");
+        free(pBuf);
+        return -1;
       }
     }
     strncat(*content, pBuf, INITIAL_SIZE);
@@ -291,7 +308,7 @@ int read_linewise(FILE* fp, char** content, unsigned long int* content_size)
 
 // CHECKED - OK
 //*/
-int read_blockwise(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
+int read_blockwise(FILE *fp, char *content, const unsigned int CONTENT_SIZE)
 {
 #ifdef DEBUG
   printf("\tfo::read_blockwise(*fp, *content, objCount)\n");
@@ -299,15 +316,16 @@ int read_blockwise(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
   printf("\t%i - &*fp\n", &*fp);
   printf("\t%i - content == NULL\n", (content == NULL));
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
 
   unsigned int count = fread(content, sizeof(*content), CONTENT_SIZE, fp);
-  if(count > CONTENT_SIZE) return -1;
-  content[count] = '\0';  
+  if (count > CONTENT_SIZE)
+    return -1;
+  content[count] = '\0';
 
   return 0;
 }
-
 
 
 /***
@@ -321,7 +339,7 @@ int read_blockwise(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
   writes characterwise from content into a FILE pointer
 //*/
 // CHECKED - OK
-int write_char(FILE* fp, char* content, const unsigned long int CONTENT_SIZE)
+int write_char(FILE *fp, char *content, const unsigned long int CONTENT_SIZE)
 {
 #ifdef DEBUG
   printf("\tfo::write_char(*fp, *content, content_size)\n");
@@ -330,14 +348,17 @@ int write_char(FILE* fp, char* content, const unsigned long int CONTENT_SIZE)
   printf("\t\'%s\' - content\n", content);
   printf("\t%i - CONTENT_SIZE\n", CONTENT_SIZE);
 #endif
-  if(fp == NULL) return -1;
-  if(content == NULL) return -1;
+  if (fp == NULL)
+    return -1;
+  if (content == NULL)
+    return -1;
   int c;
   unsigned long int idx = 0;
-  while( (c=*content++) != '\0'){
+  while ((c = *content++) != '\0') {
     ++idx;
-    if(idx >=CONTENT_SIZE){
-      fprintf(stderr, "fo::write_char(FILE*, char*, unsigned long int) - Failed!\n");
+    if (idx >= CONTENT_SIZE) {
+      fprintf(stderr,
+              "fo::write_char(FILE*, char*, unsigned long int) - Failed!\n");
       return -1;
     }
     putc(c, fp);
@@ -348,11 +369,11 @@ int write_char(FILE* fp, char* content, const unsigned long int CONTENT_SIZE)
 
 /*
   writes formated (using printf) into FILE* from char*
-  - unsafe, no fixed length - 
-  - needs fixed formatting (hardcoded!) - 
+  - unsafe, no fixed length -
+  - needs fixed formatting (hardcoded!) -
 //*/
 // CHECKED - OK
-int write_formated(FILE* fp, char* content)
+int write_formated(FILE *fp, char *content)
 {
 #ifdef DEBUG
   printf("\tfo::write_formated(*fp, *content)\n");
@@ -361,8 +382,10 @@ int write_formated(FILE* fp, char* content)
   printf("\t\'%s\' - content\n", content);
 #endif
 
-  if(fp == NULL) return -1;
-  if(content == NULL) return -1;
+  if (fp == NULL)
+    return -1;
+  if (content == NULL)
+    return -1;
   fprintf(fp, "%s", content); // needs extern formatting!
 
   return 0;
@@ -374,7 +397,8 @@ int write_formated(FILE* fp, char* content)
   - changes the string of the file pointer fp ->???!!!
 //*/
 // CHECKED - OK
-int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE)
+int write_linewise(FILE *fp, char *content,
+                   const unsigned long int CONTENT_SIZE)
 {
 #ifdef DEBUG
   printf("\tfo::write_linewise(*fp, *content, lenContent)\n");
@@ -383,34 +407,37 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
   printf("\t\'%s\' - content\n", content);
   printf("\t%i - CONTENT_SIZE\n", CONTENT_SIZE);
 #endif
-  if(fp == NULL) return -1;
-  if(content == NULL) return -1;
+  if (fp == NULL)
+    return -1;
+  if (content == NULL)
+    return -1;
 
   char bufLine[BUFSIZ];
-  int idxLine = 0;  
+  int idxLine = 0;
   int idxContent = 0;
   char *pData = &content[0];
   //  strncpy(bufLine, "", 1); // TODO: test
   memset(bufLine, '\0', BUFSIZ);
-  while((idxLine < BUFSIZ)
-	&& (idxContent < CONTENT_SIZE) 
-	&& ((bufLine[idxLine] = *(pData++)) != '\0')){
+  while ((idxLine < BUFSIZ) && (idxContent < CONTENT_SIZE) &&
+         ((bufLine[idxLine] = *(pData++)) != '\0')) {
 
-    if (idxLine >= BUFSIZ){
-      fprintf(stderr, "fo::write_linewise(FILE*, char*, const unsigned long) - Failed!\n");
+    if (idxLine >= BUFSIZ) {
+      fprintf(
+          stderr,
+          "fo::write_linewise(FILE*, char*, const unsigned long) - Failed!\n");
       return -1;
     }
 
-    if( ((idxLine == CONTENT_SIZE-2) && (bufLine[idxLine] != '\n')) 
-	|| (*(pData+1) == '\0' )){
-      bufLine[idxLine+1] = '\0';
+    if (((idxLine == CONTENT_SIZE - 2) && (bufLine[idxLine] != '\n')) ||
+        (*(pData + 1) == '\0')) {
+      bufLine[idxLine + 1] = '\0';
       fputs(bufLine, fp); // write line
       break;
 
-    }else if(bufLine[idxLine] == '\n'){
+    } else if (bufLine[idxLine] == '\n') {
       fputs(bufLine, fp); // write line
       idxLine = 0;
-    }else{
+    } else {
       ++idxLine;
     }
     ++idxContent;
@@ -431,20 +458,23 @@ int write_linewise(FILE* fp, char* content, const unsigned long int CONTENT_SIZE
   create a file with a given size
 //*/
 // CHECKED - OK
-int create_file(const char* filename, const unsigned long int SIZE)
+int create_file(const char *filename, const unsigned long int SIZE)
 {
 #ifdef DEBUG
   printf("\tfo::create_file(*filename, SIZE)\n");
   printf("\t%i - SIZE\n", SIZE);
 #endif
-  if(filename == NULL) return -1;
+  if (filename == NULL)
+    return -1;
 
-  FILE* fp = fopen(filename, "wb");
-  if(fp==NULL){
-    fprintf(stderr, "fo::create_file(const char*, const unsigned long int) - Failed!\n");
-    return -1;  
+  FILE *fp = fopen(filename, "wb");
+  if (fp == NULL) {
+    fprintf(
+        stderr,
+        "fo::create_file(const char*, const unsigned long int) - Failed!\n");
+    return -1;
   }
-  fseek(fp, SIZE-1, SEEK_SET);
+  fseek(fp, SIZE - 1, SEEK_SET);
   putc('x', fp);
   fclose(fp);
 
@@ -454,17 +484,19 @@ int create_file(const char* filename, const unsigned long int SIZE)
 
 /*
   remove a file
-  - in case use a shred_file, remove only frees the bytes, but doesn't remove the content
+  - in case use a shred_file, remove only frees the bytes, but doesn't remove
+the content
 //*/
-// CHECKED - OK (used by shred_file() ) 
-int remove_file(const char* path)
+// CHECKED - OK (used by shred_file() )
+int remove_file(const char *path)
 {
 #ifdef DEBUG
   printf("\tfo::remove_file(*path)\n");
   printf("\t\'%s\' - path\n", path);
 #endif
-  if(path == NULL) return -1;
-  if(remove(path) < 0){
+  if (path == NULL)
+    return -1;
+  if (remove(path) < 0) {
     fprintf(stderr, "fo::remove_file(char*) - Failed!\n");
     return -1;
   }
@@ -477,17 +509,18 @@ int remove_file(const char* path)
   - depending on remove_file(const char* path)
 //*/
 // CHECKED - OK
-int shred_file(const char* path)
+int shred_file(const char *path)
 {
 #ifdef DEBUG
   printf("\tfo::shred_file(*path)\n");
   printf("\t\'%s\' - path\n", path);
 #endif
-  if(path == NULL) return -1;
+  if (path == NULL)
+    return -1;
   unsigned long count;
   FILE *fp = fopen(path, "w+b");
 
-  if(fp != NULL){
+  if (fp != NULL) {
     fseek(fp, 0L, SEEK_END);
     count = ftell(fp);
     fwrite("", 1, count, fp);
@@ -502,16 +535,18 @@ int shred_file(const char* path)
   rename a file
 //*/
 // CHECKED - OK
-int rename_file(const char* oldname, const char* newname)
+int rename_file(const char *oldname, const char *newname)
 {
 #ifdef DEBUG
   printf("\tfo::rename_file(*oldname, *newname)\n");
   printf("\t\'%s\' - oldname\n", oldname);
   printf("\t\'%s\' - newname\n", newname);
 #endif
-  if(oldname == NULL) return -1;
-  if(newname == NULL) return -1;
-  if(rename(oldname, newname) < 0){
+  if (oldname == NULL)
+    return -1;
+  if (newname == NULL)
+    return -1;
+  if (rename(oldname, newname) < 0) {
     fprintf(stderr, "fo::rename_file(const char*, const char*) - Failed!\n");
     return -1;
   }
@@ -523,29 +558,33 @@ int rename_file(const char* oldname, const char* newname)
   copy a file unbuffered characterwise
 //*/
 // CHECKED - OK
-int copy_characterwise_unbuffered(const char* src, const char* dest)
+int copy_characterwise_unbuffered(const char *src, const char *dest)
 {
 #ifdef DEBUG
   printf("\tfo::copy_characterwise_unbuffered(*src, *dest)\n");
   printf("\t\'%s\' - src\n", src);
   printf("\t\'%s\' - dest\n", dest);
 #endif
-  if(src == NULL) return -1;
-  if(dest == NULL) return -1;
+  if (src == NULL)
+    return -1;
+  if (dest == NULL)
+    return -1;
 
   FILE *fpSrc, *fpDest;
   int c;
 
   // characterwise
   fpSrc = fopen(src, "rb");
-  if( fpSrc != NULL){
+  if (fpSrc != NULL) {
     fpDest = fopen(dest, "wb");
-    if(fpDest == NULL){
-	fprintf(stderr, "fo::copy_characterwise_unbuffered(const char*, const char*) - Failed!\n");
-	return -1;
-      }
-  }else{
-    fprintf(stderr, "fo::copy_characterwise_unbuffered(const char*, const char*) - Failed!\n");
+    if (fpDest == NULL) {
+      fprintf(stderr, "fo::copy_characterwise_unbuffered(const char*, const "
+                      "char*) - Failed!\n");
+      return -1;
+    }
+  } else {
+    fprintf(stderr, "fo::copy_characterwise_unbuffered(const char*, const "
+                    "char*) - Failed!\n");
     return -1;
   }
 
@@ -558,7 +597,7 @@ int copy_characterwise_unbuffered(const char* src, const char* dest)
   setbuf(fpDest, NULL);
   //*/
 
-  while((c=getc(fpSrc)) != EOF)
+  while ((c = getc(fpSrc)) != EOF)
     putc(c, fpDest);
 
   fclose(fpSrc);
@@ -572,7 +611,8 @@ int copy_characterwise_unbuffered(const char* src, const char* dest)
   copy a file buffered characterwise - provide a buffer size
 //*/
 // CHECKED - OK
-int copy_characterwise_buffered(const char* src, const char* dest, const unsigned long int BUFFER_SIZE)
+int copy_characterwise_buffered(const char *src, const char *dest,
+                                const unsigned long int BUFFER_SIZE)
 {
 #ifdef DEBUG
   printf("\tfo::copy_characterwise_buffered(*src, *dest, BUFFER_SIZE)\n");
@@ -580,8 +620,10 @@ int copy_characterwise_buffered(const char* src, const char* dest, const unsigne
   printf("\t\'%s\' - dest\n", dest);
   printf("\t%i - BUFFER_SIZE\n", BUFFER_SIZE);
 #endif
-  if(src == NULL) return -1;
-  if(dest == NULL) return -1;
+  if (src == NULL)
+    return -1;
+  if (dest == NULL)
+    return -1;
 
   //  unsigned long BUF = BUFFER_SIZE;
   FILE *fpSrc, *fpDest;
@@ -589,14 +631,16 @@ int copy_characterwise_buffered(const char* src, const char* dest, const unsigne
 
   // characterwise
   fpSrc = fopen(src, "rb");
-  if( fpSrc != NULL){
+  if (fpSrc != NULL) {
     fpDest = fopen(dest, "wb");
-    if(fpDest == NULL){
-      fprintf(stderr, "fo::copy_characterwise_buffered(const char*, const char*) - Failed!\n");
-	return -1;
-      }
-  }else{
-    fprintf(stderr, "fo::copy_characterwise_buffered(const char*, const char*) - Failed!\n");
+    if (fpDest == NULL) {
+      fprintf(stderr, "fo::copy_characterwise_buffered(const char*, const "
+                      "char*) - Failed!\n");
+      return -1;
+    }
+  } else {
+    fprintf(stderr, "fo::copy_characterwise_buffered(const char*, const char*) "
+                    "- Failed!\n");
     return -1;
   }
 
@@ -610,7 +654,7 @@ int copy_characterwise_buffered(const char* src, const char* dest, const unsigne
   setbuf(fpDest, NULL);
   //*/
 
-  while((c=getc(fpSrc)) != EOF)
+  while ((c = getc(fpSrc)) != EOF)
     putc(c, fpDest);
 
   fclose(fpSrc);
@@ -620,9 +664,8 @@ int copy_characterwise_buffered(const char* src, const char* dest, const unsigne
 }
 
 
-
 /***
-    
+    
     temp file operations
 
 ***/
@@ -725,14 +768,15 @@ int close_tmp(FILE** fp)
   closes the open FILE*
 //*/
 // CHECKED - OK
-int close_stream(FILE** fp)
+int close_stream(FILE **fp)
 {
 #ifdef DEBUG
   printf("\tfo::close_stream(**fp)\n");
   printf("\t%i - *fp == NULL\n", (*fp == NULL));
   printf("\t%i - &*fp\n", &*fp);
-#endif 
-  if(*fp == NULL) return -1;
+#endif
+  if (*fp == NULL)
+    return -1;
   int iRes = fclose(*fp);
   *fp = NULL;
 #ifdef DEBUG
@@ -741,21 +785,22 @@ int close_stream(FILE** fp)
 
   return iRes;
 }
-	
+
 
 /*
-  reads the size of the file into an unsigned long int*, 
+  reads the size of the file into an unsigned long int*,
   returns -1 in case of error, else 0
 //*/
 // CHECKED - OK
-int filesize( FILE* fp, unsigned long int* size)
+int filesize(FILE *fp, unsigned long int *size)
 {
 #ifdef DEBUG
   printf("\tfo::filesize(file[], *size\n");
   printf("\t\'%s\' - file\n", file);
   printf("\t%i - size == NULL\n", (size == NULL));
 #endif
-  if(size == NULL) return -1;  
+  if (size == NULL)
+    return -1;
   fseek(fp, 0L, SEEK_END);
   *size = ftell(fp);
   return 0;
@@ -763,25 +808,27 @@ int filesize( FILE* fp, unsigned long int* size)
 
 
 /*
-  checks for EOF - returns 1 if no EOF is found, 
+  checks for EOF - returns 1 if no EOF is found,
   else 0, and -1 if the file pointer was corrupt
 //*/
 // CHECKED - OK
-int check_eof(FILE* fp)
+int check_eof(FILE *fp)
 {
 #ifdef DEBUG
   printf("\tfo::check_eof(*fp)\n");
   printf("\t%i - fp == NULL\t", (fp == NULL));
   printf("\t%i - &*fp\n", &*fp);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
   unsigned long size = 0;
   filesize(fp, &size);
 
   int cnt;
-  for(cnt = 0; (cnt < size) && !feof(fp); ++cnt)
+  for (cnt = 0; (cnt < size) && !feof(fp); ++cnt)
     ;
-  if(cnt ==  size) return 1;
+  if (cnt == size)
+    return 1;
 
   return 0;
 }
@@ -791,19 +838,21 @@ int check_eof(FILE* fp)
   check file for errors in a file
 //*/
 // CHECKED - OK
-int check_error(FILE* fp)
+int check_error(FILE *fp)
 {
 #ifdef DEBUG
   printf("\tfo::check_error(*fp)\n");
   printf("\t%i - fp == NULL\n", (fp == NULL));
   printf("\t%i - &*fp\n", &*fp);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
   rewind(fp); // reset filestream
-  if(ferror(fp)){
+  if (ferror(fp)) {
     clearerr(fp);
     return -1;
-  }else return 0;
+  } else
+    return 0;
 }
 
 
@@ -811,7 +860,7 @@ int check_error(FILE* fp)
   reads without the EOF character into a given Buffer - OK
 //*/
 // CHECKED - OK
-int read_without_eof(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
+int read_without_eof(FILE *fp, char *content, const unsigned int CONTENT_SIZE)
 {
 #ifdef DEBUG
   printf("\tfo::read_wo_eof(*fp, *content, CONTENT_SIZE)\n");
@@ -820,27 +869,33 @@ int read_without_eof(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
   printf("\t%i - content == NULL\n", (content == NULL));
   printf("\t%i - CONTENT_SIZE\n", CONTENT_SIZE);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
 
   int c;
   unsigned long int idx = 0;
-  while( (c=getc(fp)) != 0){
+  while ((c = getc(fp)) != 0) {
 #ifdef DEBUG
     printf("%i. #", idx);
     putchar(c); // print reading out on screen
     printf("#\n");
 #endif
     unsigned int over_read = 100; // to be set
-    if(idx >= CONTENT_SIZE + over_read){ // jumps out when read size (+ over_space) expired
+    if (idx >=
+        CONTENT_SIZE +
+            over_read) { // jumps out when read size (+ over_space) expired
       break;
     }
     //*/
-    if(c == EOF) ungetc(c,fp); // This is rather experimental !!!!
-    if(c == '\0') c = 'x'; // to be set instead of '\0'
-    else content[idx] = c;
+    if (c == EOF)
+      ungetc(c, fp); // This is rather experimental !!!!
+    if (c == '\0')
+      c = 'x'; // to be set instead of '\0'
+    else
+      content[idx] = c;
     ++idx;
   }
- return 0;
+  return 0;
 }
 
 
@@ -849,7 +904,8 @@ int read_without_eof(FILE* fp, char* content, const unsigned int CONTENT_SIZE)
   The Buffer should be set up to cover one line!
 //*/
 // CHECKED - OK
-int read_nth_line(FILE* fp,  char* line, const unsigned long int LINE_SIZE, const unsigned long int LINE_NUMBER)
+int read_nth_line(FILE *fp, char *line, const unsigned long int LINE_SIZE,
+                  const unsigned long int LINE_NUMBER)
 {
 #ifdef DEBUG
   printf("\tfo::read_nth_line(*fp, *line, LINE_SIZE, LINE_NUMBER)\n");
@@ -859,13 +915,16 @@ int read_nth_line(FILE* fp,  char* line, const unsigned long int LINE_SIZE, cons
   printf("\t%i - LINE_SIZE\n", LINE_SIZE);
   printf("\t%i - LINE_NUMBER\n", LINE_NUMBER);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
   rewind(fp); // reset filestream
   char temp[LINE_SIZE];
-  int cnt=0;
-  for(cnt = 0; cnt < LINE_NUMBER - 1; ++cnt)
-    if(fgets(temp, LINE_SIZE, fp) == NULL) return -1; 
-  if(fgets(temp, LINE_SIZE, fp) == NULL) return -1;
+  int cnt = 0;
+  for (cnt = 0; cnt < LINE_NUMBER - 1; ++cnt)
+    if (fgets(temp, LINE_SIZE, fp) == NULL)
+      return -1;
+  if (fgets(temp, LINE_SIZE, fp) == NULL)
+    return -1;
   strncat(line, temp, LINE_SIZE);
 
   return 0;
@@ -876,7 +935,8 @@ int read_nth_line(FILE* fp,  char* line, const unsigned long int LINE_SIZE, cons
   reads a line from start (inclusive) to end (inclusive)
 //*/
 // CHECKED - OK
-int read_lines(FILE* fp, char* lines, const unsigned long int LINES_SIZE, const unsigned long int start, const unsigned long int end)
+int read_lines(FILE *fp, char *lines, const unsigned long int LINES_SIZE,
+               const unsigned long int start, const unsigned long int end)
 {
 #ifdef DEBUG
   printf("\tfo::read_lines(*fp, *lines, start, end)\n");
@@ -887,21 +947,26 @@ int read_lines(FILE* fp, char* lines, const unsigned long int LINES_SIZE, const 
   printf("\t%i - start\n", start);
   printf("\t%i - end\n", end);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
   rewind(fp); // reset filestream
-  if( (start == 0) || (end == 0)) return -1;
-  const unsigned long int iStart = start -1;
+  if ((start == 0) || (end == 0))
+    return -1;
+  const unsigned long int iStart = start - 1;
   const unsigned long int iEnd = end - 1;
-  if(iEnd < iStart) return -1;
+  if (iEnd < iStart)
+    return -1;
   char temp[LINES_SIZE];
-  int cnt=0;
-  for(cnt=0; cnt < iStart; ++cnt){
-    //strcpy(temp, ""); // TODO: rm
+  int cnt = 0;
+  for (cnt = 0; cnt < iStart; ++cnt) {
+    // strcpy(temp, ""); // TODO: rm
     memset(temp, '\0', LINES_SIZE);
-    if(fgets(temp, LINES_SIZE, fp) == NULL) return -1;
+    if (fgets(temp, LINES_SIZE, fp) == NULL)
+      return -1;
   }
-  for(; cnt <= iEnd; ++cnt){
-    if(fgets(temp, LINES_SIZE, fp) == NULL) return -1;
+  for (; cnt <= iEnd; ++cnt) {
+    if (fgets(temp, LINES_SIZE, fp) == NULL)
+      return -1;
     strncat(lines, temp, LINES_SIZE);
   }
   return 0;
@@ -912,7 +977,8 @@ int read_lines(FILE* fp, char* lines, const unsigned long int LINES_SIZE, const 
   reads lines into char* that contain a certain pattern (also within a word)
 //*/
 // CHECKED - OK
-int read_lines_with_pattern(FILE* fp, char* lines, const unsigned long int LINES_SIZE, char* pattern)
+int read_lines_with_pattern(FILE *fp, char *lines,
+                            const unsigned long int LINES_SIZE, char *pattern)
 {
 #ifdef DEBUG
   printf("\tfo::read_lines_with_pattern(*fp, *lines, *pattern)\n");
@@ -922,20 +988,21 @@ int read_lines_with_pattern(FILE* fp, char* lines, const unsigned long int LINES
   printf("\t%i - LINES_SIZE\n", LINES_SIZE);
   printf("\t\'%s\' - pattern\n", pattern);
 #endif
-  if(fp == NULL) return -1;
+  if (fp == NULL)
+    return -1;
   rewind(fp); // reset filestream
-  if(pattern == NULL) return -1;
+  if (pattern == NULL)
+    return -1;
   char temp[LINES_SIZE];
-  while(fgets(temp, LINES_SIZE, fp) != NULL){
-    if(strstr(temp, pattern) != 0){
+  while (fgets(temp, LINES_SIZE, fp) != NULL) {
+    if (strstr(temp, pattern) != 0) {
       strncat(lines, temp, LINES_SIZE);
       strncat(lines, "\n", 2);
-    // counter++; // for linenumbers
-    } 
+      // counter++; // for linenumbers
+    }
   }
   return 0;
 }
-
 
 
 /***
@@ -960,21 +1027,25 @@ int get_bufsize()
 
 
 /*
-  does a save re-allocation for char - or is supposed to do so, returns 0 in case of success and -1 in case of error
+  does a save re-allocation for char - or is supposed to do so, returns 0 in
+case of success and -1 in case of error
 //*/
 // CHECKED - OK
-int get_more_space(char** str, unsigned long int* str_size, const unsigned long int how_much_more){
+int get_more_space(char **str, unsigned long int *str_size,
+                   const unsigned long int how_much_more)
+{
 #ifdef DEBUG
   printf("\tfo::get_more_space(**str, *str_size, how_much_more)\n");
   printf("\t\'%s\' - *str\n", *str);
   printf("\t%i - *str_size\n", *str_size);
   printf("\t%i - how_much_more\n", how_much_more);
 #endif
-  char* tmp = NULL;
+  char *tmp = NULL;
 
   // using realloc makes using strncat() here unnecessary
-  if((tmp = realloc(*str, (*str_size + how_much_more))) == NULL){
-    if(tmp!=NULL) free(tmp);
+  if ((tmp = realloc(*str, (*str_size + how_much_more))) == NULL) {
+    if (tmp != NULL)
+      free(tmp);
     tmp = NULL;
     return -1;
   }
@@ -1003,5 +1074,3 @@ int write_blockwise(FILE* fp, struct Data content)
   return 0;
 }
 //*/
-
-

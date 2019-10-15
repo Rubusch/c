@@ -8,14 +8,14 @@
   this can end up in a segfault for still unknown reason!!!
 //*/
 
+#include <stdint.h> /* intptr_t */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h> /* intptr_t */
 
-#include <unistd.h>
-#include <sys/types.h>
 #include <pthread.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <errno.h> // EBUSY
 
@@ -33,7 +33,7 @@ void *search(void *);
 void print_it(void *);
 
 // global variables
-pthread_t  threads[NUM_THREADS];
+pthread_t threads[NUM_THREADS];
 pthread_mutex_t lock;
 int tries;
 
@@ -45,22 +45,23 @@ int main()
 {
   // create a number to search for
   pid_t pid = getpid();
-  printf("the main thread's pid is: %d\n", (int) pid);
+  printf("the main thread's pid is: %d\n", ( int )pid);
 
   // initialize the mutex lock
   pthread_mutex_init(&lock, NULL);
-  printf("Searching for the number = %d...\n", (int) pid);
-  printf("now %d threads will try to guess the number using srand()\n", NUM_THREADS);
+  printf("Searching for the number = %d...\n", ( int )pid);
+  printf("now %d threads will try to guess the number using srand()\n",
+         NUM_THREADS);
   printf("they're guessing a number between %d and %d\n", 0, RAND_MAX);
   puts("this can take quite some time, watch on htop..");
   // create the searching threads
   int idx;
-  for(idx = 0; idx < NUM_THREADS; ++idx){
-    pthread_create(&threads[idx], NULL, search, (void*) (intptr_t)pid);
+  for (idx = 0; idx < NUM_THREADS; ++idx) {
+    pthread_create(&threads[idx], NULL, search, ( void * )( intptr_t )pid);
   }
 
   // wait for (join) all the searching threads
-  for (idx = 0; idx < NUM_THREADS; ++idx){
+  for (idx = 0; idx < NUM_THREADS; ++idx) {
     pthread_join(threads[idx], NULL);
   }
 
@@ -87,23 +88,25 @@ int main()
 */
 void print_it(void *arg)
 {
-  unsigned long *try = (unsigned long*) arg;
+  unsigned long *try
+    = ( unsigned long * )arg;
   pthread_t tid;
 
   // get the calling thread's ID
   tid = pthread_self();
 
   // print where the thread was in its search when it was cancelled
-  printf("Thread %lu was canceled on its %lu try.\n", (unsigned long) tid, *try);
+  printf("Thread %lu was canceled on its %lu try.\n", ( unsigned long )tid,
+         *try);
 }
 
 
 /*
   This is the search routine that is executed in each thread
 */
-void* search(void* arg)
+void *search(void *arg)
 {
-  int num = (int) (intptr_t)arg;
+  int num = ( int )( intptr_t )arg;
   int idx = 0;
   pthread_t tid;
 
@@ -134,7 +137,7 @@ void* search(void* arg)
      want to use in the cleanup function
   */
 
-  pthread_cleanup_push(print_it, (void*) &idx);
+  pthread_cleanup_push(print_it, ( void * )&idx);
 
   // loop forever
   while (1) {
@@ -144,29 +147,29 @@ void* search(void* arg)
     if (num == rand()) {
 
       /*
-	 try to lock the mutex lock --
-	 if locked, check to see if the thread has been cancelled
-	 if not locked then continue
+         try to lock the mutex lock --
+         if locked, check to see if the thread has been cancelled
+         if not locked then continue
       */
 
-      while(pthread_mutex_trylock(&lock) == EBUSY)
-	pthread_testcancel();
+      while (pthread_mutex_trylock(&lock) == EBUSY)
+        pthread_testcancel();
 
       /*
-	 set the global variable for the number of tries
+         set the global variable for the number of tries
       */
 
       tries = idx;
 
-      printf("thread %lu found the number!\n", (unsigned long) tid);
+      printf("thread %lu found the number!\n", ( unsigned long )tid);
 
       // cancel all the other threads
       int cnt;
-      for(cnt = 0; cnt < NUM_THREADS; ++cnt){
-	if(threads[cnt] != tid){
-	  printf("cancel #%d\n", cnt);
-	  pthread_cancel(threads[cnt]);
-	}
+      for (cnt = 0; cnt < NUM_THREADS; ++cnt) {
+        if (threads[cnt] != tid) {
+          printf("cancel #%d\n", cnt);
+          pthread_cancel(threads[cnt]);
+        }
       }
 
       // break out of the while loop
@@ -196,5 +199,5 @@ void* search(void* arg)
 
   puts("clean up thread - pops");
   pthread_cleanup_pop(0);
-  return((void *)0);
+  return (( void * )0);
 }

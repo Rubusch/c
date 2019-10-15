@@ -4,22 +4,23 @@
 
   reads one file and writes into another
   uses read() and write() which is pretty much low level and fast
-  since this copying is done by threads - it seems to be extremely fast copying!!!
+  since this copying is done by threads - it seems to be extremely fast
+copying!!!
 //*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <pthread.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <pthread.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/uio.h>
+#include <unistd.h>
 
 #define BUFSIZE 512
-#define BUFCNT  4
+#define BUFCNT 4
 
 extern int pthread_setconcurrency(int);
 
@@ -53,16 +54,17 @@ int main(int argc, char **argv)
   pthread_t thr_consumer;
 
   // check the command line arguments
-  if(argc != 3) printf("Usage: %s <infile> <outfile>\n", argv[0]), exit(0);
+  if (argc != 3)
+    printf("Usage: %s <infile> <outfile>\n", argv[0]), exit(0);
 
   // open the input file for the producer to use
-  if((fd_input = open(argv[1], O_RDONLY)) == -1){
+  if ((fd_input = open(argv[1], O_RDONLY)) == -1) {
     fprintf(stderr, "Can't open file %s\n", argv[1]);
     exit(1);
   }
 
   // open the output file for the consumer to use
-  if((fd_output = open(argv[2], O_WRONLY|O_CREAT, 0666)) == -1){
+  if ((fd_output = open(argv[2], O_WRONLY | O_CREAT, 0666)) == -1) {
     fprintf(stderr, "Can't open file %s\n", argv[2]);
     exit(1);
   }
@@ -70,7 +72,8 @@ int main(int argc, char **argv)
   // zero all counters
   Buf.nextadd = Buf.nextrem = Buf.occ = Buf.done = 0;
 
-  // set the thread concurrency to 2 so the producer and consumer can run concurrently
+  // set the thread concurrency to 2 so the producer and consumer can run
+  // concurrently
   pthread_setconcurrency(2);
 
   /*
@@ -78,7 +81,7 @@ int main(int argc, char **argv)
   //*/
 
   // create the consumer thread
-  if(0 != pthread_create(&thr_consumer, NULL, consumer, (void*) fd_output)){
+  if (0 != pthread_create(&thr_consumer, NULL, consumer, ( void * )fd_output)) {
     perror("pthread create failed");
     exit(EXIT_FAILURE);
   }
@@ -102,7 +105,8 @@ int main(int argc, char **argv)
     }
 
     // read from the file and put data into a buffer
-    Buf.byteinbuf[Buf.nextadd] = read(fd_input, Buf.buffer[Buf.nextadd], BUFSIZE);
+    Buf.byteinbuf[Buf.nextadd] =
+        read(fd_input, Buf.buffer[Buf.nextadd], BUFSIZE);
 
     // check to see if done reading
     if (Buf.byteinbuf[Buf.nextadd] == 0) {
@@ -148,7 +152,7 @@ int main(int argc, char **argv)
 
 
   // wait for the consumer to finish
-  if(0 != pthread_join(thr_consumer, NULL)){
+  if (0 != pthread_join(thr_consumer, NULL)) {
     perror("pthread join failed");
     exit(EXIT_FAILURE);
   }
@@ -160,9 +164,9 @@ int main(int argc, char **argv)
 /*
    The consumer thread
 */
-void* consumer(void *arg)
+void *consumer(void *arg)
 {
-  unsigned long fd = (unsigned long) arg;
+  unsigned long fd = ( unsigned long )arg;
 
   while (1) {
 
@@ -177,7 +181,7 @@ void* consumer(void *arg)
 
     // check to see if any buffers are filled if not then wait for the
     // condition to become true
-    while (Buf.occ == 0 && !Buf.done){
+    while (Buf.occ == 0 && !Buf.done) {
       pthread_cond_wait(&Buf.adddata, &Buf.buflock);
     }
 

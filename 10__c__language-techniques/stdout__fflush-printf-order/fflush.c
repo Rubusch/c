@@ -10,23 +10,26 @@
 //*/
 
 #include <stdio.h> /* fflush() */
-#include <string.h> /* memset() */
 #include <stdlib.h>
+#include <string.h> /* memset() */
 #include <unistd.h> /* sleep() */
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   puts("stdout: twisted order between buffered and unbuffered stream");
-  char buf[BUFSIZ]; memset(buf, '\0', sizeof(buf));
+  char buf[BUFSIZ];
+  memset(buf, '\0', sizeof(buf));
   fprintf(stdout, "turn buffer on\n");
   setvbuf(stdout, buf, _IOFBF, BUFSIZ); // setup buffer for stdout to BUFSIZ
 
   fprintf(stdout, "1. ipsum lorum primeiro (buffered stdout, but fflush-ed)\n");
   fflush(stdout); // flush - comes at once, then the 'big task'
 
-  fprintf(stdout, "2. ipsum lorum segundo (buffered stdout)\n"); // this will come even AFTER SLEEP!!!
-//  fflush(stdout); // flush - turn this on, for order: 1-2-3
+  fprintf(stdout,
+          "2. ipsum lorum segundo (buffered stdout)\n"); // this will come even
+                                                         // AFTER SLEEP!!!
+  //  fflush(stdout); // flush - turn this on, for order: 1-2-3
 
   fprintf(stderr, "3. ipsum lorum terceiro (unbuffered stderr)\n");
   fprintf(stderr, "\tsleeping...\n");

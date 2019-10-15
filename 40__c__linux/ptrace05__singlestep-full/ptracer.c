@@ -24,7 +24,8 @@
 
   email: L.Rubusch@gmx.ch
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+  or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -39,64 +40,67 @@
 #include <sys/syscall.h>
 #include <sys/user.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
-int main( int argc, char** argv )
+int main(int argc, char **argv)
 {
-	pid_t child;
+  pid_t child;
 
-	child = fork();
-	if (child == 0) {
-		/* mark child PTRACE_TRACEME, and exec external program */
-		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-		execl("./rabbit.exe", "rabbit.exe", NULL);
+  child = fork();
+  if (child == 0) {
+    /* mark child PTRACE_TRACEME, and exec external program */
+    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+    execl("./rabbit.exe", "rabbit.exe", NULL);
 
-	} else {
-		int status;
-		struct user_regs_struct regs;
-		long count = 0;
-		long ins;
-		while(1) {
+  } else {
+    int status;
+    struct user_regs_struct regs;
+    long count = 0;
+    long ins;
+    while (1) {
 #if __x86_64__
-			/* child still alive */
-			wait(&status);
-			if (WIFEXITED(status)) break;
+      /* child still alive */
+      wait(&status);
+      if (WIFEXITED(status))
+        break;
 
-			/* read out registers -> regs for instruction pointer */
-			ptrace(PTRACE_GETREGS, child, NULL, &regs);
+      /* read out registers -> regs for instruction pointer */
+      ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-			/* get ins by regs.eip */
-			ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
-			printf("%ld. RIP: %llx Instruction executed: %lx\n", count, regs.rip, ins);
+      /* get ins by regs.eip */
+      ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
+      printf("%ld. RIP: %llx Instruction executed: %lx\n", count, regs.rip,
+             ins);
 
-			/* turn on PTRACE_SINGLESTEP */
-			ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+      /* turn on PTRACE_SINGLESTEP */
+      ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
 
-			/* increment line counter */
-			count++;
+      /* increment line counter */
+      count++;
 #else
-			/* child still alive */
-			wait(&status);
-			if (WIFEXITED(status)) break;
+      /* child still alive */
+      wait(&status);
+      if (WIFEXITED(status))
+        break;
 
-			/* read out registers -> regs for instruction pointer */
-			ptrace(PTRACE_GETREGS, child, NULL, &regs);
+      /* read out registers -> regs for instruction pointer */
+      ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-			/* get ins by regs.eip */
-			ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
-			printf("%ld. EIP: %lx Instruction executed: %lx\n", count, regs.eip, ins);
+      /* get ins by regs.eip */
+      ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
+      printf("%ld. EIP: %lx Instruction executed: %lx\n", count, regs.eip, ins);
 
-			/* turn on PTRACE_SINGLESTEP */
-			ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+      /* turn on PTRACE_SINGLESTEP */
+      ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
 
-			/* increment line counter */
-			count++;
+      /* increment line counter */
+      count++;
 #endif
-		}
-	}
+    }
+  }
 
-        exit(EXIT_SUCCESS);
+  exit(EXIT_SUCCESS);
 }

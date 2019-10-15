@@ -13,17 +13,18 @@
    - to be closed with close(int fd)
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include <unistd.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #define BUF_SIZE 64
 
 
-void childcode(int* pfd){
+void childcode(int *pfd)
+{
   char ME[] = "ITCHY:";
   char buf[BUF_SIZE];
 
@@ -36,7 +37,8 @@ void childcode(int* pfd){
   close(pfd[1]);
 
   // receive
-  while(0 < read(pfd[0], buf, BUF_SIZE));
+  while (0 < read(pfd[0], buf, BUF_SIZE))
+    ;
   fprintf(stderr, "%s received \"%s\"\n", ME, buf);
 
   // close - reading
@@ -47,7 +49,8 @@ void childcode(int* pfd){
 }
 
 
-void parentcode(int* pfd){
+void parentcode(int *pfd)
+{
   char ME[] = "SCRATCHY:";
   char MESSAGE[] = "Scratchymessage";
 
@@ -58,7 +61,7 @@ void parentcode(int* pfd){
 
   // send
   fprintf(stdout, "%s sends \"%s\"..\n", ME, MESSAGE);
-  write(pfd[1], MESSAGE, 1+strlen(MESSAGE));
+  write(pfd[1], MESSAGE, 1 + strlen(MESSAGE));
 
   // close - writing
   close(pfd[1]);
@@ -69,25 +72,25 @@ void parentcode(int* pfd){
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   int pfd[2];
   pid_t pid;
- 
+
   // create the pipe before forking
-  if(0 > pipe(pfd)){
+  if (0 > pipe(pfd)) {
     perror("pipe failed");
     exit(EXIT_FAILURE);
   }
 
   // fork
   fprintf(stderr, "fork()\n");
-  if(0 > (pid = fork())){
+  if (0 > (pid = fork())) {
     perror("fork failed");
     exit(EXIT_FAILURE);
-  }else if(pid == 0){
+  } else if (pid == 0) {
     childcode(pfd);
-  }else{
+  } else {
     parentcode(pfd);
   }
 

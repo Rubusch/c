@@ -6,12 +6,12 @@
 #ifndef BUBBLESORT
 #define BUBBLESORT
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-void* sort(void**);
-int compare(void*, void*);
-int swap(void**, void*);
+void *sort(void **);
+int compare(void *, void *);
+int swap(void **, void *);
 
 #endif

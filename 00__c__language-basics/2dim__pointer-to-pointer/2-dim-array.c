@@ -29,7 +29,8 @@
   which is unsigned long int (=64 bit).
 
   The type of the second (in general: only the type of the last pointer) is the
-  named type, here "char" - it points to somewhere where a char is stored (8 bit).
+  named type, here "char" - it points to somewhere where a char is stored (8
+bit).
 
   this is important, since storing an 64 bit value in a variable of 8 bit will
   only store one part, the rest will disappear, reading out that value gives
@@ -39,8 +40,8 @@
 
 
 // given inits
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -49,23 +50,24 @@
 
 
 // forward declaration of function
-void output(char**);
+void output(char **);
 
 
-int main(int argc, char** argv){
+int main(int argc, char **argv)
+{
 
   // Definition and allocation of pointer to pointers
   // first pointer:
   char **arr = NULL;
-  if( NULL == (arr = calloc(ELEMENT_COUNT, sizeof(*arr)))){
+  if (NULL == (arr = calloc(ELEMENT_COUNT, sizeof(*arr)))) {
     perror("allocation failed");
     exit(EXIT_FAILURE);
   }
 
   // second pointer:
   int cnt;
-  for(cnt = 0; cnt < ELEMENT_COUNT; ++cnt){
-    if( NULL == (arr[cnt] = calloc(ELEMENT_LENGTH, sizeof(**arr)))){
+  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
+    if (NULL == (arr[cnt] = calloc(ELEMENT_LENGTH, sizeof(**arr)))) {
       perror("allocation failed");
       exit(EXIT_FAILURE);
     }
@@ -74,7 +76,7 @@ int main(int argc, char** argv){
   // initialization of pointer to pointers
   char str[6];
   memset(str, '\0', 6);
-  for(cnt = 0; cnt < ELEMENT_COUNT; ++cnt){
+  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
     // adding the number to the content of str ;)
     memset(str, '\0', 6);
     sprintf(str, "str %1d", cnt);
@@ -85,14 +87,14 @@ int main(int argc, char** argv){
   output(arr);
 
   // free second pointer (to the elements)
-  for(cnt = 0; cnt < ELEMENT_COUNT; ++cnt){
-    if(NULL != arr[cnt]){
+  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
+    if (NULL != arr[cnt]) {
       free(arr[cnt]);
     }
   }
 
   // free first pointer
-  if(NULL != arr){
+  if (NULL != arr) {
     free(arr);
   }
 
@@ -102,7 +104,7 @@ int main(int argc, char** argv){
 
 
 // Definition of a funcion with pointer to pointers
-void output(char** arr)
+void output(char **arr)
 {
   // CAUTION: here the size of the pointer to pointers is unknown - has to be
   // passed as param!!!
@@ -111,10 +113,10 @@ void output(char** arr)
   // print out
   int idx;
   int jdx;
-  for(idx = 0; idx < ELEMENT_COUNT; ++idx){
+  for (idx = 0; idx < ELEMENT_COUNT; ++idx) {
     printf("%i. element:\t", idx);
-    for(jdx = 0; jdx < (strlen(arr[idx])+1); ++jdx){
-      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")) , arr[idx][jdx]);
+    for (jdx = 0; jdx < (strlen(arr[idx]) + 1); ++jdx) {
+      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")), arr[idx][jdx]);
     }
     printf("\n");
   }

@@ -11,19 +11,20 @@
 #define NUMBER_OF_ELEMENTS 10
 
 void output();
-void insert(int, char*);
+void insert(int, char *);
 
 
-int main(int argc, char** argv){
+int main(int argc, char **argv)
+{
   printf("Single Linked Queue\n\n");
 
   printf("Generate queue:\n");
   char str[] = "Blahblahblah";
 
   int cnt = 0;
-  for(cnt=0; cnt<NUMBER_OF_ELEMENTS; ++cnt){
+  for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
     printf("\telement #%i added: %s\n", cnt, str);
-    addItem(str); 
+    addItem(str);
   }
 
   // queue size
@@ -52,7 +53,8 @@ int main(int argc, char** argv){
   // output of the queue content
   output();
 
-  printf("\nThe item with the content \"CCC\" is now at positions: %i\n", find("CCC", 3));
+  printf("\nThe item with the content \"CCC\" is now at positions: %i\n",
+         find("CCC", 3));
 
   printf("READY.\n");
   return 0;
@@ -62,9 +64,10 @@ int main(int argc, char** argv){
 void output()
 {
   printf("The queue's content:\n");
-  int cnt=0;
-  for(cnt=0; cnt < queueSize(); ++cnt){
-    if(getContent(cnt) == NULL) printf("NO CONTENT HERE!!\n");
+  int cnt = 0;
+  for (cnt = 0; cnt < queueSize(); ++cnt) {
+    if (getContent(cnt) == NULL)
+      printf("NO CONTENT HERE!!\n");
     printf("\telement #%i: %s\n", cnt, getContent(cnt));
   }
   printf("\n");

@@ -8,7 +8,7 @@
 ** readmem.c
 **
 ** This program is a quick example of using the /proc filesystem
-** to access a process memory space. 
+** to access a process memory space.
 **
 ** This process will scan through all addresses on 1k boundaries
 ** looking for readable segments by lseek()ing through the /proc/PID/mem
@@ -25,20 +25,20 @@
 ** ------------------------------------------------------------------
 */
 
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <sys/wait.h>
 #include <sys/ptrace.h>
-#include <sys/user.h>
 #include <sys/signal.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/user.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 
 #define D_LINUX 1
 
 
-main(int argc, char *argv[]) 
+main(int argc, char *argv[])
 
 {
   int Tpid;
@@ -47,7 +47,7 @@ main(int argc, char *argv[])
   char *srchstr;
   char *eptr;
   unsigned int addr;
-  int  goodaddr;
+  int goodaddr;
   int goodread;
   int srchlen;
   int j;
@@ -60,12 +60,12 @@ main(int argc, char *argv[])
     printf("usage: readmem PID string\n");
     exit(1);
   }
-  
+
   Tpid = strtoul(argv[1], &eptr, 10);
-  srchstr = (char *)strdup(argv[2]);
+  srchstr = ( char * )strdup(argv[2]);
   srchlen = strlen(srchstr);
-  printf("readproc: Tracing PID %d for string [%s] len %d\n",Tpid,
-         srchstr, srchlen);
+  printf("readproc: Tracing PID %d for string [%s] len %d\n", Tpid, srchstr,
+         srchlen);
   /*
   ** In order to read /proc/PID/mem from this process, I have to have already
   ** stopped it via Ptrace(). (This is not documented anywhere, by the
@@ -73,7 +73,7 @@ main(int argc, char *argv[])
   ** start it again in a minute...
   */
   if ((ptrace(PTRACE_ATTACH, Tpid, 0, 0)) != 0) {
-    printf("procexa: Attached to process %d\n",Tpid);
+    printf("procexa: Attached to process %d\n", Tpid);
   }
   /*
   ** Create the string and open the proc mem file. Note under Linux this
@@ -81,9 +81,9 @@ main(int argc, char *argv[])
   ** Also, even though we open this RDWR, Linux will not allow us to write
   ** to it.
   */
-  sprintf(buff,"/proc/%d/as", Tpid);
-  printf("procexa:opening [%s]\n",buff);
-  if ((pfd = open(buff,O_RDWR)) <= 0) {
+  sprintf(buff, "/proc/%d/as", Tpid);
+  printf("procexa:opening [%s]\n", buff);
+  if ((pfd = open(buff, O_RDWR)) <= 0) {
     perror("Error opening /proc/PID/mem file");
     exit(2);
   }
@@ -93,17 +93,18 @@ main(int argc, char *argv[])
   ** should be readable. Print out start and end of valid mapped address
   ** ranges.
   */
-  goodaddr = 0; goodread = 0;
-  for (addr = 0; addr < (unsigned int)0xf0000000; addr += 1024) {
+  goodaddr = 0;
+  goodread = 0;
+  for (addr = 0; addr < ( unsigned int )0xf0000000; addr += 1024) {
     if (lseek(pfd, addr, SEEK_SET) != addr) {
       if (goodaddr == 1) {
-        printf("Address: %x RANGE END\n",addr);
+        printf("Address: %x RANGE END\n", addr);
         goodaddr = 0;
-      } 
+      }
       continue;
     } else {
       if (goodaddr == 0) {
-        printf("Address %x RANGE START\n",addr);
+        printf("Address %x RANGE START\n", addr);
         goodaddr = 1;
       }
     }
@@ -112,24 +113,23 @@ main(int argc, char *argv[])
     */
     if (read(pfd, buff, 1024) <= 0) {
       if (goodread == 1) {
-        printf("READ address %x RANGE END\n",addr);
+        printf("READ address %x RANGE END\n", addr);
         goodread = 0;
       }
       continue;
     } else {
       if (goodread == 0) {
-        printf("READ address %x RANGE START\n",addr);
+        printf("READ address %x RANGE START\n", addr);
         goodread = 1;
       }
       for (j = 0; j < 1024; j++) {
         if (memcmp(&buff[j], srchstr, srchlen) == 0) {
-          printf("*****Pattern found %x\n",
-                 addr + j);
+          printf("*****Pattern found %x\n", addr + j);
           buff[j] = 'A';
         }
       }
       /*
-      ** If NOT Linux, then write the modified buffer back to the address 
+      ** If NOT Linux, then write the modified buffer back to the address
       ** space.
       */
 #ifndef D_LINUX
@@ -140,5 +140,5 @@ main(int argc, char *argv[])
 #endif
     }
   }
-  printf("Stopped at address %x\n",addr);
+  printf("Stopped at address %x\n", addr);
 }

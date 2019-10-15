@@ -3,18 +3,18 @@
   demo for rwlock
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 //#define _MULTI_THREADED
 #include <pthread.h>
 
 
-pthread_rwlock_t       rwlock;
+pthread_rwlock_t rwlock;
 
-#define checkResults( text, rc ) \
-  if( 0 != rc ){ \
-    fprintf( stderr, "%s", text ); \
+#define checkResults(text, rc)                                                 \
+  if (0 != rc) {                                                               \
+    fprintf(stderr, "%s", text);                                               \
   }
 
 
@@ -27,7 +27,7 @@ void *rdlockThread(void *arg)
   checkResults("pthread_rwlock_rdlock()\n", rc);
   printf("got the rwlock read lock\n");
 
-  sleep( 5 );
+  sleep(5);
 
   printf("unlock the read lock\n");
   rc = pthread_rwlock_unlock(&rwlock);
@@ -53,7 +53,7 @@ void *wrlockThread(void *arg)
 
 int main(int argc, char **argv)
 {
-  int rc=0;
+  int rc = 0;
   pthread_t thread, thread1;
 
   printf("Enter Testcase - %s\n", argv[0]);
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 
   printf("Main, grab a read lock\n");
   rc = pthread_rwlock_rdlock(&rwlock);
-  checkResults("pthread_rwlock_rdlock()\n",rc);
+  checkResults("pthread_rwlock_rdlock()\n", rc);
 
   printf("Main, grab the same read lock again\n");
   rc = pthread_rwlock_rdlock(&rwlock);
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   rc = pthread_create(&thread1, NULL, wrlockThread, NULL);
   checkResults("pthread_create\n", rc);
 
-  sleep( 5 );
+  sleep(5);
 
   printf("Main - unlock the second read lock\n");
   rc = pthread_rwlock_unlock(&rwlock);

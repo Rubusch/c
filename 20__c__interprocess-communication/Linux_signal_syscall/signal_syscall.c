@@ -4,12 +4,12 @@
   Send a SIGKILL (e.g. with htop) to end the prg!
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <unistd.h>
-#include <sys/types.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 void catch_int(int sig)
 {
@@ -20,11 +20,12 @@ void catch_int(int sig)
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // set the INT (CTRL+C) signal handler to catch_int
   signal(SIGINT, catch_int);
-  
+
   // infinite loop
-  while(1) pause();
+  while (1)
+    pause();
 }

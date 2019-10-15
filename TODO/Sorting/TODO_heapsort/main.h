@@ -6,8 +6,8 @@
 #ifndef MAINSORTING
 #define MAINSORTING
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // max limit
@@ -16,14 +16,14 @@
 // garbage collection
 unsigned int global_list_size;
 
-typedef struct listelement{
-  struct listelement* next;
-  struct listelement* prev;
+typedef struct listelement {
+  struct listelement *next;
+  struct listelement *prev;
   unsigned int data;
-} element_t; 
+} element_t;
 
-void printlist(void*);
-void alloclist(void*, void*);
-void freelist(void*);
+void printlist(void *);
+void alloclist(void *, void *);
+void freelist(void *);
 
 #endif

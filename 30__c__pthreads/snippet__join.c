@@ -9,7 +9,7 @@
 #include <pthread.h>
 // ...
 
-void* thread_function(void*);
+void *thread_function(void *);
 // ...
 
 
@@ -21,25 +21,26 @@ void* thread_function(void*);
 
   // the thread HAS to be joinable!!!
   pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE); 
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
   // ...
 
   pthread_t calling_thread_id = pthread_self();
   // ...
 
   // creation
-  if(0 != pthread_create(&thread_id, &attr, thread_function, &calling_thread_id)){
+  if (0 !=
+      pthread_create(&thread_id, &attr, thread_function, &calling_thread_id)) {
     perror("MAIN: pthread_create failed");
     break;
   }
-  // ... 
-  
+  // ...
+
   // now wait on the execution of the created thread!!!
-  int return_status=0;
-  if(0 > pthread_join(thread_id, (void*) &return_status)){
+  int return_status = 0;
+  if (0 > pthread_join(thread_id, ( void * )&return_status)) {
     perror("pthread_join failed");
-    pthread_exit((void*) 11); 
-    // in case this already was a thread, 
+    pthread_exit(( void * )11);
+    // in case this already was a thread,
     // just any return code, say, 11 - might also be NULL
   }
   // ...
@@ -50,10 +51,8 @@ void* thread_function(void*);
 }
 
 
-void* thread_function(void* some_arg)
+void *thread_function(void *some_arg)
 {
   // ...
-  pthread_exit((void*) 123);
+  pthread_exit(( void * )123);
 }
-
-

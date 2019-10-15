@@ -5,13 +5,13 @@
   the method using sleep() is NOT a reliable method of synchronization! ;-)
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include <signal.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <signal.h>
 
 extern int kill(pid_t, int);
 
@@ -20,28 +20,28 @@ void sigint();
 void sigquit();
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   pid_t pid = 0;
-  
-  if(0 > (pid = fork())){
+
+  if (0 > (pid = fork())) {
     perror("fork failed");
     exit(EXIT_FAILURE);
 
-  }else if(pid == 0){
+  } else if (pid == 0) {
     // child code
     puts("child");
     signal(SIGHUP, sighup);
     signal(SIGINT, sigint);
     signal(SIGQUIT, sigquit);
-    while(1)
+    while (1)
       ;
 
-  }else{
+  } else {
     // parent code
     puts("parent - SIGHUP");
     kill(pid, SIGHUP);
-    
+
     sleep(3); // pause for 3 secs
 
     puts("parent - SIGINT");

@@ -1,21 +1,21 @@
 // String_cmp
 /*
-	avoid strcpy() -> use strncpy()
-	avoid strcmp() -> use strncmp()
+        avoid strcpy() -> use strncpy()
+        avoid strcmp() -> use strncmp()
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define TEXT01 "foobar"
 #define TEXT02 "FOOBAR"
 
-extern char* strcpy(char*, const char*);
-extern int strcmp(const char*, const char*);
+extern char *strcpy(char *, const char *);
+extern int strcmp(const char *, const char *);
 
 
-int string_cmp(char* str1, char* str2, int* pResult)
+int string_cmp(char *str1, char *str2, int *pResult)
 {
   // modifications of strcmp can be tested here!
   *pResult = strcmp(str1, str2);
@@ -23,34 +23,40 @@ int string_cmp(char* str1, char* str2, int* pResult)
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  char* pText01 = NULL;
-  char* pText02 = NULL;
+  char *pText01 = NULL;
+  char *pText02 = NULL;
 
   printf("init\n");
-  if( (pText01 = malloc(sizeof(pText01))) == NULL) return EXIT_FAILURE;
+  if ((pText01 = malloc(sizeof(pText01))) == NULL)
+    return EXIT_FAILURE;
   strcpy(pText01, TEXT01);
-  if( (pText02 = malloc(sizeof(pText02))) == NULL) return EXIT_FAILURE;
+  if ((pText02 = malloc(sizeof(pText02))) == NULL)
+    return EXIT_FAILURE;
   strcpy(pText02, TEXT02);
 
   // strcmp output
   printf("do string_cmp()\n");
   int iResult = 0;
-  if( -1 == string_cmp(pText01, pText02, &iResult)) return EXIT_FAILURE;
-  printf("strcmp: \"%s\" and \"%s\", \nresult: \'%d\' - ", pText01, pText02, iResult);
+  if (-1 == string_cmp(pText01, pText02, &iResult))
+    return EXIT_FAILURE;
+  printf("strcmp: \"%s\" and \"%s\", \nresult: \'%d\' - ", pText01, pText02,
+         iResult);
 
   // print result
-  if(iResult < 0){
+  if (iResult < 0) {
     printf("\"%s\" greater than \"%s\"\n", pText01, pText02);
-  }else if(iResult > 0){
+  } else if (iResult > 0) {
     printf("\"%s\" smaller than \"%s\"\n", pText01, pText02);
-  }else{
+  } else {
     printf("Equal!\n");
   }
 
-  if(pText01 != NULL) free(pText01);
-  if(pText01 != NULL) free(pText02);
+  if (pText01 != NULL)
+    free(pText01);
+  if (pText01 != NULL)
+    free(pText02);
 
   printf("READY.\n");
 

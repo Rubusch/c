@@ -13,7 +13,7 @@ void handler_int(int);
 void handler_quit(int);
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // 1. set up the signal handler to the signal
   signal(SIGINT, handler_int);
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
   puts("CTRL-c disbled - use CTRL-\\ to quit");
 
   // infinite loop
-  while(1)
+  while (1)
     ;
 }
 
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 // 2. signal handler implementation
 void handler_int(int dummy)
 {
-  // 3. make sure that the next time the signal can be received 
+  // 3. make sure that the next time the signal can be received
   // (system resets the sighandler on some systems)
   signal(SIGINT, handler_int);
 

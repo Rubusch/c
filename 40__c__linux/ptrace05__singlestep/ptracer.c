@@ -11,7 +11,7 @@
   child, thus it's not possible to print them in a different way, than either a
   hexadecimal code, or the offset to the start address of main
 
-# TODO check    
+# TODO check
 
   listing for rabbit.s written in assembly language and compiled as
   gcc -o rabbit.exe rabbit.s
@@ -37,7 +37,8 @@
 
   email: L.Rubusch@gmx.ch
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
+or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -52,78 +53,80 @@
 #include <sys/syscall.h>
 #include <sys/user.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
-int main( int argc, char** argv )
+int main(int argc, char **argv)
 {
-	pid_t child;
+  pid_t child;
 
-	child = fork();
-	if (child == 0) {
-		/* mark child PTRACE_TRACEME, and exec external program */
-		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-		execl("./rabbit.exe", "rabbit.exe", NULL);
+  child = fork();
+  if (child == 0) {
+    /* mark child PTRACE_TRACEME, and exec external program */
+    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+    execl("./rabbit.exe", "rabbit.exe", NULL);
 
-	} else {
-		int status;
-		struct user_regs_struct regs;
-		int start = 0;
-		long ins;
-		while(1) {
+  } else {
+    int status;
+    struct user_regs_struct regs;
+    int start = 0;
+    long ins;
+    while (1) {
 #if __x86_64__
-			/* child still alive */
-			wait(&status);
-			if (WIFEXITED(status)) break;
+      /* child still alive */
+      wait(&status);
+      if (WIFEXITED(status))
+        break;
 
-			/* read out registers -> regs for instruction pointer */
-			ptrace(PTRACE_GETREGS, child, NULL, &regs);
+      /* read out registers -> regs for instruction pointer */
+      ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-			/* when start - fetch executed instruction by PTRACE_PEEKTEXT */
-			if (start == 1) {
-				/* get ins by regs.eip */
-				ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
-				printf("RIP: %llx Instruction executed: %lx\n", regs.rip, ins);
-			}
+      /* when start - fetch executed instruction by PTRACE_PEEKTEXT */
+      if (start == 1) {
+        /* get ins by regs.eip */
+        ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
+        printf("RIP: %llx Instruction executed: %lx\n", regs.rip, ins);
+      }
 
-			/* start step-by-step when a write syscall was made */
-			if (regs.orig_rax == SYS_write) {
-				start = 1;
-				/* turn on PTRACE_SINGLESTEP */
-				ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
-			} else {
-				/* else: check for syscalls, PTRACE_SYSCALL */
-				ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-			}
+      /* start step-by-step when a write syscall was made */
+      if (regs.orig_rax == SYS_write) {
+        start = 1;
+        /* turn on PTRACE_SINGLESTEP */
+        ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+      } else {
+        /* else: check for syscalls, PTRACE_SYSCALL */
+        ptrace(PTRACE_SYSCALL, child, NULL, NULL);
+      }
 #else
-			/* child still alive */
-			wait(&status);
-			if (WIFEXITED(status)) break;
+      /* child still alive */
+      wait(&status);
+      if (WIFEXITED(status))
+        break;
 
-			/* read out registers -> regs for instruction pointer */
-			ptrace(PTRACE_GETREGS, child, NULL, &regs);
+      /* read out registers -> regs for instruction pointer */
+      ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-			/* when start - fetch executed instruction by PTRACE_PEEKTEXT */
-			if (start == 1) {
-				/* get ins by regs.eip */
-				ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
-				printf("EIP: %lx Instruction executed: %lx\n", regs.eip, ins);
-			}
+      /* when start - fetch executed instruction by PTRACE_PEEKTEXT */
+      if (start == 1) {
+        /* get ins by regs.eip */
+        ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
+        printf("EIP: %lx Instruction executed: %lx\n", regs.eip, ins);
+      }
 
-			/* start step-by-step when a write syscall was made */
-			if (regs.orig_eax == SYS_write) {
-				start = 1;
-				/* turn on PTRACE_SINGLESTEP */
-				ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
-			} else {
-				/* else: check for syscalls, PTRACE_SYSCALL */
-				ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-			}
+      /* start step-by-step when a write syscall was made */
+      if (regs.orig_eax == SYS_write) {
+        start = 1;
+        /* turn on PTRACE_SINGLESTEP */
+        ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+      } else {
+        /* else: check for syscalls, PTRACE_SYSCALL */
+        ptrace(PTRACE_SYSCALL, child, NULL, NULL);
+      }
 #endif
-		}
-	}
+    }
+  }
 
-        exit(EXIT_SUCCESS);
+  exit(EXIT_SUCCESS);
 }

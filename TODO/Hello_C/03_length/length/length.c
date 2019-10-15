@@ -1,14 +1,15 @@
 // length.c
 /*
-  A dynamic array is a pointer with some allocated space. This space of memory is 
-  allocated in an area of memory called the "heap", memory on the heap is called 
-  dynamic memory! Its size can be changed later on. Allocated memory ALWAYS has to 
-  be freed or a memory leak results! a dynamic array's pointer is e.g. char *arr;
+  A dynamic array is a pointer with some allocated space. This space of memory
+is allocated in an area of memory called the "heap", memory on the heap is
+called dynamic memory! Its size can be changed later on. Allocated memory ALWAYS
+has to be freed or a memory leak results! a dynamic array's pointer is e.g. char
+*arr;
 
-  A static array (static has NOTHING to do with the keyword "static" in the code!!!)
-  has a fixed size, its memory is located in an area of memory called the stack!
-  The size has to be defined at beginning and can't be changed later on. The array 
-  variable is a pointer, e.g. char arr[10];
+  A static array (static has NOTHING to do with the keyword "static" in the
+code!!!) has a fixed size, its memory is located in an area of memory called the
+stack! The size has to be defined at beginning and can't be changed later on.
+The array variable is a pointer, e.g. char arr[10];
 
   output:
 
@@ -65,21 +66,23 @@ func with arrays
 READY.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define INT_SIZ 10
 #define CHAR_SIZ 10
 
 
-void func(char* pCh, unsigned int siz_ch, int* pInt, unsigned int siz_i)
+void func(char *pCh, unsigned int siz_ch, int *pInt, unsigned int siz_i)
 {
   puts("\tfunction");
 
   // check for NULL in pointers (a can, not a MUST!):
-  if(NULL == pCh) return;
-  if(NULL == pInt) return;
+  if (NULL == pCh)
+    return;
+  if (NULL == pInt)
+    return;
 
   // do the actual work in the function
   puts("\t\tpInt:");
@@ -98,15 +101,15 @@ void func(char* pCh, unsigned int siz_ch, int* pInt, unsigned int siz_i)
 
 int main()
 {
-// definition of variables
-  int* int_pointer = NULL;
-  char* char_pointer = NULL;
+  // definition of variables
+  int *int_pointer = NULL;
+  char *char_pointer = NULL;
   int int_array[INT_SIZ];
   char char_array[CHAR_SIZ];
 
   puts("allocation and init");
   // alloc and clean int_pointer
-  if(NULL == (int_pointer = calloc(INT_SIZ, sizeof(*int_pointer)))){
+  if (NULL == (int_pointer = calloc(INT_SIZ, sizeof(*int_pointer)))) {
     perror("calloc failed");
     exit(EXIT_FAILURE);
   }
@@ -114,7 +117,7 @@ int main()
 
 
   // alloc and clean char_pointer
-  if(NULL == (char_pointer = calloc(CHAR_SIZ, sizeof(*char_pointer)))){
+  if (NULL == (char_pointer = calloc(CHAR_SIZ, sizeof(*char_pointer)))) {
     perror("calloc failed");
     exit(EXIT_FAILURE);
   }
@@ -126,8 +129,8 @@ int main()
 
 
   // set each element of the int array to 7
-  int idx=0;
-  for(idx=0; idx<INT_SIZ; ++idx){
+  int idx = 0;
+  for (idx = 0; idx < INT_SIZ; ++idx) {
     int_pointer[idx] = 7;
   }
 
@@ -135,7 +138,7 @@ int main()
   strncpy(char_pointer, "777777777", CHAR_SIZ);
 
   // set each element of the int array to 7
-  for(idx=0; idx<INT_SIZ; ++idx){
+  for (idx = 0; idx < INT_SIZ; ++idx) {
     int_array[idx] = 7;
   }
 
@@ -145,7 +148,7 @@ int main()
   puts("");
 
 
-  // do the actual work 
+  // do the actual work
   puts("int_pointer:");
   printf("sizeof(int_pointer)\t= %d\n", sizeof(int_pointer));
   printf("elements of int_pointer\t= %d\n", sizeof(int_pointer) / sizeof(int));
@@ -168,7 +171,9 @@ int main()
   printf("strlen(char_array)\t= %d\n", strlen(char_array));
   puts("");
 
-  puts("as you can see:\n\t1. sizeof() has NO knowledge about allocated space.\n\t2. sizeof() has NO knowledge about sizes of arrays in a called function");  
+  puts("as you can see:\n\t1. sizeof() has NO knowledge about allocated "
+       "space.\n\t2. sizeof() has NO knowledge about sizes of arrays in a "
+       "called function");
 
   // call the function with pointers
   puts("func with pointers");

@@ -15,17 +15,18 @@
   Demo: causes a "Double Free" situation - to be checked with Valgrind/memcheck.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define TEXT "foo"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // set up dyn var and init with text
-  char* pText = NULL;
-  if( (pText = (char*) malloc( (strlen(TEXT) + 1) * sizeof(char))) == NULL) return EXIT_FAILURE;
+  char *pText = NULL;
+  if ((pText = ( char * )malloc((strlen(TEXT) + 1) * sizeof(char))) == NULL)
+    return EXIT_FAILURE;
   strcpy(pText, TEXT);
 
   // show

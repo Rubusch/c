@@ -3,10 +3,10 @@
   shows a multithreaded signalhandler
 //*/
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #include <pthread.h>
 #include <signal.h>
@@ -29,9 +29,8 @@ int main()
   sigfillset(&set);
 
 
-
   // set the signalmask to "set"
-  if(0 != pthread_sigmask(SIG_SETMASK, &set, NULL)){
+  if (0 != pthread_sigmask(SIG_SETMASK, &set, NULL)) {
     perror("pthread sigmask failed");
     exit(EXIT_FAILURE);
   }
@@ -49,13 +48,14 @@ int main()
 
 
   // creating - no "THR_DAEMON" in POSIX!
-  if(0 != pthread_create(&thr, &attr_thr, signal_handler, NULL)){
+  if (0 != pthread_create(&thr, &attr_thr, signal_handler, NULL)) {
     perror("pthread create falied");
     exit(EXIT_FAILURE);
   }
-  //  thr_create(NULL, 0, signal_hand, 0, THR_NEW_LWP|THR_DAEMON|THR_DETACHED, NULL); // TODO rm
+  //  thr_create(NULL, 0, signal_hand, 0, THR_NEW_LWP|THR_DAEMON|THR_DETACHED,
+  //  NULL); // TODO rm
 
-  
+
   while (1) {
     /*
       Do your normal processing here....
@@ -84,11 +84,11 @@ void *signal_handler(void *arg)
 {
   // for sigwait the signal needs to be blocked for other threads!!!!
   sigset_t waitset;
-  sigemptyset( &waitset);
-  sigaddset( &waitset, SIGINT);
+  sigemptyset(&waitset);
+  sigaddset(&waitset, SIGINT);
   //  sigprocmask( SIG_BLOCK, SIGINT);
 
-  int sig = (int) (intptr_t)arg;
+  int sig = ( int )( intptr_t )arg;
 
   // catch all signals
   //  sigfillset(&set);
@@ -96,7 +96,7 @@ void *signal_handler(void *arg)
   // wait for a signal to arrive
   while (1) {
 
-    switch (sigwait( &waitset, &sig)) {
+    switch (sigwait(&waitset, &sig)) {
     case 0:
       // here you would add whatever signal you needed to catch
       printf("Interrupted with signal %d, exiting...\n", sig);
@@ -110,6 +110,4 @@ void *signal_handler(void *arg)
   //  return((void *)0);
   pthread_t thr = pthread_self();
   pthread_exit(&thr);
-} 
-
-
+}

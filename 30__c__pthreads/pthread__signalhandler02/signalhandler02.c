@@ -27,14 +27,14 @@
 #include <unistd.h>
 
 
-static 	void* first_thread();
-static 	void* second_thread();
+static void *first_thread();
+static void *second_thread();
 void ExitHandler(int);
 
 static pthread_t thr_one, thr_two, thr_main;
 
 // better: hanlde this states with conditional variables & mutexes!
-int first_active = 1 ;
+int first_active = 1;
 int second_active = 1;
 
 
@@ -49,19 +49,19 @@ int main()
   thr_main = pthread_self();
 
   // create threads thr_one and thr_two
-  if(0 != pthread_create(&thr_one, NULL, first_thread, NULL)){
+  if (0 != pthread_create(&thr_one, NULL, first_thread, NULL)) {
     perror("pthread create failed");
     exit(EXIT_FAILURE);
   }
-  if(0 != pthread_create(&thr_two, NULL, second_thread, NULL)){
+  if (0 != pthread_create(&thr_two, NULL, second_thread, NULL)) {
     perror("pthread create failed");
     exit(EXIT_FAILURE);
   }
 
   int idx = 0;
-  for(idx = 0; idx < 10; idx++){
+  for (idx = 0; idx < 10; idx++) {
     fprintf(stderr, "main loop: %d\n", idx);
-    if(idx == 5)	{
+    if (idx == 5) {
       pthread_kill(thr_one, SIGTERM);
     }
     sleep(3);
@@ -82,10 +82,10 @@ static void *first_thread()
 {
   pthread_t thr = pthread_self();
 
-  fprintf(stderr, "first_thread id: %lu\n", (unsigned long) thr);
+  fprintf(stderr, "first_thread id: %lu\n", ( unsigned long )thr);
 
   int idx = 0;
-  while (first_active){
+  while (first_active) {
     fprintf(stderr, "first_thread: %d\n", idx++);
     sleep(2);
   }
@@ -102,9 +102,9 @@ static void *second_thread()
 {
   int idx = 0;
 
-  fprintf(stderr, "second_thread id: %lu\n", (unsigned long) pthread_self());
+  fprintf(stderr, "second_thread id: %lu\n", ( unsigned long )pthread_self());
 
-  while(second_active){
+  while (second_active) {
     fprintf(stderr, "second_thread: %d\n", idx++);
     sleep(3);
   }
@@ -121,7 +121,7 @@ static void *second_thread()
 void ExitHandler(int sig)
 {
   pthread_t thr = pthread_self();
-  fprintf(stderr, "ExitHandler thread id: %lu\n", (unsigned long) thr);
+  fprintf(stderr, "ExitHandler thread id: %lu\n", ( unsigned long )thr);
 
   pthread_exit(&thr);
 }

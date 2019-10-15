@@ -15,8 +15,8 @@
   Demo: causes a "Memory Leak" situation - to be checked with Valgrind/memcheck.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -24,9 +24,11 @@ int main(void)
 {
   // init
   printf("init vars\n");
-  int *a=NULL, *b=NULL;
-  if( (a = (int*) malloc(sizeof(int))) == NULL) return EXIT_FAILURE;
-  if( (b= (int*) malloc(sizeof(int))) == NULL) return EXIT_FAILURE;
+  int *a = NULL, *b = NULL;
+  if ((a = ( int * )malloc(sizeof(int))) == NULL)
+    return EXIT_FAILURE;
+  if ((b = ( int * )malloc(sizeof(int))) == NULL)
+    return EXIT_FAILURE;
 
   // assignment
   printf("*a = 5\n");
@@ -42,7 +44,8 @@ int main(void)
   printf("free(a)\n");
   free(b);
 
-  // Error! *a points to the same address as *b, the space allocated for *a isn't refered anymore.
+  // Error! *a points to the same address as *b, the space allocated for *a
+  // isn't refered anymore.
   printf("free(b) - Oups!\n\n");
   free(a);
 

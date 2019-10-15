@@ -2,11 +2,12 @@
 /*
   #include <stdlib.h>
   int system(const char* command);
-      executes a console command - be aware of differences between the 'nix and win console
+      executes a console command - be aware of differences between the 'nix and
+win console
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 

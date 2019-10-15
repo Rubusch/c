@@ -2,8 +2,8 @@
 /*
   demonstrates pass-by-value
 
-  pass-by-value means passing only the content of a variable to a 
-  subfunction, this is similar as passing only a copy of the variable 
+  pass-by-value means passing only the content of a variable to a
+  subfunction, this is similar as passing only a copy of the variable
   to the subfunction.
 
   when the subfunction changes the value, the calling function still
@@ -12,15 +12,15 @@
 output:
 parent:	777
 
-	 *** subfunction called *** 
+         *** subfunction called ***
 
-	passed value (before):	777
+        passed value (before):	777
 
-	 *** change value *** 
+         *** change value ***
 
-	passed value (after):	-223
+        passed value (after):	-223
 
-	 *** subfunction done *** 
+         *** subfunction done ***
 
 parent:	777
 parent: READY.

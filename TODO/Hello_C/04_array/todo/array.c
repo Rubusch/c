@@ -1,6 +1,7 @@
 // array.c
 /*
-  char arrays (I recommend the following - just my own termination, but is similar to e.g. strLEN())
+  char arrays (I recommend the following - just my own termination, but is
+similar to e.g. strLEN())
 
   size      the number of elements, inclusive the '\0'
 
@@ -8,8 +9,8 @@
 
   index     the index of each element, the index starts with 0
             the index of all elements starts at 0 and goes until idx < size
-            the index of all characters starts at 0 and goes until idx < size-1 
-	    or idx < length - which is the last index
+            the index of all characters starts at 0 and goes until idx < size-1
+            or idx < length - which is the last index
 
 output:
 $ ./array.exe
@@ -55,31 +56,33 @@ READY.
 #define ARRAY_SIZ 10
 
 
-void print_content(char* arr, unsigned int arr_siz)
+void print_content(char *arr, unsigned int arr_siz)
 {
-  if(NULL == arr) return;
+  if (NULL == arr)
+    return;
 
   puts("content of the array:");
   puts("\taddress,\tindex\t\t: content");
   puts("\t------------------------------------------");
-  // do a recommendation to "register" to gain performance for "running indexes" - 
-  // only possible if the variable (here idx) won't be "referenced" (=used with a '&')
-  register unsigned int idx=0;
-  for(idx=0; idx < arr_siz; ++idx){
+  // do a recommendation to "register" to gain performance for "running indexes"
+  // - only possible if the variable (here idx) won't be "referenced" (=used
+  // with a '&')
+  register unsigned int idx = 0;
+  for (idx = 0; idx < arr_siz; ++idx) {
     // TODO
   }
 }
 
 
 int main()
-{ 
+{
   puts("arrays");
 
   // init
   char arr1[ARRAY_SIZ];
   strncpy(arr1, "tentokens", ARRAY_SIZ);
   char arr2[] = "anotherword";
-  
+
   // print length:
   puts("arr1:");
   // call the function print_content with arr1

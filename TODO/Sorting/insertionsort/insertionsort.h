@@ -10,14 +10,14 @@
 #include <string.h>
 
 // insertion sort specific
-void insert(void*);
+void insert(void *);
 
-void sort(void**);
-int compare(void*, void*);
-int swap(void*, void*);
-int isfirstelement(void*);
-int islastelement(void*);
-void* getnextelement(void*);
-void* getprevelement(void*);
+void sort(void **);
+int compare(void *, void *);
+int swap(void *, void *);
+int isfirstelement(void *);
+int islastelement(void *);
+void *getnextelement(void *);
+void *getprevelement(void *);
 
 #endif

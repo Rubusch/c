@@ -9,13 +9,13 @@
 
 /******* embed C++ code *******/
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
-  
 
-  // functions
-  void test(int*);
-  
+
+// functions
+void test(int *);
+
 
 /******* embed C++ code *******/
 #ifdef __cplusplus

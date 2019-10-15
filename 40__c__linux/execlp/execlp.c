@@ -15,14 +15,14 @@
   The function returns an error code (0=Ok / -1=Fail)
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 
 int main()
 {
   printf("execute 'ls -rtl' via execlp\n");
-  execlp("ls", "-r", "-t", "-l", (char *) 0);
+  execlp("ls", "-r", "-t", "-l", ( char * )0);
   exit(0);
 }

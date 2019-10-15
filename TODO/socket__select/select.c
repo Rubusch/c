@@ -31,26 +31,26 @@
 //*/
 
 
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/fcntl.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <sys/types.h>
 
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <sys/select.h>
 
 
-struct list_entry{
+struct list_entry {
   int hSocket;
   struct list_entry *next;
 };
 
 
-struct list_type{
+struct list_type {
   struct list_entry *data;
   unsigned count;
 };
@@ -60,24 +60,25 @@ struct list_type{
 #define PORT 7777
 
 
-void init_list(struct list_type* list)
+void init_list(struct list_type *list)
 {
   list->data = NULL;
   list->count = 0;
 }
 
 
-void quit(const char* text)
+void quit(const char *text)
 {
   perror(text);
   exit(1);
 }
 
 
-int add_client(struct list_type* list, int hSocket)
+int add_client(struct list_type *list, int hSocket)
 {
   struct list_entry *entry;
-  if( (entry = malloc(sizeof(*entry))) == NULL) quit("malloc() failed");
+  if ((entry = malloc(sizeof(*entry))) == NULL)
+    quit("malloc() failed");
 
   entry->hSocket = hSocket;
   entry->next = list->data;
@@ -88,19 +89,24 @@ int add_client(struct list_type* list, int hSocket)
 }
 
 
-int remove_client(struct list_type* list, int hSocket)
+int remove_client(struct list_type *list, int hSocket)
 {
-  if(!list->count) return 1;
+  if (!list->count)
+    return 1;
 
   struct list_entry *pElement, *pElementBefore = NULL;
-  for(pElement = list->data; pElement; pElement = pElement->next){
-    if(pElement->hSocket == hSocket) break;
+  for (pElement = list->data; pElement; pElement = pElement->next) {
+    if (pElement->hSocket == hSocket)
+      break;
     pElementBefore = pElement;
   }
 
-  if(!pElement) return 1;
-  if(pElementBefore) pElementBefore->next = pElement->next;
-  else list->data = pElement->next;
+  if (!pElement)
+    return 1;
+  if (pElementBefore)
+    pElementBefore->next = pElement->next;
+  else
+    list->data = pElement->next;
 
   free(pElement);
   list->count--;
@@ -109,14 +115,15 @@ int remove_client(struct list_type* list, int hSocket)
 }
 
 
-int fill_set(fd_set* set, struct list_type* list)
+int fill_set(fd_set *set, struct list_type *list)
 {
   int max = 0;
-  struct list_entry* pElement;
+  struct list_entry *pElement;
 
-  for(pElement = list->data; pElement; pElement = pElement->next){
+  for (pElement = list->data; pElement; pElement = pElement->next) {
 
-    if(pElement->hSocket > max) max = pElement->hSocket;
+    if (pElement->hSocket > max)
+      max = pElement->hSocket;
 
     FD_SET(pElement->hSocket, set);
   }
@@ -125,11 +132,12 @@ int fill_set(fd_set* set, struct list_type* list)
 }
 
 
-int get_sender(fd_set* set)
+int get_sender(fd_set *set)
 {
   int idx = 0;
 
-  while(!FD_ISSET(idx, set)) ++idx;
+  while (!FD_ISSET(idx, set))
+    ++idx;
 
   return idx;
 }
@@ -138,16 +146,20 @@ int get_sender(fd_set* set)
 /*
   Special case: STDIN_FILENO needs to be writen on STDOUT_FILENO
 //*/
-int send_all(char* message, unsigned int message_len, struct list_type* list, int hSender)
+int send_all(char *message, unsigned int message_len, struct list_type *list,
+             int hSender)
 {
-  struct list_entry* pElement;
+  struct list_entry *pElement;
 
-  for(pElement = list->data; pElement; pElement = pElement->next){
+  for (pElement = list->data; pElement; pElement = pElement->next) {
 
-    if(pElement->hSocket == hSender) continue;
+    if (pElement->hSocket == hSender)
+      continue;
 
-    if(pElement->hSocket == STDIN_FILENO) write(STDOUT_FILENO, message, message_len);
-    else write(pElement->hSocket, message, message_len);
+    if (pElement->hSocket == STDIN_FILENO)
+      write(STDOUT_FILENO, message, message_len);
+    else
+      write(pElement->hSocket, message, message_len);
   }
 
   return 0;
@@ -163,23 +175,26 @@ int main_loop(int hSocket)
   init_list(&list);
   add_client(&list, STDIN_FILENO);
 
-  while(1){
+  while (1) {
     FD_ZERO(&set);
     max = fill_set(&set, &list);
     FD_SET(hSocket, &set);
 
-    if(hSocket > max) max = hSocket;
+    if (hSocket > max)
+      max = hSocket;
 
     select(max + 1, &set, NULL, NULL, NULL); // S E L E C T ( ... )
 
-    if(FD_ISSET(hSocket,  &set)){
+    if (FD_ISSET(hSocket, &set)) {
       hClient = accept(hSocket, NULL, 0);
       add_client(&list, hClient);
-    }else{
+    } else {
       hSender = get_sender(&set);
       bytes = read(hSender, buf, sizeof(buf));
-      if(bytes == 0) remove_client(&list, hSender);
-      else send_all(buf, bytes, &list, hSender);
+      if (bytes == 0)
+        remove_client(&list, hSender);
+      else
+        send_all(buf, bytes, &list, hSender);
     }
   }
 }
@@ -190,19 +205,19 @@ int main(void)
   int hSocket;
   struct sockaddr_in addrServer;
 
-  if(-1 == (hSocket = socket(PF_INET, SOCK_STREAM, 0))) quit("socket() failed");
+  if (-1 == (hSocket = socket(PF_INET, SOCK_STREAM, 0)))
+    quit("socket() failed");
 
   addrServer.sin_addr.s_addr = INADDR_ANY;
   addrServer.sin_family = AF_INET;
   addrServer.sin_port = htons(PORT);
 
-  if(-1 == (bind(hSocket, (struct sockaddr*) &addrServer, sizeof(addrServer))))
+  if (-1 ==
+      (bind(hSocket, ( struct sockaddr * )&addrServer, sizeof(addrServer))))
     quit("bind failed");
 
-  if(-1 == (listen(hSocket, 3)))
+  if (-1 == (listen(hSocket, 3)))
     quit("listen failed");
 
   return main_loop(hSocket);
 }
-
-

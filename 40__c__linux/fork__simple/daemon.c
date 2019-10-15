@@ -54,12 +54,12 @@
   Returns 0 if ok, else "unslept"amount of seconds, if awoken by a signal.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include <sys/types.h>
 #include <sys/fcntl.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 
@@ -76,27 +76,28 @@ void start_daemon()
   dup(STDIN_FILENO);
   dup(STDIN_FILENO);
 
-  while(1) sleep(100);
+  while (1)
+    sleep(100);
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  pid_t pidChild=0;
+  pid_t pidChild = 0;
 
-  if(0 > (pidChild = fork())){
+  if (0 > (pidChild = fork())) {
     perror("fork() failed");
     return EXIT_FAILURE;
   }
 
-  if(pidChild == 0) {
+  if (pidChild == 0) {
     start_daemon();
   }
 
   // child never reaches here,
   // this is parent code!
   printf("child has PID %i\r\n", pidChild);
-  pid_t pidParent=getpid();
+  pid_t pidParent = getpid();
   printf("Parent has (had) PID %i\r\n", pidParent);
 
   // no error handling, if fork() fails

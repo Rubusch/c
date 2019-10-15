@@ -1,17 +1,17 @@
 // main.c
 /*
   main file to start the proggy
-  
-  A single linked list is easy to implement, but it is quite 
+
+  A single linked list is easy to implement, but it is quite
   limited. Operations like removing within the list or inserting
-  are quite complicated, because they need the previous element 
+  are quite complicated, because they need the previous element
   as pointer.
 
 
   Deleting elments "downwards" - decrementing the index
 
-  in some cases e.g. deleting elements from the last one, 
-  it makes more sense counting backwards. 
+  in some cases e.g. deleting elements from the last one,
+  it makes more sense counting backwards.
   In this case you have to check for:
 
     size != length
@@ -24,31 +24,31 @@ output:
 
 
 creating a list
-content: january  
+content: january
 
 appending elements
-content: january  february  
+content: january  february
 
 appending elements
-content: january  february  may  
+content: january  february  may
 
 inserting elements
-content: january  february  april  may  
+content: january  february  april  may
 
 inserting elements
-content: january  february  march  april  may  
+content: january  february  march  april  may
 
 print list content
-content: january  february  march  april  may  
+content: january  february  march  april  may
 
 remove all
-content: 
+content:
 
 READY.
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "sl_list.h"
 
@@ -57,45 +57,47 @@ int main()
 {
   // create
   puts("\ncreating a list");
-  do{
+  do {
     // append and create automatically the list
-    if(0 != appendelement("january", 1 + strlen("january"))){
+    if (0 != appendelement("january", 1 + strlen("january"))) {
       exit(EXIT_FAILURE);
     }
     printlist();
-    
+
     // append
     puts("\nappending elements");
-    if(0 != appendelement("february", 1 + strlen("february"))){
+    if (0 != appendelement("february", 1 + strlen("february"))) {
       break;
     }
     printlist();
     puts("\nappending elements");
-    if(0 != appendelement("may", 1 + strlen("may"))){
+    if (0 != appendelement("may", 1 + strlen("may"))) {
       break;
     }
     printlist();
 
     // insert
     puts("\ninserting elements");
-    if(0 != insertelement("february", 1 + strlen("february"), "april", 1 + strlen("april"))){
+    if (0 != insertelement("february", 1 + strlen("february"), "april",
+                           1 + strlen("april"))) {
       break;
     }
     printlist();
     puts("\ninserting elements");
-    if(0 != insertelement("february", 1 + strlen("february"), "march", 1 + strlen("march"))){
+    if (0 != insertelement("february", 1 + strlen("february"), "march",
+                           1 + strlen("march"))) {
       break;
     }
     printlist();
-    
+
     // print
     puts("\nprint list content");
     printlist();
-  }while(0);
+  } while (0);
 
   // remove all - cleaning up, HAS to occur!!
   puts("\nremove all");
-  if(0 != removeall()){
+  if (0 != removeall()) {
     puts("deallocation failed!");
     exit(EXIT_FAILURE);
   }

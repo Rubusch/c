@@ -3,27 +3,28 @@
   shared memory - receiver
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
 
 #include "../sharedmemory.h"
 
 #define ME "ITCHY:"
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // shared memory key
   key_t shm_key = 1234; // FIXME: ftok?
 
   // shared memory ID
-  fprintf(stderr, "%s set up shared memory key, ID and get some shared memory\n", ME);
-  int shm_id=0;
-  if(0 > (shm_id = shmget(shm_key, SHM_SIZE, 0666))){
+  fprintf(stderr,
+          "%s set up shared memory key, ID and get some shared memory\n", ME);
+  int shm_id = 0;
+  if (0 > (shm_id = shmget(shm_key, SHM_SIZE, 0666))) {
     perror("shmget failed");
     exit(EXIT_FAILURE);
   }
@@ -31,7 +32,7 @@ int main(int argc, char** argv)
   // attach shared memory to a process
   fprintf(stderr, "%s attach shared memory to process \"%s\"\n", ME, ME);
   char *shm = NULL;
-  if(0 > (shm = shmat(shm_id, NULL, 0))){
+  if (0 > (shm = shmat(shm_id, NULL, 0))) {
     perror("shmat failed");
     exit(EXIT_FAILURE);
   }

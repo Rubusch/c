@@ -3,12 +3,12 @@
   messagequeue - sender
 //*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/types.h>
 
 #include "../messagequeue.h"
 
@@ -16,12 +16,12 @@
 #define MESSAGE "Scratchymessage"
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // message queue key
   fprintf(stderr, "%s set up message queue key\n", ME);
-  key_t mq_key=0;
-  if(0 > (mq_key = ftok("../messagequeue.h", 'B'))){
+  key_t mq_key = 0;
+  if (0 > (mq_key = ftok("../messagequeue.h", 'B'))) {
     perror("ftok failed");
     exit(EXIT_FAILURE);
   }
@@ -29,8 +29,8 @@ int main(int argc, char** argv)
   // message queue ID
   fprintf(stderr, "%s set up message queue ID\n", ME);
   int mq_flag = IPC_CREAT | 0666;
-  int mq_id=0;
-  if(0 > (mq_id = msgget(mq_key, mq_flag))){
+  int mq_id = 0;
+  if (0 > (mq_id = msgget(mq_key, mq_flag))) {
     perror("msgget failed");
     exit(EXIT_FAILURE);
   }
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
   // send message
   fprintf(stderr, "%s send message \"%s\"\n", ME, mq_message.buf);
-  if(0 > msgsnd(mq_id, &mq_message, strlen(MESSAGE), IPC_NOWAIT)){
+  if (0 > msgsnd(mq_id, &mq_message, strlen(MESSAGE), IPC_NOWAIT)) {
     perror("msgsnd failed");
     exit(EXIT_FAILURE);
   }

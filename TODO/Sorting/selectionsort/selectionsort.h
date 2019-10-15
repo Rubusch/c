@@ -10,15 +10,15 @@
 #include <string.h>
 
 // selection sort specific
-void* find_minimum(void*);
-int exchange(void**, void**);
+void *find_minimum(void *);
+int exchange(void **, void **);
 
-void sort(void**);
-int compare(void*, void*);
-int swap(void*, void*);
-int isfirstelement(void*);
-int islastelement(void*);
-void* getnextelement(void*);
-void* getprevelement(void*);
+void sort(void **);
+int compare(void *, void *);
+int swap(void *, void *);
+int isfirstelement(void *);
+int islastelement(void *);
+void *getnextelement(void *);
+void *getprevelement(void *);
 
 #endif

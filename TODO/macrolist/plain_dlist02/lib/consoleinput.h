@@ -8,9 +8,9 @@
 
 // TODO
 
-void readdigit(unsigned int*, const char*); 
-int isnumber(const char*, const unsigned int);
-void readnumber(unsigned int*, const unsigned int, const char*);
-void readstring(char*, const unsigned int, const char*);
+void readdigit(unsigned int *, const char *);
+int isnumber(const char *, const unsigned int);
+void readnumber(unsigned int *, const unsigned int, const char *);
+void readstring(char *, const unsigned int, const char *);
 
 #endif

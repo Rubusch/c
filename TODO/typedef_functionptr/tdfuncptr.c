@@ -5,10 +5,7 @@
 
 #include <stdlib.h>
 
-void some_function()
-{
-  ;
-}
+void some_function() { ; }
 
 
 int main()

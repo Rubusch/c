@@ -14,19 +14,19 @@
 #define EXPORT_SYMTAB
 #endif
 
-#include <linux/module.h>
-#include <linux/kernel.h>
 #include <linux/init.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
 #include <linux/proc_fs.h>
 
 MODULE_AUTHOR("linux-netzwerkarchitektur.de");
 MODULE_DESCRIPTION("Book example");
 
 /*
- Moduleparameters (example) 
+ Moduleparameters (example)
 */
 unsigned int variable1;
-unsigned long variable2[3] = {0,1,2};
+unsigned long variable2[3] = {0, 1, 2};
 
 /*
  Function, to be exported as symbol (example)
@@ -36,25 +36,25 @@ void method1(int test1, char *test2)
   // do anything
 }
 
-EXPORT_SYMBOL (variable1);
-EXPORT_SYMBOL (variable2);
-EXPORT_SYMBOL (method1);
+EXPORT_SYMBOL(variable1);
+EXPORT_SYMBOL(variable2);
+EXPORT_SYMBOL(method1);
 
-MODULE_PARM (variable1, "i");
-MODULE_PARM_DESC (variable1, "Description for the int val");
+MODULE_PARM(variable1, "i");
+MODULE_PARM_DESC(variable1, "Description for the int val");
 
-MODULE_PARM (variable2, "1-31");
-MODULE_PARM_DESC (variable2, "Description for the long array");
+MODULE_PARM(variable2, "1-31");
+MODULE_PARM_DESC(variable2, "Description for the long array");
 
 /*
   Proc file support
 //*/
 
 #ifdef CONFIG_PROC_FS
-struct proc_dir_entry* test_dir, *entry;
+struct proc_dir_entry *test_dir, *entry;
 
 
-int test_proc_get_info(char* buf, char** start, off_t offset, int len)
+int test_proc_get_info(char *buf, char **start, off_t offset, int len)
 {
   len = sprintf(buf, "\n This is a test module\n\n");
   len += sprintf(buf + len, " Integer: %u\n", variable1);
@@ -65,14 +65,16 @@ int test_proc_get_info(char* buf, char** start, off_t offset, int len)
 }
 
 
-int test_proc_read(char* buf, char** start, off_t off, int count, int *eof, void *data)
+int test_proc_read(char *buf, char **start, off_t off, int count, int *eof,
+                   void *data)
 {
-  unsigned int* ptr_var1 = data;
+  unsigned int *ptr_var1 = data;
   return sprintf(buf, "%u\n", *ptr_var1);
 }
 
 
-int test_proc_write(struct file* file, const char* buffer, unsigned long count, void* data)
+int test_proc_write(struct file *file, const char *buffer, unsigned long count,
+                    void *data)
 {
   unsigned int *ptr_var1 = data;
   printk(KERN_DEBUG "TEST: variable1 set to: %s", buffer);
@@ -84,13 +86,13 @@ int test_proc_write(struct file* file, const char* buffer, unsigned long count, 
 register_proc_files()
 {
   test_dir = proc_mkdir("test_dir", &proc_root);
-  if(!create_proc_info_entry("test", 0444, test_dir, test_proc_get_info))
+  if (!create_proc_info_entry("test", 0444, test_dir, test_proc_get_info))
     printk(KERN_DEBUG "TEST: Error creating /proc/test.");
-  
+
   entry = create_proc_entry("test_rw", 0644, test_dir);
-  
+
   entry->nlink = 1;
-  entry->data = (void*) &varable1;
+  entry->data = ( void * )&varable1;
   entry->read_proc = test_proc_read;
   entry->write_proc = test_proc_write;
 }
@@ -110,7 +112,7 @@ unregister_proc_files()
 
 int skull_init(void)
 {
-  // register the functionality of the module 
+  // register the functionality of the module
   // e.g. register_netdevice, inet_add_protocol, dev_add_pack, etc.
 
 #ifdef CONFIG_PROC_FS
@@ -142,5 +144,3 @@ void skull_cleanup(void)
 
 module_init(skull_init);
 module_exit(skull_cleanup);
-
-

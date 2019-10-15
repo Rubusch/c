@@ -11,14 +11,14 @@
 int main()
 {
   struct timespec ts_resolution, ts_start, ts_end;
-  unsigned long int difference=0;
+  unsigned long int difference = 0;
 
 
   // 1. set up the clock resolution
   clock_getres(CLOCK_MONOTONIC, &ts_resolution);
 
-  printf("clock resolution set up to %lus and %lins\n"
-	 , ts_resolution.tv_sec, ts_resolution.tv_nsec);
+  printf("clock resolution set up to %lus and %lins\n", ts_resolution.tv_sec,
+         ts_resolution.tv_nsec);
 
 
   // 2. measurement start
@@ -28,7 +28,7 @@ int main()
     operation
   //*/
   int cnt = 0;
-  for(cnt=0; cnt < 10; ++cnt){
+  for (cnt = 0; cnt < 10; ++cnt) {
     puts("foobar");
   }
 
@@ -38,7 +38,8 @@ int main()
 
 
   // 4. calculating the time difference
-  difference = (ts_end.tv_sec - ts_start.tv_sec) * 1000000000 + ts_end.tv_nsec - ts_start.tv_nsec;
+  difference = (ts_end.tv_sec - ts_start.tv_sec) * 1000000000 + ts_end.tv_nsec -
+               ts_start.tv_nsec;
 
   printf("Elapsed time: %luns\n", difference);
 

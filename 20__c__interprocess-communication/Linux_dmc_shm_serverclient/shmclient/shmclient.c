@@ -4,32 +4,32 @@
   unsynchronized!
 //*/
 
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define SHM_SIZ 27
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // shm_key
   key_t shm_key = 5678;
-  
+
   // shm_id - locate the segment
   int shm_id;
-  if(0 > (shm_id = shmget(shm_key, SHM_SIZ, 0666))){
+  if (0 > (shm_id = shmget(shm_key, SHM_SIZ, 0666))) {
     perror("shmget failed");
     exit(EXIT_FAILURE);
   }
 
   // shmat - attach the shared memory
-  char* shm = NULL;
-  if(((char*)-1) == (shm = shmat(shm_id, NULL, 0))){
+  char *shm = NULL;
+  if ((( char * )-1) == (shm = shmat(shm_id, NULL, 0))) {
     perror("shmat failed");
     exit(EXIT_FAILURE);
   }
@@ -47,4 +47,3 @@ int main(int argc, char** argv)
   puts("READY.");
   exit(EXIT_SUCCESS);
 }
-  

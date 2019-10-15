@@ -8,10 +8,10 @@
  * number
 //*/
 
+#include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <ctype.h>
 
 /*
   converts a string stored hex number into an
@@ -19,29 +19,30 @@
 
   returns the result or stores it in the passed unsigned pointer
 //*/
-int xtoi(const char* origin, unsigned int* result)
+int xtoi(const char *origin, unsigned int *result)
 {
   size_t szlen = strlen(origin);
   int idx, ptr, factor;
 
-  if(szlen > 0){
-    if(szlen > 8) return 0;
+  if (szlen > 0) {
+    if (szlen > 8)
+      return 0;
     *result = 0;
     factor = 1;
 
-    for(idx = szlen-1; idx >= 0; --idx){
-      if(isxdigit( *(origin+idx))){
-	if( *(origin + idx) >= 97){
-	  ptr = ( *(origin + idx) - 97) + 10;
-	}else if( *(origin + idx) >= 65){
-	  ptr = ( *(origin + idx) - 65) + 10;
-	}else{
-	  ptr = *(origin + idx) - 48;
-	}
-	*result += (ptr * factor);
-	factor *= 16;
-      }else{
-	return 4;
+    for (idx = szlen - 1; idx >= 0; --idx) {
+      if (isxdigit(*(origin + idx))) {
+        if (*(origin + idx) >= 97) {
+          ptr = (*(origin + idx) - 97) + 10;
+        } else if (*(origin + idx) >= 65) {
+          ptr = (*(origin + idx) - 65) + 10;
+        } else {
+          ptr = *(origin + idx) - 48;
+        }
+        *result += (ptr * factor);
+        factor *= 16;
+      } else {
+        return 4;
       }
     }
   }
@@ -50,7 +51,7 @@ int xtoi(const char* origin, unsigned int* result)
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   char source[3] = "ff";
 
@@ -59,16 +60,16 @@ int main(int argc, char** argv)
   puts("1. converto to int");
   printf("\tsource: %s\n", source);
 
-  unsigned int tmp=0;
+  unsigned int tmp = 0;
   xtoi(source, &tmp);
   printf("\tatoi() output: %i\n", tmp);
 
   puts("2. converto int to char");
-  unsigned char destination=0;
+  unsigned char destination = 0;
   /*
     either typedeffing
   //*/
-  destination = (char) tmp;
+  destination = ( char )tmp;
 
   /*
     or memcopy:

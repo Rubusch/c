@@ -19,30 +19,31 @@
 
   insert a new leaf
 //*/
-int insert(leaf* first, leaf* item)
+int insert(leaf *first, leaf *item)
 {
-  if(NULL == first){
+  if (NULL == first) {
     fprintf(stderr, "ERROR: insert() - first is NULL\n");
     return -1;
   }
-  if(NULL == item){
+  if (NULL == item) {
     fprintf(stderr, "ERROR: insert() - item is NULL\n");
     return -1;
   }
 
-  leaf* predecessor = first;
-  if(NULL != find(first, &predecessor, item->data)){
+  leaf *predecessor = first;
+  if (NULL != find(first, &predecessor, item->data)) {
     // node already in tree - dropped
-    fprintf(stderr, "ERROR: insert() - node \'%d\' is contained in the tree!\n", item->data);
+    fprintf(stderr, "ERROR: insert() - node \'%d\' is contained in the tree!\n",
+            item->data);
     return -1;
 
-  }else{
+  } else {
     // ok - node not found
-    if(predecessor->data > item->data){
+    if (predecessor->data > item->data) {
       predecessor->left = item;
-    }else if(predecessor->data < item->data){
+    } else if (predecessor->data < item->data) {
       predecessor->right = item;
-    }else{
+    } else {
       // nothing - element already in the tree, security case here..
     }
 
@@ -57,34 +58,42 @@ int insert(leaf* first, leaf* item)
   deletes a node
   sets the pointer of the predecessor
 //*/
-int delete(leaf** item, leaf* predecessor)
+int delete (leaf **item, leaf *predecessor)
 {
-  if(NULL == *item){
+  if (NULL == *item) {
     fprintf(stderr, "ERROR: delete() - item to delete was NULL\n");
     return -1;
   }
-  if(NULL == predecessor){
-    fprintf(stderr, "ERROR: delete() - predecessor of the item to delete was NULL\n");
+  if (NULL == predecessor) {
+    fprintf(stderr,
+            "ERROR: delete() - predecessor of the item to delete was NULL\n");
     return -1;
   }
 
-  if(predecessor == *item){
-    fprintf(stderr, "ERROR: delete() - not deleted - predecessor and item \"%d\" are identical\n", (*item)->data);
-    return -1;
-  }
-  
-  if((NULL  != (*item)->left) || (NULL != (*item)->right)){
-    fprintf(stderr, "ERROR: delete() - the item %d is a edge and not a leaf node - only leafs can be deleted\n", (*item)->data);
+  if (predecessor == *item) {
+    fprintf(stderr,
+            "ERROR: delete() - not deleted - predecessor and item \"%d\" are "
+            "identical\n",
+            (*item)->data);
     return -1;
   }
 
-  if(predecessor->data > (*item)->data){
+  if ((NULL != (*item)->left) || (NULL != (*item)->right)) {
+    fprintf(stderr,
+            "ERROR: delete() - the item %d is a edge and not a leaf node - "
+            "only leafs can be deleted\n",
+            (*item)->data);
+    return -1;
+  }
+
+  if (predecessor->data > (*item)->data) {
     predecessor->left = NULL;
-  }else if(predecessor->data < (*item)->data){
+  } else if (predecessor->data < (*item)->data) {
     predecessor->right = NULL;
   }
 
-  if(NULL != *item) free(*item);
+  if (NULL != *item)
+    free(*item);
 
   return 0;
 }
@@ -95,36 +104,36 @@ int delete(leaf** item, leaf* predecessor)
 
   find a leaf
 //*/
-leaf* find(leaf* first, leaf** predecessor, const unsigned int data)
+leaf *find(leaf *first, leaf **predecessor, const unsigned int data)
 {
-  if(NULL == first){
+  if (NULL == first) {
     fprintf(stderr, "ERROR: find() - first was NULL\n");
     return NULL;
   }
 
-  leaf* item = NULL;
-  leaf* tmp = NULL;
+  leaf *item = NULL;
+  leaf *tmp = NULL;
 
   item = first;
-  while(1){
+  while (1) {
     tmp = item;
-    if(item->data > data){
-      if(0 > get_left_node(&item)){
-	*predecessor = tmp;
-	return NULL;
-      }else{
-	*predecessor = tmp;
+    if (item->data > data) {
+      if (0 > get_left_node(&item)) {
+        *predecessor = tmp;
+        return NULL;
+      } else {
+        *predecessor = tmp;
       }
 
-    }else if(item->data < data){
-      if(0 > get_right_node(&item)){
-	*predecessor = tmp;
-	return NULL;
-      }else{
-	*predecessor = tmp;
+    } else if (item->data < data) {
+      if (0 > get_right_node(&item)) {
+        *predecessor = tmp;
+        return NULL;
+      } else {
+        *predecessor = tmp;
       }
 
-    }else if(item->data == data){
+    } else if (item->data == data) {
       return item;
     }
   }
@@ -137,26 +146,26 @@ leaf* find(leaf* first, leaf** predecessor, const unsigned int data)
   deletes the whole tree recursively
   doesn't delete the first node
 //*/
-int deleteall(leaf** item, leaf* predecessor)
+int deleteall(leaf **item, leaf *predecessor)
 {
-  if(NULL == *item){
+  if (NULL == *item) {
     fprintf(stderr, "ERROR: deleteall() - first was NULL\n");
     return -1;
   }
-  if(NULL == predecessor){
+  if (NULL == predecessor) {
     fprintf(stderr, "ERROR: deleteall() - aborting, predecessor was NULL\n");
     exit(EXIT_FAILURE);
   }
 
-  if(NULL != (*item)->left){
-    leaf* left = (*item)->left;
+  if (NULL != (*item)->left) {
+    leaf *left = (*item)->left;
     deleteall(&left, *item);
   }
-  if(NULL != (*item)->right){
-    leaf* right = (*item)->right;
+  if (NULL != (*item)->right) {
+    leaf *right = (*item)->right;
     deleteall(&right, *item);
   }
-  delete(item, predecessor);
+  delete (item, predecessor);
 
   return 0;
 }
@@ -173,22 +182,22 @@ int deleteall(leaf** item, leaf* predecessor)
   finds a node by doing a left and right branch search
   returns node or NULL
 //*/
-leaf* find_node(leaf* first, const unsigned int data)
+leaf *find_node(leaf *first, const unsigned int data)
 {
-  if(NULL == first){
+  if (NULL == first) {
     fprintf(stderr, "ERROR: find_node() - first node is NULL, aborting.\n");
     exit(EXIT_FAILURE);
   }
 
-  leaf* dummy = first;
-  if(first->data == data){
+  leaf *dummy = first;
+  if (first->data == data) {
     return first;
   }
 
-  if(NULL != first->left){
+  if (NULL != first->left) {
     return find(first->left, &dummy, data);
   }
-  if(NULL != first->right){
+  if (NULL != first->right) {
     return find(first->right, &dummy, data);
   }
 
@@ -203,16 +212,16 @@ leaf* find_node(leaf* first, const unsigned int data)
   avances the passed param to the left side
   returns -1 in case lf is NULL then
 //*/
-int get_left_node(leaf** item)
+int get_left_node(leaf **item)
 {
-  if(NULL == *item){
+  if (NULL == *item) {
     fprintf(stderr, "ERROR: get_left_node() - lf is NULL, abort proggy!\n");
     return -1;
   }
 
-  if(NULL == (*item)->left){
+  if (NULL == (*item)->left) {
     return -1;
-  }else{
+  } else {
     *item = (*item)->left;
     return 0;
   }
@@ -226,16 +235,16 @@ int get_left_node(leaf** item)
   avances the passed param to the right side
   returns -1 in case lf is NULL then
 //*/
-int get_right_node(leaf** item)
+int get_right_node(leaf **item)
 {
-  if(NULL == *item){
+  if (NULL == *item) {
     fprintf(stderr, "ERROR: get_right_node() - lf is NULL, abort proggy!\n");
     return -1;
   }
 
-  if(NULL == (*item)->right){
+  if (NULL == (*item)->right) {
     return -1;
-  }else{
+  } else {
     *item = (*item)->right;
     return 0;
   }
@@ -250,9 +259,9 @@ int get_right_node(leaf** item)
   sets data
   inits left and right to NULL
 //*/
-int init_node(leaf** lf, const unsigned int data)
+int init_node(leaf **lf, const unsigned int data)
 {
-  if(NULL == (*lf = malloc(sizeof(**lf)))){
+  if (NULL == (*lf = malloc(sizeof(**lf)))) {
     perror("ERROR: init_node() - malloc failed!");
     return -1;
   }
@@ -270,26 +279,28 @@ int init_node(leaf** lf, const unsigned int data)
 
   deletes left and right branch
 //*/
-int delete_nodes(leaf** first){
-  if(NULL == first){
+int delete_nodes(leaf **first)
+{
+  if (NULL == first) {
     fprintf(stderr, "ERROR: delete_nodes() - first node is NULL\n");
     return -1;
   }
 
-  leaf* left = (*first)->left;
-  if(NULL != left){
-    if(0 > deleteall(&left, *first)){
+  leaf *left = (*first)->left;
+  if (NULL != left) {
+    if (0 > deleteall(&left, *first)) {
       return -1;
     }
   }
-  leaf* right = (*first)->right;
-  if(NULL != right){
-    if(0 > deleteall(&right, *first)){
+  leaf *right = (*first)->right;
+  if (NULL != right) {
+    if (0 > deleteall(&right, *first)) {
       return -1;
     }
   }
 
-  if(NULL != *first) free(*first);
+  if (NULL != *first)
+    free(*first);
 
   return 0;
 }
