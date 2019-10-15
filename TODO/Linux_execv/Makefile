@@ -1,25 +1,25 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = execv.c
+TARGET = $(SOURCE:.c=.exe)
 OBJECTS = ${SOURCE:.c=.o}
-
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} ${CFLAGS} -c $<
 
-execv.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
 
-all: execv.exe
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) execv.exe *~ core
+clean:
+	${RM} $(OBJECTS) $(TARGET) *~ core
 
 
