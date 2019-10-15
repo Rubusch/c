@@ -23,8 +23,6 @@
   e.g. char* env[] = {"USER=user", "PATH=/usr/bin:/bin:/opt/bin", (char*) 0};
 
   The function returns an error code (0=Ok / -1=Fail).
-
-FIXME: realloc seems broken
 //*/
 
 #include <stdio.h>
@@ -95,7 +93,7 @@ int readFile(char filename[FILENAME_MAX], char ***listOfEnvVars,
       // realloc
       if (idxStr >= alloc_size - 2) {
         char *tmp = NULL;
-        if (NULL == (tmp = realloc(tmpStr, (idxStr + 1 + BUF_SIZ)))) {
+        if (NULL == (tmp = realloc(tmpStr, (idxStr + 1 + BUF_SIZ)))) { // FIXME: usage of realloc buggy?
           if (NULL != tmp)
             free(tmp);
           tmp = NULL;
