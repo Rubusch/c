@@ -7,37 +7,36 @@
 ##
 ## bind to library
 ##   ar -cvq libstatic.a test1.o test2.o
-## 
+##
 ## list files
 ##   ar -t libstatic.a
 ##
 ## link against library
 ##   cc -o static.exe static.c libstatic.a
-## 
+##
 ## bind statically
 ##   cc -o static.exe static.c -L/path/to/library/ -ltest
 ##
 
 SOURCE = static.c
+TARGET = $(SOURCE:.c=.exe)
 TLIB = staticlib.a
 OBJS = test1.o test2.o
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -std=c99 -Werror -pedantic
 RM = rm -f
 
-static.exe: $(OBJS) $(TLIB)
+$(TARGET): $(OBJS) $(TLIB)
 	$(CC) -o $@ $(SOURCE) $(TLIB)
 
-$(OBJS): 
+$(OBJS):
 	$(CC) $(CFLAGS) -c test1.c test2.c
 
 $(TLIB): $(OBJs)
 	ar -cvq $(TLIB) $(OBJS)
 
-all: static.exe
+all: $(TARGET)
 
-clean: 
-	$(RM) $(OBJS) $(TLIB) static.exe *~ core
-
-
+clean:
+	$(RM) $(OBJS) $(TLIB) $(TARGET) *~ core
