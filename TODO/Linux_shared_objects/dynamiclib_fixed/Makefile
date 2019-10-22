@@ -4,7 +4,7 @@
 ##
 ##  compile files to be placed into lib
 ##  > gcc -Wall -fPIC -c test1.c test2.c
-##  
+##
 ##  "lib" has to be pre-fix!!!
 ##  > gcc -shared -Wl,-soname,libdynamic.so.1 -o libdynamic.so.1.0 *.o
 ##
@@ -13,7 +13,7 @@
 ##  > ln -sf /opt/lib/libdynamic.so.1.0 /opt/lib/libdynamic.so
 ##  > ln -sf /opt/lib/libdynamic.so.1.0 /opt/lib/libdynamic.so.1
 ##
-##  in case set LD_LIBRARY_PATH  
+##  in case set LD_LIBRARY_PATH
 ##  > export LD_LIBRARY_PATH=/opt/lib:$LD_LIBRARY_PATH
 ##
 ##  here, supposed "libdynamic" under LD_LIBRARY_PATH
@@ -60,7 +60,7 @@ dynamic.exe:
 	$(CC) $(CFLAGS3) -L$(LDPATH) $(SOURCE) -ldynamic -o $@
 
 
-clean: 
+clean:
 	$(RM) $(OBJS) $(TLIB) $(FILENAME) dynamic.exe *~ core
 
 
