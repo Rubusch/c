@@ -4,7 +4,7 @@
 
   compile files to be placed into lib
   > gcc -Wall -fPIC -c test1.c test2.c
-  
+
   "lib" has to be pre-fix!!!
   > gcc -shared -Wl,-soname,libdynamic.so.1 -o libdynamic.so.1.0 *.o
 
@@ -18,8 +18,7 @@
 
   here, supposed "libdynamic" under LD_LIBRARY_PATH
   > gcc -Wall -L/opt/lib dynamic.c -ldynamic -o dynamic.exe
-  [  > gcc -Wall -I/path/to/include/files -L/path/to/libXXX program.c
--ldynamiclib -o program.exe   ]
+  [  > gcc -Wall -I/path/to/include/files -L/path/to/libXXX program.c -ldynamiclib -o program.exe   ]
 //*/
 
 #include <stdio.h>
