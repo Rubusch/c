@@ -3,7 +3,7 @@
 ## commands:
 ##  compile files, e.g. test1.c
 ##  > gcc -Wall -fPIC -c test1.c
-##  
+##
 ##  "lib" has to be pre-fix! Build library file
 ##  > gcc -shared -Wl,-soname,libplugin.so.1 -o libplugin.so.1.0 *.o
 ##
@@ -12,13 +12,13 @@
 ##  > ln -sf /opt/lib/libplugin.so.1.0 /opt/lib/libplugin.so
 ##  > ln -sf /opt/lib/libplugin.so.1.0 /opt/lib/libplugin.so.1
 ##
-##  in case set LD_LIBRARY_PATH  
+##  in case set LD_LIBRARY_PATH
 ##  > export LD_LIBRARY_PATH=/opt/lib:$LD_LIBRARY_PATH
 ##
 ##
 ##
 ##  now compile main program
-##  > gcc -rdynamic -o plugin.exe pluginbase.c -ldl  
+##  > gcc -rdynamic -o plugin.exe pluginbase.c -ldl
 ##
 ##
 ## makefile:
@@ -38,7 +38,7 @@
 ## > make plugin.exe
 ##
 
-OBJ1 = test1.o 
+OBJ1 = test1.o
 TLIB1 = libplugin.so
 FILENAME1 = libplugin.so.1.0
 SONAME1 = libplugin.so.1
@@ -70,7 +70,7 @@ RM = rm -f
 #$(OBJ1):
 #	$(CC) $(CFLAGS1A) -c test1.c
 #
-#libplugin.so.1.0: 
+#libplugin.so.1.0:
 #	$(OBJ1) $(TLIB1)
 
 
@@ -81,7 +81,7 @@ $(TLIB2): $(OBJ2)
 $(OBJ2):
 	$(CC) $(CFLAGS2A) -c test2.c
 
-libplugin.so.2.0: 
+libplugin.so.2.0:
 	$(OBJ2) $(TLIB2)
 
 
@@ -89,5 +89,5 @@ plugin.exe:
 	$(CC) -Wall -rdynamic -o $@ $(SOURCE) -ldl
 
 
-clean: 
+clean:
 	$(RM) $(OBJ1) $(OBJ2) $(TLIB1) $(TLIB2) $(FILENAME1) $(FILENAME1) plugin.exe *~ core
