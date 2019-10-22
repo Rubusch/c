@@ -4,7 +4,7 @@
 
   compile files, e.g. test1.c
   > gcc -Wall -fPIC -c test1.c
-  
+
   "lib" has to be pre-fix! Build library file
   > gcc -shared -Wl,-soname,libplugin.so.1 -o libplugin.so.1.0 *.o
 
@@ -22,7 +22,6 @@
   > gcc -rdynamic -o plugin.exe pluginbase.c -ldl
 
 
-  
   experiment: replace the libplugin.so.1.0 placed under /opt/lib, as
   compiled test1.c by a compiled test2.c
   > gcc -Wall -fPIC -c test2.c
