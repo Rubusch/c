@@ -90,4 +90,4 @@ plugin.exe:
 
 
 clean:
-	$(RM) $(OBJ1) $(OBJ2) $(TLIB1) $(TLIB2) $(FILENAME1) $(FILENAME1) plugin.exe *~ core
+	$(RM) $(OBJ1) $(OBJ2) $(TLIB1) $(TLIB2) $(FILENAME1) $(FILENAME2) plugin.exe *~ core
