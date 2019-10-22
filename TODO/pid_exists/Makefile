@@ -1,20 +1,21 @@
 # Makefile
 
 SRC = pid_exists.c
+TARGET = $(SRC:.c=.exe)
 OBJ = $(SRC:.c=.o)
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-pid_exists.exe: $(OBJ)
-	$(CC) -o $@ $(OBJ) -lm
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $(OBJ) -lm
 
-all: pid_exists.exe
+all: $(TARGET)
 
 clean:
-	$(RM) $(OBJ) pid_exists.exe *~
+	$(RM) $(OBJ) $(TARGET) *~
 
 .PHONY: all clean
