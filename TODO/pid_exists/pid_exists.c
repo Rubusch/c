@@ -1,3 +1,8 @@
+//
+// check if a provided PID currently exists
+// usage:
+// $ ./pidexists 123
+
 // pid_exists.c
 
 #include <stdio.h>
