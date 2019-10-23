@@ -3,21 +3,22 @@
 #
 
 SOURCE = preprocessor.c
-OBJECTS = ${SOURCE:.c=.o}
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
-.c.o: 
-	${CC} -c ${SOURCE} $<
+.c.o:
+	$(CC) $(CFLAGS) -c $(SOURCE) $<
 
-preprocessor: ${OBJECTS}
-	$(CC) -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: preprocessor
+all: $(TARGET)
 
 clean:
-	${RM} preprocessor.exe *.o *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~ core
 
