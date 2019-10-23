@@ -29,7 +29,7 @@
 #define TRUE "certo!"
 #define FALSE "errado!"
 
-int main(char **argv, int argc)
+int main(int argc, char **argv)
 {
   int arr[ARRAYSIZE];
   arr[0] = 10;
@@ -44,7 +44,7 @@ int main(char **argv, int argc)
          ((MAX(arr[0], arr[1])) ? (TRUE) : (FALSE)));
 
   return EXIT_SUCCESS;
-};
+}
 #endif
 
 
