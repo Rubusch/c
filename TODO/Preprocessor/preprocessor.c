@@ -92,8 +92,7 @@ of the code file xyz.c (e.g. #ifdef, #elif, #endif)
 
 
 It is even possible to redefine a new language (decoment):
-//*
-//*
+// *
 #include <stdio.h>
 #include <stdlib.h>
 
