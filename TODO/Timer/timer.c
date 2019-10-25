@@ -5,8 +5,6 @@
   @license: EPL
   @2013-october-22
 
-
-
   sets up a timer on a linux system, the timer ticks down 250ms sec and prints
   out a message
 
