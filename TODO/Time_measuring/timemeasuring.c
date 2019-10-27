@@ -1,11 +1,12 @@
 // timemeasuring.c
 /*
+  the example shows how to set two timestamps and how to compute the difference
+  in human readable time
 //*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <time.h>
 
 int main()
