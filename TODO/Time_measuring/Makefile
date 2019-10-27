@@ -1,26 +1,26 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = timemeasuring.c
-OBJECTS = ${SOURCE:.c=.o}
-
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
-timemeasuring: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm -lrt
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -lrt
 # linked against librt for the time.h functions -> -lrt
 
-all: timemeasuring
+all: $(TARGET)
 
 clean: 
-	${RM} $(OBJECTS) timemeasuring *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~ core
 
 
