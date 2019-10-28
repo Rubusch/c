@@ -1,7 +1,8 @@
 // semaphore.c
 /*
-  we fork a child process so that we have two processes running:
-  each process communicates via a semaphore
+  We fork a child process so that we have two processes running:
+  each process communicates via a semaphore.
+
   The respective process can only do its work (not much here)
   When it notices that the semaphore track is free when it returns
   to 0 each process must modify the semaphore accordingly.
@@ -48,7 +49,7 @@ union semun {
 
 int main(int argc, char **argv)
 {
-  unsigned int i; // TODO
+  unsigned int i;
 
   // index for the sem_ops array
   int idx = 0;
