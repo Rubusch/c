@@ -1,25 +1,25 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = semaphore.c
-OBJECTS = ${SOURCE:.c=.o}
-
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
-semaphore: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm -D _SVID_SOURCE -D _XOPEN_SOURCE
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE -D _XOPEN_SOURCE
 
-all: semaphore
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) semaphore *~ core
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~ core
 
 
