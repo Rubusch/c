@@ -238,12 +238,12 @@ static void do_semctl(int sem_id, int sem_num, int sem_cmd, union semun sem_un)
           sem_cmd);
   switch (sem_cmd) {
   case GETALL:
-    fprintf(stderr, "sem_un.array = %#x)\n", ( unsigned int )sem_un.array);
+    fprintf(stderr, "sem_un.array = %#lx)\n", (unsigned long) sem_un.array);
     break;
 
   case IPC_STAT:
   case IPC_SET:
-    fprintf(stderr, "sem_un.buf = %#x)\n", ( unsigned int )&sem_un.buf);
+    fprintf(stderr, "sem_un.buf = %#lx)\n", (unsigned long) sem_un.buf);
     break;
   case SETALL:
     fprintf(stderr, "sem_un.array = [");
