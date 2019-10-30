@@ -3,23 +3,22 @@
 # use -O, -O1, -O2 for optimization
 
 SOURCE = semctl.c console_input.c
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 HEADERS = console_input.h
-OBJECTS = ${SOURCE:.c=.o}
-
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
+all: $(TARGET)
 
-all: semctl
-
-semctl: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 
 clean:
-	${RM} $(OBJECTS) semctl *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~ core
