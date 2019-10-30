@@ -3,7 +3,7 @@
 # use -O, -O1, -O2 for optimization
 
 SOURCE = semctl.c console_input.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = semctl.exe
 OBJECTS = $(SOURCE:.c=.o)
 HEADERS = console_input.h
 .PREFIXES = .c .o
