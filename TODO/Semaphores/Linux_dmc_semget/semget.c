@@ -1,6 +1,8 @@
 // semget.c
 /*
   semaphores testing grounds - semget()
+
+  TODO: needs some explanation and in case adjustment
 //*/
 
 #include <ctype.h>
