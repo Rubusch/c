@@ -1,25 +1,25 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
+# use -O, -O1, -O2 for optimization
 
 
 SOURCE = semget.c
-OBJECTS = ${SOURCE:.c=.o}
-
+TARGET = $(SOURCE:.c=.exe)
+OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
-semget: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm -D _SVID_SOURCE -D _XOPEN_SOURCE
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE -D _XOPEN_SOURCE
 
-all: semget
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) semget *~ core
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~ core
 
 
