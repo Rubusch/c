@@ -94,6 +94,7 @@ script:
   - cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe && cd -
   - cd 30__c__pthreads/semaphore && make && ./*.exe && cd -
   - cd 30__c__pthreads/semaphore__semctl && make && cd -
+  - cd 30__c__pthreads/semaphore__semget && make && cd -
   - cd 30__c__pthreads/semaphore__ipc-synchronization && make && ./*.exe && cd -
 
   ## needs command line arguments
