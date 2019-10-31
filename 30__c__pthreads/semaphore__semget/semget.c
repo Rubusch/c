@@ -5,14 +5,20 @@
   TODO: needs some explanation and in case adjustment
 //*/
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
+#include <sys/types.h>
+#include <stdio.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <pwd.h>
+#include <fcntl.h>
+#include <limits.h>
 
 #define KEY_DIGITS 5
 #define NSEMS_DIGITS 4
@@ -63,6 +69,9 @@ int main(int argc, char **argv)
 
     case 3:
       puts("owner read");
+      
+// TODO adjust flags
+// TODO falgs need to be combined via '|'
       sem_flag = 0400;
       break;
 
@@ -102,7 +111,15 @@ int main(int argc, char **argv)
   fprintf(stderr, "calling semget(%#lx, %d, %#o)\n", ( long unsigned int )key,
           nsems, sem_flag);
   int sem_id = 0;
+/*
+// FIXME original call not working correctly
   if (0 > (sem_id = semget(key, nsems, sem_flag))) {
+/*/
+// as an example this call works, source
+// https://linux.die.net/man/3/semget
+  if (0 > (sem_id = semget(key, nsems, IPC_CREAT | IPC_EXCL | S_IRUSR |
+        S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH))) {
+//*/
     perror("semget failed");
     exit(EXIT_FAILURE);
   } else {
