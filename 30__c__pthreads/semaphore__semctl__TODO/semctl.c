@@ -59,7 +59,9 @@ int main(int argc, char **argv)
   unsigned int sem_cmd = 0;
   unsigned int sem_num = 0;
   union semun sem_un;
+
   readdigit(&chosen, "select a semaphore command");
+
   switch (chosen) {
   case 0:
     puts("GETALL - get and print the values of all semaphores in the set");
