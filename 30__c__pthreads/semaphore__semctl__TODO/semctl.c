@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
   // sem_id
   unsigned int sem_id = 0;
-  puts("semid: the semid has to be smaller than the key value");
+  puts("sem_id: the sem_id has to be smaller than the key value");
   readnumber(&sem_id, SEM_ID_DIGITS, "enter a semaphore id value:");
 
   // sem_cmd
