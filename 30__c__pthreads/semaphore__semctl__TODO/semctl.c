@@ -236,8 +236,7 @@ int main(int argc, char **argv)
 static void do_semctl(int sem_id, int sem_num, int sem_cmd, union semun sem_un)
 {
   register int idx = 0;
-  fprintf(stderr, "calling semctl(%d, %d, %d, sem_un)\n", sem_id, sem_num,
-          sem_cmd);
+  fprintf(stderr, "calling semctl(sem_id, sem_num, sem_cmd, union sem_un) - semctl(%d, %d, %d, sem_un)\n", sem_id, sem_num, sem_cmd);
   switch (sem_cmd) {
   case GETALL:
     fprintf(stderr, "sem_un.array = %#lx)\n", (unsigned long) sem_un.array);
