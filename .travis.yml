@@ -73,6 +73,7 @@ script:
   - cd ./10__c__language-techniques/file__fseek-position && make && cd -
   - cd ./10__c__language-techniques/stdin__fflush-undefined && make && cd -
   - cd ./10__c__language-techniques/file__fsetpos && make && cd -
+  - cd ./10__c__language-techniques/file__move && make && cd -
   - cd ./10__c__language-techniques/input__getch && make && cd -
 
 
