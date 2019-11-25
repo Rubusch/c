@@ -17,4 +17,4 @@ ${TARGET}: ${OBJECTS}
 all: ${TARGET}
 
 clean:
-	-${RM} ${TARGET} ${OBJECTS} Mickey-Mouse.txt *~
+	-${RM} ${TARGET} ${OBJECTS} Mickey-Mouse.txt Donald-Duck.txt text.txt *~
