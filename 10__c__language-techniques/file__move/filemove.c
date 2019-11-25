@@ -41,36 +41,37 @@ int file_move(const char old_filename[FILENAME_MAX], const char new_filename[FIL
 
 int file_move(const char* src, const char* dst)
 {
-    int fd_input, fd_output;
-    mode_t perm_file;
-    char buf[BUF_SIZE];
-    ssize_t num;
+  int fd_input, fd_output;
+  mode_t perm_file;
+  char buf[BUF_SIZE];
+  ssize_t num;
 
-    fd_input = open(src, O_RDONLY);
-    if (-1 == fd_input)
-        return 1;
+  fd_input = open(src, O_RDONLY);
+  if (-1 == fd_input)
+    return 1;
 
-    perm_file = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
-    fd_output = open(dst, O_CREAT | O_TRUNC | O_WRONLY, perm_file);
-    if (-1 == fd_output)
-        return 1;
+  perm_file = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+  fd_output = open(dst, O_CREAT | O_TRUNC | O_WRONLY, perm_file);
+  if (-1 == fd_output)
+    return 1;
 
-    while (0 < (num = read(fd_input, buf, BUF_SIZE)))
-        if (num != write(fd_output, buf, num))
-            return 1;
+  while (0 < (num = read(fd_input, buf, BUF_SIZE)))
+    if (num != write(fd_output, buf, num))
+      return 1;
 
-    if (-1 == num)
-        return 1;
-    if (-1 == close(fd_input))
-        return 1;
-    if (-1 == close(fd_output))
-        return 1;
+  if (-1 == num)
+    return 1;
+  if (-1 == close(fd_input))
+    return 1;
+  if (-1 == close(fd_output))
+    return 1;
 
-    remove(src);
+  remove(src);
 
-    return 0;
+  return 0;
 }
 // */
+
 
 int main(int argc, char **argv)
 {
