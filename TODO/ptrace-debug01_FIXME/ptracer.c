@@ -1,7 +1,8 @@
 /*
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Debugging with PTrace Utility, Jim Blakey jdblakey@innovative-as.com
+
+  resource: Debugging with PTrace Utility, Jim Blakey jdblakey@innovative-as.com
  */
 
 #include <stdio.h>
