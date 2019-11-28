@@ -12,9 +12,10 @@
 
 int main(int argc, char **argv)
 {
+  int max=10;
   int cnt;
-  for (cnt = 0; cnt < 10; ++cnt) {
-    printf("counter: '%d'\n", cnt);
+  for (cnt = 0; cnt < max; ++cnt) {
+    printf("rabbit (%d/%d)\n", cnt, max);
     sleep(3);
   }
   return 0;
