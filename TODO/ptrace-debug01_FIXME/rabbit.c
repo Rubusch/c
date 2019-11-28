@@ -1,9 +1,13 @@
 /*
-  dummy example to be debugged stepwise
+  show instructions of another program, e.g. of one loop iteration
+
+  start as follows
+  $ ./rabbit.exe & ./ptracer.exe $(pidof rabbit.exe)
+
+  resource: Linux Journal, Oct 31, 2002  By Pradeep Padala
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
  */
 
 #include <stdio.h> /* printf() */

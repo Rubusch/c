@@ -1,8 +1,17 @@
 /*
+  show instructions of another program, e.g. of one loop iteration
+
+  start as follows
+  $ ./rabbit.exe & ./ptracer.exe $(pidof rabbit.exe)
+
+  resource:
+  Debugging with PTrace Utility, Jim Blakey jdblakey@innovative-as.com
+
+  and for 64 bit have a look into the glibc regs struct, e.g. here:
+  https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/x86/sys/user.h.html
+
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-
-  resource: Debugging with PTrace Utility, Jim Blakey jdblakey@innovative-as.com
  */
 
 #include <stdio.h>
@@ -49,8 +58,8 @@ int main(int argc, char *argv[])
    * need this later.
    */
   // TODO regs, to be defined by macro??
-  ipoffs = M_OFFSETOF(struct user, regs.eip);
-  spoffs = M_OFFSETOF(struct user, regs.esp);
+  ipoffs = M_OFFSETOF(struct user, regs.rip);
+  spoffs = M_OFFSETOF(struct user, regs.rsp);
   /*
    * Attach to the process. This will cause the target process to become
    * the child of this process. The target will be sent a SIGSTOP. call
