@@ -118,16 +118,17 @@ script:
 
 
 ## 40: linux (all just built, since execution in case needs runs in parallel
+  - cd 40__c__linux/ptrace01__simple && make && cd -
   - cd 40__c__linux/ptrace02__syscall_peekreg-TODO && make && cd -
-  - cd 40__c__linux/ptrace09__injection-in-free-space-TODO && make && cd -
-  - cd 40__c__linux/ptrace07__injection-TODO && make && cd -
-  - cd 40__c__linux/ptrace08__injection-replace && make && cd -
+  - cd 40__c__linux/ptrace03__syscall_getregs-TODO && make && cd -
+  - cd 40__c__linux/ptrace04__revertstring-TODO && make && cd -
   - cd 40__c__linux/ptrace05__singlestep-full && make && cd -
   - cd 40__c__linux/ptrace05__singlestep && make && cd -
   - cd 40__c__linux/ptrace06__attach-detach && make && cd -
-  - cd 40__c__linux/ptrace01__simple && make && cd -
-  - cd 40__c__linux/ptrace04__revertstring-TODO && make && cd -
-  - cd 40__c__linux/ptrace03__syscall_getregs-TODO && make && cd -
+  - cd 40__c__linux/ptrace07__injection-TODO && make && cd -
+  - cd 40__c__linux/ptrace08__injection-replace && make && cd -
+  - cd 40__c__linux/ptrace09__injection-in-free-space-TODO && make && cd -
+  - cd 40__c__linux/ptrace__debug01-loop-instructions && make && cd -
   - cd 40__c__linux/fork__simple && make && cd -
   - cd 40__c__linux/fork__cli-command && make && cd -
   - cd 40__c__linux/fork && make && cd -
