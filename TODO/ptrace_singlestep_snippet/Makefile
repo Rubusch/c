@@ -10,7 +10,7 @@
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall #-std=c99 -pedantic
+CFLAGS += -g -Wall # -Werror -pedantic
 RM = rm -f
 
 %.o: %.c
@@ -20,7 +20,7 @@ RM = rm -f
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ ptracer.o -lm
+	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
