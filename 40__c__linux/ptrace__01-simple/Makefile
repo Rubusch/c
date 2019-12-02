@@ -5,13 +5,11 @@
 ## @license: GPLv3 2013
 ##
 ## use -O, -O1, -O2 for optimization
-
-
 SOURCE = ptracer.c
 OBJECTS = $(SOURCE:%.c=%.o)
 TARGET = $(SOURCE:%.c=%.exe)
 CC = gcc
-CFLAGS += -g -Wall #-std=c99 -pedantic
+CFLAGS += -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
