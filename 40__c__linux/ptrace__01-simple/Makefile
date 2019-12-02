@@ -9,6 +9,7 @@
 
 SOURCE = ptracer.c
 OBJECTS = $(SOURCE:%.c=%.o)
+TARGET = $(SOURCE:%.c=%.exe)
 CC = gcc
 CFLAGS += -g -Wall #-std=c99 -pedantic
 RM = rm -f
@@ -17,13 +18,13 @@ RM = rm -f
 	$(CC) -c $(CFLAGS) $<
 
 
-all: ptracer.exe
+all: $(TARGET)
 
-ptracer.exe: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) -lm
 
 
 clean:
-	$(RM) $(OBJECTS) ptracer.exe *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: clean all
