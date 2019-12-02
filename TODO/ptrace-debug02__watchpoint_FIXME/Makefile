@@ -6,7 +6,6 @@
 ##
 ## use -O, -O1, -O2 for optimization
 
-
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
@@ -14,13 +13,13 @@ CFLAGS += -g -Wall #-std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
 
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ ptracer.o -lm
+	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
