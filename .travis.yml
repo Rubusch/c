@@ -119,7 +119,7 @@ script:
 
 ## 40: linux (all just built, since execution in case needs runs in parallel
   - cd 40__c__linux/ptrace__01-simple && make && cd -
-  - cd 40__c__linux/ptrace02__syscall_peekreg-TODO && make && cd -
+  - cd 40__c__linux/ptrace__02-syscall_peekreg-TODO && make && cd -
   - cd 40__c__linux/ptrace03__syscall_getregs-TODO && make && cd -
   - cd 40__c__linux/ptrace04__revertstring-TODO && make && cd -
   - cd 40__c__linux/ptrace05__singlestep-full && make && cd -
