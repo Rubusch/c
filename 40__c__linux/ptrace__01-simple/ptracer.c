@@ -32,7 +32,7 @@
 int main(int argc, char **argv)
 {
   pid_t child;
-  long orig_eax;
+  long instr;
 
   if (0 > (child = fork())) {
     perror("fork failed");
@@ -45,21 +45,28 @@ int main(int argc, char **argv)
     }
     execl("/bin/pwd", "pwd", NULL);
 
-
   } else {
     /* parent: debugger */
-
-    wait(NULL); // wait call
+    int status, cnt=0;
+    wait(&status);
+    while (WIFSTOPPED(status)) {
+      cnt++;
+      struct user_regs_struct regs;
+      ptrace(PTRACE_GETREGS, child, 0, &regs);
 #if __x86_64__
-//    orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_RAX, NULL); // ptrace, fetch data (parent)
-    struct user_regs_struct regs;
-    ptrace(PTRACE_GETREGS, child, 0, &regs);
-    orig_eax = ptrace(PTRACE_PEEKTEXT, child, regs.rax, 0);
+      instr = ptrace(PTRACE_PEEKTEXT, child, regs.rax, 0);
+      fprintf(stderr, "%d. EIP = '0x%016llx', instr = '0x%016lx', RAX = '0x%016llx', RBX = '0x%016llx', RCX = '0x%016llx'\n", cnt, regs.rip, instr, regs.rax, regs.rbx, regs.rcx);
 #else
-    orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_EAX, NULL);
+      instr = ptrace(PTRACE_PEEKTEXT, child, regs.eax, 0);
+      fprintf(stderr, "%d. EIP = '0x%08x', instr = '0x%08x', EAX = '0x%08x', EBX = '0x%08x', ECX = '0x%08x'\n", cnt, regs.eip, instr, regs.eax, regs.ebx, regs.ecx);
 #endif
-    fprintf(stderr, "parent: child's systemcall '%lX' in EAX\n", orig_eax);
-    ptrace(PTRACE_CONT, child, NULL, NULL); // ptrace, let child continue (parent)
+
+      if (0 > (ptrace(PTRACE_SINGLESTEP, child, 0, 0))) {
+        perror("ptrace, single step");
+        exit(EXIT_FAILURE);
+      }
+      wait(&status);
+    }
   }
   puts("parent: READY.");
 
