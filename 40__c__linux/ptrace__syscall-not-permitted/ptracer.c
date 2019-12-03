@@ -41,7 +41,7 @@ int main(int argc, char **argv)
   } else if (0 == child) {
     /* child: tracee */
     ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("/bin/ls", "ls", NULL);
+    execl("/bin/pwd", "pwd", NULL);
 
   } else {
     /* parent: tracer */
@@ -93,13 +93,14 @@ int main(int argc, char **argv)
 
 
       // set syscall to blocked by EPERM (permission denied)
-//      regs.rax = -EPERM;
-//      ptrace(PTRACE_SETREGS, child, 0, &regs);
-      regs.orig_rax = -1; // set to invalid system call
-      if (0 > ptrace(PTRACE_SETREGS, child, RAX * 8, -EPERM)) {
-        perror("ptrace: PTRACE_SETREGS failed");
-        exit(EXIT_FAILURE);
-      }
+      //
+      // NOTE: the following error in the logs
+      // pwd: error while loading shared libraries: libc.so.6: cannot open shared object file: Operation not permitted
+      //
+      // still the program will show some output
+      // the error disappears when the following lines are commented out
+      regs.rax = -EPERM;
+      ptrace(PTRACE_SETREGS, child, 0, &regs);
     }
   }
   return 0;
