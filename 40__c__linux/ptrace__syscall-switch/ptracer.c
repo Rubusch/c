@@ -8,8 +8,8 @@
   2 (0x2) open sys_open
   3 (0x3) close sys_close
   4 (0x4) stat sys_newstat
-  5 (0x5) fstat sys_newfstat
-  6 (0x6) lstat sys_newlstat
+  5 (0x5) fstat sys_fstat
+  6 (0x6) lstat sys_lstat
   7 (0x7) poll sys_poll
   8 (0x8) lseek sys_lseek
   9 (0x9) mmap sys_mmap
@@ -408,6 +408,26 @@ int main(int argc, char **argv)
 
 
       switch(regs.orig_rax) {
+#ifdef SYS_munmap
+      case SYS_munmap:
+        fprintf(stderr, "SYSCALL: SYS_munmap, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
+#ifdef SYS_arch_prctl
+      case SYS_arch_prctl:
+        fprintf(stderr, "SYSCALL: SYS_arch_prctl, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
+#ifdef SYS_getcwd
+      case SYS_getcwd:
+        fprintf(stderr, "SYSCALL: SYS_getcwd, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
+#ifdef SYS_mprotect
+      case SYS_mprotect:
+        fprintf(stderr, "SYSCALL: SYS_mprotect, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
 #ifdef SYS_mmap
       case SYS_mmap:
         fprintf(stderr, "SYSCALL: SYS_mmap, '0x%04lx'\n", (long)regs.orig_rax);
@@ -433,12 +453,11 @@ int main(int argc, char **argv)
         fprintf(stderr, "SYSCALL: SYS_access, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
-#ifdef SYS_newfstat
-      case SYS_newfstat:
-        fprintf(stderr, "SYSCALL: SYS_newfstat, '0x%04lx'\n", (long)regs.orig_rax);
+#ifdef SYS_fstat
+      case SYS_fstat:
+        fprintf(stderr, "SYSCALL: SYS_fstat, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
-
 #ifdef SYS_read
       case SYS_read:
         fprintf(stderr, "SYSCALL: SYS_read, '0x%04lx'\n", (long)regs.orig_rax);
@@ -454,9 +473,9 @@ int main(int argc, char **argv)
         fprintf(stderr, "SYSCALL: SYS_open, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
-#ifdef SYS_exit
-      case SYS_exit:
-        fprintf(stderr, "SYSCALL: SYS_exit, '0x%04lx'\n", (long)regs.orig_rax);
+#ifdef SYS_exit_group
+      case SYS_exit_group:
+        fprintf(stderr, "SYSCALL: SYS_exit_group, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
 
