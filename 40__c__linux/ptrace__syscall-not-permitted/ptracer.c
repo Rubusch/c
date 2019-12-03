@@ -81,6 +81,25 @@ int main(int argc, char **argv)
               , (long)regs.r8
               , (long)regs.r9);
 
+      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
+        perror("ptrace: PTRACE_SYSCALL failed");
+        exit(EXIT_FAILURE);
+      }
+
+      if (0 > waitpid(child, 0, 0)) {
+        perror("waitpid: failed");
+        exit(EXIT_FAILURE);
+      }
+
+
+      // set syscall to blocked by EPERM (permission denied)
+//      regs.rax = -EPERM;
+//      ptrace(PTRACE_SETREGS, child, 0, &regs);
+      regs.orig_rax = -1; // set to invalid system call
+      if (0 > ptrace(PTRACE_SETREGS, child, RAX * 8, -EPERM)) {
+        perror("ptrace: PTRACE_SETREGS failed");
+        exit(EXIT_FAILURE);
+      }
     }
   }
   return 0;
