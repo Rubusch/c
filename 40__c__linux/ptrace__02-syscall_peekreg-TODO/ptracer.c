@@ -35,7 +35,8 @@ FIXME: not working for 64 bit (so far)
 #else
 #include <asm/ptrace-abi.h> /* constants, e.g. ORIG_EAX, etc. */
 #endif
-#include <sys/syscall.h> /* SYS_write */
+
+#include <errno.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,10 +44,6 @@ FIXME: not working for 64 bit (so far)
 int main(int argc, char **argv)
 {
   pid_t child;
-  long orig_eax, eax;
-  long registers[3];
-  int status;
-  int insyscall = 0;
 
 #ifndef __x86_64__
   fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
@@ -100,7 +97,16 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
       }
 
-      
+      // get syscall results (copied from Christopher Wellons
+      if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
+        fputs(" = ?\n", stderr);
+        if (errno == ESRCH) { // ESRCH: No such process
+          exit(regs.rdi); // syscall was 'exit' or similar
+        }
+        perror("ptrace: final PTRACE_GETREGS failed");
+      }
+
+      fprintf(stderr, " = '%ld' [rax]\n", (long)regs.rax);
     }
   }
   return 0;
