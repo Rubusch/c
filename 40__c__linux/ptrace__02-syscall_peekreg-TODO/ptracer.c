@@ -12,13 +12,16 @@
   reads out child's registers %ebx, %ecx and %edx one by one, else it prints
   the %eax register for other syscalls
 
+  system call numbers can be found in /usr/include/asm/unistd.h and unistd_64.h,
+  respectively
+
 FIXME: not working for 64 bit (so far)
 
 
   email: L.Rubusch@gmx.ch
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-or p_padala@yahoo.com
+  resources:
+  Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -40,25 +43,31 @@ int main(int argc, char **argv)
 {
   pid_t child;
   long orig_eax, eax;
-  long args[3];
+  long registers[3];
   int status;
   int insyscall = 0;
 
   if (0 > (child = fork())) {
     perror("fork() failed");
+
   } else if (0 == child) {
-    /* child */
-    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("/bin/pwd", "pwd", NULL);
+    /* child: tracked */
+    if (0 > (ptrace(PTRACE_TRACEME, 0, NULL, NULL))) {
+      perror("ptrace: PTRACE_TRACEME failed");
+      exit(EXIT_FAILURE);
+    }
+    execl("/bin/ls", "ls", NULL);
+
   } else {
-    /* parent */
+    /* parent: tracker */
     while (1) {
 
       /* check wether the child was stopped by ptrace or exited */
-
       wait(&status);
-      if (WIFEXITED(status))
+      if (WIFEXITED(status)) {
         break;
+      }
+
 #if __x86_64__
       orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_RAX, NULL);
 
@@ -72,11 +81,10 @@ int main(int argc, char **argv)
              PTRACE_PEEKUSER looks into the arguments of the child
            */
           insyscall = 1;
-          args[0] = ptrace(PTRACE_PEEKUSER, child, 4 * RBX, NULL);
-          args[1] = ptrace(PTRACE_PEEKUSER, child, 4 * RCX, NULL);
-          args[2] = ptrace(PTRACE_PEEKUSER, child, 4 * RDX, NULL);
-          fprintf(stderr, "parent: write called with %lu, %lu, %lu\n", args[0],
-                  args[1], args[2]);
+          registers[0] = ptrace(PTRACE_PEEKUSER, child, RBX, NULL);
+          registers[1] = ptrace(PTRACE_PEEKUSER, child, RCX, NULL);
+          registers[2] = ptrace(PTRACE_PEEKUSER, child, RDX, NULL);
+          fprintf(stderr, "parent: write called with %lu, %lu, %lu\n", registers[0], registers[1], registers[2]);
         } else {
           /* syscall exit */
           eax = ptrace(PTRACE_PEEKUSER, child, 4 * RAX, NULL);
