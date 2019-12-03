@@ -408,39 +408,60 @@ int main(int argc, char **argv)
 
 
       switch(regs.orig_rax) {
+#ifdef SYS_mmap
+      case SYS_mmap:
+        fprintf(stderr, "SYSCALL: SYS_mmap, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
+#ifdef SYS_close
+      case SYS_close:
+        fprintf(stderr, "SYSCALL: SYS_close, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
 #ifdef SYS_brk // change the location of the program break, which defines the end of the process's data segment
       case SYS_brk:
-        fprintf(stderr, "SYSCALL: SYS_brk\n");
+        fprintf(stderr, "SYSCALL: SYS_brk, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
 #ifdef SYS_openat
-        case SYS_openat:
-          fprintf(stderr, "SYSCALL: SYS_openat\n");
-          break;
+      case SYS_openat:
+        fprintf(stderr, "SYSCALL: SYS_openat, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
+#ifdef SYS_access
+      case SYS_access:
+        fprintf(stderr, "SYSCALL: SYS_access, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
+#endif
+#ifdef SYS_newfstat
+      case SYS_newfstat:
+        fprintf(stderr, "SYSCALL: SYS_newfstat, '0x%04lx'\n", (long)regs.orig_rax);
+        break;
 #endif
 
 #ifdef SYS_read
       case SYS_read:
-        fprintf(stderr, "SYSCALL: SYS_read\n");
+        fprintf(stderr, "SYSCALL: SYS_read, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
 #ifdef SYS_write
       case SYS_write:
-        fprintf(stderr, "SYSCALL: SYS_write\n");
+        fprintf(stderr, "SYSCALL: SYS_write, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
 #ifdef SYS_open
       case SYS_open:
-        fprintf(stderr, "SYSCALL: SYS_open\n");
+        fprintf(stderr, "SYSCALL: SYS_open, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
 #ifdef SYS_exit
       case SYS_exit:
-        fprintf(stderr, "SYSCALL: SYS_exit\n");
+        fprintf(stderr, "SYSCALL: SYS_exit, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
+
       default:
-        fprintf(stderr, "SYSCALL: uncaught, '0x%04lx'\n", (long)regs.orig_rax);
+        fprintf(stderr, "SYSCALL: uncaught, '0x%04lx' XXXXXXX\n", (long)regs.orig_rax);
       }
 
     }
