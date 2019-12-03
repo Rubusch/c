@@ -1,5 +1,5 @@
 /*
-  ptrace example
+  ptrace example: read registers on x86_64!
 
   ptrace is a system call found in Unix and several Unix-like operating systems.
   By using ptrace (the name is an abbreviation of "process trace") one process
@@ -21,7 +21,8 @@ FIXME: not working for 64 bit (so far)
   email: L.Rubusch@gmx.ch
 
   resources:
-  Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+  https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
+  Linux Journal, Nov 30, 2002 by Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -47,6 +48,11 @@ int main(int argc, char **argv)
   int status;
   int insyscall = 0;
 
+#ifndef __x86_64__
+  fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
+  exit(EXIT_FAILURE);
+#endif
+
   if (0 > (child = fork())) {
     perror("fork() failed");
 
@@ -71,65 +77,30 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
       }
 
+      struct user_regs_struct regs;
+      if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
+        perror("ptrace: PTRACE_GETREGS failed");
+        exit(EXIT_FAILURE);
+      }
+
+      // for internal kernel purposes, the system call number is stored in
+      // orig_rax rather than rax
+      // all the other system call arguments are straightforward
+      long syscall = regs.orig_rax;
+
+      fprintf(stderr, "syscall: '%ld(%ld [rdi], %ld [rsi], %ld [rdx], %ld [r10], %ld [r8], %ld [r9])'\n", syscall, (long)regs.rdi, (long)regs.rsi, (long)regs.rdx, (long)regs.r10, (long)regs.r8, (long)regs.r9);
+
+      // execute systemcall and stop on exit
+      if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
+        perror("ptrace: second PTRACE_SYSCALL failed");
+        exit(EXIT_FAILURE);
+      }
+      if (0 > waitpid(child, 0, 0)) {
+        perror("waitpid: second waitpid failed");
+        exit(EXIT_FAILURE);
+      }
+
       
-/*
-      // check wether the child was stopped by ptrace or exited
-      wait(&status);
-      if (WIFEXITED(status)) {
-        break;
-      }
-
-#if __x86_64__
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, ORIG_RAX, NULL);
-
-      // tracking the 'write' syscall
-      if (orig_eax == SYS_write) {
-        if (insyscall == 0) {
-          // syscall entry
-          //
-          // PTRACE_PEEKUSER looks into the arguments of the child
-          //
-          insyscall = 1;
-          registers[0] = ptrace(PTRACE_PEEKUSER, child, RBX, NULL);
-          registers[1] = ptrace(PTRACE_PEEKUSER, child, RCX, NULL);
-          registers[2] = ptrace(PTRACE_PEEKUSER, child, RDX, NULL);
-          fprintf(stderr, "parent: write called with %lu, %lu, %lu\n", registers[0], registers[1], registers[2]);
-        } else {
-          // syscall exit
-          eax = ptrace(PTRACE_PEEKUSER, child, RAX, NULL);
-          fprintf(stderr, "parent: write returned with %lu\n", eax);
-          insyscall = 0;
-        }
-      }
-
-#else
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_EAX, NULL);
-
-      // tracking the 'write' syscall
-      if (orig_eax == SYS_write) {
-        if (insyscall == 0) {
-          // syscall entry
-          //
-          // PTRACE_PEEKUSER looks into the arguments of the child
-          //
-          insyscall = 1;
-          args[0] = ptrace(PTRACE_PEEKUSER, child, 4 * EBX, NULL);
-          args[1] = ptrace(PTRACE_PEEKUSER, child, 4 * ECX, NULL);
-          args[2] = ptrace(PTRACE_PEEKUSER, child, 4 * EDX, NULL);
-          fprintf(stderr, "parent: write called with %lu, %lu, %lu\n", args[0],
-                  args[1], args[2]);
-        } else {
-          // syscall exit
-          eax = ptrace(PTRACE_PEEKUSER, child, 4 * EAX, NULL);
-          fprintf(stderr, "parent: write returned with %lu\n", eax);
-          insyscall = 0;
-        }
-      }
-#endif
-      // stop the child process whenever a syscall entry/exit was received
-      ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-
-// */
     }
   }
   return 0;
