@@ -84,9 +84,8 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
       }
 
-      // for internal kernel purposes, the system call number is stored in
-      // orig_rax rather than rax
-      // all the other system call arguments are straightforward
+      // rax will be overwritten with the return value of the syscall,
+      // thus orig_rax contains the initial rax value
       long syscall = regs.orig_rax;
 
       fprintf(stderr
