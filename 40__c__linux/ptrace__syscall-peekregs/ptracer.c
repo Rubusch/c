@@ -15,8 +15,6 @@
   system call numbers can be found in /usr/include/asm/unistd.h and unistd_64.h,
   respectively
 
-FIXME: not working for 64 bit (so far)
-
 
   email: L.Rubusch@gmx.ch
 
@@ -65,6 +63,11 @@ int main(int argc, char **argv)
 
     while (1) {
       // restart the stopped tracee
+
+/*
+  read out registers
+ */
+
       if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
         perror("ptrace: PTRACE_SYSCALL failed");
         exit(EXIT_FAILURE);
@@ -95,6 +98,10 @@ int main(int argc, char **argv)
               , (long)regs.r10
               , (long)regs.r8
               , (long)regs.r9);
+
+/*
+  read out result
+ */
 
       // execute systemcall and stop on exit
       if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
