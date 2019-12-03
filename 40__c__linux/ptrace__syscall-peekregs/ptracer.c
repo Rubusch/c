@@ -69,6 +69,7 @@ int main(int argc, char **argv)
         perror("ptrace: PTRACE_SYSCALL failed");
         exit(EXIT_FAILURE);
       }
+
       if (0 > waitpid(child, 0, 0)) {
         perror("waitpid: failed");
         exit(EXIT_FAILURE);
@@ -85,13 +86,22 @@ int main(int argc, char **argv)
       // all the other system call arguments are straightforward
       long syscall = regs.orig_rax;
 
-      fprintf(stderr, "syscall: '%lx(%016lx [rdi], %016lx [rsi], %016lx [rdx], %016lx [r10], %016lx [r8], %016lx [r9])'\n", syscall, (long)regs.rdi, (long)regs.rsi, (long)regs.rdx, (long)regs.r10, (long)regs.r8, (long)regs.r9);
+      fprintf(stderr
+              , "syscall: '%lx(%016lx [rdi], %016lx [rsi], %016lx [rdx], %016lx [r10], %016lx [r8], %016lx [r9])'\n"
+              , syscall
+              , (long)regs.rdi
+              , (long)regs.rsi
+              , (long)regs.rdx
+              , (long)regs.r10
+              , (long)regs.r8
+              , (long)regs.r9);
 
       // execute systemcall and stop on exit
       if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
         perror("ptrace: second PTRACE_SYSCALL failed");
         exit(EXIT_FAILURE);
       }
+
       if (0 > waitpid(child, 0, 0)) {
         perror("waitpid: second waitpid failed");
         exit(EXIT_FAILURE);
