@@ -52,42 +52,40 @@ int main(int argc, char **argv)
 
   } else if (0 == child) {
     /* child: tracked */
-    if (0 > (ptrace(PTRACE_TRACEME, 0, NULL, NULL))) {
-      perror("ptrace: PTRACE_TRACEME failed");
-      exit(EXIT_FAILURE);
-    }
+    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
     execl("/bin/ls", "ls", NULL);
 
   } else {
     /* parent: tracker */
+    waitpid(child, 0, 0);
+    ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
+/*
     while (1) {
 
-      /* check wether the child was stopped by ptrace or exited */
+      // check wether the child was stopped by ptrace or exited
       wait(&status);
       if (WIFEXITED(status)) {
         break;
       }
 
 #if __x86_64__
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_RAX, NULL);
+      orig_eax = ptrace(PTRACE_PEEKUSER, child, ORIG_RAX, NULL);
 
-      /*
-        tracking the 'write' syscall
-      */
+      // tracking the 'write' syscall
       if (orig_eax == SYS_write) {
         if (insyscall == 0) {
-          /* syscall entry
-
-             PTRACE_PEEKUSER looks into the arguments of the child
-           */
+          // syscall entry
+          //
+          // PTRACE_PEEKUSER looks into the arguments of the child
+          //
           insyscall = 1;
           registers[0] = ptrace(PTRACE_PEEKUSER, child, RBX, NULL);
           registers[1] = ptrace(PTRACE_PEEKUSER, child, RCX, NULL);
           registers[2] = ptrace(PTRACE_PEEKUSER, child, RDX, NULL);
           fprintf(stderr, "parent: write called with %lu, %lu, %lu\n", registers[0], registers[1], registers[2]);
         } else {
-          /* syscall exit */
-          eax = ptrace(PTRACE_PEEKUSER, child, 4 * RAX, NULL);
+          // syscall exit
+          eax = ptrace(PTRACE_PEEKUSER, child, RAX, NULL);
           fprintf(stderr, "parent: write returned with %lu\n", eax);
           insyscall = 0;
         }
@@ -96,15 +94,13 @@ int main(int argc, char **argv)
 #else
       orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_EAX, NULL);
 
-      /*
-        tracking the 'write' syscall
-      */
+      // tracking the 'write' syscall
       if (orig_eax == SYS_write) {
         if (insyscall == 0) {
-          /* syscall entry
-
-             PTRACE_PEEKUSER looks into the arguments of the child
-           */
+          // syscall entry
+          //
+          // PTRACE_PEEKUSER looks into the arguments of the child
+          //
           insyscall = 1;
           args[0] = ptrace(PTRACE_PEEKUSER, child, 4 * EBX, NULL);
           args[1] = ptrace(PTRACE_PEEKUSER, child, 4 * ECX, NULL);
@@ -112,18 +108,17 @@ int main(int argc, char **argv)
           fprintf(stderr, "parent: write called with %lu, %lu, %lu\n", args[0],
                   args[1], args[2]);
         } else {
-          /* syscall exit */
+          // syscall exit
           eax = ptrace(PTRACE_PEEKUSER, child, 4 * EAX, NULL);
           fprintf(stderr, "parent: write returned with %lu\n", eax);
           insyscall = 0;
         }
       }
 #endif
-      /*
-        stop the child process whenever a syscall entry/exit was received
-      */
+      // stop the child process whenever a syscall entry/exit was received
       ptrace(PTRACE_SYSCALL, child, NULL, NULL);
     }
+// */
   }
   return 0;
 }
