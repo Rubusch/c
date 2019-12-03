@@ -85,7 +85,7 @@ int main(int argc, char **argv)
       // all the other system call arguments are straightforward
       long syscall = regs.orig_rax;
 
-      fprintf(stderr, "syscall: '%ld(%ld [rdi], %ld [rsi], %ld [rdx], %ld [r10], %ld [r8], %ld [r9])'\n", syscall, (long)regs.rdi, (long)regs.rsi, (long)regs.rdx, (long)regs.r10, (long)regs.r8, (long)regs.r9);
+      fprintf(stderr, "syscall: '%lx(%016lx [rdi], %016lx [rsi], %016lx [rdx], %016lx [r10], %016lx [r8], %016lx [r9])'\n", syscall, (long)regs.rdi, (long)regs.rsi, (long)regs.rdx, (long)regs.r10, (long)regs.r8, (long)regs.r9);
 
       // execute systemcall and stop on exit
       if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
         perror("ptrace: final PTRACE_GETREGS failed");
       }
 
-      fprintf(stderr, " = '%ld' [rax]\n", (long)regs.rax);
+      fprintf(stderr, " = '%016lx' [rax]\n\n", (long)regs.rax);
     }
   }
   return 0;
