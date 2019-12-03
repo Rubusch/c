@@ -51,17 +51,28 @@ int main(int argc, char **argv)
     perror("fork() failed");
 
   } else if (0 == child) {
-    /* child: tracked */
+    /* child: tracee */
     ptrace(PTRACE_TRACEME, 0, NULL, NULL);
     execl("/bin/ls", "ls", NULL);
 
   } else {
-    /* parent: tracker */
+    /* parent: tracer */
     waitpid(child, 0, 0);
     ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
-/*
-    while (1) {
 
+    while (1) {
+      // restart the stopped tracee
+      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
+        perror("ptrace: PTRACE_SYSCALL failed");
+        exit(EXIT_FAILURE);
+      }
+      if (0 > waitpid(child, 0, 0)) {
+        perror("waitpid: failed");
+        exit(EXIT_FAILURE);
+      }
+
+      
+/*
       // check wether the child was stopped by ptrace or exited
       wait(&status);
       if (WIFEXITED(status)) {
@@ -117,8 +128,9 @@ int main(int argc, char **argv)
 #endif
       // stop the child process whenever a syscall entry/exit was received
       ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-    }
+
 // */
+    }
   }
   return 0;
 }
