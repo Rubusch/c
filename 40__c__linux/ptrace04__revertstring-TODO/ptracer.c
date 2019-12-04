@@ -5,6 +5,11 @@
   PTRACE_PEEKDATA, revert it, and inject the reverted back into the child with
   PTRACE_POKEDATA
 
+  the proggy forks of a 'pwd' shell command, it then catches a SYS_write call of
+  the 'pwd' and kidnaps its argument (the current path) to be writen to stdout
+  (rdi == 1); then it reverts the argument as string and re-injects
+  (PTRACE_POKEDATA) the reverted string, which then goes to be displayed
+
   NOTE: the implementation is for x86_64 only!
 
 
@@ -69,29 +74,14 @@ void get_data(pid_t child, long addr, char *str, int len)
 
 void reverse(char *str)
 {
-/*
   int idx, jdx;
   char temp;
-  for (idx = 0, jdx = strlen(str)-2; idx <= jdx; ++idx, --jdx) { // FIXME
+  // NOTE: keep '-2' as upper bound, due to '\0' and '\n'!!
+  for (idx = 0, jdx = strlen(str)-2; idx <= jdx; ++idx, --jdx) {
     temp = str[idx];
     str[idx] = str[jdx];
     str[jdx] = temp;
   }
-/*/
-  int len;
-  int idx, jdx;
-  char temp;
-  for (idx = 0, jdx = strlen(str)-2; idx <= jdx; ++idx, --jdx) { // FIXME: why '2' and not '1'?
-    temp = str[idx];
-    fprintf(stderr, "%s[%d]:     temp '%c'\n", __func__, __LINE__, temp);
-    str[idx] = str[jdx];
-    str[jdx] = temp;
-  }
-
-  len = strlen(str);
-  fprintf(stderr, "%s[%d]:     str '%s', len = %d\n", __func__, __LINE__, str, len);
-// */
-
 }
 
 
@@ -152,7 +142,7 @@ int main(int argc, char **argv)
   } else {
     /* tracer */
     long orig_eax;
-    long params[3];
+    long params[6];
     int status;
     char *str;
     int toggle = 0;
@@ -173,22 +163,24 @@ int main(int argc, char **argv)
           /* params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RCX, NULL); */
           /* params[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL); */
 
-// FIXME: are the registers correct for x86_64? as arguments
-          params[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RBX, NULL);
-          params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RCX, NULL);
+          params[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RDI, NULL);
+          params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
           params[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL);
+          params[3] = ptrace(PTRACE_PEEKUSER, child, 8 * R10, NULL);
+          params[4] = ptrace(PTRACE_PEEKUSER, child, 8 * R8, NULL);
+          params[5] = ptrace(PTRACE_PEEKUSER, child, 8 * R9, NULL);
 
           // allocation
-          str = ( char * )calloc((params[2] + 1), sizeof(char));
-          fprintf(stderr, "AAA str = '%s'\n", str);
+          str = (char*) calloc((params[2] + 1), sizeof(char));
 
           // get data
           get_data(child, params[1], str, params[2]);
-          fprintf(stderr, "BBB str = '%s'\n", str);
+          fprintf(stderr, "\tsyscall: 0x%lx( 0x%08lx [rdi], 0x%08lx [rsi], '%s' [rdx], 0x%08lx [r10], 0x%08lx [r8], 0x%08lx [r9]\n\n"
+                  , (long)orig_eax, (long)params[0], (long)params[1], str, (long)params[3], (long)params[4], (long)params[5]);
 
           // reverse
           reverse(str);
-          fprintf(stderr, "CCC str = '%s'\n", str);
+          fprintf(stderr, "\treverting: str = '%s'\n\n", str);
 
           // print data
           put_data(child, params[1], str, params[2]);
@@ -204,11 +196,10 @@ int main(int argc, char **argv)
           puts("");
         }
       }
-fprintf(stderr, "111\n");   // XXX 
       ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-fprintf(stderr, "222\n");   // XXX 
     }
-fprintf(stderr, "333\n");   // XXX 
   }
+  puts("READY.");
+
   exit(EXIT_SUCCESS);
 }
