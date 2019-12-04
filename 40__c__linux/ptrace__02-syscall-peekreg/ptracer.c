@@ -12,6 +12,8 @@
   reads out child's registers %ebx, %ecx and %edx one by one, else it prints
   the %eax register for other syscalls
 
+  peek registers directly via PTRACE_PEEKUSER
+
   NOTE: for x86_64 the alignment is 8, thus registers need to be multiplied by 8
 
 
