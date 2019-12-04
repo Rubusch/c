@@ -14,6 +14,7 @@
   resources
   https://wiki.osdev.org/System_V_ABI
   https://nullprogram.com/blog/2015/05/15/
+  https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI
 */
 
 #include <sys/ptrace.h>
@@ -52,7 +53,7 @@ long system_caller(long syscall_number, long rdi, long rsi, long rdx, long r10, 
 
 int main(int argc, char **argv)
 {
-  static const char msg[] = "Ipsum Lorum" "\n";
+  static const char msg[] = "Ipsum Lorum" "\n"; // to be sent via rsi
 
   // example: syscall "write", standard output,...
   // NOTE: SYS_write == 1, equally use '1' instead
