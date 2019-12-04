@@ -121,10 +121,10 @@ script:
   - cd 40__c__linux/ptrace__01-simple && make && cd -
   - cd 40__c__linux/ptrace__02-syscall-peekreg && make && cd -
   - cd 40__c__linux/ptrace__03-syscall && make && cd -
+  - cd 40__c__linux/ptrace__04-peek-and-poke && make && cd -
   - cd 40__c__linux/ptrace__syscall-peekregs && make && cd -
   - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
   - cd 40__c__linux/ptrace__syscall-switch && make cd -
-  - cd 40__c__linux/ptrace04__revertstring-TODO && make && cd -
   - cd 40__c__linux/ptrace05__singlestep-full && make && cd -
   - cd 40__c__linux/ptrace05__singlestep && make && cd -
   - cd 40__c__linux/ptrace06__attach-detach && make && cd -
