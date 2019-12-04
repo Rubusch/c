@@ -10,10 +10,10 @@
   NOTE: for x86_64 it needs to be aligned by 8, for x86 needs to be aligned by 4
 
 
-  email: L.Rubusch@gmx.ch
+  author: L.Rubusch@gmx.ch
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-or p_padala@yahoo.com
+  resources
+  Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -40,14 +40,16 @@ int main(int argc, char **argv)
   long orig_eax, eax;
   int status;
   int insyscall = 0;
-  struct user_regs_struct regs; /* registers */
+  struct user_regs_struct regs;
 
   if (0 > (child = fork())) {
     perror("fork() failed");
+
   } else if (0 == child) {
     /* tracee */
     ptrace(PTRACE_TRACEME, 0, NULL, NULL);
     execl("/bin/pwd", "pwd", NULL);
+
   } else {
     /* tracer */
     while (1) {
