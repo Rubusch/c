@@ -27,7 +27,7 @@
 #include <string.h>
 
 
-const int long_size = sizeof(long long);
+const int long_size = sizeof(long);
 
 
 void get_data(pid_t child, long addr, char *str, int len)
