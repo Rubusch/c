@@ -119,6 +119,7 @@ script:
 
 ## 40: linux (all just built, since execution in case needs runs in parallel
   - cd 40__c__linux/ptrace__01-simple && make && cd -
+  - cd 40__c__linux/ptrace__02-syscall-peekreg && make && cd -
   - cd 40__c__linux/ptrace__syscall-peekregs && make && cd -
   - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
   - cd 40__c__linux/ptrace__syscall-switch && make cd -
