@@ -47,7 +47,7 @@ void get_data(pid_t child, long addr, char *str, int len)
   laddr = str;
   while (idx < jdx) {
     /* get 'val' for data */
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
 
     /* copy over to 'chars' */
     memcpy(laddr, data.chars, long_size);
@@ -62,7 +62,7 @@ void get_data(pid_t child, long addr, char *str, int len)
   /* copy over remaining characters to 'chars' */
   jdx = len % long_size;
   if (jdx != 0) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
     memcpy(laddr, data.chars, jdx);
   }
   str[len] = '\0';
@@ -99,7 +99,7 @@ void put_data(pid_t child, long addr, char *str, int len)
     memcpy(data.chars, laddr, long_size);
 
     /* write from 'val' */
-    ptrace(PTRACE_POKEDATA, child, addr + idx * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + idx * 8, data.val);
 
     /* next to read */
     ++idx;
@@ -115,7 +115,7 @@ void put_data(pid_t child, long addr, char *str, int len)
     memcpy(data.chars, laddr, jdx);
 
     /*  print */
-    ptrace(PTRACE_POKEDATA, child, addr + idx * 4, NULL);
+    ptrace(PTRACE_POKEDATA, child, addr + idx * 8, NULL);
   }
 }
 
@@ -123,6 +123,11 @@ void put_data(pid_t child, long addr, char *str, int len)
 int main(int argc, char **argv)
 {
   pid_t child;
+#ifndef __x86_64__
+  fprintf(stderr, "Source needs x86_64 to run!!\n");
+  exit(EXIT_FAILURE);
+#endif
+
   if (0 > (child = fork())) {
     perror("fork() failed");
 
@@ -139,23 +144,22 @@ int main(int argc, char **argv)
     int toggle = 0;
 
     while (1) {
-#if __x86_64__
       /* ptrace stopped child, or it exited? */
       wait(&status);
       if (WIFEXITED(status)) {
         break;
       }
 
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_RAX, NULL);
+      orig_eax = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX, NULL);
       if (SYS_write == orig_eax) {
         if (0 == toggle) {
 
           /* turn peek-reverse-poke off */
           toggle = 1;
 
-          params[0] = ptrace(PTRACE_PEEKUSER, child, 4 * RBX, NULL);
-          params[1] = ptrace(PTRACE_PEEKUSER, child, 4 * RCX, NULL);
-          params[2] = ptrace(PTRACE_PEEKUSER, child, 4 * RDX, NULL);
+          params[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RBX, NULL);
+          params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RCX, NULL);
+          params[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL);
 
           /* allocation */
           str = ( char * )calloc((params[2] + 1), sizeof(char));
@@ -178,46 +182,6 @@ int main(int argc, char **argv)
         }
       }
       ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-#else
-      /* ptrace stopped child, or it exited? */
-      wait(&status);
-      if (WIFEXITED(status)) {
-        break;
-      }
-
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_EAX, NULL);
-      if (SYS_write == orig_eax) {
-        if (0 == toggle) {
-
-          /* turn peek-reverse-poke off */
-          toggle = 1;
-
-          params[0] = ptrace(PTRACE_PEEKUSER, child, 4 * EBX, NULL);
-          params[1] = ptrace(PTRACE_PEEKUSER, child, 4 * ECX, NULL);
-          params[2] = ptrace(PTRACE_PEEKUSER, child, 4 * EDX, NULL);
-
-          /* allocation */
-          str = ( char * )calloc((params[2] + 1), sizeof(char));
-
-          /* get data */
-          get_data(child, params[1], str, params[2]);
-
-          /* reverse */
-          reverse(str);
-
-          /* print data */
-          put_data(child, params[1], str, params[2]);
-
-        } else {
-          /* turn on peek-reverse-poke of this if-cluase */
-          toggle = 0;
-
-          /* append linefeed */
-          puts("");
-        }
-      }
-      ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-#endif
     }
   }
   exit(EXIT_SUCCESS);
