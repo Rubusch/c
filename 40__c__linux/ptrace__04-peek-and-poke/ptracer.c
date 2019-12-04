@@ -159,10 +159,6 @@ int main(int argc, char **argv)
           // turn peek-reverse-poke off
           toggle = 1;
 
-          /* params[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RBX, NULL); */
-          /* params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RCX, NULL); */
-          /* params[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL); */
-
           params[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RDI, NULL);
           params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
           params[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL);
