@@ -122,7 +122,7 @@ script:
   - cd 40__c__linux/ptrace__syscall-peekregs && make && cd -
   - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
   - cd 40__c__linux/ptrace__syscall-switch && make cd -
-  - cd 40__c__linux/ptrace03__syscall_getregs-TODO && make && cd -
+  - cd 40__c__linux/ptrace__syscall && make && cd -
   - cd 40__c__linux/ptrace04__revertstring-TODO && make && cd -
   - cd 40__c__linux/ptrace05__singlestep-full && make && cd -
   - cd 40__c__linux/ptrace05__singlestep && make && cd -
