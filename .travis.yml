@@ -123,6 +123,7 @@ script:
   - cd 40__c__linux/ptrace__03-syscall && make && cd -
   - cd 40__c__linux/ptrace__04-peek-and-poke && make && cd -
   - cd 40__c__linux/ptrace__04-peek-and-poke-getregs && make && cd -
+  - cd 40__c__linux/ptrace__04-peek-and-poke-syscall-switch && make && cd -
   - cd 40__c__linux/ptrace__syscall-peekregs && make && cd -
   - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
   - cd 40__c__linux/ptrace__syscall-switch && make && cd -
