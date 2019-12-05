@@ -141,57 +141,12 @@ int main(int argc, char **argv)
 
   } else {
     /* tracer */
-/*
-    long orig_eax;
-    long params[6]; 
-    int status; 
-    char *str; 
-    int toggle = 0; 
-    while (1) { 
-
-      // ptrace stopped child, or it exited?
-      wait(&status);
-      if (WIFEXITED(status)) {
-        break;
-      }
-
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX, NULL);
-      if (SYS_write == orig_eax) {
-        if (0 == toggle) {
-          // turn peek-reverse-poke off
-          toggle = 1;
-
-          params[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RDI, NULL);
-          params[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
-          params[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL);
-          params[3] = ptrace(PTRACE_PEEKUSER, child, 8 * R10, NULL);
-          params[4] = ptrace(PTRACE_PEEKUSER, child, 8 * R8, NULL);
-          params[5] = ptrace(PTRACE_PEEKUSER, child, 8 * R9, NULL);
-
-          // allocation
-          str = (char*) calloc((params[2] + 1), sizeof(char));
-
-          // get data
-          get_data(child, params[1], str, params[2]);
-          fprintf(stderr, "\tsyscall: 0x%lx( 0x%08lx [rdi], 0x%08lx [rsi], '%s' [rdx], 0x%08lx [r10], 0x%08lx [r8], 0x%08lx [r9]\n\n"
-                  , (long)orig_eax, (long)params[0], (long)params[1], str, (long)params[3], (long)params[4], (long)params[5]);
-
-
-
-          // reverse
-          reverse(str);
-          fprintf(stderr, "\treverting: str = '%s'\n\n", str);
-
-          // print data
-          put_data(child, params[1], str, params[2]);
-
-          free(str);
-          str = NULL;
-
-/*/
     int toggle = 0;
     char *str;
-//    waitpid(child, 0, 0);
+
+    // If a tracer sets this flag, a SIGKILL signal will be sent to every tracee
+    // if the tracer exits. This option is useful for ptrace jailers that want
+    // to ensure that tracees can never escape the tracer's control.
     ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
     while (1) {
       if (0 > (waitpid(child, 0, 0))) {
@@ -227,7 +182,7 @@ int main(int argc, char **argv)
 
           free(str);
           str = NULL;
-//*/
+
         } else {
           // turn on peek-reverse-poke of this if-cluase
           toggle = 0;
