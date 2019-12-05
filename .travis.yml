@@ -124,16 +124,16 @@ script:
   - cd 40__c__linux/ptrace__04-peek-and-poke && make && cd -
   - cd 40__c__linux/ptrace__04-peek-and-poke-getregs && make && cd -
   - cd 40__c__linux/ptrace__04-peek-and-poke-syscall-switch && make && cd -
-  - cd 40__c__linux/ptrace__05-singlestep-full && make && cd -
-  - cd 40__c__linux/ptrace__syscall-peekregs && make && cd -
-  - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
-  - cd 40__c__linux/ptrace__syscall-switch && make && cd -
+  - cd 40__c__linux/ptrace__05-singlestep && make && cd -
   - cd 40__c__linux/ptrace05__singlestep-full && make && cd -
   - cd 40__c__linux/ptrace05__singlestep && make && cd -
   - cd 40__c__linux/ptrace06__attach-detach && make && cd -
   - cd 40__c__linux/ptrace07__injection-TODO && make && cd -
   - cd 40__c__linux/ptrace08__injection-replace && make && cd -
   - cd 40__c__linux/ptrace09__injection-in-free-space-TODO && make && cd -
+  - cd 40__c__linux/ptrace__syscall-peekregs && make && cd -
+  - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
+  - cd 40__c__linux/ptrace__syscall-switch && make && cd -
   - cd 40__c__linux/ptrace__debug01-loop-instructions && make && cd -
   - cd 40__c__linux/fork__simple && make && cd -
   - cd 40__c__linux/fork__cli-command && make && cd -
