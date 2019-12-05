@@ -23,6 +23,6 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) x$(TARGET) *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: clean all
