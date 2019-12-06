@@ -16,7 +16,7 @@ SOURCE = ptracer.c rabbit.c
 endif
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -fPIC #-std=c99 -pedantic
+CFLAGS += -g -Wall -fPIC -std=c99 -pedantic
 RM = rm -f
 
 
@@ -40,6 +40,10 @@ else
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
 endif
+	@echo ""
+	@echo "start the example by:"
+	@echo '$$ ./rabbit.exe & ./ptracer.exe $$(pidof rabbit.exe)'
+
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~
