@@ -59,8 +59,7 @@ void get_data(pid_t child, long addr, char *str, int len)
     laddr += long_size;
   }
   j = len % long_size;
-  /* since long_size will be 4, we always will fall into this condition for
-   * reading */
+  // since long_size will be 4, we always will fall into this condition for reading
   if (j != 0) {
     data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
     memcpy(laddr, data.chars, j);
@@ -86,8 +85,7 @@ void put_data(pid_t child, long addr, char *str, int len)
   }
   j = len % long_size;
 
-  /* since long_size will be 4, we always will fall into this condition for
-   * writing back */
+  // since long_size will be 4, we always will fall into this condition for writing back
   if (j != 0) {
     memcpy(data.chars, laddr, j);
     ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
@@ -103,14 +101,14 @@ int main(int argc, char **argv)
   char backup[4];
 
   if (argc != 2) {
-    printf("Usage: %s <pid to be traced> \n", argv[0]);
-    printf("  for running the example, compile it (Makefile) and in one shell "
-           "window run\n");
-    printf("  $ ./rabbit.exe\n");
-    printf("\n");
-    printf("  in another shell window run, within 10 sec\n");
-    printf("  $ ./ptracer.exe $(pidof rabbit.exe)\nor\n$ ./rabbit.exe & "
-           "./ptracer.exe $(pidof rabbit.exe)");
+    fprintf(stderr, "Usage: %s <pid to be traced> \n", argv[0]);
+    fprintf(stderr, "  for running the example, compile it (Makefile) and in one shell ");
+    fprintf(stderr, "window run\n");
+    fprintf(stderr, "  $ ./rabbit.exe\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "  in another shell window run, within 10 sec\n");
+    fprintf(stderr, "  $ ./ptracer.exe $(pidof rabbit.exe)\nor\n$ ./rabbit.exe & " );
+    fprintf(stderr, "./ptracer.exe $(pidof rabbit.exe)\n");
 
     exit(EXIT_FAILURE);
   }
@@ -135,7 +133,7 @@ int main(int argc, char **argv)
   // TODO check if len is correct?
   put_data(traced_process, regs.rip, code, len);
 
-  // TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?
+// TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?
   ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
 
