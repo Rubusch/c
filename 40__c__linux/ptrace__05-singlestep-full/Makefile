@@ -16,7 +16,7 @@ ASMSOURCE = rabbit32.s
 endif
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -fPIC #-std=c99 -pedantic
+CFLAGS += -g -Wall -fPIC -std=c99 -pedantic
 RM = rm -f
 
 
