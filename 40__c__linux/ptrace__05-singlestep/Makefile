@@ -9,9 +9,9 @@
 SOURCE = ptracer.c
 LONG_BIT := $(shell getconf LONG_BIT)
 ifeq ($(LONG_BIT),64)
-ASMSOURCE = bunny.s
+ASMSOURCE = rabbit64.s
 else
-ASMSOURCE = rabbit.s
+ASMSOURCE = rabbit32.s
 endif
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
