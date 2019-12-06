@@ -28,8 +28,13 @@
   or p_padala@yahoo.com
 */
 
-// FIXME at resume external process segfaults
+// FIXME: segmentation fault at finish
 
+// kill()
+#define _POSIX_SOURCE
+#include <signal.h>
+
+// ptrace()
 #include <sys/ptrace.h>
 #include <sys/types.h>
 #include <sys/user.h>
@@ -40,11 +45,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-const int long_size = sizeof(long);
 
-void get_data(pid_t child, long addr, char *str, int len)
+#define long_size sizeof(long)
+
+void get_data(pid_t child, long addr, unsigned char *str, int len)
 {
-  char *laddr;
+  unsigned char *laddr;
   int i, j;
   union u {
     long val;
@@ -69,9 +75,9 @@ void get_data(pid_t child, long addr, char *str, int len)
 }
 
 
-void put_data(pid_t child, long addr, char *str, int len)
+void put_data(pid_t child, long addr, unsigned char *str, int len)
 {
-  char *laddr;
+  unsigned char *laddr;
   int i = 0, j = len / long_size;
   union u {
     long val;
@@ -98,8 +104,8 @@ int main(int argc, char **argv)
   pid_t traced_process;
   struct user_regs_struct regs;
   int len = 4;
-  char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 */
-  char backup[4];
+  unsigned char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 */
+  unsigned char backup[4];
 
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <pid to be traced> \n", argv[0]);
@@ -112,7 +118,7 @@ int main(int argc, char **argv)
   exit(EXIT_FAILURE);
 #endif
 
-  printf("runing with long_size = '%d'\n", long_size);
+  printf("runing with long_size = '%ld'\n", long_size);
 
   // get traced process pid, and attach
   traced_process = atoi(argv[1]);
@@ -144,7 +150,7 @@ int main(int argc, char **argv)
   wait(NULL);
 
   printf("the process stopped, restoring the original instructions\n");
-  // TODO actually the process does not stop if not attached successfully - test
+// TODO actually the process does not stop if not attached successfully - test
   // with external window, probably not controllable since it is neither a
   // child, nor declares PTRACE_TRACEME
   printf("press ENTER\n");
