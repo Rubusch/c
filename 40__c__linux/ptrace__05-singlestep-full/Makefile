@@ -10,9 +10,9 @@
 SOURCE = ptracer.c
 LONG_BIT := $(shell getconf LONG_BIT)
 ifeq ($(LONG_BIT),64)
-ASMSOURCE = bunny.s
+ASMSOURCE = rabbit64.s
 else
-ASMSOURCE = rabbit.s
+ASMSOURCE = rabbit32.s
 endif
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
@@ -40,6 +40,10 @@ else
 rabbit.exe:
 	${CC} -o $@ $(ASMSOURCE)
 endif
+	@echo ""
+	@echo "start the example by:"
+	@echo "$$ ./ptracer.exe"
+
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~
