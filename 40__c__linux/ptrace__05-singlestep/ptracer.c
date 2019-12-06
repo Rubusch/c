@@ -87,6 +87,10 @@ int main(int argc, char **argv)
         // display
         fprintf(stderr, "RIP: 0x%lx Instruction executed: 0x%04lx [ins], '%s' [string], 0x%04lx [rsi, start address of string], %lld [rdx, size of string]\n"
                 , (long)regs.rip, (long)ins, str, (long)regs.rsi , regs.rdx);
+
+        // free memory
+        free(str);
+        str=NULL;
       }
 
       // start step-by-step when a write syscall was made
