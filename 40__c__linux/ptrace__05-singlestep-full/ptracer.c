@@ -74,7 +74,6 @@ int main(int argc, char **argv)
         fprintf(stderr, "\tSYSCALL: SYS_exit_group, '0x%04lx'\n", (long)regs.orig_rax);
         break;
 #endif
-
       default:
         fprintf(stderr, "\tSYSCALL: uncaught or no syscall\n");
       }
