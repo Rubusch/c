@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
   child = fork();
   if (child == 0) {
-    // mark child PTRACE_TRACEME, and exec external program
+    // start external program, and set PTRACE_TRACEME, and exec external program
     ptrace(PTRACE_TRACEME, 0, NULL, NULL);
     execl("./rabbit.exe", "rabbit.exe", NULL);
 
@@ -58,6 +58,7 @@ int main(int argc, char **argv)
     struct user_regs_struct regs;
     int start = 0;
     long ins;
+    char* str;
 
     while (1) {
 #if __x86_64__
@@ -73,7 +74,19 @@ int main(int argc, char **argv)
       if (start == 1) {
         // get ins by regs.eip
         ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
-        printf("RIP: 0x%lx Instruction executed: %lx\n", (long)regs.rip, ins);
+
+        // read out string argument from program
+        str = (char*) calloc((regs.rdx+1), sizeof(char)); // size of string is in rdx
+        memset(str, '\0', (regs.rdx+1));
+        int idx=0;
+        for (idx=0; idx< (regs.rdx+1); ++idx) {
+          str[idx] = ptrace(PTRACE_PEEKTEXT, child, regs.rsi+idx, NULL); // start address of string is in rsi
+        }
+        str[regs.rdx-1] = '\0'; // display cosmetics: replace \n by \0
+
+        // display
+        fprintf(stderr, "RIP: 0x%lx Instruction executed: 0x%04lx [ins], '%s' [string], 0x%04lx [rsi, start address of string], %lld [rdx, size of string]\n"
+                , (long)regs.rip, (long)ins, str, (long)regs.rsi , regs.rdx);
       }
 
       // start step-by-step when a write syscall was made
