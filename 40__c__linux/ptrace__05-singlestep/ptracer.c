@@ -58,6 +58,7 @@ int main(int argc, char **argv)
     struct user_regs_struct regs;
     int start = 0;
     long ins;
+
     while (1) {
 #if __x86_64__
       // child still alive
@@ -78,35 +79,35 @@ int main(int argc, char **argv)
       // start step-by-step when a write syscall was made
       if (regs.orig_rax == SYS_write) {
         start = 1;
-        /* turn on PTRACE_SINGLESTEP */
+        // turn on PTRACE_SINGLESTEP
         ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
       } else {
-        /* else: check for syscalls, PTRACE_SYSCALL */
+        // else: check for syscalls, PTRACE_SYSCALL
         ptrace(PTRACE_SYSCALL, child, NULL, NULL);
       }
 #else
-      /* child still alive */
+      // child still alive
       wait(&status);
       if (WIFEXITED(status))
         break;
 
-      /* read out registers -> regs for instruction pointer */
+      // read out registers -> regs for instruction pointer
       ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-      /* when start - fetch executed instruction by PTRACE_PEEKTEXT */
+      // when start - fetch executed instruction by PTRACE_PEEKTEXT
       if (start == 1) {
-        /* get ins by regs.eip */
+        // get ins by regs.eip
         ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
         printf("EIP: %lx Instruction executed: %lx\n", regs.eip, ins);
       }
 
-      /* start step-by-step when a write syscall was made */
+      // start step-by-step when a write syscall was made
       if (regs.orig_eax == SYS_write) {
         start = 1;
-        /* turn on PTRACE_SINGLESTEP */
+        // turn on PTRACE_SINGLESTEP
         ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
       } else {
-        /* else: check for syscalls, PTRACE_SYSCALL */
+        // else: check for syscalls, PTRACE_SYSCALL
         ptrace(PTRACE_SYSCALL, child, NULL, NULL);
       }
 #endif
