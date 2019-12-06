@@ -9,7 +9,10 @@
   $ ./rabbit.exe
 
   in another shell window run, within 10 sec
-  $ ./ptracer.exe `pidof rabbit.exe`
+  $ ./ptracer.exe $(pidof rabbit.exe)
+
+  or
+  $ ./rabbit.exe & ./ptracer.exe $(pidof rabbit.exe)
 
   ptrace.exe prints the next instruction
 
