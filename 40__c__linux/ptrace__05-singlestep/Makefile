@@ -6,7 +6,6 @@
 ##
 ## use -O, -O1, -O2 for optimization
 
-
 SOURCE = ptracer.c
 LONG_BIT := $(shell getconf LONG_BIT)
 ifeq ($(LONG_BIT),64)
@@ -40,6 +39,9 @@ else
 rabbit.exe:
 	${CC} -o $@ $(ASMSOURCE)
 endif
+	@echo ""
+	@echo "start the example by:"
+	@echo "$$ ./ptracer.exe"
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~
