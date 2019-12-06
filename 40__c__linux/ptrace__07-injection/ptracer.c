@@ -27,6 +27,7 @@
   resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
   or p_padala@yahoo.com
 */
+
 // FIXME at resume external process segfaults
 
 #include <sys/ptrace.h>
@@ -106,24 +107,28 @@ int main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-#if __x86_64__
+#ifndef __x86_64__
+  fprintf(stderr, "Source needs x86_64 to run!!\n");
+  exit(EXIT_FAILURE);
+#endif
+
   printf("runing with long_size = '%d'\n", long_size);
 
-  /* get traced process pid, and attach */
+  // get traced process pid, and attach
   traced_process = atoi(argv[1]);
 
-  /* attach process */
+  // attach process
   ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
   wait(NULL);
 
   ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
 
   /* backup instructions */
-  // TODO check if len is correct?
+// TODO check if len is correct?
   get_data(traced_process, regs.rip, backup, len);
 
   /* put trap into child */
-  // TODO check if len is correct?
+// TODO check if len is correct?
   put_data(traced_process, regs.rip, code, len);
 
 // TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?
@@ -153,54 +158,6 @@ int main(int argc, char **argv)
   ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-#else
-  printf("runing with long_size = '%d'\n", long_size);
-
-  /* get traced process pid, and attach */
-  traced_process = atoi(argv[1]);
-
-  /* attach process */
-  ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-  wait(NULL);
-
-  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
-
-  /* backup instructions */
-  // TODO check if len is correct?
-  get_data(traced_process, regs.eip, backup, len);
-
-  /* put trap into child */
-  // TODO check if len is correct?
-  put_data(traced_process, regs.eip, code, len);
-
-  // TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-
-  /* let child continue, run into trap, and execute int3 instruction */
-  ptrace(PTRACE_CONT, traced_process, NULL, NULL);
-
-
-  /* why does this work? */
-  kill(traced_process, SIGINT);
-  wait(NULL);
-
-  printf("the process stopped, restoring the original instructions\n");
-  // TODO actually the process does not stop if not attached successfully - test
-  // with external window, probably not controllable since it is neither a
-  // child, nor declares PTRACE_TRACEME
-  printf("press ENTER\n");
-  getchar();
-
-  /* restore the backuped code */
-  put_data(traced_process, regs.eip, backup, len);
-
-  /* setting the eip back to the original instruction, and let process continue
-   */
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-  ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-#endif
 
   return 0;
 }
