@@ -102,14 +102,7 @@ int main(int argc, char **argv)
 
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <pid to be traced> \n", argv[0]);
-    fprintf(stderr, "  for running the example, compile it (Makefile) and in one shell ");
-    fprintf(stderr, "window run\n");
-    fprintf(stderr, "  $ ./rabbit.exe\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "  in another shell window run, within 10 sec\n");
-    fprintf(stderr, "  $ ./ptracer.exe $(pidof rabbit.exe)\nor\n$ ./rabbit.exe & " );
-    fprintf(stderr, "./ptracer.exe $(pidof rabbit.exe)\n");
-
+    fprintf(stderr, "$ ./rabbit.exe & ./ptracer.exe $(pidof rabbit.exe)\n");
     exit(EXIT_FAILURE);
   }
 
