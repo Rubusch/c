@@ -1,5 +1,5 @@
 /*
-  single step
+  single step (x86_64, and x86 32bit part kept from Linux Journal article)
 
   monitor a child process (PTRACE_TRACEME), watchout if a 'write' system call
   (SYS_write) was made; if so, turn on (start flag) the single step
@@ -11,34 +11,19 @@
   child, thus it's not possible to print them in a different way, than either a
   hexadecimal code, or the offset to the start address of main
 
-# TODO check
-
   listing for rabbit.s written in assembly language and compiled as
-  gcc -o rabbit.exe rabbit.s
+  $ gcc -o rabbit.exe rabbit.s
+
+  run the example (ptracer.exe will fork and run the rabbit.exe)
+  $ ./ptracer.exe
 
 
-  a possible child may be the following rabbit.s
+  author: Lothar Rubusch, L.Rubusch@gmx.ch
+  GPLv3
 
-  .data
-  hello:
-              .string "hello world\n"
-  .globl      main
-  main:
-      movl    $4, %eax
-      movl    $2, %ebx
-      movl    $hello, %ecx
-      movl    $12, %edx
-      int     $0x80
-      movl    $1, %eax
-      xorl    %ebx, %ebx
-      int     $0x80
-      ret
-
-
-  email: L.Rubusch@gmx.ch
-
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-or p_padala@yahoo.com
+  resources:
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+  * assembly by Jim Fisher (a snippet found somewhere on the web)
 */
 
 #include <sys/ptrace.h>
@@ -64,7 +49,7 @@ int main(int argc, char **argv)
 
   child = fork();
   if (child == 0) {
-    /* mark child PTRACE_TRACEME, and exec external program */
+    // mark child PTRACE_TRACEME, and exec external program
     ptrace(PTRACE_TRACEME, 0, NULL, NULL);
     execl("./rabbit.exe", "rabbit.exe", NULL);
 
@@ -75,22 +60,22 @@ int main(int argc, char **argv)
     long ins;
     while (1) {
 #if __x86_64__
-      /* child still alive */
+      // child still alive
       wait(&status);
       if (WIFEXITED(status))
         break;
 
-      /* read out registers -> regs for instruction pointer */
+      // read out registers -> regs for instruction pointer
       ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-      /* when start - fetch executed instruction by PTRACE_PEEKTEXT */
+      // when start - fetch executed instruction by PTRACE_PEEKTEXT
       if (start == 1) {
-        /* get ins by regs.eip */
+        // get ins by regs.eip
         ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
-        printf("RIP: %llx Instruction executed: %lx\n", regs.rip, ins);
+        printf("RIP: 0x%lx Instruction executed: %lx\n", (long)regs.rip, ins);
       }
 
-      /* start step-by-step when a write syscall was made */
+      // start step-by-step when a write syscall was made
       if (regs.orig_rax == SYS_write) {
         start = 1;
         /* turn on PTRACE_SINGLESTEP */
