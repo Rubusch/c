@@ -20,7 +20,7 @@ section .text
 _start:
   mov rax, 35
   mov rdi, timespec
-  xor rsi, rsi        
+  xor rsi, rsi
   syscall
 
   mov rax, 1        ; write(

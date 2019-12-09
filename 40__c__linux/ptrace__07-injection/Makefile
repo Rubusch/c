@@ -9,6 +9,8 @@
 
 LONG_BIT := $(shell getconf LONG_BIT)
 SOURCE = ptracer.c
+# TODO: use .c files instead of asm files
+#SOURCE = ptrace.c rabbit.c
 ASMSOURCE = rabbit.s
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
