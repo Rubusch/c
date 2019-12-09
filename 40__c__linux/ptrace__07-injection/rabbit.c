@@ -1,6 +1,11 @@
 /*
   modified hello world from before...
 
+  after sleeping for 10 sec the rabbit.exe is going to enter its asm instructions
+  it falls into trap and cannot end only when ptracer.exe
+  receives enter, it leaves the attached rabbit.exe
+
+
   example prepared for code injection in my ptracer,
   the NASM (Net-ASM) assembler syntax was translated to GAS (GCC Assembler
   Syntax), for compiling it as inlined __asm__ source inside linux/c gcc
@@ -86,14 +91,24 @@
 
   NOTE: a better version was for nowadays to use 'explicit variables'
 
+  NOTE: In basic inline assembly, we had only instructions. In extended
+  assembly, we can also specify the operands. It allows us to specify the
+  input registers, output registers and a list of clobbered registers. It
+  is not mandatory to specify the registers to use, we can leave that head
+  ache to GCC and that probably fit into GCC’s optimization scheme better.
+  Anyway the basic format is:
+
+           asm ( assembler template
+               : output operands                  / * optional * /
+               : input operands                   / * optional * /
+               : list of clobbered registers      / * optional * /
+               );
+
 
 TODO rework this
   breakpoint will replace the following instruction:
          int    $0x80\n\
 
-  after sleeping for 10 sec the rabbit.exe is going to enter its asm
-  instructions where it falls into trap and cannot end only when ptracer.exe
-  receives enter, it leaves the attached rabbit.exe
 
 TODO check
 
