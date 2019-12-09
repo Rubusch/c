@@ -1,24 +1,23 @@
 /*
-  fabricated hello world
+  modified hello world from before...
 
-  example prepared for code injection for a ptracer, breakpoint will replace the
-following instruction:
+  example prepared for code injection in my ptracer,
+  the NASM (Net-ASM) assembler syntax was translated to GAS (GCC Assembler
+  Syntax), for compiling it as inlined __asm__ source inside linux/c gcc
+
+
+TODO rework this
+  breakpoint will replace the following instruction:
          int    $0x80\n\
 
-  for running the example, compile it (Makefile) and in one shell window run
-  $ ./rabbit.exe
-
-  in another shell window run, within 10 sec
-  $ ./ptracer.exe `pidof rabbit.exe`
-
   after sleeping for 10 sec the rabbit.exe is going to enter its asm
-instructions where it falls into trap and cannot end only when ptracer.exe
-receives enter, it leaves the attached rabbit.exe
+  instructions where it falls into trap and cannot end only when ptracer.exe
+  receives enter, it leaves the attached rabbit.exe
 
 TODO check
-  Note: rabbit.exe was stopped, w/o being a child, nor having declared
-PTRACE_TRACEME explicitely!
 
+  NOTE: rabbit.exe was stopped, w/o being a child, nor having declared
+  PTRACE_TRACEME explicitely!
  */
 
 #include <unistd.h>
