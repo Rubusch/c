@@ -3,7 +3,8 @@
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
+
+  resources: Linux Journal, Oct 31, 2002  By Pradeep Padala
  */
 
 #include <stdio.h> /* printf() */
