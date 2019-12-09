@@ -102,6 +102,19 @@
                : list of clobbered registers      / * optional * /
                );
 
+  NOTE: To specify the register, you must directly specify the register names by using specific register constraints. They are:
+
+    +---+--------------------+
+    | r |    Register(s)     |
+    +---+--------------------+
+    | a |   %eax, %ax, %al   |
+    | b |   %ebx, %bx, %bl   |
+    | c |   %ecx, %cx, %cl   |
+    | d |   %edx, %dx, %dl   |
+    | S |   %esi, %si        |
+    | D |   %edi, %di        |
+    +---+--------------------+
+
   NOTE: rabbit.exe was stopped, w/o being a child, nor having declared
   PTRACE_TRACEME explicitely!
 
