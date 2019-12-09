@@ -8,10 +8,11 @@
 
 
 LONG_BIT := $(shell getconf LONG_BIT)
-SOURCE = ptracer.c
-# TODO: use .c files instead of asm files
-SOURCE = ptrace.c rabbit.c
+#SOURCE = ptracer.c
 #ASMSOURCE = rabbit.s
+# TODO: use .c files instead of asm files
+SOURCE = ptracer.c rabbit.c
+
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
 CFLAGS += -g -Wall -fPIC -std=c99 -pedantic
@@ -19,13 +20,13 @@ RM = rm -f
 
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
 
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 #ifeq ($(LONG_BIT),64)
 #ifeq (, $(shell which nasm))
