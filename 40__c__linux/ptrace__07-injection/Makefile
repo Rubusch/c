@@ -15,7 +15,8 @@ SOURCE = ptracer.c rabbit.c
 
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -fPIC -std=c99 -pedantic
+## NOTE: don't use -std=c99!!! -std=c99 disables "asm volatile", since it is not standard C99
+CFLAGS += -g -Wall -fPIC -pedantic
 RM = rm -f
 
 
@@ -26,19 +27,10 @@ RM = rm -f
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
-#ifeq ($(LONG_BIT),64)
-#ifeq (, $(shell which nasm))
-#$(error "nasm is not installed, please install nasm")
-#endif
-#rabbit.exe:
-#	nasm -f elf64 -o rabbit.o $(ASMSOURCE)
-#	ld -o $@ rabbit.o
-#else
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
-#endif
 	@echo ""
 	@echo "start the example by:"
 	@echo '$$ ./rabbit.exe & ./ptracer.exe $$(pidof rabbit.exe)'
