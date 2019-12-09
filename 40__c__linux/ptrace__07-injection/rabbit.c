@@ -41,7 +41,7 @@ int main()
 section .rodata \n \
   msg: db \"Hello, world!\", 10 \n \
   msglen: equ $ - msg \n \
-  ")
+  ");
 
   return 0;
 }
