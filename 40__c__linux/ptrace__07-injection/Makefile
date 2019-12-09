@@ -8,12 +8,8 @@
 
 
 LONG_BIT := $(shell getconf LONG_BIT)
-ifeq ($(LONG_BIT),64)
 SOURCE = ptracer.c
-ASMSOURCE = bunny.s
-else
-SOURCE = ptracer.c rabbit.c
-endif
+ASMSOURCE = rabbit.s
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
 CFLAGS += -g -Wall -fPIC -std=c99 -pedantic
