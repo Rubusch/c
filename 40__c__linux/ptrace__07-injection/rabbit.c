@@ -5,11 +5,9 @@
   it falls into trap and cannot end only when ptracer.exe
   receives enter, it leaves the attached rabbit.exe
 
-
   example prepared for code injection in my ptracer,
   the NASM (Net-ASM) assembler syntax was translated to GAS (GCC Assembler
   Syntax), for compiling it as inlined __asm__ source inside linux/c gcc
-
 
 
 
@@ -104,18 +102,13 @@
                : list of clobbered registers      / * optional * /
                );
 
-
-TODO rework this
-  breakpoint will replace the following instruction:
-         int    $0x80\n\
-
-
-TODO check
-
   NOTE: rabbit.exe was stopped, w/o being a child, nor having declared
   PTRACE_TRACEME explicitely!
 
+
+
   resources:
+
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
   https://stackoverflow.com/questions/23020380/inline-assembly-in-c-program-on-x86-64-linux
  */
