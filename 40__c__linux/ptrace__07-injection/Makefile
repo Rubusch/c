@@ -15,10 +15,10 @@ SOURCE = ptracer.c rabbit.c
 
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-## NOTE: don't use -std=c99!!! -std=c99 disables "asm volatile", since it is not standard C99
-CFLAGS += -g -Wall -fPIC -pedantic
+## NOTE: don't use -std=c99!!! -std=c99 disables "asm volatile", since it is not standard C99,
+## either use '__asm__' instead of 'asm' with '-std=c99', or use '-std=gnu99'
+CFLAGS += -g -Wall -fPIC -pedantic -std=gnu99
 RM = rm -f
-
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
@@ -34,7 +34,6 @@ rabbit.exe: $(OBJECTS)
 	@echo ""
 	@echo "start the example by:"
 	@echo '$$ ./rabbit.exe & ./ptracer.exe $$(pidof rabbit.exe)'
-
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~

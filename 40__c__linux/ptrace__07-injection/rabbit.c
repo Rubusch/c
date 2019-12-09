@@ -82,12 +82,9 @@
     | sub     eax,[ebx+ecx*4h-20h] |  subl    -0x20(%ebx,%ecx,0x4),%eax |
     +------------------------------+------------------------------------+
 
-  NOTE: for amt64, you need to use 'syscall' and different registers instead of
-  'int 0x80'
+  NOTE: for amt64, you need to use 'syscall' instead of 'int 0x80'
 
   NOTE: a better version was for nowadays to use 'explicit variables'
-
-
 
 
 TODO rework this
@@ -103,9 +100,6 @@ TODO check
   NOTE: rabbit.exe was stopped, w/o being a child, nor having declared
   PTRACE_TRACEME explicitely!
 
-
-
-
   resources:
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
   https://stackoverflow.com/questions/23020380/inline-assembly-in-c-program-on-x86-64-linux
@@ -115,23 +109,6 @@ TODO check
 
 int main()
 {
-/*
-  __asm__("\n \
-  mov rax, 1 \n \
-  mov rdi, 1 \n \
-  mov rsi, msg \n \
-  mov rdx, msglen \n \
-  syscall \n \
-  \n \
-  mov rax, 60 \n \
-  mov rdi, 0 \n \
-  syscall \n \
-  \n \
-section .rodata \n \
-  msg: db \"Hello, world!\", 10 \n \
-  msglen: equ $ - msg \n \
-  ");
-/*/
   const char msg[] = "Hello World!\n";
   const size_t msg_size = sizeof(msg);
   ssize_t ret;
@@ -149,7 +126,6 @@ section .rodata \n \
      : "g"(msg), "g"(msg_size)
      : "%rdi", "%rsi", "%rdx", "%rcx", "%r11"
      );
-// */
 
   return 0;
 }
