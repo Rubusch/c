@@ -164,8 +164,8 @@ int main(void)
   __asm__ __volatile__(
                        "   lock       ;\n"
                        "   addl %1,%0 ;\n"
-                       : "=m"  (my_var)
-                       : "ir"  (my_int), "m" (my_var)
+                       : "=m"  (foo)
+                       : "ir"  (bar), "m" (foo)
                        : /* no clobber-list */
                        );
 
