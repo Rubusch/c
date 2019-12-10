@@ -131,10 +131,10 @@
 int main()
 {
   const char msg[] = "Hello World!\n";
-  const size_t msg_size = sizeof(msg);
+  const size_t msg_size = sizeof(msg)+1;
   ssize_t ret;
 
-  sleep(10);
+  sleep(3);
 
   asm volatile
     (
