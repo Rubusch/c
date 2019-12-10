@@ -20,13 +20,13 @@ RM = rm -f
 
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
 
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 ifeq ($(LONG_BIT),64)
 ifeq (, $(shell which nasm))
@@ -37,7 +37,7 @@ rabbit.exe:
 	ld -o $@ rabbit.o
 else
 rabbit.exe:
-	${CC} -o $@ $(ASMSOURCE)
+	${CC} $(CFLAGS) -o $@ $(ASMSOURCE)
 endif
 	@echo ""
 	@echo "start the example by:"
