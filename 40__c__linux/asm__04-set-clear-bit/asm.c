@@ -160,31 +160,24 @@ void binary(int foo_cpy, char* ret, const int ret_size)
 {
   int idx = ret_size;
   memset(ret, '0', ret_size);
+  ret[idx-1] = '\0';
   while (foo_cpy) {
-    idx--;
-
-    fprintf(stderr, "XXX foo_cpy %x, ret %ld, idx %d, ret_size %d : '%c'\n", foo_cpy, (long)&ret, idx, ret_size, ((foo_cpy & 0x1)?'1':'0'));    
-
-    sprintf( ret+idx, "%c", (foo_cpy & 1 ?'1':'0'));
-
+    ret[idx--] = foo_cpy & 1 ?'1':'0';
     foo_cpy >>= 1;
   }
-
-  ret[ret_size-1] = '\0';  
 }
 
 
 int main(void)
 {
-  int foo = 0xf;
+  int foo = 0xffffff;
   int pos = 4; // we can set/clear any bit from 0th to 31st of the variable at ADDR
-  int foo_cpy = 0;
 
   const int foo_size = sizeof(int)*8+1;
   char foo_representation[foo_size];
 
   // check: foo [7]
-  fprintf(stderr, "set/clear %d. bit in '0x%x': 0b", pos, foo);
+  fprintf(stderr, "set/clear %d. bit (starting from 0) in '0x%x': 0b", pos, foo);
 
   // print binary
   binary(foo, foo_representation, foo_size);
@@ -199,11 +192,10 @@ int main(void)
   fprintf(stderr, " => '0x%x': 0b", foo);
 
   // print binary (redundant)
-  foo_cpy = foo;
-  while (foo_cpy) {
-    fprintf(stderr, "%c", ((foo_cpy & 0x1)?'1':'0'));
-    foo_cpy >>= 1;
-  }
+  memset(foo_representation, 0, foo_size);
+  binary(foo, foo_representation, foo_size);
+  fprintf(stderr, "%s", foo_representation);
+
   fprintf(stderr, "\n");
 
   fprintf(stderr, "READY.\n");
