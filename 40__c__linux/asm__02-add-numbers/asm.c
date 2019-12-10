@@ -165,7 +165,7 @@ int main(void)
                        "   lock       ;\n" /* makes the instruction 'atomic' and could also be removed */
                        "   addl %1,%0 ;\n"
                        : "=m" (foo)
-                       : "ir" (bar), "m" (foo) /* ir says bar is an integer, but should reside outside the used registers */
+                       : "ir" (bar), "m" (foo) /* 'ir' says bar is an integer, but should reside outside the used registers */
                        : /* no clobber-list */
                        );
 
