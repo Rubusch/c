@@ -110,6 +110,43 @@
     | D |   %edi, %di        |
     +---+--------------------+
 
+  NOTE: further constraints
+  Some other constraints used are:
+
+  "m" : A memory operand is allowed, with any kind of address that the machine
+        supports in general.
+  "o" : A memory operand is allowed, but only if the address is offsettable. ie,
+        adding a small offset to the address gives a valid address.
+  "V" : A memory operand that is not offsettable. In other words, anything that
+        would fit the 'm' constraint but not the 'o' constraint.
+  "i" : An immediate integer operand (one with constant value) is allowed. This
+        includes symbolic constants whose values will be known only at assembly
+        time.
+  "n" : An immediate integer operand with a known numeric value is allowed. Many
+        systems cannot support assembly-time constants for operands less than a
+        word wide. Constraints for these operands should use 'n' rather than
+        'i'.
+  "g" : Any register, memory or immediate integer operand is allowed, except for
+        registers that are not general registers.
+
+Following constraints are x86 specific.
+
+    "r" : Register operand constraint, look table given above.
+    "q" : Registers a, b, c or d.
+    "I" : Constant in range 0 to 31 (for 32-bit shifts).
+    "J" : Constant in range 0 to 63 (for 64-bit shifts).
+    "K" : 0xff.
+    "L" : 0xffff.
+    "M" : 0, 1, 2, or 3 (shifts for lea instruction).
+    "N" : Constant in range 0 to 255 (for out instruction).
+    "f" : Floating point register
+    "t" : First (top of stack) floating point register
+    "u" : Second floating point register
+    "A" : Specifies the 'a' or 'd' registers. This is primarily useful for
+          64-bit integer values intended to be returned with the `d’ register
+          holding the most significant bits and the 'a' register holding the
+          least significant bits.
+
 
   resource:
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
