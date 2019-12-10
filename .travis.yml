@@ -136,6 +136,7 @@ script:
   - cd 40__c__linux/ptrace__debug01-loop-instructions && make && cd -
   - cd 40__c__linux/asm__01-add-numbers && make && cd -
   - cd 40__c__linux/asm__02-add-numbers && make && cd -
+  - cd 40__c__linux/asm__03-compare-values && make && cd -
   - cd 40__c__linux/fork__simple && make && cd -
   - cd 40__c__linux/fork__cli-command && make && cd -
   - cd 40__c__linux/fork && make && cd -
