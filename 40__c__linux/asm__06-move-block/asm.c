@@ -178,6 +178,8 @@ int main(void)
   puts("string copy...");
   asm_mv_blk(text, copy, sizeof(text));
 
+  // note: this is a move, i.e. the original memory block is destroyed after the move
+  // a move comes in handy e.g. in a swap implementation
   fprintf(stderr, "text after:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n", "", (long) 0, copy, strlen(copy));
 
   fprintf(stderr, "READY.\n");
