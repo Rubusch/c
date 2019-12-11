@@ -3,8 +3,12 @@
 
   Implementation of a syscall. In Linux, system calls are implemented using
   GCC inline assembly. All the system calls are written as macros
-  (linux/unistd.h). The current example shows a syscall with e.g. three
+  (linux/unistd.h). The current example shows a syscall e.g. 'write' with three
   arguments.
+  A process is forked, and among the two resulting processes a pipe is opened.
+  The parent now sends a message over the pipe, using the syscall interface for
+  writing onto the pipe. The child reads the pipe and displays the received
+  string.
 
 
 
@@ -150,6 +154,7 @@ Following constraints are x86 specific.
           holding the most significant bits and the 'a' register holding the
           least significant bits.
 
+  author: Lothar Rubusch, l.rubusch@gmx.ch
 
   resource:
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
