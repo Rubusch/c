@@ -1,8 +1,7 @@
 /*
   Inline ASM Demo
 
-  Decrement a value. Compare the value to 0. If so return true. Use 'incl'
-  instead of 'decl' for incrementation.
+  Implementation of strcpy() in GAS assembler.
 
 
 
