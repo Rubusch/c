@@ -13,14 +13,12 @@ CFLAGS += -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
-
+	$(CC) $(CFLAGS) -c $<
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
-
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
