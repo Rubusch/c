@@ -155,29 +155,71 @@ Following constraints are x86 specific.
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
  */
 
+#define _POSIX_SOURCE
+//#include <sys/types.h> /* ssize_t */
+#include <unistd.h>
+//#include <linux/types.h>
+
+#include <asm/unistd.h> /* __NR_write */
+#include <unistd.h> /* write */
+#include <sys/wait.h> /* pid_t */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) \
-  type name(type1 arg1,type2 arg2,type3 arg3)                 \
-  {                                                           \
-    long __res;                                               \
-    __asm__ volatile (  "int $0x80"                           \
+
+#define _syscall3(type,NAME,type1,arg1,type2,arg2,type3,arg3)           \
+  type NAME(type1 arg1, type2 arg2, type3 arg3)                         \
+  {                                                                     \
+    long __res;                                                         \
+    __asm__ volatile (  "int $0x80"                                     \
                         : "=a" (__res)                                  \
-                        : "0" (__NR_##name),"b" ((long)(arg1)),"c" ((long)(arg2)), \
+                        : "0" (__NR_##NAME),"b" ((long)(arg1)),"c" ((long)(arg2)), \
                           "d" ((long)(arg3)));                          \
     __syscall_return(type,__res);                                       \
   }
 
 
+// hack to make this demo work
+#define __NR_plop __NR_write
+
+// define syscall function
+_syscall3(ssize_t, plop, int, fildes, void*, buf, size_t, nbyte)
+
+
 int main(void)
 {
-  // TODO
+  int fd[2]; // fd[0]: read - fd[1]: write
+  pid_t pid;
 
-  fprintf(stderr, "READY.\n");
+  pipe(fd);
+  pid = fork();
+  if (0 > pid) {
+    perror("fork failed");
 
-  // note: the asm_mv_blk seems to finish unclean, exit() cleans this up, a return ends in a SIGSEGV when finishing
+  } else if (0 < pid) {
+    /* parent */
+    close(fd[0]); // close reading end
+
+    static const char msg[] = "Dies diem docet!";
+    fprintf(stderr, "message: '%s'\n", msg);
+    write(fd[1], msg, sizeof(msg));
+
+    wait(NULL); // wait for child to send something
+    close(fd[1]);
+
+  } else {
+    /* child */
+    char copy[32]; memset(copy, '\0', 32);
+    close(fd[1]); // close writing end
+    read(fd[0], copy, 32);
+    fprintf(stderr, "received: '%s'\n", copy);
+    close(fd[0]);
+  }
+
+  puts("READY.");
+
   exit(EXIT_SUCCESS);
 }
