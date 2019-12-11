@@ -164,7 +164,7 @@ Following constraints are x86 specific.
                         "movsl"                                 \
                         :                                       \
                         : "S" (src), "D" (dest), "c" (numwords) \
-                        : "memory"                \
+                        : "memory"                              \
                        )
 
 
