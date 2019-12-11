@@ -156,9 +156,7 @@ Following constraints are x86 specific.
  */
 
 #define _POSIX_SOURCE
-//#include <sys/types.h> /* ssize_t */
 #include <unistd.h>
-//#include <linux/types.h>
 
 #include <asm/unistd.h> /* __NR_write */
 #include <unistd.h> /* write */
@@ -169,8 +167,7 @@ Following constraints are x86 specific.
 #include <string.h>
 
 
-
-#define _syscall3(type,NAME,type1,arg1,type2,arg2,type3,arg3)           \
+#define my_syscall3(type, NAME, type1, arg1, type2, arg2, type3, arg3)  \
   type NAME(type1 arg1, type2 arg2, type3 arg3)                         \
   {                                                                     \
     long __res;                                                         \
@@ -178,7 +175,7 @@ Following constraints are x86 specific.
                         : "=a" (__res)                                  \
                         : "0" (__NR_##NAME),"b" ((long)(arg1)),"c" ((long)(arg2)), \
                           "d" ((long)(arg3)));                          \
-    __syscall_return(type,__res);                                       \
+    return (type) __res;                                                \
   }
 
 
@@ -186,7 +183,7 @@ Following constraints are x86 specific.
 #define __NR_plop __NR_write
 
 // define syscall function
-_syscall3(ssize_t, plop, int, fildes, void*, buf, size_t, nbyte)
+my_syscall3(ssize_t, plop, int, fildes, void*, buf, size_t, nbyte)
 
 
 int main(void)
