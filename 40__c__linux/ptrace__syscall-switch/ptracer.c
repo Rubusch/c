@@ -396,7 +396,7 @@ int main(int argc, char **argv)
               , (long)regs.r8
               , (long)regs.r9);
 // */
-      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
+      if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
         perror("ptrace: process finished");
         exit(EXIT_FAILURE);
       }

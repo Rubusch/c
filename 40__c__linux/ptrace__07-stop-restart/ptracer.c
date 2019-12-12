@@ -140,17 +140,44 @@ int main(int argc, char **argv)
   // get traced process pid, and attach
   traced_process = atoi(argv[1]);
 
-
-//  while(1) {
-
   // attach process
   ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-  wait(NULL);
+//  wait(NULL);
 
-  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
-  if (regs.orig_rax == SYS_write) {
-    fprintf(stderr, "XXX regs.orig_rax '0x%lx'\n", (long)regs.orig_rax); /// XXXXXXXXX
 
+  while(1) {
+//*
+    wait(NULL);
+/*/
+    if (0 > waitpid(traced_process, 0, 0)) {
+      perror("waitpid: failed");
+      exit(EXIT_FAILURE);
+    }
+// */
+
+    if (0 > ptrace(PTRACE_GETREGS, traced_process, NULL, &regs)) {
+      perror("ptrace: PTRACE_GETREGS failed");
+      exit(EXIT_FAILURE);
+    }
+
+    fprintf(stderr, "syscall capturing, regs.orig_rax: '0x%lx'\n", (long)regs.orig_rax); /// XXXXXXXXX
+
+// FIXME: the 'syscall' seems already to be issued when we pass this?
+    if (regs.orig_rax == SYS_write) {
+      fprintf(stderr, "AWESOME: we got a SYS_write,...\n");
+      break;
+    }
+/*
+    if (0 > ptrace(PTRACE_SYSCALL, traced_process, 0, 0)) {
+      perror("ptrace: process finished");
+      exit(EXIT_FAILURE);
+    }
+// */
+
+    ptrace(PTRACE_CONT, traced_process, NULL, NULL);
+  }
+
+puts("ZZZZZZZZ");
 
   /* backup instructions */
 //  get_data(traced_process, regs.rip, backup, len);
@@ -170,16 +197,15 @@ int main(int argc, char **argv)
 
 
     /* why does this work? */
-    kill(traced_process, SIGINT);
-    wait(NULL);
+//    kill(traced_process, SIGINT);
+//    wait(NULL);
 
-    printf("the process stopped, restoring the original instructions\n");
+//    printf("the process stopped, restoring the original instructions\n");
 // TODO actually the process does not stop if not attached successfully - test
   // with external window, probably not controllable since it is neither a
   // child, nor declares PTRACE_TRACEME
     printf("press ENTER\n");
     getchar();
-//  }
 
   /* restore the backuped code */
 //  put_data(traced_process, regs.rip, backup, len);
@@ -189,8 +215,6 @@ int main(int argc, char **argv)
 //  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
     ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-
-  } // while
 
     return 0;
 }
