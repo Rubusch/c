@@ -99,6 +99,7 @@ void put_data(pid_t child, long addr, unsigned char *str, int len)
   }
 }
 
+
 int main(int argc, char **argv)
 {
   pid_t traced_process;
@@ -135,10 +136,10 @@ int main(int argc, char **argv)
 
   /* put trap into child */
 // TODO check if len is correct?
-  put_data(traced_process, regs.rip, code, len);
+//  put_data(traced_process, regs.rip, code, len);
 
 // TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
 
   /* let child continue, run into trap, and execute int3 instruction */
@@ -157,11 +158,11 @@ int main(int argc, char **argv)
   getchar();
 
   /* restore the backuped code */
-  put_data(traced_process, regs.rip, backup, len);
+//  put_data(traced_process, regs.rip, backup, len);
 
   /* setting the eip back to the original instruction, and let process continue
    */
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
 
