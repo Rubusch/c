@@ -261,7 +261,7 @@
   NOTE: for amt64, you need to use 'syscall' instead of 'int 0x80'
 
 
-  Terms:
+  Terminology:
   branching  : conditional (if, else, etc)
   clobbers   : clobbers used to tell GCC that registers are used
   constraint : an assignment to/from assembly

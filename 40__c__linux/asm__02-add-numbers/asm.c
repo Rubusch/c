@@ -6,6 +6,185 @@
 
 
 
+  GCC inline assembly
+
+  Here is attempt to make best notes about gcc inline asm. As this is just small
+  operator that is for long time, i dont thing there is some full guide how to
+  use it lets do it here for wisdom of internet.
+
+
+  Inline assembly syntax
+
+  asm [volatile] (
+          AssemblerTemplate
+          : OutputOperands
+          [ : InputOperands
+          [ : Clobbers ] ]
+  )
+
+
+  Output operands
+
+  Option   Note
+  -------------------------------------------------
+  "=r"     Write output to register
+
+
+  Input operands
+
+  Option   Note
+  -------------------------------------------------
+  "r"      Input to register
+
+
+  Clobbers used to tell GCC that registers are used.
+
+  Clobber   option Note
+  -------------------------------------------------
+  "0"       map to register "0" same register
+
+
+  Modifier Specifies
+
+  = Write-only operand, usually used for all output operands
+  + Read-write operand, must be listed as an output operand
+  & A register that should be used for output only
+
+
+  Table of AMD64 register names
+
+  +---+--------------------+
+  | r |    Register(s)     |
+  +---+--------------------+
+  | a |   %eax, %ax, %al   |
+  | b |   %ebx, %bx, %bl   |
+  | c |   %ecx, %cx, %cl   |
+  | d |   %edx, %dx, %dl   |
+  | S |   %esi, %si        |
+  | D |   %edi, %di        |
+  +---+--------------------+
+
+
+  Register  Name
+  -------------------------------------------------
+  rax       %%rax
+  rbx       %%rbx
+  rcx       %%rcx
+  rdx       %%rdx
+  rdi       %%rdi
+  rsi       %%rsi
+  rbp       %%rbp
+  rsp       %%rsp
+  r8        %%r8
+  r9        %%r9
+  r10       %%r10
+  r11       %%r11
+  r12       %%r12
+  r13       %%r13
+  r14       %%r14
+  r15       %%r15
+
+
+  Syscall calling convention - Intel AMD64 Linux
+
+  Param Register
+  -------------------------------------------------
+  1th   rdi
+  2th   rsi
+  3th   rdx
+  4th   rcx
+  5th   r8
+  6th   r9
+
+  syscall number rax
+  TODO r10?
+
+  Examples
+
+  AMD64 Add two numbers
+
+  int32_t a=1,b=2,c=-1;
+  asm(
+      "movl %1, %0\n\t"
+      "addl %2, %0\n\t"
+      :"=r"(c)
+      :"r"(a),"r"(b)
+      :"0");
+
+  a,b - use regisers and save result c to register, make to use for c same
+  register by mentioning "0" in clobber register
+
+
+  Output:
+      movl %edx, %edx
+      addl %ecx, %edx
+
+
+  int32_t a=1,b=2,c=-1;
+  asm(
+      "movl %1, %0\n\t"
+      "addl %2, %0\n\t"
+      :"=r"(c)
+      :"g"(a),"g"(b)
+      :"0");
+
+  Output:
+      movl -4(%rbp), %edx
+      addl -8(%rbp), %edx
+
+
+  AMD64 Call linux syscall mmap with inline asm
+
+  long sys_mmap(unsigned long addr, unsigned long len, unsigned long prot,
+  unsigned long flags, unsigned long fd, unsigned long off)
+  {
+      long ret;
+      asm(
+          "mov %p6, %%r9\n\t"
+          "mov %p5, %%r8\n\t"
+          "mov %p4, %%r10\n\t"
+          "mov %p3, %%rdx\n\t"
+          "mov %p2, %%rsi\n\t"
+          "mov %p1, %%rdi\n\t"
+          "mov $9, %%rax\n\t"
+          "syscall\n\t"
+          :"=a"(ret)
+          :[p1]"m"(addr),[p2]"m"(len),[p3]"m"(prot),[p4]"m"(flags),[p5]"m"(fd),[p6]"m"(off));
+      return ret;
+  }
+
+  Put result of execution to ret, all paramters in memory
+
+
+  Intel random number with RDRAND
+
+  uint64_t get_hw_rand()
+  {
+      uint64_t ret;
+      int i=0;
+      const int timeout = 10;
+      while (i<timeout)
+      {
+          asm("rdrand %0\n\t"
+              :"=a"(ret)::);
+          if (ret) break;
+          i++;
+      }
+      return ret;
+  }
+
+
+  Switching on of intel/att syntax
+
+  Inline assembler for GCC by default uses AT&T syntax. There is possible to
+  turn on/off intel syntax.
+
+  asm(".intel_syntax noprefix");
+  asm("mov eax, 1");
+  asm(".att_syntax prefix");
+
+
+
   GAS (GCC Assembler Syntax)
 
   GCC, the GNU C Compiler for Linux, uses AT&T/UNIX assembly syntax. Here we’ll
@@ -82,74 +261,10 @@
 
   NOTE: for amt64, you need to use 'syscall' instead of 'int 0x80'
 
-  NOTE: a better version was for nowadays to use 'explicit variables'
-
-  NOTE: In basic inline assembly, we had only instructions. In extended
-  assembly, we can also specify the operands. It allows us to specify the
-  input registers, output registers and a list of clobbered registers. It
-  is not mandatory to specify the registers to use, we can leave that head
-  ache to GCC and that probably fit into GCC’s optimization scheme better.
-  Anyway the basic format is:
-
-           asm ( assembler template
-               : output operands                  / * optional * /
-               : input operands                   / * optional * /
-               : list of clobbered registers      / * optional * /
-               );
-
-  NOTE: To specify the register, you must directly specify the register
-  names by using specific register constraints. They are:
-
-    +---+--------------------+
-    | r |    Register(s)     |
-    +---+--------------------+
-    | a |   %eax, %ax, %al   |
-    | b |   %ebx, %bx, %bl   |
-    | c |   %ecx, %cx, %cl   |
-    | d |   %edx, %dx, %dl   |
-    | S |   %esi, %si        |
-    | D |   %edi, %di        |
-    +---+--------------------+
-
-  NOTE: further constraints
-  Some other constraints used are:
-
-  "m" : A memory operand is allowed, with any kind of address that the machine
-        supports in general.
-  "o" : A memory operand is allowed, but only if the address is offsettable. ie,
-        adding a small offset to the address gives a valid address.
-  "V" : A memory operand that is not offsettable. In other words, anything that
-        would fit the 'm' constraint but not the 'o' constraint.
-  "i" : An immediate integer operand (one with constant value) is allowed. This
-        includes symbolic constants whose values will be known only at assembly
-        time.
-  "n" : An immediate integer operand with a known numeric value is allowed. Many
-        systems cannot support assembly-time constants for operands less than a
-        word wide. Constraints for these operands should use 'n' rather than
-        'i'.
-  "g" : Any register, memory or immediate integer operand is allowed, except for
-        registers that are not general registers.
-
-Following constraints are x86 specific.
-
-    "r" : Register operand constraint, look table given above.
-    "q" : Registers a, b, c or d.
-    "I" : Constant in range 0 to 31 (for 32-bit shifts).
-    "J" : Constant in range 0 to 63 (for 64-bit shifts).
-    "K" : 0xff.
-    "L" : 0xffff.
-    "M" : 0, 1, 2, or 3 (shifts for lea instruction).
-    "N" : Constant in range 0 to 255 (for out instruction).
-    "f" : Floating point register
-    "t" : First (top of stack) floating point register
-    "u" : Second floating point register
-    "A" : Specifies the 'a' or 'd' registers. This is primarily useful for
-          64-bit integer values intended to be returned with the `d’ register
-          holding the most significant bits and the 'a' register holding the
-          least significant bits.
 
 
-  resource:
+  RESOURCES
+  http://main.lv/writeup/gcc_inline_assembly.md
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
  */
 
