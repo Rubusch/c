@@ -277,6 +277,7 @@
 #define _POSIX_SOURCE
 #include <syscall.h> /* SYS_write */
 #include <unistd.h> /* ssize_t */
+#include <sys/types.h> /* pid_t */
 
 #include <asm/unistd.h> /* __NR_write */
 #include <unistd.h> /* write */
