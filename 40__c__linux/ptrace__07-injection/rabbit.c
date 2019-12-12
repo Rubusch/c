@@ -121,32 +121,33 @@
 
 
   resources:
-
+  jim fisher  https://jameshfisher.com/2018/02/20/c-inline-assembly-hello-world
   https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
   https://stackoverflow.com/questions/23020380/inline-assembly-in-c-program-on-x86-64-linux
  */
 
+#include <stdlib.h>
 #include <unistd.h>
+#include <syscall.h>
+
+#define STDOUT 1
+#define STDERR 2
 
 int main()
 {
-  const char msg[] = "Hello World!\n";
-  const size_t msg_size = sizeof(msg)+1;
-  ssize_t ret;
+  static char msg[] = "Hello World!\n";
+  int msg_size = sizeof(msg);
 
-  sleep(3);
+  sleep(1); // setup for ptrace
 
-  asm volatile
-    (
-     "movl $1, %%eax\n\t"
-     "movl $1, %%edi\n\t"
-     "movq %1, %%rsi\n\t"
-     "movl %2, %%edx\n\t"
-     "syscall"
-     : "=a"(ret)
-     : "g"(msg), "g"(msg_size)
-     : "%rdi", "%rsi", "%rdx", "%rcx", "%r11"
-     );
+  // initializing the assembler
+  register int    syscall_no  asm("rax") = SYS_write; /* syscall number */
+  register int    arg1        asm("rdi") = STDERR;    /* destination: the std stream */
+  register char*  arg2        asm("rsi") = msg;       /* source, the message */
+  register int    arg3        asm("rdx") = msg_size;  /* size of source */
 
-  return 0;
+  // execute assembly
+  asm("syscall");
+
+  exit(EXIT_SUCCESS);
 }
