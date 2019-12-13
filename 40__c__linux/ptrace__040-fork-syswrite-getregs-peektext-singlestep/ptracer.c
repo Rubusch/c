@@ -15,12 +15,6 @@
 
   show the contents of the registers rdi, rsi, rdx, r10, r8, r9
 
-  peek the content of the SYS_write (address stored in rsi), using PTRACE_PEEKDATA
-
-  revert the content
-
-  poke the content of the SYS_write using PTRACE_POKEDATA
-
 
   ---
 

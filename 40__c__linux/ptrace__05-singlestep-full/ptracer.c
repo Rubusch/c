@@ -1,13 +1,30 @@
 /*
-  single step (x86_64, and x86 32bit part kept from Linux Journal article)
+  single step
+
+
+  fork child with PTRACE_TRACEME
+
+  let it execute a separate rabbit64.s process
+
+  in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
+
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream),
+  turn on (start flag) the single step PTRACE_SINGLESTEP which will stop/continue the child process
+
+  read all syscall registers with PTRACE_GETREGS
+
+  show the contents of the registers rdi, rsi, rdx, r10, r8, r9
 
   print EVERY step as ASM instruction of a simple hello world application
 
 
+  ---
 
-  author: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  resources:
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
+
+
+  RESOURCES:
   * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
   * assembly by Jim Fisher (a snippet found somewhere on the web)
 */
