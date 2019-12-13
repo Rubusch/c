@@ -1,13 +1,23 @@
 /*
   ptrace example: x86_64 only!
 
-  capture tracee's syscalls and answer them with EPERM (not permitted).
+  fork child with PTRACE_TRACEME
+
+  let it execute a command, e.g. "/bin/pwd"
+
+  capture tracee's syscalls and answer them with EPERM (not permitted)
+
+  show all syscalls
 
 
-  email: L.Rubusch@gmx.ch
+  ---
 
-  resources:
-  https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
+
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
+
+
+  RESOURCES:
+  * https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
 */
 
 #include <sys/ptrace.h>
