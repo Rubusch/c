@@ -1,6 +1,23 @@
 /*
   ptrace example: read registers on x86_64!
 
+
+  fork child with PTRACE_TRACEME
+
+  let it execute a command, e.g. "/bin/ls"
+
+  in the parent read out all registers with PTRACE_GETREGS
+
+  show the contents of the registers rdi, rsi, rdx, r10, r8, r9
+
+  execute "syscall" via PTRACE_SYSCALL
+
+  read all registers again with PTRACE_GETREGS,
+  and show the results to the executed syscall before
+
+
+  ---
+
   ptrace is a system call found in Unix and several Unix-like operating systems.
   By using ptrace (the name is an abbreviation of "process trace") one process
   can control another, enabling the controller to inspect and manipulate the
@@ -16,11 +33,12 @@
   respectively
 
 
-  email: L.Rubusch@gmx.ch
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  resources:
-  https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
-  Linux Journal, Nov 30, 2002 by Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  RESOURCES:
+  * https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
+  * Linux Journal, Nov 30, 2002 by Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -63,11 +81,6 @@ int main(int argc, char **argv)
 
     while (1) {
       // restart the stopped tracee
-
-/*
-  read out registers
- */
-
       if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
         perror("ptrace: PTRACE_SYSCALL failed");
         exit(EXIT_FAILURE);
@@ -98,11 +111,7 @@ int main(int argc, char **argv)
               , (long)regs.r8
               , (long)regs.r9);
 
-/*
-  read out result
- */
-
-      // execute systemcall and stop on exit
+      // execute "syscall" and stop on exit, i.e. "run/execute" the current getregs state
       if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
         perror("ptrace: second PTRACE_SYSCALL failed");
         exit(EXIT_FAILURE);
