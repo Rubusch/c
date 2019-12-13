@@ -25,10 +25,11 @@
   NOTE: for x86_64 it needs to be aligned by 8, for x86 needs to be aligned by 4
 
 
-  author: L.Rubusch@gmx.ch
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  resources
-  Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  RESOURCES:
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
