@@ -10,9 +10,12 @@
   display all instructions of the child process
 
 
-  email: L.Rubusch@gmx.ch
+  ---
 
-  resources
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
+
+
+  RESOURCES:
   * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
   * https://eli.thegreenplace.net/2011/01/23/how-debuggers-work-part-1
 */

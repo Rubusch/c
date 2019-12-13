@@ -1,6 +1,18 @@
 /*
   ptrace example
 
+  fork child with PTRACE_TRACEME
+
+  let it execute a command, e.g. "/bin/pwd"
+
+  in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
+
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream),
+  read the RBX, RCX and RDX registers and show their arguments
+
+
+  ---
+
   ptrace is a system call found in Unix and several Unix-like operating systems.
   By using ptrace (the name is an abbreviation of "process trace") one process
   can control another, enabling the controller to inspect and manipulate the
@@ -17,11 +29,12 @@
   NOTE: for x86_64 the alignment is 8, thus registers need to be multiplied by 8
 
 
-  author: L.Rubusch@gmx.ch
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  resources
-  Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-or p_padala@yahoo.com
+
+  RESOURCES:
+  * wikipedia
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
@@ -62,6 +75,7 @@ int main(int argc, char **argv)
       wait(&status);
       if (WIFEXITED(status))
         break;
+
 #if __x86_64__
       orig_eax = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX, NULL);
 
