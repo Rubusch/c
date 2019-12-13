@@ -1,9 +1,13 @@
 /*
   ptrace example
 
-  fork child with PTRACE_TRACEME, let it execute the "pwd" command
+  fork child with PTRACE_TRACEME
 
-  in parent set then PTRACE_PEEK for the registers and PTRACE_CONT to continue
+  let it execute the a command, e.g. "/bin/pwd"
+
+  in the parent set PTRACE_PEEK for the registers and PTRACE_CONT to continue
+
+  display all instructions of the child process
 
 
   email: L.Rubusch@gmx.ch
