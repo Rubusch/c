@@ -1,27 +1,38 @@
 /*
   single step (x86_64, and x86 32bit part kept from Linux Journal article)
 
-  monitor a child process (PTRACE_TRACEME), watchout if a 'write' system call
-  (SYS_write) was made; if so, turn on (start flag) the single step
-  (PTRACE_SINGLESTEP) which will stop/continue the child process; here, read out
-  the instruction and instruction pointer (PTRACE_PEEKTEXT) from the registers
-  (PTRACE_GETREGS) of the child
+
+  fork child with PTRACE_TRACEME
+
+  let it execute a separate rabbit64.s process
+
+  in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
+
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream),
+  turn on (start flag) the single step PTRACE_SINGLESTEP which will stop/continue the child process
+
+  read all syscall registers with PTRACE_GETREGS
+
+  show the contents of the registers rdi, rsi, rdx, r10, r8, r9
+
+  peek the content of the SYS_write (address stored in rsi), using PTRACE_PEEKDATA
+
+  revert the content
+
+  poke the content of the SYS_write using PTRACE_POKEDATA
+
+
+  ---
 
   the instructions, will be HEX code in the binary (ASM) address space of the
   child, thus it's not possible to print them in a different way, than either a
   hexadecimal code, or the offset to the start address of main
 
-  listing for rabbit.s written in assembly language and compiled as
-  $ gcc -o rabbit.exe rabbit.s
 
-  run the example (ptracer.exe will fork and run the rabbit.exe)
-  $ ./ptracer.exe
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
 
-  author: Lothar Rubusch, L.Rubusch@gmx.ch
-  GPLv3
-
-  resources:
+  RESOURCES:
   * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
   * assembly by Jim Fisher (a snippet found somewhere on the web)
 */
