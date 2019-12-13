@@ -131,7 +131,7 @@ script:
   - cd 40__c__linux/ptrace__041-fork-syswrite-getregs-peektext-singlestep-all-instructions && make && cd -
   - cd 40__c__linux/ptrace__050-attach-detatch && make && cd -
   - cd 40__c__linux/ptrace__051-attach-stop-restart-detach && make && cd -
-  - cd 40__c__linux/ptrace__07-injection && make && cd -
+  - cd 40__c__linux/ptrace__052-attach-stop-inject-restart-detach__TODO && make && cd -
   - cd 40__c__linux/ptrace08__injection-replace && make && cd -
   - cd 40__c__linux/ptrace09__injection-in-free-space-TODO && make && cd -
   - cd 40__c__linux/ptrace__debug01-loop-instructions && make && cd -
