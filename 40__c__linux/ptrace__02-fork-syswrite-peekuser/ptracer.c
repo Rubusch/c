@@ -7,9 +7,11 @@
 
   in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
 
-  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream),
-  read the RBX, RCX and RDX registers and show their arguments
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream)
 
+  read the RBX, RCX and RDX registers individually
+
+  show the contents of the RBX, RCX and RDX registers
 
   ---
 

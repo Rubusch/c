@@ -1,6 +1,21 @@
 /*
   ptrace example
 
+  fork child with PTRACE_TRACEME
+
+  let it execute a command, e.g. "/bin/pwd"
+
+  in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
+
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream)
+
+  read all registers with PTRACE_GETREGS
+
+  show the contents of the RBX, RCX and RDX registers
+
+
+  ---
+
   tracking system calls - when a write syscall was caught in the child, ptrace
   reads out child's registers %ebx, %ecx and %edx one by one, else it prints
   the %eax register for other syscalls
