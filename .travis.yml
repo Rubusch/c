@@ -126,6 +126,7 @@ script:
   - cd 40__c__linux/ptrace__032-fork-getregs-show-syscalls && make && cd -
   - cd 40__c__linux/ptrace__033-fork-getregs-show-syscalls-peekdata-pokedata-change-syswrite && make && cd -
   - cd 40__c__linux/ptrace__034-fork-getregs-show-syscalls-results && make && cd -
+  - cd 40__c__linux/ptrace__035-fork-getregs-show-syscalls-inject-result-eperm && make && cd -
   - cd 40__c__linux/ptrace__040-fork-syswrite-getregs-peektext-singlestep && make && cd -
   - cd 40__c__linux/ptrace__041-fork-syswrite-getregs-peektext-singlestep-all-instructions && make && cd -
   - cd 40__c__linux/ptrace__050-attach-detatch && make && cd -
@@ -133,7 +134,6 @@ script:
   - cd 40__c__linux/ptrace__07-injection && make && cd -
   - cd 40__c__linux/ptrace08__injection-replace && make && cd -
   - cd 40__c__linux/ptrace09__injection-in-free-space-TODO && make && cd -
-  - cd 40__c__linux/ptrace__syscall-not-permitted && make && cd -
   - cd 40__c__linux/ptrace__debug01-loop-instructions && make && cd -
   - cd 40__c__linux/asm__01-add-numbers && make && cd -
   - cd 40__c__linux/asm__02-add-numbers && make && cd -
