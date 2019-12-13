@@ -1,6 +1,31 @@
 /*
   ptrace example: x86_64 only!
 
+
+  fork child with PTRACE_TRACEME
+
+  let it execute a command, e.g. "/bin/pwd"
+
+  in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
+
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream)
+
+  read all syscall registers with PTRACE_GETREGS
+
+  show the contents of the registers rdi, rsi, rdx, r10, r8, r9
+
+  show all syscalls
+
+  peek the content of the SYS_write (address stored in rsi), using PTRACE_PEEKDATA
+
+  revert the content
+
+  poke the content of the SYS_write using PTRACE_POKEDATA
+
+
+  ---
+
+
   identify a tracee's syscall
 
   0 (0x0) read sys_read
@@ -319,12 +344,12 @@
   313 (0x139) finit_module sys_finit_module
 
 
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  email: L.Rubusch@gmx.ch
 
-  resources:
-  https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
-  https://www.aldeid.com/wiki/Syscall
+  RESOURCES:
+  * https://nullprogram.com/blog/2018/06/23/ by Christopher Wellons
+  * https://www.aldeid.com/wiki/Syscall
 */
 
 #include <sys/ptrace.h>

@@ -19,6 +19,7 @@
 
   poke the content of the SYS_write using PTRACE_POKEDATA
 
+
   ---
 
   take the output string of a child process (PTRACE_TRACEME), using
@@ -33,10 +34,11 @@
   NOTE: the implementation is for x86_64 only!
 
 
-  author: Lothar Rubusch, L.Rubusch@gmx.ch
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  resources
-  Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
+
+  RESOURCES:
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
