@@ -118,15 +118,15 @@ script:
 
 
 ## 40: linux (all just built, since execution in case needs runs in parallel
-  - cd 40__c__linux/ptrace__01-simple && make && cd -
-  - cd 40__c__linux/ptrace__02-syscall-peekreg && make && cd -
-  - cd 40__c__linux/ptrace__03-syscall && make && cd -
-  - cd 40__c__linux/ptrace__04-peek-and-poke && make && cd -
-  - cd 40__c__linux/ptrace__04-peek-and-poke-getregs && make && cd -
-  - cd 40__c__linux/ptrace__04-peek-and-poke-syscall-switch && make && cd -
-  - cd 40__c__linux/ptrace__05-singlestep && make && cd -
-  - cd 40__c__linux/ptrace__05-singlestep-full && make && cd -
-  - cd 40__c__linux/ptrace__06-attach-detatch && make && cd -
+  - cd 40__c__linux/ptrace__010-fork-show-all-instructions && make && cd -
+  - cd 40__c__linux/ptrace__020-fork-syswrite-peekuser && make && cd -
+  - cd 40__c__linux/ptrace__021-fork-syswrite-peekuser-getregs && make && cd -
+  - cd 40__c__linux/ptrace__030-fork-syswrite-peekuser-peekdata-pokedata && make && cd -
+  - cd 40__c__linux/ptrace__031-fork-syswrite-getregs-peekdata-pokedata && make && cd -
+  - cd 40__c__linux/ptrace__032-fork-syswrite-getregs-peekdata-pokedata-all-syscalls && make && cd -
+  - cd 40__c__linux/ptrace__040-fork-syswrite-getregs-peektext-singlestep && make && cd -
+  - cd 40__c__linux/ptrace__041-fork-syswrite-getregs-peektext-singlestep-all-instructions && make && cd -
+  - cd 40__c__linux/ptrace__050-attach-detatch && make && cd -
   - cd 40__c__linux/ptrace__07-injection && make && cd -
   - cd 40__c__linux/ptrace08__injection-replace && make && cd -
   - cd 40__c__linux/ptrace09__injection-in-free-space-TODO && make && cd -
