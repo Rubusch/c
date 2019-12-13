@@ -1,6 +1,26 @@
 /*
   ptrace example: "do something funny"
 
+  fork child with PTRACE_TRACEME
+
+  let it execute a command, e.g. "/bin/pwd"
+
+  in the parent read out the RAX (EAX) register with PTRACE_PEEKUSER, aligned to 8
+
+  if the RAX (EAX) register shows the syscall SYS_write (i.e. write to a stream)
+
+  read all syscall registers individually with PTRACE_PEEKUSER, aligned to 8
+
+  show the contents of the registers rdi, rsi, rdx, r10, r8, r9
+
+  peek the content of the SYS_write (address stored in rsi), using PTRACE_PEEKDATA
+
+  revert the content
+
+  poke the content of the SYS_write using PTRACE_POKEDATA
+
+  ---
+
   take the output string of a child process (PTRACE_TRACEME), using
   PTRACE_PEEKDATA, revert it, and inject the reverted back into the child with
   PTRACE_POKEDATA
