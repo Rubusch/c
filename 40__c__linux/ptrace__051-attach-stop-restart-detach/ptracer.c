@@ -4,17 +4,15 @@
 
   attach to a running rabbit.exe process with PTRACE_SEIZE and PTRACE_INTERRUPT
 
-  read all syscall registers with PTRACE_GETREGS
+  in the parent obtain the current regs and instruction with PTRACE_GETREGS
 
-  in the parent obtain the current instruction with PTRACE_PEEKTEXT
+  wait on ENTER to continue the rabbit.exe after any syscall via PTRACE_CONT
 
   if the RAX (EAX) register shows the syscall SYS_write,
   obtain the argument (address in: rsi, length rdx), and store it in 'backup',
 
   stop the attached rabbit.exe and show the captured 'backup',
   use either PTRACE_PEEKDATA or PTRACE_PEEKTEXT
-
-  wait on ENTER to continue the rabbit.exe via PTRACE_CONT
 
   detach the rabbit.exe with PTRACE_DETACH
 
@@ -129,6 +127,9 @@ int main(int argc, char **argv)
     }
     fprintf(stderr, "syscall capturing, regs.orig_rax: '0x%lx'\n", (long)regs.orig_rax);
 
+    printf("press ENTER\n");
+    getchar();
+
     // check for SYS_write
     if (regs.orig_rax == SYS_write) {
       fprintf(stderr, "AWESOME: we got a SYS_write,...STOP the process!\n");
@@ -137,9 +138,6 @@ int main(int argc, char **argv)
 
       // backup instructions
       fprintf(stderr, "AWESOME: captured data backup: '%s'\n", backup);
-
-      printf("press ENTER\n");
-      getchar();
 
       break;
     }
