@@ -11,9 +11,10 @@
   if the RAX (EAX) register shows the syscall SYS_write,
   obtain the argument (address in: rsi, length rdx), and store it in 'backup',
 
-  stop the attached rabbit.exe and show the captured 'backup'
+  stop the attached rabbit.exe and show the captured 'backup',
+  use either PTRACE_PEEKDATA or PTRACE_PEEKTEXT
 
-  on ENTER continue the rabbit.exe via PTRACE_CONT
+  wait on ENTER to continue the rabbit.exe via PTRACE_CONT
 
   detach the rabbit.exe with PTRACE_DETACH
 
@@ -91,34 +92,6 @@ void get_data(pid_t child, long addr, unsigned char *str, int len)
 }
 
 
-void put_data(pid_t child, long addr, unsigned char *str, int len)
-{
-  unsigned char *laddr;
-  int i = 0, j = len / long_size;
-  union u {
-    long val;
-    char chars[long_size];
-  } data;
-
-  laddr = str;
-
-  while (i < j) {
-    memcpy(data.chars, laddr, long_size);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
-    ++i;
-    laddr += long_size;
-  }
-
-  j = len % long_size;
-
-  // since long_size will be 4, we always will fall into this condition for writing back
-  if (j != 0) {
-    memcpy(data.chars, laddr, j);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
-  }
-}
-
-
 int main(int argc, char **argv)
 {
   pid_t traced_process;
@@ -165,7 +138,6 @@ int main(int argc, char **argv)
       // backup instructions
       fprintf(stderr, "AWESOME: captured data backup: '%s'\n", backup);
 
-
       printf("press ENTER\n");
       getchar();
 
@@ -177,11 +149,9 @@ int main(int argc, char **argv)
       perror("ptrace: process finished");
       exit(EXIT_FAILURE);
     }
-
-    ptrace(PTRACE_CONT, traced_process, NULL, NULL);
   }
 
-  // let child continue, run into trap, and execute int3 instruction
+  // let child continue
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
   // detach process again
