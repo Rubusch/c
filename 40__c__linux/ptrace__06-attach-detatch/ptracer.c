@@ -1,6 +1,23 @@
 /*
   Attaching and Detaching
 
+
+  attach to a running rabbit.exe process with PTRACE_SEIZE and PTRACE_INTERRUPT
+
+  read all syscall registers with PTRACE_GETREGS
+
+  in the parent obtain the current instruction with PTRACE_PEEKTEXT
+
+  if the RAX (EAX) register shows the syscall SYS_nanosleep
+
+  show the contents of the instruction pointer rip and the obtained instruction
+
+  detach the rabbit.exe with PTRACE_DETACH
+
+
+  ---
+
+
   attaching (PTRACE_ATTACH) to some external process, a parent requests
   registers and instruction, prints it and, when done, detaches with
   PTRACE_DETACH
@@ -90,10 +107,12 @@
   pending signal is injected.
 
 
-  email: L.Rubusch@gmx.ch
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-  or p_padala@yahoo.com
+
+  RESOURCES:
+  * ptrace manpage (3)
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 // kill()
@@ -132,14 +151,14 @@ int main(int argc, char **argv)
   traced_process = atoi(argv[1]);
 
   // attach to the child process
-/*
-  // old version
-  ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-/*/
-  // somehow in manpage described "new" process
+
+  // PTRACE_ATTACH: classic, old approach
+  //ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
+  //
+  // PTRACE_SEIZE: the manpage nowadays recommends this "new" approach
   ptrace(PTRACE_SEIZE, traced_process, NULL, NULL);
   ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
-// */
+
 
   wait(NULL);
 
