@@ -120,8 +120,8 @@ int main(int argc, char **argv)
   pid_t traced_process;
   struct user_regs_struct regs;
   int len = 32;
-  unsigned char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 */
-//  unsigned char code[] = { 0xcd, 0xcc };
+  unsigned char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 - but also 64bit safe, see binutils-gdb */
+
   unsigned char backup[len];
 
   if (argc != 2) {
@@ -161,8 +161,10 @@ int main(int argc, char **argv)
     if (regs.orig_rax == SYS_write) {
       fprintf(stderr, "AWESOME: we got a SYS_write,...STOP the process!\n");
 
+      // INJECT: get instructions
       get_data(traced_process, regs.rsi, backup, len);
 
+      // INJECT: set breakpoint
       put_data(traced_process, regs.rip, code, len);
 
       // backup instructions
