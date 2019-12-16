@@ -1,37 +1,36 @@
 /*
   setting breakpoints
 
-  attach an external process by declaring PTRACE_ATTACH;
 
-  request its instruction (PTRACE_PEEKDATA) from process's registers
-  (PTRACE_GETREGS), backup instruction and inject (PTRACE_POKEDATA) a trap;
+  attach to a running rabbit.exe process with PTRACE_SEIZE and PTRACE_INTERRUPT
 
-  let the process continue (PTRACE_CONT) and let it run into the trap
+  in the parent obtain the current regs and instruction with PTRACE_GETREGS
 
-  in the tracer wait for "hit ENTER" - when enter is hit, replace the injected
-  trap in the process by the former, backuped code (PTRACE_POKEDATA), and inject
-  it into process's registers (PTRACE_SETREGS)
+  wait on ENTER to continue the rabbit.exe after any syscall via PTRACE_CONT
 
-  when done, detaches with PTRACE_DETACH
+  if the RAX (EAX) register shows the syscall SYS_write,
+  obtain the argument (address in: rsi, length rdx), and store it in 'backup',
 
+  stop the attached rabbit.exe and show the captured 'backup',
+  use either PTRACE_PEEKDATA or PTRACE_PEEKTEXT
 
-  usage: compile it (Makefile) and in one shell window run
-  $ ./rabbit.exe
-
-  in another shell window run, within 10 sec
-  $ ./ptracer.exe `pidof rabbit.exe`
+  detach the rabbit.exe with PTRACE_DETACH
 
 
-  email: L.Rubusch@gmx.ch
+  ---
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-  or p_padala@yahoo.com
+
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
+
+
+  RESOURCES:
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
-// FIXME: segmentation fault at finish
 
 // kill()
 #define _POSIX_SOURCE
+#include <syscall.h>
 #include <signal.h>
 
 // ptrace()
@@ -56,21 +55,37 @@ void get_data(pid_t child, long addr, unsigned char *str, int len)
     long val;
     char chars[long_size];
   } data;
+
   i = 0;
   j = len / long_size;
+
   laddr = str;
+
+//*
+  // version via PTRACE_PEEKDATA and alignment to 8 (due to x86_64)
   while (i < j) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + (i) * 8, NULL);
     memcpy(laddr, data.chars, long_size);
     ++i;
     laddr += long_size;
   }
+/*/
+  // version via PTRACE_PEEKTEXT (x86_64 no alignment needed)
+  memset(laddr, '\0', len);
+  int idx=0;
+  for (idx=0; idx<len-1; ++idx) {
+    laddr[idx] = ptrace(PTRACE_PEEKTEXT, child, addr+idx, NULL);
+  }
+// */
+
   j = len % long_size;
-  // since long_size will be 4, we always will fall into this condition for reading
+
+  // since long_size will be 8, we always will fall into this condition for reading
   if (j != 0) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 8, NULL);
     memcpy(laddr, data.chars, j);
   }
+
   str[len] = '\0';
 }
 
@@ -86,7 +101,7 @@ void put_data(pid_t child, long addr, unsigned char *str, int len)
   laddr = str;
   while (i < j) {
     memcpy(data.chars, laddr, long_size);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
     ++i;
     laddr += long_size;
   }
@@ -95,7 +110,7 @@ void put_data(pid_t child, long addr, unsigned char *str, int len)
   // since long_size will be 4, we always will fall into this condition for writing back
   if (j != 0) {
     memcpy(data.chars, laddr, j);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
   }
 }
 
@@ -104,9 +119,10 @@ int main(int argc, char **argv)
 {
   pid_t traced_process;
   struct user_regs_struct regs;
-  int len = 4;
+  int len = 32;
   unsigned char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 */
-  unsigned char backup[4];
+//  unsigned char code[] = { 0xcd, 0xcc };
+  unsigned char backup[len];
 
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <pid to be traced> \n", argv[0]);
@@ -125,45 +141,47 @@ int main(int argc, char **argv)
   traced_process = atoi(argv[1]);
 
   // attach process
-  ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-  wait(NULL);
+  ptrace(PTRACE_SEIZE, traced_process, NULL, NULL);
+  ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
 
-  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
+  while(1) {
+    wait(NULL);
 
-  /* backup instructions */
-// TODO check if len is correct?
-  get_data(traced_process, regs.rip, backup, len);
+    // get all regs and display
+    if (0 > ptrace(PTRACE_GETREGS, traced_process, NULL, &regs)) {
+      perror("ptrace: PTRACE_GETREGS failed");
+      exit(EXIT_FAILURE);
+    }
+    fprintf(stderr, "syscall capturing, regs.orig_rax: '0x%lx'\n", (long)regs.orig_rax);
 
-  /* put trap into child */
-// TODO check if len is correct?
-//  put_data(traced_process, regs.rip, code, len);
+    printf("press ENTER\n");
+    getchar();
 
-// TODO no PTRACE_POKEDATA, then PTRACE_SETREGS needed here?
-//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+    // check for SYS_write
+    if (regs.orig_rax == SYS_write) {
+      fprintf(stderr, "AWESOME: we got a SYS_write,...STOP the process!\n");
 
+      get_data(traced_process, regs.rsi, backup, len);
 
-  /* let child continue, run into trap, and execute int3 instruction */
+      put_data(traced_process, regs.rip, code, len);
+
+      // backup instructions
+      fprintf(stderr, "AWESOME: captured data backup: '%s'\n", backup);
+
+      break;
+    }
+
+    // continue if nothing interesting happened
+    if (0 > ptrace(PTRACE_SYSCALL, traced_process, 0, 0)) {
+      perror("ptrace: process finished");
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  // let child continue
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
-
-  /* why does this work? */
-  kill(traced_process, SIGINT);
-  wait(NULL);
-
-  printf("the process stopped, restoring the original instructions\n");
-// TODO actually the process does not stop if not attached successfully - test
-  // with external window, probably not controllable since it is neither a
-  // child, nor declares PTRACE_TRACEME
-  printf("press ENTER\n");
-  getchar();
-
-  /* restore the backuped code */
-//  put_data(traced_process, regs.rip, backup, len);
-
-  /* setting the eip back to the original instruction, and let process continue
-   */
-//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
+  // detach process again
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
 
   return 0;
