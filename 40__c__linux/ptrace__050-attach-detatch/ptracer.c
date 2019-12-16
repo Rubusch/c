@@ -1,10 +1,11 @@
 /*
-  Attaching and Detaching
+  setting breakpoints
 
 
-  attach to a running rabbit.exe process with PTRACE_SEIZE and PTRACE_INTERRUPT
+  attach to a running rabbit.exe process with PTRACE_SEIZE and
+  PTRACE_INTERRUPT
 
-  read all syscall registers with PTRACE_GETREGS
+  in the parent obtain the current regs with PTRACE_GETREGS
 
   in the parent obtain the current instruction with PTRACE_PEEKTEXT
 
@@ -17,13 +18,14 @@
 
   ---
 
+  NOTE: error code handling of ptrace() calls are removed to make it more
+  readable, for productive code consider error code evaluation
 
-  attaching (PTRACE_ATTACH) to some external process, a parent requests
-  registers and instruction, prints it and, when done, detaches with
-  PTRACE_DETACH
-
-  usage: compile it (Makefile) and in one shell window run
-  $ ./rabbit.exe & ./ptracer.exe $(pidof rabbit.exe)
+  if (0 > ptrace(...)) {
+      // free resources
+      perror("something failed");
+      exit(EXIT_FAILURE);
+  }
 
 
 
