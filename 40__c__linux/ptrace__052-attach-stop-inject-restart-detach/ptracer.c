@@ -2,7 +2,8 @@
   setting breakpoints
 
 
-  attach to a running rabbit.exe process with PTRACE_SEIZE and PTRACE_INTERRUPT
+  attach to a running rabbit.exe process with PTRACE_SEIZE and
+  PTRACE_INTERRUPT
 
   in the parent obtain the current regs and instruction with PTRACE_GETREGS
 
@@ -18,6 +19,16 @@
 
 
   ---
+
+  NOTE: error code handling of ptrace() calls are removed to make it more
+  readable, for productive code consider error code evaluation
+
+  if (0 > ptrace(...)) {
+      // free resources
+      perror("something failed");
+      exit(EXIT_FAILURE);
+  }
+
 
 
   AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
@@ -148,10 +159,7 @@ int main(int argc, char **argv)
     wait(NULL);
 
     // get all regs and display
-    if (0 > ptrace(PTRACE_GETREGS, traced_process, NULL, &regs)) {
-      perror("ptrace: PTRACE_GETREGS failed");
-      exit(EXIT_FAILURE);
-    }
+    ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
     fprintf(stderr, "syscall capturing, regs.orig_rax: '0x%lx'\n", (long)regs.orig_rax);
 
     printf("press ENTER\n");
@@ -174,10 +182,7 @@ int main(int argc, char **argv)
     }
 
     // continue if nothing interesting happened
-    if (0 > ptrace(PTRACE_SYSCALL, traced_process, 0, 0)) {
-      perror("ptrace: process finished");
-      exit(EXIT_FAILURE);
-    }
+    ptrace(PTRACE_SYSCALL, traced_process, 0, 0);
   }
 
   // let child continue
