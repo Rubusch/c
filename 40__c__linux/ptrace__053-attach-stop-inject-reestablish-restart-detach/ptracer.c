@@ -9,12 +9,13 @@
 
   wait on ENTER to continue the rabbit.exe after any syscall via PTRACE_CONT
 
-  if the RAX (EAX) register shows the syscall SYS_write,
-  obtain the argument (address in: rsi, length rdx), and store it in 'backup',
-  and inject a break point SIGTRAP signal, i.e. {0xcd, 0x80, 0xcc, 0}
+  backup instruction pointer rip
 
-  stop the attached rabbit.exe and show the captured 'backup',
-  use either PTRACE_PEEKDATA or PTRACE_PEEKTEXT
+  replace the current instruction with the breakpoint, SIGTRAP 0x03
+
+  stop at the breakpoint
+
+  then re-inject a break point SIGTRAP signal, i.e. {0xcd, 0x80, 0xcc, 0}
 
   detach the rabbit.exe with PTRACE_DETACH
 
@@ -61,40 +62,32 @@
 void get_data(pid_t child, long addr, unsigned char *str, int len)
 {
   unsigned char *laddr;
-  int i, j;
+  int idx, jdx;
   union u {
     long val;
     char chars[long_size];
   } data;
 
-  i = 0;
-  j = len / long_size;
-
+  idx = 0;
+  jdx = len / long_size;
   laddr = str;
+//  fprintf(stderr, "DEBUG %s(), [%d]: idx = %d, jdx = %d\n", __func__, __LINE__, idx, jdx);
 
-//*
   // version via PTRACE_PEEKDATA and alignment to 8 (due to x86_64)
-  while (i < j) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + (i) * 8, NULL);
+  while (idx < jdx) {
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + (idx) * 8, NULL);
     memcpy(laddr, data.chars, long_size);
-    ++i;
+    ++idx;
     laddr += long_size;
   }
-/*/
-  // version via PTRACE_PEEKTEXT (x86_64 no alignment needed)
-  memset(laddr, '\0', len);
-  int idx=0;
-  for (idx=0; idx<len-1; ++idx) {
-    laddr[idx] = ptrace(PTRACE_PEEKTEXT, child, addr+idx, NULL);
-  }
-// */
 
-  j = len % long_size;
+  jdx = len % long_size;
+//  fprintf(stderr, "DEBUG %s(), [%d]: idx = %d, jdx = %d\n", __func__, __LINE__, idx, jdx);
 
   // since long_size will be 8, we always will fall into this condition for reading
-  if (j != 0) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 8, NULL);
-    memcpy(laddr, data.chars, j);
+  if (jdx != 0) {
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
+    memcpy(laddr, data.chars, jdx);
   }
 
   str[len] = '\0';
@@ -104,24 +97,25 @@ void get_data(pid_t child, long addr, unsigned char *str, int len)
 void put_data(pid_t child, long addr, unsigned char *str, int len)
 {
   unsigned char *laddr;
-  int i = 0, j = len / long_size;
+  int idx = 0, jdx = len / long_size;
   union u {
     long val;
     char chars[long_size];
   } data;
+
   laddr = str;
-  while (i < j) {
+  while (idx < jdx) {
     memcpy(data.chars, laddr, long_size);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
-    ++i;
+    ptrace(PTRACE_POKETEXT, child, addr + idx * 8, data.val);
+    ++idx;
     laddr += long_size;
   }
-  j = len % long_size;
+  jdx = len % long_size;
 
-  // since long_size will be 4, we always will fall into this condition for writing back
-  if (j != 0) {
-    memcpy(data.chars, laddr, j);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
+  // since long_size will be 8, we always will fall into this condition for writing back
+  if (jdx != 0) {
+    memcpy(data.chars, laddr, jdx);
+    ptrace(PTRACE_POKETEXT, child, addr + idx * 8, data.val);
   }
 }
 
@@ -130,10 +124,9 @@ int main(int argc, char **argv)
 {
   pid_t traced_process;
   struct user_regs_struct regs;
-  int len = 32;
-  unsigned char code[] = {0xcd, 0x80, 0xcc, 0}; /*  int 0x80, int3 - but also 64bit safe, see binutils-gdb */
-
-  unsigned char backup[len];
+  unsigned char code[] = { 0xcd, 0x80, 0xcc, 0, 0, 0, 0 }; // NOTE: the instruction only has 3 elements, though we align it to 8 due to x86_64
+  int len = 8; // aligned to 8 for simplification
+  unsigned char backup[len+1]; memset(backup, '\0', len+1);
 
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <pid to be traced> \n", argv[0]);
@@ -154,39 +147,36 @@ int main(int argc, char **argv)
   // attach process
   ptrace(PTRACE_SEIZE, traced_process, NULL, NULL);
   ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
+  wait(NULL);
 
-  while(1) {
-    wait(NULL);
+  // INJECT: get all regs and display
+  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
 
-    // get all regs and display
-    ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
-    fprintf(stderr, "syscall capturing, regs.orig_rax: '0x%lx'\n", (long)regs.orig_rax);
+  // INJECT: backup original next instructions at instruction pointer (rip)
+  get_data(traced_process, regs.rip, backup, len);
+  fprintf(stderr, "captured next %d instructions (backup):\n", len);
+  int cnt;
+  for (int cnt=0; cnt<len; ++cnt) fprintf(stderr, "'0x%02x' ", backup[cnt]);
+  fprintf(stderr, "\n");
 
-    printf("press ENTER\n");
-    getchar();
+  // INJECT: put breakpoint as next instruction
+  // NOTE: remove this put_data() and the message "Hello World!" will appear before "press ENTER"
+  put_data(traced_process, regs.rip, code, len);
 
-    // check for SYS_write
-    if (regs.orig_rax == SYS_write) {
-      fprintf(stderr, "AWESOME: we got a SYS_write,...STOP the process!\n");
-
-      // INJECT: get instructions
-      get_data(traced_process, regs.rsi, backup, len);
-
-      // INJECT: set breakpoint
-      put_data(traced_process, regs.rip, code, len);
-
-      // backup instructions
-      fprintf(stderr, "AWESOME: captured data backup: '%s'\n", backup);
-
-      break;
-    }
-
-    // continue if nothing interesting happened
-    ptrace(PTRACE_SYSCALL, traced_process, 0, 0);
-  }
-
-  // let child continue
+  // INJECT: let the process continue
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
+  wait(NULL);
+
+  fprintf(stderr, "AWESOME: we got a BREAKPOINT - the process stopped!\n");
+  printf("press ENTER\n");
+  getchar();
+
+  // RESET: put the original code back to the instruction pointer
+  // NOTE: remove this put_data() and it will fall into "Trace/breakpoint trap   ./rabbit.exe"
+  put_data(traced_process, regs.rip, backup, len);
+
+  // RESET: resetting the regs to their orig config (before breakpoint)
+  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
   // detach process again
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);

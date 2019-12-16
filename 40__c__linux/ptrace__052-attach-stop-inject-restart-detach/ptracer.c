@@ -13,10 +13,12 @@
   obtain the argument (address in: rsi, length rdx), and store it in 'backup',
   and inject a break point SIGTRAP signal, i.e. {0xcd, 0x80, 0xcc, 0}
 
-  stop the attached rabbit.exe and show the captured 'backup',
+  stop the attached rabbit.exe and show the captured 'backup' manually,
   use either PTRACE_PEEKDATA or PTRACE_PEEKTEXT
 
   detach the rabbit.exe with PTRACE_DETACH
+
+  observation: at the end, the breakpoint would write a message
 
 
   ---
