@@ -9,13 +9,16 @@
 
   wait on ENTER to continue the rabbit.exe after any syscall via PTRACE_CONT
 
-  backup instruction pointer rip
+  backup instruction pointer, rip
 
-  replace the current instruction with the breakpoint, SIGTRAP 0x03
+  replace the current instruction with thea breakpoint SIGTRAP signal,
+  i.e. {0xcd, 0x80, 0xcc, 0, 0, 0, 0, 0}
+
+  continue the tracee rabbit.exe
 
   stop at the breakpoint
 
-  then re-inject a break point SIGTRAP signal, i.e. {0xcd, 0x80, 0xcc, 0}
+  then re-inject the backuped instruction and continue the rabbit.exe
 
   detach the rabbit.exe with PTRACE_DETACH
 
