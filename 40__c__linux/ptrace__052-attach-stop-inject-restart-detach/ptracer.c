@@ -11,6 +11,7 @@
 
   if the RAX (EAX) register shows the syscall SYS_write,
   obtain the argument (address in: rsi, length rdx), and store it in 'backup',
+  and inject a break point SIGTRAP signal, i.e. {0xcd, 0x80, 0xcc, 0}
 
   stop the attached rabbit.exe and show the captured 'backup',
   use either PTRACE_PEEKDATA or PTRACE_PEEKTEXT
@@ -28,7 +29,6 @@
       perror("something failed");
       exit(EXIT_FAILURE);
   }
-
 
 
   AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
