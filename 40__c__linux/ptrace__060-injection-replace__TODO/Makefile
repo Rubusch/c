@@ -6,40 +6,22 @@
 ##
 ## use -O, -O1, -O2 for optimization
 
-
-LONG_BIT := $(shell getconf LONG_BIT)
-ifeq ($(LONG_BIT),64)
-SOURCE = ptracer.c
-ASMSOURCE = bunny.s
-else
 SOURCE = ptracer.c rabbit.c
-endif
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -fPIC #-std=c99 -pedantic
+CFLAGS += -g -Wall -fPIC -std=gnu99 #-pedantic
 RM = rm -f
 
-
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
-
+	$(CC) $(CFLAGS) -c $<
 
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ ptracer.o -lm
+	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
-ifeq ($(LONG_BIT),64)
-ifeq (, $(shell which nasm))
-$(error "nasm is not installed, please install nasm")
-endif
-rabbit.exe:
-	nasm -f elf64 -o rabbit.o $(ASMSOURCE)
-	ld -o $@ rabbit.o
-else
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
-endif
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~

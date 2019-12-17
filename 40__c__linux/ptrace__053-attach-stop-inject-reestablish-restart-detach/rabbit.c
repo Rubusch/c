@@ -119,11 +119,10 @@
   PTRACE_TRACEME explicitely!
 
 
-
-  resources:
-  jim fisher  https://jameshfisher.com/2018/02/20/c-inline-assembly-hello-world
-  https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
-  https://stackoverflow.com/questions/23020380/inline-assembly-in-c-program-on-x86-64-linux
+  RESOURCES
+  * jim fisher  https://jameshfisher.com/2018/02/20/c-inline-assembly-hello-world
+  * https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
+  * https://stackoverflow.com/questions/23020380/inline-assembly-in-c-program-on-x86-64-linux
  */
 
 #include <stdlib.h>
@@ -140,6 +139,7 @@ int main()
 
   sleep(1); // setup for ptrace
 
+//*
   // initializing the assembler
   register int    syscall_no  asm("rax") = SYS_write; /* syscall number */
   register int    arg1        asm("rdi") = STDERR;    /* destination: the std stream */
@@ -148,6 +148,7 @@ int main()
 
   // execute assembly
   asm("syscall");
+// */
 
   exit(EXIT_SUCCESS);
 }
