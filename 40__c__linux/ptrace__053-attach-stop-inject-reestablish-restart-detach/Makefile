@@ -14,7 +14,7 @@ OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
 ## NOTE: don't use -std=c99!!! -std=c99 disables "asm volatile", since it is not standard C99,
 ## either use '__asm__' instead of 'asm' with '-std=c99', or use '-std=gnu99'
-CFLAGS += -g -Wall -Wno-unused-variable -pedantic -std=gnu99
+CFLAGS += -g -Wall -pedantic -std=gnu99
 RM = rm -f
 
 %.o: %.c

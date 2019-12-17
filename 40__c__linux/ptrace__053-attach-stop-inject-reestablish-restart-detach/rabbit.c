@@ -136,19 +136,18 @@ int main()
 {
   static char msg[] = "Hello World!\n";
   int msg_size = sizeof(msg);
+  int res;
 
   sleep(1); // setup for ptrace
 
-//*
-  // initializing the assembler
-  register int    syscall_no  asm("rax") = SYS_write; /* syscall number */
-  register int    arg1        asm("rdi") = STDERR;    /* destination: the std stream */
-  register char*  arg2        asm("rsi") = msg;       /* source, the message */
-  register int    arg3        asm("rdx") = msg_size;  /* size of source */
-
-  // execute assembly
-  asm("syscall");
-// */
+  {
+    __asm__ __volatile__ (
+                          "syscall"
+                          : "=a" (res)
+                          : "a"(SYS_write), "D"(STDOUT), "S" (msg), "d" (msg_size)
+                          : "memory"
+                          );
+  }
 
   exit(EXIT_SUCCESS);
 }

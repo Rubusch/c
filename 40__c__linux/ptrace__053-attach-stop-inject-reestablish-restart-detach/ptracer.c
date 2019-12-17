@@ -159,7 +159,7 @@ int main(int argc, char **argv)
   get_data(traced_process, regs.rip, backup, len);
   fprintf(stderr, "captured next %d instructions (backup):\n", len);
   int cnt;
-  for (int cnt=0; cnt<len; ++cnt) fprintf(stderr, "'0x%02x' ", backup[cnt]);
+  for (cnt=0; cnt<len; ++cnt) fprintf(stderr, "'0x%02x' ", backup[cnt]);
   fprintf(stderr, "\n");
 
   // INJECT: put breakpoint as next instruction
