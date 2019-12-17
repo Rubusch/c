@@ -5,7 +5,7 @@
   attach to a running rabbit.exe process with PTRACE_SEIZE and
   PTRACE_INTERRUPT
 
-  in the parent obtain the current regs and instruction with PTRACE_GETREGS
+  in the tracer obtain the current regs and instruction with PTRACE_GETREGS
 
   wait on ENTER to continue the rabbit.exe after any syscall via PTRACE_CONT
 
