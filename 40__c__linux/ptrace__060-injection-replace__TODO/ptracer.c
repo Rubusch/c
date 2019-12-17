@@ -1,30 +1,26 @@
 /*
-  inject "hello world"
-
-  attach an external process by declaring PTRACE_ATTACH;
-
-  request its instruction (PTRACE_PEEKDATA) from process's registers
-  (PTRACE_GETREGS), backup instructions and inject (PTRACE_POKEDATA) a "hello
-  world" sequence as hex;
-
-  write to instruction (PTRACE_POKEDATA) and set registers (PTRACE_SETREGS)
-
-  continue the process (PTRACE_CONT) and let it run into the trap
-
-  in the tracer wait, then replace the injected "hello world" in the process by
-  the former, backuped, code (PTRACE_POKEDATA), and inject it into process's
-  registers (PTRACE_SETREGS)
-
-  when done, detaches with PTRACE_DETACH
+  inject something into "hello world"
 
 
-  usage: compile it (Makefile) and in one shell window run
-  $ ./rabbit.exe
+  attach to a running rabbit.exe process with PTRACE_SEIZE and
+  PTRACE_INTERRUPT
 
-  in another shell window run, within 10 sec
-  $ ./ptracer.exe `pidof rabbit.exe`
+  in the tracer obtain the current regs and instruction with PTRACE_GETREGS
 
-  the result should inject code to print "Hello world" in the controlled process
+  backup instruction pointer, rip
+
+  replace the current instruction with some assembled (via gdb) sequence of
+  another program which ends with a breakpoint SIGTRAP signal,
+
+  continue the tracee rabbit.exe
+
+  detach the rabbit.exe with PTRACE_DETACH
+
+  rabbit.exe will now print "Hello XXX World" and end in a SIGTRAP
+
+  stop at the breakpoint
+
+  ---
 
 
   email: L.Rubusch@gmx.ch
@@ -45,13 +41,13 @@
 
 const int long_size = sizeof(long);
 
-void get_data(pid_t child, long addr, char *str, int len)
+void get_data(pid_t child, long addr, unsigned char *str, int len)
 {
-  char *laddr;
+  unsigned char *laddr;
   int i, j;
   union u {
     long val;
-    char chars[long_size];
+    unsigned char chars[long_size];
   } data;
   i = 0;
   j = len / long_size;
@@ -71,13 +67,13 @@ void get_data(pid_t child, long addr, char *str, int len)
 }
 
 
-void put_data(pid_t child, long addr, char *str, int len)
+void put_data(pid_t child, long addr, unsigned char *str, int len)
 {
-  char *laddr;
+  unsigned char *laddr;
   int i = 0, j = len / long_size;
   union u {
     long val;
-    char chars[long_size];
+    unsigned char chars[long_size];
   } data;
   laddr = str;
   while (i < j) {
@@ -104,12 +100,12 @@ int main(int argc, char *argv[])
   pid_t traced_process;
   struct user_regs_struct regs;
 
-  char insertcode[] = { 0xeb, 0x19, 0x5e, 0x48, 0xc7, 0xc0, 0x01, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc7, 0x02, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc2, 0x12, 0x00, 0x00, 0x00, 0x0f, 0x05, 0xcc, 0xe8, 0xe2, 0xff, 0xff, 0xff, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x58, 0x58, 0x58, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x00 };
+  unsigned char insertcode[] = { 0xeb, 0x19, 0x5e, 0x48, 0xc7, 0xc0, 0x01, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc7, 0x02, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc2, 0x12, 0x00, 0x00, 0x00, 0x0f, 0x05, 0xcc, 0xe8, 0xe2, 0xff, 0xff, 0xff, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x58, 0x58, 0x58, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x00 };
 
   int len = sizeof(insertcode);
 
   fprintf(stderr, "%s()[%d]: sizeof insertcode: '%d'\n", __func__, __LINE__, len);
-  char backup[len];
+  unsigned char backup[len];
 
   if (argc != 2) {
     printf("Usage: %s <pid to be traced> \n", argv[0]);
@@ -153,8 +149,7 @@ int main(int argc, char *argv[])
   wait(NULL);
 
 
-  printf("The process stopped, rabbit will now continue as a rabbit-xxx.exe\n");
-
+  printf("The original rabbit.exe stopped. rabbit.exe would print 'Hello World', it will now continue as a 'rabbit-xxx.exe' and place an 'XXX' in between and end with a SIGTRAP\n");
 // NOTE: to reset it to the regular behavior, inject the backup instructions and reset the registers
 //  put_data(traced_process, regs.rip, backup, len);
 //  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
