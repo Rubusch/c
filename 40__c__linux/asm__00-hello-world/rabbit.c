@@ -1,7 +1,7 @@
 /*
   Hello World
 
-  after sleeping for 10 sec the rabbit.exe is going to enter its asm instructions
+  after sleeping for 3 sec the rabbit.exe is going to enter its asm instructions
   it falls into trap and cannot end only when ptracer.exe
   receives enter, it leaves the attached rabbit.exe
 
@@ -120,15 +120,18 @@
 
   ---
 
-  disassembling - how to obtain the "hello world" instructions
+  disassembling
+
+  how to obtain the "hello world" instructions with gdb?
 
   compile it run it in gdb and extract the ASM sequence for the trap as hex
 
   compile:
-  $ gcc -o hello.exe hello.c
+  $ gcc -o rabbit.exe rabbit.c
+  or run
+  $ make
 
-  run code in gdb
-
+  execute then in gdb
   $ gdb ./hello.exe
   GNU gdb (GDB) 7.4.1-debian
   Copyright (C) 2012 Free Software Foundation, Inc.
@@ -261,7 +264,7 @@ int main()
   int msg_size = sizeof(msg);
   long res=0;
 
-  sleep(1); // setup for ptrace
+  sleep(3); // setup for ptrace
 
 /*
   // initializing the assembler (will need '-Wno-unused-variable' in Makefile)

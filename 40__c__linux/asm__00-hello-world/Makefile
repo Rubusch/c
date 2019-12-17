@@ -8,7 +8,7 @@ SOURCE = rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 TARGET = $(SOURCE:%.c=%.exe)
 CC = gcc
-CFLAGS += -g -Wall -std=gnu99 # -pedantic
+CFLAGS += -g -Wall -std=gnu99 -pedantic
 RM = rm -f
 
 %.o: %.c
