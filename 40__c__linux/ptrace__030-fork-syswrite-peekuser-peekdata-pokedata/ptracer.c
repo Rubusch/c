@@ -147,11 +147,12 @@ void put_data(pid_t child, long addr, char *str, int len)
 
 int main(int argc, char **argv)
 {
-  pid_t child;
 #ifndef __x86_64__
   fprintf(stderr, "Source needs x86_64 to run!!\n");
   exit(EXIT_FAILURE);
 #endif
+
+  pid_t child;
 
   if (0 > (child = fork())) {
     perror("fork() failed");
