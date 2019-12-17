@@ -58,14 +58,14 @@ void get_data(pid_t child, long addr, char *str, int len)
   j = len / long_size;
   laddr = str;
   while (i < j) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 8, NULL);
     memcpy(laddr, data.chars, long_size);
     ++i;
     laddr += long_size;
   }
   j = len % long_size;
   if (j != 0) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 8, NULL);
     memcpy(laddr, data.chars, j);
   }
   str[len] = '\0';
@@ -83,14 +83,14 @@ void put_data(pid_t child, long addr, char *str, int len)
   laddr = str;
   while (i < j) {
     memcpy(data.chars, laddr, long_size);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
     ++i;
     laddr += long_size;
   }
   j = len % long_size;
   if (j != 0) {
     memcpy(data.chars, laddr, j);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
   }
 }
 
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   }
 
   traced_process = atoi(argv[1]);
-#if __x86_64__
+
   /* attach external process */
   ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
 
@@ -188,47 +188,6 @@ int main(int argc, char *argv[])
 
   /* detach process */
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-#else
-  /* attach external process */
-  ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-
-  wait(NULL);
-
-  /* get process's registers */
-  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
-
-  /* find some free space for injection */
-  addr = freespaceaddr(traced_process);
-
-  /* get current instructions */
-  get_data(traced_process, addr, backup, len);
-
-  /* inject new instructions */
-  put_data(traced_process, addr, insertcode, len);
-
-  memcpy(&oldregs, &regs, sizeof(regs));
-  regs.eip = addr;
-
-  /* write registers back */
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-  /* let external process continue */
-  ptrace(PTRACE_CONT, traced_process, NULL, NULL);
-
-  wait(NULL);
-  printf("The process stopped, Putting back the original instructions\n");
-
-  /* restore backuped instructions */
-  put_data(traced_process, addr, backup, len);
-
-  /* set registers */
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
-
-  printf("Letting it continue with original flow\n");
-
-  /* detach process */
-  ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-#endif
 
   return 0;
 }
