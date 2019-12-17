@@ -28,7 +28,11 @@ rabbit.exe: $(OBJECTS)
 	@echo "start the example by:"
 	@echo '$$ ./rabbit.exe & ./ptracer.exe $$(pidof rabbit.exe)'
 
+rabbit-XXX.exe:
+	$(CC) $(CFLAGS) -c rabbit-XXX.c
+	$(CC) $(CFLAGS) -o $@ rabbit-XXX.o
+
 clean:
-	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit.o *~
+	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit-XXX.exe rabbit.o rabbit-XXX.o *~
 
 .PHONY: clean all

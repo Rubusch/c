@@ -103,13 +103,12 @@ int main(int argc, char *argv[])
 
   pid_t traced_process;
   struct user_regs_struct regs;
-// TODO check if this length is actually correct
-  int len = 41;
-  char insertcode[] = "\xeb\x15\x5e\xb8\x04\x00"
-                      "\x00\x00\xbb\x02\x00\x00\x00\x89\xf1\xba"
-                      "\x0c\x00\x00\x00\xcd\x80\xcc\xe8\xe6\xff"
-                      "\xff\xff\x48\x65\x6c\x6c\x6f\x20\x57\x6f"
-                      "\x72\x6c\x64\x0a\x00";
+
+  char insertcode[] = { 0xeb, 0x19, 0x5e, 0x48, 0xc7, 0xc0, 0x01, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc7, 0x02, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc2, 0x12, 0x00, 0x00, 0x00, 0x0f, 0x05, 0xcc, 0xe8, 0xe2, 0xff, 0xff, 0xff, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x58, 0x58, 0x58, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x00 };
+
+  int len = sizeof(insertcode);
+
+  fprintf(stderr, "%s()[%d]: sizeof insertcode: '%d'\n", __func__, __LINE__, len);
   char backup[len];
 
   if (argc != 2) {
@@ -127,7 +126,8 @@ int main(int argc, char *argv[])
   traced_process = atoi(argv[1]);
 
   // attach process
-  ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
+  ptrace(PTRACE_SEIZE, traced_process, NULL, NULL);
+  ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
   wait(NULL);
 
   // get registers
@@ -142,6 +142,9 @@ int main(int argc, char *argv[])
   // restore registers
   ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
+  printf("press ENTER\n");
+  getchar();
+
   // continue process
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
@@ -150,15 +153,11 @@ int main(int argc, char *argv[])
   wait(NULL);
 
 
-  printf("The process stopped, Putting back the original instructions\n");
+  printf("The process stopped, rabbit will now continue as a rabbit-xxx.exe\n");
 
-  // put back backuped instructions
-  put_data(traced_process, regs.rip, backup, len);
-
-  // set registers
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-  printf("Letting it continue with original flow\n");
+// NOTE: to reset it to the regular behavior, inject the backup instructions and reset the registers
+//  put_data(traced_process, regs.rip, backup, len);
+//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
   // detach process
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
