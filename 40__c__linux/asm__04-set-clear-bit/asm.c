@@ -17,8 +17,8 @@
   asm [volatile] (
           AssemblerTemplate
           : OutputOperands
-          [ : InputOperands
-          [ : Clobbers ] ]
+        [ : InputOperands
+        [ : Clobbers      ] ]
   )
 
 
@@ -110,7 +110,7 @@
       :"r"(a),"r"(b)
       :"0");
 
-  a,b - use regisers and save result c to register, make to use for c same
+  a,b - use registers and save result c to register, make to use for c same
   register by mentioning "0" in clobber register
 
 

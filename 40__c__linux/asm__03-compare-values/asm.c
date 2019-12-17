@@ -18,8 +18,8 @@
   asm [volatile] (
           AssemblerTemplate
           : OutputOperands
-          [ : InputOperands
-          [ : Clobbers ] ]
+        [ : InputOperands
+        [ : Clobbers       ] ]
   )
 
 

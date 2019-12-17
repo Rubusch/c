@@ -259,18 +259,46 @@ int main()
 {
   static char msg[] = "Hello World!\n";
   int msg_size = sizeof(msg);
+  long res=0;
 
   sleep(1); // setup for ptrace
 
-//*
-  // initializing the assembler
-  register int    syscall_no  asm("rax") = SYS_write; /* syscall number */
-  register int    arg1        asm("rdi") = STDERR;    /* destination: the std stream */
-  register char*  arg2        asm("rsi") = msg;       /* source, the message */
-  register int    arg3        asm("rdx") = msg_size;  /* size of source */
+/*
+  // initializing the assembler (will need '-Wno-unused-variable' in Makefile)
+  register int    syscall_no  asm("rax") = SYS_write; // syscall number
+  register int    arg1        asm("rdi") = STDERR;    // destination: the std stream
+  register char*  arg2        asm("rsi") = msg;       // source, the message
+  register int    arg3        asm("rdx") = msg_size;  // size of source
 
   // execute assembly
   asm("syscall");
+// */
+/*
+  // assembly initialization
+  {
+    __asm__ __volatile__ (
+                          "movq $1, %%rax\n\t"
+                          "movq $2, %%rdi\n\t"
+                          "syscall\n\t"
+                          : "=a" (res)
+                          : "S" (msg), "d" (msg_size)
+                          : "memory"
+                          );
+  }
+// */
+// *
+  // assembly instructions
+  {
+    __asm__ __volatile__ (
+                          "movq $1, %%rax\n\t"
+                          "movq $2, %%rdi\n\t"
+                          "movq %1, %%rsi\n\t"
+                          "syscall\n\t"
+                          : "=a" (res)
+                          : "r"(msg), "d"(msg_size)
+                          : "memory"
+                          );
+  }
 // */
 
   exit(EXIT_SUCCESS);

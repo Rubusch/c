@@ -9,7 +9,7 @@
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall -fPIC -std=gnu99 #-pedantic
+CFLAGS += -g -Wall -std=gnu99 #-pedantic
 RM = rm -f
 
 %.o: %.c
