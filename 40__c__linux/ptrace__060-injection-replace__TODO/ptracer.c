@@ -57,14 +57,14 @@ void get_data(pid_t child, long addr, char *str, int len)
   j = len / long_size;
   laddr = str;
   while (i < j) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 8, NULL);
     memcpy(laddr, data.chars, long_size);
     ++i;
     laddr += long_size;
   }
   j = len % long_size;
   if (j != 0) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 4, NULL);
+    data.val = ptrace(PTRACE_PEEKDATA, child, addr + i * 8, NULL);
     memcpy(laddr, data.chars, j);
   }
   str[len] = '\0';
@@ -82,23 +82,28 @@ void put_data(pid_t child, long addr, char *str, int len)
   laddr = str;
   while (i < j) {
     memcpy(data.chars, laddr, long_size);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
     ++i;
     laddr += long_size;
   }
   j = len % long_size;
   if (j != 0) {
     memcpy(data.chars, laddr, j);
-    ptrace(PTRACE_POKEDATA, child, addr + i * 4, data.val);
+    ptrace(PTRACE_POKEDATA, child, addr + i * 8, data.val);
   }
 }
 
 
 int main(int argc, char *argv[])
 {
+#ifndef __x86_64__
+  fprintf(stderr, "Source needs x86_64 to run!!\n");
+  exit(EXIT_FAILURE);
+#endif
+
   pid_t traced_process;
   struct user_regs_struct regs;
-  // TODO check if this length is actually correct
+// TODO check if this length is actually correct
   int len = 41;
   char insertcode[] = "\xeb\x15\x5e\xb8\x04\x00"
                       "\x00\x00\xbb\x02\x00\x00\x00\x89\xf1\xba"
@@ -121,24 +126,23 @@ int main(int argc, char *argv[])
 
   traced_process = atoi(argv[1]);
 
-#if __x86_64__
-  /* attach process */
+  // attach process
   ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
   wait(NULL);
 
-  /* get registers */
+  // get registers
   ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
 
-  /* backup instructions */
+  // backup instructions
   get_data(traced_process, regs.rip, backup, len);
 
-  /* inject new instructions */
+  // inject new instructions
   put_data(traced_process, regs.rip, insertcode, len);
 
-  /* restore registers */
+  // restore registers
   ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
-  /* continue process */
+  // continue process
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
 
 
@@ -148,55 +152,16 @@ int main(int argc, char *argv[])
 
   printf("The process stopped, Putting back the original instructions\n");
 
-  /* put back backuped instructions */
+  // put back backuped instructions
   put_data(traced_process, regs.rip, backup, len);
 
-  /* set registers */
+  // set registers
   ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
   printf("Letting it continue with original flow\n");
 
-  /* detach process */
+  // detach process
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-#else
-  // FIXME for 32 bit, process resumes with segmentations fault
-  /* attach process */
-  ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-  wait(NULL);
-
-  /* get registers */
-  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
-
-  /* backup instructions */
-  get_data(traced_process, regs.eip, backup, len);
-
-  /* inject new instructions */
-  put_data(traced_process, regs.eip, insertcode, len);
-
-  /* restore registers */
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-  /* continue process */
-  ptrace(PTRACE_CONT, traced_process, NULL, NULL);
-
-
-  kill(traced_process, SIGINT);
-  wait(NULL);
-
-
-  printf("The process stopped, Putting back the original instructions\n");
-
-  /* put back backuped instructions */
-  put_data(traced_process, regs.eip, backup, len);
-
-  /* set registers */
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-  printf("Letting it continue with original flow\n");
-
-  /* detach process */
-  ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
-#endif
 
   return 0;
 }
