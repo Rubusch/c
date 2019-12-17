@@ -150,6 +150,7 @@ script:
   - cd 40__c__linux/asm__07-syscall && make && cd -
   - cd 40__c__linux/asm__08-eval-sys-exit && make && cd -
   - cd 40__c__linux/asm__09-syscall-generic && make && cd -
+  - cd 40__c__linux/asm__10-string-section && make && cd -
   - cd 40__c__linux/fork__simple && make && cd -
   - cd 40__c__linux/fork__cli-command && make && cd -
   - cd 40__c__linux/fork && make && cd -
