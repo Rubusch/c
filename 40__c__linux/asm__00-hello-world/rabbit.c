@@ -132,117 +132,51 @@
   $ make
 
   execute then in gdb
-  $ gdb ./hello.exe
-  GNU gdb (GDB) 7.4.1-debian
-  Copyright (C) 2012 Free Software Foundation, Inc.
-  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-  This is free software: you are free to change and redistribute it.
-  There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-  and "show warranty" for details.
-  This GDB was configured as "i486-linux-gnu".
-  For bug reporting instructions, please see:
-  <http://www.gnu.org/software/gdb/bugs/>...
-  Reading symbols from
-  /data/opt/git_c/ptrace08__injection-replace_FIXME/hello.exe...done.
+  $ gdb ./rabbit.exe
+    GNU gdb (Debian 8.2.1-2+b3) 8.2.1
+    Copyright (C) 2018 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+    Type "show copying" and "show warranty" for details.
+    This GDB was configured as "x86_64-linux-gnu".
+    Type "show configuration" for configuration details.
+    For bug reporting instructions, please see:
+    <http://www.gnu.org/software/gdb/bugs/>.
+    Find the GDB manual and other documentation resources online at:
+        <http://www.gnu.org/software/gdb/documentation/>.
 
-
-  disassemble the assembly methods
+    For help, type "help".
+    Type "apropos word" to search for commands related to "word"...
+    Reading symbols from ./rabbit.exe...done.
 
   (gdb) disassemble main
-  Dump of assembler code for function main:
-  0x0804841c <+0>:     push   %ebp
-  0x0804841d <+1>:     mov    %esp,%ebp
-  0x0804841f <+3>:     jmp    0x8048436 <forward>
-  0x08048421 <+5>:     pop    %esi
-  0x08048422 <+6>:     mov    $0x4,%eax
-  0x08048427 <+11>:    mov    $0x2,%ebx
-  0x0804842c <+16>:    mov    %esi,%ecx
-  0x0804842e <+18>:    mov    $0xc,%edx
-  0x08048433 <+23>:    int    $0x80
-  0x08048435 <+25>:    int3
-  0x08048436 <+0>:     call   0x8048421 <main+5>
-  0x0804843b <+5>:     dec    %eax
-  0x0804843c <+6>:     gs
-  0x0804843d <+7>:     insb   (%dx),%es:(%edi)
-  0x0804843e <+8>:     insb   (%dx),%es:(%edi)
-  0x0804843f <+9>:     outsl  %ds:(%esi),(%dx)
-  0x08048440 <+10>:    and    %dl,0x6f(%edi)
-  0x08048443 <+13>:    jb     0x80484b1 <__libc_csu_init+81>
-  0x08048445 <+15>:    or     %fs:(%eax),%al
-  0x08048448 <+18>:    pop    %ebp
-  0x08048449 <+19>:    ret
-  End of assembler dump.
+    Dump of assembler code for function main:
+       0x0000000000001145 <+0>:     push   %rbp
+       0x0000000000001146 <+1>:     mov    %rsp,%rbp
+       0x0000000000001149 <+4>:     sub    $0x10,%rsp
+       0x000000000000114d <+8>:     movl   $0xe,-0x4(%rbp)
+       0x0000000000001154 <+15>:    movq   $0x0,-0x10(%rbp)
+       0x000000000000115c <+23>:    mov    $0x3,%edi
+       0x0000000000001161 <+28>:    callq  0x1040 <sleep@plt>
+       0x0000000000001166 <+33>:    lea    0x2ecb(%rip),%rcx        # 0x4038 <msg.3132>
+       0x000000000000116d <+40>:    mov    -0x4(%rbp),%eax
+       0x0000000000001170 <+43>:    mov    %eax,%edx
+       0x0000000000001172 <+45>:    mov    $0x1,%rax
+       0x0000000000001179 <+52>:    mov    $0x2,%rdi
+       0x0000000000001180 <+59>:    mov    %rcx,%rsi
+       0x0000000000001183 <+62>:    syscall
+       0x0000000000001185 <+64>:    mov    %rax,-0x10(%rbp)
+       0x0000000000001189 <+68>:    mov    $0x0,%edi
+       0x000000000000118e <+73>:    callq  0x1030 <exit@plt>
+    End of assembler dump.
 
-  (gdb) disassemble forward
-  Dump of assembler code for function main:
-  0x0804841c <+0>:     push   %ebp
-  0x0804841d <+1>:     mov    %esp,%ebp
-  0x0804841f <+3>:     jmp    0x8048436 <forward>
-  0x08048421 <+5>:     pop    %esi
-  0x08048422 <+6>:     mov    $0x4,%eax
-  0x08048427 <+11>:    mov    $0x2,%ebx
-  0x0804842c <+16>:    mov    %esi,%ecx
-  0x0804842e <+18>:    mov    $0xc,%edx
-  0x08048433 <+23>:    int    $0x80
-  0x08048435 <+25>:    int3
-  0x08048436 <+0>:     call   0x8048421 <main+5>
-  0x0804843b <+5>:     dec    %eax
-  0x0804843c <+6>:     gs
-  0x0804843d <+7>:     insb   (%dx),%es:(%edi)
-  0x0804843e <+8>:     insb   (%dx),%es:(%edi)
-  0x0804843f <+9>:     outsl  %ds:(%esi),(%dx)
-  0x08048440 <+10>:    and    %dl,0x6f(%edi)
-  0x08048443 <+13>:    jb     0x80484b1 <__libc_csu_init+81>
-  0x08048445 <+15>:    or     %fs:(%eax),%al
-  0x08048448 <+18>:    pop    %ebp
-  0x08048449 <+19>:    ret
-  End of assembler dump.
-
-  (gdb) disassemble backward
-  Dump of assembler code for function main:
-  0x0804841c <+0>:     push   %ebp
-  0x0804841d <+1>:     mov    %esp,%ebp
-  0x0804841f <+3>:     jmp    0x8048436 <forward>
-  0x08048421 <+5>:     pop    %esi
-  0x08048422 <+6>:     mov    $0x4,%eax
-  0x08048427 <+11>:    mov    $0x2,%ebx
-  0x0804842c <+16>:    mov    %esi,%ecx
-  0x0804842e <+18>:    mov    $0xc,%edx
-  0x08048433 <+23>:    int    $0x80
-  0x08048435 <+25>:    int3
-  0x08048436 <+0>:     call   0x8048421 <main+5>
-  0x0804843b <+5>:     dec    %eax
-  0x0804843c <+6>:     gs
-  0x0804843d <+7>:     insb   (%dx),%es:(%edi)
-  0x0804843e <+8>:     insb   (%dx),%es:(%edi)
-  0x0804843f <+9>:     outsl  %ds:(%esi),(%dx)
-  0x08048440 <+10>:    and    %dl,0x6f(%edi)
-  0x08048443 <+13>:    jb     0x80484b1 <__libc_csu_init+81>
-  0x08048445 <+15>:    or     %fs:(%eax),%al
-  0x08048448 <+18>:    pop    %ebp
-  0x08048449 <+19>:    ret
-  End of assembler dump.
-
-
-  we need to take the machine code bytes from main+3 to backward+20, which is a
-  total of 41 bytes; obtain this sequence as HEX
-
-  (gdb) x/40bx main+3
-  0x804841f <main+3>:     0xeb    0x15    0x5e    0xb8    0x04    0x00    0x00
-  0x00 0x8048427 <main+11>:    0xbb    0x02    0x00    0x00    0x00    0x89 0xf1
-  0xba 0x804842f <main+19>:    0x0c    0x00    0x00    0x00    0xcd    0x80 0xcc
-  0xe8 0x8048437 <forward+1>:  0xe6    0xff    0xff    0xff    0x48    0x65 0x6c
-  0x6c 0x804843f <forward+9>:  0x6f    0x20    0x57    0x6f    0x72    0x6c 0x64
-  0x0a
-
-  now, insert this hex instructions into the ptracer.c, this results to the
-  following
-
-  "\xeb\x15\x5e\xb8\x04\x00"
-  "\x00\x00\xbb\x02\x00\x00\x00\x89\xf1\xba"
-  "\x0c\x00\x00\x00\xcd\x80\xcc\xe8\xe6\xff"
-  "\xff\xff\x48\x65\x6c\x6c\x6f\x20\x57\x6f"
-  "\x72\x6c\x64\x0a\x00"
+  (gdb) disassemble sleep
+    Dump of assembler code for function sleep@plt:
+       0x0000000000001040 <+0>:     jmpq   *0x2fda(%rip)        # 0x4020 <sleep@got.plt>
+       0x0000000000001046 <+6>:     pushq  $0x1
+       0x000000000000104b <+11>:    jmpq   0x1020
+    End of assembler dump.
 
 
   RESOURCES
@@ -267,7 +201,10 @@ int main()
   sleep(3); // setup for ptrace
 
 /*
-  // initializing the assembler (will need '-Wno-unused-variable' in Makefile)
+  // variant I)
+
+  // initializing the assembler
+  // NOTE: this will need '-Wno-unused-variable' in a Makefile
   register int    syscall_no  asm("rax") = SYS_write; // syscall number
   register int    arg1        asm("rdi") = STDERR;    // destination: the std stream
   register char*  arg2        asm("rsi") = msg;       // source, the message
@@ -276,20 +213,25 @@ int main()
   // execute assembly
   asm("syscall");
 // */
-/*
+
+
+//*
+  // variant II)
+
   // assembly initialization
   {
     __asm__ __volatile__ (
-                          "movq $1, %%rax\n\t"
-                          "movq $2, %%rdi\n\t"
-                          "syscall\n\t"
+                          "syscall"
                           : "=a" (res)
-                          : "S" (msg), "d" (msg_size)
+                          : "a"(SYS_write), "D"(STDOUT), "S" (msg), "d" (msg_size)
                           : "memory"
                           );
   }
 // */
-// *
+
+/*
+  // variant III)
+
   // assembly instructions
   {
     __asm__ __volatile__ (
