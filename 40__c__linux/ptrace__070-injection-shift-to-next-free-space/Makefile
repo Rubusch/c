@@ -19,10 +19,6 @@ RM = rm -f
 
 all: ptracer.exe rabbit.exe
 
-rabbit-modif.exe:
-	$(CC) $(CFLAGS) -c rabbit-modif.c
-	$(CC) $(CFLAGS) -o $@ rabbit-modif.o
-
 ptracer.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
@@ -33,6 +29,6 @@ rabbit.exe: $(OBJECTS)
 	@echo '$$ ./rabbit.exe & ./ptracer.exe $$(pidof rabbit.exe)'
 
 clean:
-	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit-modif.o rabbit-modif.exe *~
+	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~
 
 .PHONY: clean all
