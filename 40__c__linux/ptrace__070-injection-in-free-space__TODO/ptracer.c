@@ -112,23 +112,28 @@ long freespaceaddr(pid_t pid)
 {
   FILE *fp;
   char filename[30];
-  char line[85];
-  long addr;
-  unsigned char str[20];
+  char line[120];
+  long addr = -1;
+  char str[20];
+  char *is_found = NULL;
 
   sprintf(filename, "/proc/%d/maps", pid);
-  fp = fopen(filename, "r");
-  if (fp == NULL) {
+  if (NULL == (fp = fopen(filename, "r"))) {
     exit(EXIT_FAILURE);
   }
-  while (fgets(line, 85, fp) != NULL) {
+  while (NULL != fgets(line, 120, fp)) {
     sscanf(line, "%lx-%hhx %s", (long unsigned int*) &addr, str, str);
-    if (strcmp((char*)str, "00:00") == 0) {
+    fprintf(stderr, "XXX %s()[%d]:\tline '%s'\n", __func__, __LINE__, line);
+//    if (strcmp((char*)str, " 00:00 ") == 0) { // TODO rm
+    if (NULL != (is_found = strstr( line, " 00:00 "))) {
       break;
     }
   }
   fclose(fp);
-  return addr;
+
+  fprintf(stderr, "XXX %s()[%d]:\tis_found '%s'\n", __func__, __LINE__, (is_found)?"true":"false");
+
+  return (is_found) ? addr : -1;
 }
 
 
@@ -164,31 +169,40 @@ int main(int argc, char *argv[])
   ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
 
   // find some free space for injection
-  addr = freespaceaddr(traced_process);
+  if (0 >= (addr = freespaceaddr(traced_process))) {
+    perror("Aborting, no free space found!");
+    exit(EXIT_FAILURE);
+  }
 
   // get current instructions
+//  get_data(traced_process, addr, backup, len);
   get_data(traced_process, addr, backup, len);
 
   // inject new instructions
   put_data(traced_process, addr, insertcode, len);
+//  put_data(traced_process, regs.rip, insertcode, len);
 
   memcpy(&oldregs, &regs, sizeof(regs));
   regs.rip = addr;
 
+
+
   // write registers back
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
+
+  printf("The process stopped, Putting back the original instructions\n");
+  printf("press ENTER\n");
+  getchar();
 
   // let external process continue
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
-
   wait(NULL);
-  printf("The process stopped, Putting back the original instructions\n");
 
   // restore backuped instructions
-  put_data(traced_process, addr, backup, len);
+//  put_data(traced_process, addr, backup, len);
 
   // set registers
-  ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
+//  ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
 
   printf("Letting it continue with original flow\n");
 
