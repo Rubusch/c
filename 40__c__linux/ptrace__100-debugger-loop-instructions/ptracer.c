@@ -83,11 +83,12 @@ int main(int argc, char *argv[])
   if (0 != (pres = ptrace(PTRACE_ATTACH, tracee_pid, 0, 0))) {
     printf("Attach result %lx\n", pres);
   }
-  res = waitpid(tracee_pid, &stat, WUNTRACED);
-  if ((res != tracee_pid) || !(WIFSTOPPED(stat))) {
+
+  if ((tracee_pid != (res = waitpid(tracee_pid, &stat, WUNTRACED))) || !(WIFSTOPPED(stat))) {
     printf("Unexpected wait result res %d stat %x\n", res, stat);
     exit(EXIT_FAILURE);
   }
+
   printf("Wait result stat %x pid %d\n", stat, res);
   stat = 0;
   signo = 0;
