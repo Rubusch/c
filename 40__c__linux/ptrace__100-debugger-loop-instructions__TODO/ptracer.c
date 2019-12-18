@@ -21,7 +21,8 @@
 
 
   RESOURCES:
-  * based on a true example, Jim Blakey, http://www.secretmango.com/jimb/Whitepapers/ptrace/ptrace.html
+  * based on a true example, Jim Blakey (jdblakey@innovative-as.com),
+  http://www.secretmango.com/jimb/Whitepapers/ptrace/ptrace.html
 */
 
 
@@ -39,13 +40,13 @@
 #include <string.h>
 
 #define M_OFFSETOF(STRUCT, ELEMENT)                                            \
-  ( unsigned long int )&(( STRUCT * )NULL)->ELEMENT;
+  (unsigned long int) &( (STRUCT*) NULL)->ELEMENT;
 
 #define D_LINUXNONUSRCONTEXT 0x40000000
 
 int main(int argc, char *argv[])
 {
-  int Tpid, stat, res;
+  pid_t tracee_pid, stat, res;
   long pres;
   int signo;
   int ip, sp;
@@ -53,37 +54,39 @@ int main(int argc, char *argv[])
   int initialSP = -1;
   int initialIP = -1;
 
-  // This program needs the PID of the target process as argument.
+  // this program needs the PID of the target process as argument
   if (argv[1] == NULL) {
-    printf("Need pid of traced process\n");
-    printf("Usage: pt  pid  \n");
-    exit(1);
+    fprintf(stderr, "Usage: %s <pid>\n", argv[0]);
+    exit(EXIT_FAILURE);
   }
-  Tpid = strtoul(argv[1], NULL, 10);
-  printf("Tracing pid %d \n", Tpid);
+  tracee_pid = strtoul(argv[1], NULL, 10);
+  printf("tracing pid %d \n", tracee_pid);
 
-  // Get the offset into the user area of the IP and SP registers. We'll
-  // need this later.
-// TODO regs, to be defined by macro??
-  ipoffs = M_OFFSETOF(struct user, regs.rip);
+  // get the offset into the user area of the IP and SP registers
+  // get regs contents by dereferencing elements in global static "struct user"
+  ipoffs = (unsigned long int) &( (struct user*) NULL)->regs.rip;
+  fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - ipoffs\n", __func__, __LINE__, ipoffs);
+
+  // ...or do it as macro
   spoffs = M_OFFSETOF(struct user, regs.rsp);
+  fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - ipoffs\n", __func__, __LINE__, spoffs);
 
   // Attach to the process. This will cause the target process to become
   // the child of this process. The target will be sent a SIGSTOP. call
   // wait(2) after this to detect the child state change. We're expecting
   // the new child state to be STOPPED
-  
-  printf("Attaching to process %d\n", Tpid);
-  // TODO return value fixed
-  //	if ((ptrace(PTRACE_ATTACH, Tpid, 0, 0)) != 0) {
+
+  printf("Attaching to process %d\n", tracee_pid);
+// TODO return value fixed
+  //	if ((ptrace(PTRACE_ATTACH, tracee_pid, 0, 0)) != 0) {
   //		printf("Attach result %d\n",res);
-  if (0 != (pres = ptrace(PTRACE_ATTACH, Tpid, 0, 0))) {
+  if (0 != (pres = ptrace(PTRACE_ATTACH, tracee_pid, 0, 0))) {
     printf("Attach result %lx\n", pres);
   }
-  res = waitpid(Tpid, &stat, WUNTRACED);
-  if ((res != Tpid) || !(WIFSTOPPED(stat))) {
+  res = waitpid(tracee_pid, &stat, WUNTRACED);
+  if ((res != tracee_pid) || !(WIFSTOPPED(stat))) {
     printf("Unexpected wait result res %d stat %x\n", res, stat);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   printf("Wait result stat %x pid %d\n", stat, res);
   stat = 0;
@@ -95,10 +98,10 @@ int main(int argc, char *argv[])
     // the psw. This will cause the child to exeute just one instruction and
     // trap us again. The wait(2) catches the trap.
 
-//  if ((res = ptrace(PTRACE_SINGLESTEP, Tpid, 0, signo)) < 0) {
-    if (0 > (pres = ptrace(PTRACE_SINGLESTEP, Tpid, 0, signo))) {
+//  if ((res = ptrace(PTRACE_SINGLESTEP, tracee_pid, 0, signo)) < 0) {
+    if (0 > (pres = ptrace(PTRACE_SINGLESTEP, tracee_pid, 0, signo))) {
       perror("Ptrace singlestep error");
-      exit(1);
+      exit(EXIT_FAILURE);
     }
     res = wait(&stat);
     // The previous call to wait(2) returned the child's signal number.
@@ -111,14 +114,14 @@ int main(int argc, char *argv[])
       signo = 0;
     }
     if ((signo == SIGHUP) || (signo == SIGINT)) {
-      ptrace(PTRACE_CONT, Tpid, 0, signo);
+      ptrace(PTRACE_CONT, tracee_pid, 0, signo);
       printf("Child took a SIGHUP or SIGINT. We are done\n");
       break;
     }
     // Fetch the current IP and SP from the child's user area. Log them.
 
-    ip = ptrace(PTRACE_PEEKUSER, Tpid, ipoffs, 0);
-    sp = ptrace(PTRACE_PEEKUSER, Tpid, spoffs, 0);
+    ip = ptrace(PTRACE_PEEKUSER, tracee_pid, ipoffs, 0);
+    sp = ptrace(PTRACE_PEEKUSER, tracee_pid, spoffs, 0);
     // Checkto see where we are in the process. Using the ldd(1) utility, I
     // dumped the list of shared libraries that were required by this process.
     // This showed:
@@ -140,7 +143,7 @@ int main(int argc, char *argv[])
       printf("---- Starting LOOP IP %x SP %x ---- \n", initialIP, initialSP);
     } else {
       if ((ip == initialIP) && (sp == initialSP)) {
-        ptrace(PTRACE_CONT, Tpid, 0, signo);
+        ptrace(PTRACE_CONT, tracee_pid, 0, signo);
         printf("----- LOOP COMPLETE -----\n");
         break;
       }
@@ -152,5 +155,5 @@ int main(int argc, char *argv[])
 
   sleep(5);
 
-  return 0;
+  exit(EXIT_SUCCESS);
 }
