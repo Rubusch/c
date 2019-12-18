@@ -39,7 +39,7 @@
 #include <string.h>
 
 #define M_OFFSETOF(STRUCT, ELEMENT)                                            \
-  ( unsigned int )&(( STRUCT * )NULL)->ELEMENT;
+  ( unsigned long int )&(( STRUCT * )NULL)->ELEMENT;
 
 #define D_LINUXNONUSRCONTEXT 0x40000000
 
@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
   int ipoffs, spoffs;
   int initialSP = -1;
   int initialIP = -1;
-//  struct user u_area; // unknown
 
   // This program needs the PID of the target process as argument.
   if (argv[1] == NULL) {
