@@ -135,7 +135,7 @@ script:
   - cd 40__c__linux/ptrace__053-attach-stop-inject-reestablish-restart-detach && make && cd -
   - cd 40__c__linux/ptrace__060-injection-replace && make && cd -
   - cd 40__c__linux/ptrace__070-injection-shift-to-next-free-space && make && cd -
-#  - cd 40__c__linux/ptrace__100-debugger-loop-instructions__TODO && make && cd -
+  - cd 40__c__linux/ptrace__100-debugger-loop-instructions && make && cd -
 #  - cd 40__c__linux/ptrace__105-singlestep-snippet__FIXME && make && cd -
 #  - cd 40__c__linux/ptrace__110-debugger-watchpoint__FIXME && make && cd -
 #  - cd 40__c__linux/ptrace__120-debugger-proc__FIXME && make && cd -
