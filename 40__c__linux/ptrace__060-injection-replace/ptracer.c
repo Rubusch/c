@@ -20,13 +20,24 @@
 
   stop at the breakpoint
 
+
   ---
 
+  NOTE: error code handling of ptrace() calls are removed to make it more
+  readable, for productive code consider error code evaluation
 
-  email: L.Rubusch@gmx.ch
+  if (0 > ptrace(...)) {
+      // free resources
+      perror("something failed");
+      exit(EXIT_FAILURE);
+  }
 
-  resources: Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu
-  or p_padala@yahoo.com
+
+  AUTHOR: Lothar Rubusch, L.Rubusch@gmx.ch
+
+
+  RESOURCES:
+  * Linux Journal, Nov 30, 2002  By Pradeep Padala ppadala@cise.ufl.edu or p_padala@yahoo.com
 */
 
 #include <sys/ptrace.h>
