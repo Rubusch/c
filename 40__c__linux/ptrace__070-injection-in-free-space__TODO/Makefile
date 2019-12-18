@@ -10,22 +10,26 @@
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall #-std=c99 -pedantic
+CFLAGS += -g -Wall -std=c99 #-pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
 
 all: ptracer.exe rabbit.exe
 
+rabbit-modif.exe:
+	$(CC) $(CFLAGS) -c rabbit-modif.c
+	$(CC) $(CFLAGS) -o $@ rabbit-modif.o
+
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ ptracer.o -lm
+	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
 rabbit.exe: $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
+	$(CC) $(CFLAGS) -o $@ rabbit.o
 
 clean:
-	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~
+	$(RM) $(OBJECTS) ptracer.exe rabbit.exe rabbit-modif.o rabbit-modif.exe *~
 
 .PHONY: clean all
