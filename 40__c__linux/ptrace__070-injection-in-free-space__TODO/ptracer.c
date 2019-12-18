@@ -11,18 +11,15 @@
   backup instruction pointer, rip
 
   it is best to store the instructions in free space, when injecting, so this
-  version searches for "free space" to inject the instructions to
+  version searches for "free space" to inject
 
-  replace the current instruction with some assembled (via gdb) sequence of
-  another program which ends with a breakpoint SIGTRAP signal,
+  inject the current code to the address of the "free space"
 
-  continue the tracee rabbit.exe
+  set the rip to the "free space" and update the registers of the tracee
 
-  detach the rabbit.exe with PTRACE_DETACH
+  continue the tracee
 
-  rabbit.exe will now print "Hello XXX World" and end in a SIGTRAP
-
-  stop at the breakpoint
+  detach the tracee with PTRACE_DETACH
 
 
   ---
@@ -123,15 +120,13 @@ long freespaceaddr(pid_t pid)
   }
   while (NULL != fgets(line, 120, fp)) {
     sscanf(line, "%lx-%hhx %s", (long unsigned int*) &addr, str, str);
-    fprintf(stderr, "XXX %s()[%d]:\tline '%s'\n", __func__, __LINE__, line);
-//    if (strcmp((char*)str, " 00:00 ") == 0) { // TODO rm
+//    fprintf(stderr, "XXX %s()[%d]:\tline '%s'\n", __func__, __LINE__, line);
     if (NULL != (is_found = strstr( line, " 00:00 "))) {
       break;
     }
   }
   fclose(fp);
-
-  fprintf(stderr, "XXX %s()[%d]:\tis_found '%s'\n", __func__, __LINE__, (is_found)?"true":"false");
+//  fprintf(stderr, "XXX %s()[%d]:\tis_found '%s'\n", __func__, __LINE__, (is_found)?"true":"false");
 
   return (is_found) ? addr : -1;
 }
@@ -141,8 +136,7 @@ int main(int argc, char *argv[])
 {
   pid_t traced_process;
   struct user_regs_struct oldregs, regs;
-  unsigned char insertcode[] = { 0xeb, 0x19, 0x5e, 0x48, 0xc7, 0xc0, 0x01, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc7, 0x02, 0x00, 0x00, 0x00, 0x48, 0xc7, 0xc2, 0x12, 0x00, 0x00, 0x00, 0x0f, 0x05, 0xcc, 0xe8, 0xe2, 0xff, 0xff, 0xff, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x58, 0x58, 0x58, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x00 };
-  int len = sizeof(insertcode);
+  int len = 42;
   unsigned char backup[len];
   long addr;
 
@@ -165,38 +159,27 @@ int main(int argc, char *argv[])
   ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
   wait(NULL);
 
-  // get process's registers
+  // get process's registers and *backup*
   ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
-  fprintf(stderr, "XXX %s()[%d]:\t'0x%08lx' - regs.rip\n", __func__, __LINE__, (long)regs.rip);
+  memcpy(&oldregs, &regs, sizeof(regs));
+
+  fprintf(stderr, "XXX %s()[%d]:\t'0x%016lx' - regs.rip (original next instruction)\n", __func__, __LINE__, (long)regs.rip);
 
   // find some free space for injection
   if (0 >= (addr = freespaceaddr(traced_process))) {
     perror("Aborting, no free space found!");
     exit(EXIT_FAILURE);
   }
-  fprintf(stderr, "XXX %s()[%d]:\t'0x%08lx' - addr\n", __func__, __LINE__, (long)addr);
-  
-  memcpy(&oldregs, &regs, sizeof(regs));
+  fprintf(stderr, "XXX %s()[%d]:\t'0x%016lx' - addr (free address, heap)\n", __func__, __LINE__, (long)addr);
+
+  // get current instructions and *backup*
+  get_data(traced_process, regs.rip, backup, len);
+
+  // modify and write registers back
   regs.rip = addr;
-  
+  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
 
-  // get current instructions
-  get_data(traced_process, addr, backup, len);
-//  get_data(traced_process, regs.rip, backup, len);
-
-  // inject new instructions
-  put_data(traced_process, addr, insertcode, len);
-//  put_data(traced_process, regs.rip, insertcode, len);
-
-//  memcpy(&oldregs, &regs, sizeof(regs));
-//  regs.rip = addr;
-
-
-
-  // write registers back
-//  ptrace(PTRACE_SETREGS, traced_process, NULL, &regs);
-
-  printf("The process stopped, Putting back the original instructions\n");
+  printf("The process stopped\n");
   printf("press ENTER\n");
   getchar();
 
@@ -204,14 +187,15 @@ int main(int argc, char *argv[])
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
   wait(NULL);
 
-/*  // restore backup
-  printf("Letting it continue with original flow\n");
+  // restore backup instructions and register state at addr (shifted address)
+  fprintf(stderr, "Let's shift the next instruction to addr (0x%016lx) and let it continue there..\n", (long)addr);
   put_data(traced_process, addr, backup, len);
   ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
-// */
 
   // detach process
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
+  sleep(3);
+  puts("READY.");
 
   return 0;
 }
