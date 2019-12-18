@@ -167,23 +167,29 @@ int main(int argc, char *argv[])
 
   // get process's registers
   ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
+  fprintf(stderr, "XXX %s()[%d]:\t'0x%08lx' - regs.rip\n", __func__, __LINE__, (long)regs.rip);
 
   // find some free space for injection
   if (0 >= (addr = freespaceaddr(traced_process))) {
     perror("Aborting, no free space found!");
     exit(EXIT_FAILURE);
   }
+  fprintf(stderr, "XXX %s()[%d]:\t'0x%08lx' - addr\n", __func__, __LINE__, (long)addr);
+  
+  memcpy(&oldregs, &regs, sizeof(regs));
+  regs.rip = addr;
+  
 
   // get current instructions
-//  get_data(traced_process, addr, backup, len);
   get_data(traced_process, addr, backup, len);
+//  get_data(traced_process, regs.rip, backup, len);
 
   // inject new instructions
   put_data(traced_process, addr, insertcode, len);
 //  put_data(traced_process, regs.rip, insertcode, len);
 
-  memcpy(&oldregs, &regs, sizeof(regs));
-  regs.rip = addr;
+//  memcpy(&oldregs, &regs, sizeof(regs));
+//  regs.rip = addr;
 
 
 
@@ -198,13 +204,11 @@ int main(int argc, char *argv[])
   ptrace(PTRACE_CONT, traced_process, NULL, NULL);
   wait(NULL);
 
-  // restore backuped instructions
-//  put_data(traced_process, addr, backup, len);
-
-  // set registers
-//  ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
-
+/*  // restore backup
   printf("Letting it continue with original flow\n");
+  put_data(traced_process, addr, backup, len);
+  ptrace(PTRACE_SETREGS, traced_process, NULL, &oldregs);
+// */
 
   // detach process
   ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
