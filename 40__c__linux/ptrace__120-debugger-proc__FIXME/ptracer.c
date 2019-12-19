@@ -129,7 +129,6 @@ main(int argc, char *argv[])
   int goodaddr;
   int goodread;
   int srchlen;
-  int j;
 
   // Get arguments. Since this is an example program, I won't validate them
   if (argv[1] == NULL || argv[2] == NULL) {
@@ -193,10 +192,11 @@ main(int argc, char *argv[])
         printf("READ address %x RANGE START\n", addr);
         goodread = 1;
       }
-      for (j = 0; j < 1024; j++) {
-        if (memcmp(&buff[j], srchstr, srchlen) == 0) {
-          printf("*****Pattern found %x\n", addr + j);
-          buff[j] = 'A';
+      int jdx;
+      for (jdx = 0; jdx < 1024; jdx++) {
+        if (memcmp(&buff[jdx], srchstr, srchlen) == 0) {
+          printf("*****Pattern found %x\n", addr + jdx);
+          buff[jdx] = 'A';
         }
       }
 
