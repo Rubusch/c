@@ -10,21 +10,22 @@
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
 CC = gcc
-CFLAGS += -g -Wall #-std=c99 -pedantic
+CFLAGS += -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
-
+	$(CC) $(CFLAGS) -c $<
 
 all: ptracer.exe rabbit.exe
 
 ptracer.exe: $(OBJECTS)
-	$(CC) -o $@ ptracer.o -lm
+	$(CC) $(CFLAGS) -o $@ ptracer.o -lm
 
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -lm
-
+	@echo ""
+	@echo "start the example by:"
+	@echo '$$ ./rabbit.exe & ./ptracer.exe $$(pidof rabbit.exe) "string to search for "'
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~

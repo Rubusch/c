@@ -13,9 +13,9 @@
 int main(int argc, char **argv)
 {
   int cnt;
-  for (cnt = 0; cnt < 10; ++cnt) {
+  sleep(1);
+  for (cnt = 0; cnt < 999999999; ++cnt) {
     printf("counter: '%d'\n", cnt);
-    sleep(3);
   }
   return 0;
 }

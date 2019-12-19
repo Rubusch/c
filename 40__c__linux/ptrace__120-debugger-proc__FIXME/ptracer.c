@@ -102,7 +102,9 @@
 */
 
 
-
+#define POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 700
+#define _GNU_SOURCE 1
 
 #include <fcntl.h>
 #include <sys/ptrace.h>
@@ -113,11 +115,14 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #define D_LINUX 1
 
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 
 {
   int tracee_pid;
@@ -153,7 +158,7 @@ main(int argc, char *argv[])
   // file is /proc/PID/mem while under Solaris this is /proc/PID/as
   // Also, even though we open this RDWR, Linux will not allow us to write
   // to it.
-  sprintf(buff, "/proc/%d/as", tracee_pid);
+  sprintf(buff, "/proc/%d/mem", tracee_pid);
   printf("procexa:opening [%s]\n", buff);
   if ((pfd = open(buff, O_RDWR)) <= 0) {
     perror("Error opening /proc/PID/mem file");
@@ -199,14 +204,6 @@ main(int argc, char *argv[])
           buff[jdx] = 'A';
         }
       }
-
-      // If NOT Linux, then write the modified buffer back to the address space
-#ifndef D_LINUX
-      lseek(pfd, addr, SEEK_SET);
-      if (write(pfd, buff, 1024) <= 0) {
-        printf("Nope on write\n");
-      }
-#endif
     }
   }
   printf("Stopped at address %x\n", addr);
