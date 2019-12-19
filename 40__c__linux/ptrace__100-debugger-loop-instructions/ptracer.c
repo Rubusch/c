@@ -2,7 +2,7 @@
   debugging with ptrace
 
 
-  show instructions of another program in infinite loop
+  show instruction pointer and stack pointer of another program in infinite loop
 
   ---
 
@@ -39,15 +39,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <syscall.h>
+
 #define M_OFFSETOF(STRUCT, ELEMENT)                                            \
   (unsigned long int) &( (STRUCT*) NULL)->ELEMENT;
 
+// used for filtering (turned off)
 #define D_LINUXNONUSRCONTEXT 0x40000000
 
 int main(int argc, char *argv[])
 {
   pid_t tracee_pid, stat, res;
   long pres;
+  long syscall;
   int signo;
   int ip, sp;
   int ipoffs, spoffs;
@@ -92,38 +96,48 @@ int main(int argc, char *argv[])
   printf("Wait result stat %x pid %d\n", stat, res);
   stat = 0;
   signo = 0;
+
   // Loop now, tracing the child
+  sleep(1);
 
   while (1) {
     // Ok, now we will continue the child, but set the single step bit in
     // the psw. This will cause the child to exeute just one instruction and
     // trap us again. The wait(2) catches the trap.
-
-//  if ((res = ptrace(PTRACE_SINGLESTEP, tracee_pid, 0, signo)) < 0) {
     if (0 > (pres = ptrace(PTRACE_SINGLESTEP, tracee_pid, 0, signo))) {
       perror("Ptrace singlestep error");
       exit(EXIT_FAILURE);
     }
+
     res = wait(&stat);
     // The previous call to wait(2) returned the child's signal number.
     // If this is a SIGTRAP, then we set it to zero (this does not get
     // passed on to the child when we PTRACE_CONT or PTRACE_SINGLESTEP
-    // it).  If it is the SIGHUP, then PTRACE_CONT the child and we
-    // can exit.
-
+    // it).
     if ((signo = WSTOPSIG(stat)) == SIGTRAP) {
+      fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - signo (SIGTRAP)\n", __func__, __LINE__, signo);
       signo = 0;
     }
+
+    // If it is the SIGHUP, then PTRACE_CONT the child and we can exit.
     if ((signo == SIGHUP) || (signo == SIGINT)) {
       ptrace(PTRACE_CONT, tracee_pid, 0, signo);
+      fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - signo (SIGHUP or SIGINT)\n", __func__, __LINE__, signo);
       printf("Child took a SIGHUP or SIGINT. We are done\n");
       break;
     }
-    // Fetch the current IP and SP from the child's user area. Log them.
 
+    printf("press ENTER\n");
+    getchar();
+
+    // Fetch the current IP and SP from the child's user area. Log them.
+    // Get IP and SP either by taking the value by a corresponding offset
+    // (as here), or get them directly as shown below. There can be a
+    // difference in precision.
     ip = ptrace(PTRACE_PEEKUSER, tracee_pid, ipoffs, 0);
     sp = ptrace(PTRACE_PEEKUSER, tracee_pid, spoffs, 0);
-    // Checkto see where we are in the process. Using the ldd(1) utility, I
+
+    // Check to see where we are in the process. Using the ldd(1) utility, I
     // dumped the list of shared libraries that were required by this process.
     // This showed:
     //
@@ -135,26 +149,40 @@ int main(int argc, char *argv[])
     // some sort of kernel state. We really don't care about these addresses
     // so we'll skip 'em. Also, nm(1) showed that all the local symbols
     // we would be interested in start in the 0x08000000 range.
+    //
+    // NOTE: this "filtering" is just an upgrade, depending if the addresses
+    // are still valid for contemporary x86_64
+    // NOTE: "over" is performed by a binary and operation
+/*
     if (ip & D_LINUXNONUSRCONTEXT) {
+      fprintf(stderr, "SKIPPED IP 0x%016lx\n", (long)ip);
       continue;
     }
+// */
+
     if (initialIP == -1) {
       initialIP = ip;
       initialSP = sp;
-      printf("---- Starting LOOP IP %x SP %x ---- \n", initialIP, initialSP);
+      fprintf(stderr, "---- Starting LOOP IP %x SP %x ---- \n", initialIP, initialSP);
     } else {
       if ((ip == initialIP) && (sp == initialSP)) {
         ptrace(PTRACE_CONT, tracee_pid, 0, signo);
-        printf("----- LOOP COMPLETE -----\n");
+        fprintf(stderr, "----- LOOP COMPLETE -----\n");
         break;
       }
     }
-    printf("Stat %x IP %x SP %x  Last signal %d\n", stat, ip, sp, signo);
+    syscall = ptrace(PTRACE_PEEKUSER, tracee_pid, 8 * ORIG_RAX, 0);
+    fprintf(stderr, "Stat 0x%x IP 0x%x [0x%016lx] SP x0%x [0x%016lx]  Last syscall: '%s'\n"
+           , stat
+           , ip
+           , ptrace(PTRACE_PEEKUSER, tracee_pid, 8 * RIP, 0)
+           , sp
+           , ptrace(PTRACE_PEEKUSER, tracee_pid, 8 * RSP, 0)
+           , syscall == SYS_restart_syscall ? "SYS_restart_syscall" : (syscall == 0xffffffffffffffff ? "unknown" : "SYS_something...")
+            );
     // If we're back to where we started tracing the loop, then exit
   }
   printf("Debugging complete\n");
-
-  sleep(5);
 
   exit(EXIT_SUCCESS);
 }

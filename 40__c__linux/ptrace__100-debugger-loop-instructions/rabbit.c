@@ -12,9 +12,9 @@
 int main(int argc, char **argv)
 {
   int cnt;
-  for (cnt = 0; cnt < 3; ++cnt) {
+  sleep(1);
+  for (cnt = 0; cnt < 99999999; ++cnt) {
     printf("counter: '%d'\n", cnt);
-    sleep(1);
   }
   return 0;
 }
