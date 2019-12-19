@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
   // ...or do it as macro
   spoffs = M_OFFSETOF(struct user, regs.rsp);
-  fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - ipoffs\n", __func__, __LINE__, spoffs);
+  fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - spoffs\n", __func__, __LINE__, spoffs);
 
   // Attach to the process. This will cause the target process to become
   // the child of this process. The target will be sent a SIGSTOP. call
@@ -81,9 +81,6 @@ int main(int argc, char *argv[])
   // the new child state to be STOPPED
 
   printf("Attaching to process %d\n", tracee_pid);
-// TODO return value fixed
-  //	if ((ptrace(PTRACE_ATTACH, tracee_pid, 0, 0)) != 0) {
-  //		printf("Attach result %d\n",res);
   if (0 != (pres = ptrace(PTRACE_ATTACH, tracee_pid, 0, 0))) {
     printf("Attach result %lx\n", pres);
   }
@@ -122,8 +119,7 @@ int main(int argc, char *argv[])
     // If it is the SIGHUP, then PTRACE_CONT the child and we can exit.
     if ((signo == SIGHUP) || (signo == SIGINT)) {
       ptrace(PTRACE_CONT, tracee_pid, 0, signo);
-      fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - signo (SIGHUP or SIGINT)\n", __func__, __LINE__, signo);
-      printf("Child took a SIGHUP or SIGINT. We are done\n");
+      fprintf(stderr, "DEBUG %s()[%d]:\t0x%016x - signo (SIGHUP or SIGINT). Child took a SIGHUP or SIGINT. We are done\n", __func__, __LINE__, signo);
       break;
     }
 
