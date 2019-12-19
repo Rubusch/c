@@ -3,7 +3,6 @@
 
   author: Lothar Rubusch
   email: L.Rubusch@gmx.ch
-  original: Linux Journal, Oct 31, 2002  By Pradeep Padala
  */
 
 #include <stdio.h> /* printf() */
@@ -14,7 +13,7 @@ int main(int argc, char **argv)
 {
   int cnt;
   sleep(1);
-  for (cnt = 0; cnt < 999999999; ++cnt) {
+  for (cnt = 0; cnt < 999999; ++cnt) {
     printf("counter: '%d'\n", cnt);
   }
   return 0;

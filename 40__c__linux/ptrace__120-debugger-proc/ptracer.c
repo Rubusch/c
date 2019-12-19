@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 {
   int tracee_pid;
   int pfd;
-  char buff[1024];
+  char buf[1024];
   char *srchstr;
   char *eptr;
   unsigned int addr;
@@ -135,33 +135,40 @@ int main(int argc, char *argv[])
   int goodread;
   int srchlen;
 
-  // Get arguments. Since this is an example program, I won't validate them
   if (argv[1] == NULL || argv[2] == NULL) {
     fprintf(stderr, "Usage: %s <pid> <string>\n", argv[0]);
     exit(EXIT_FAILURE);
   }
+  fprintf(stderr, "DEBUG %s()[%d]:\targv[0]: '%s', argv[1]: '%s', argv[2]: '%s'\n"
+          , __func__, __LINE__, argv[0], argv[1], argv[2]);
+
   tracee_pid = strtoul(argv[1], &eptr, 10);
-  srchstr = ( char * )strdup(argv[2]);
-  srchlen = strlen(srchstr);
-  printf("readproc: Tracing PID %d for string [%s] len %d\n"
+  srchlen = sizeof(argv[2]);
+  srchstr = (char*) strdup(argv[2]); // note: strdup() is open source!!!
+
+  printf("readproc: Tracing PID %d for string '%s', len %d\n"
          , tracee_pid, srchstr, srchlen);
 
   // In order to read /proc/PID/mem from this process, I have to have already
-  // stopped it via Ptrace(). (This is not documented anywhere, by the
+  // stopped it via ptrace(). (This is not documented anywhere, by the
   // way). Anyway, this will leave the process in a STOPPED state. We'll
   // start it again in a minute...
-  if ((ptrace(PTRACE_ATTACH, tracee_pid, 0, 0)) != 0) {
+  if (0 != (ptrace(PTRACE_SEIZE, tracee_pid, NULL, NULL))) {
     printf("procexa: Attached to process %d\n", tracee_pid);
+    free(srchstr);
+    exit(EXIT_FAILURE);
   }
+  ptrace(PTRACE_INTERRUPT, tracee_pid, NULL, NULL);
 
   // Create the string and open the proc mem file. Note under Linux this
   // file is /proc/PID/mem while under Solaris this is /proc/PID/as
-  // Also, even though we open this RDWR, Linux will not allow us to write
+  // Also, even though we open this RD/WR, Linux will not allow us to write
   // to it.
-  sprintf(buff, "/proc/%d/mem", tracee_pid);
-  printf("procexa:opening [%s]\n", buff);
-  if ((pfd = open(buff, O_RDWR)) <= 0) {
+  sprintf(buf, "/proc/%d/mem", tracee_pid);
+  printf("procexa:opening [%s]\n", buf);
+  if ((pfd = open(buf, O_RDWR)) <= 0) {
     perror("Error opening /proc/PID/mem file");
+    free(srchstr);
     exit(EXIT_FAILURE);
   }
 
@@ -171,40 +178,51 @@ int main(int argc, char *argv[])
   // ranges.
   goodaddr = 0;
   goodread = 0;
-  for (addr = 0; addr < ( unsigned int )0xf0000000; addr += 1024) {
+  for (addr = 0; addr < (unsigned int) 0xf0000000; addr += 1024) {  // note: address needs to be adjusted
     if (lseek(pfd, addr, SEEK_SET) != addr) {
       if (goodaddr == 1) {
-        printf("Address: %x RANGE END\n", addr);
+        fprintf(stderr, "Address: 0x%x RANGE END\n", addr);
         goodaddr = 0;
       }
       continue;
     } else {
       if (goodaddr == 0) {
-        printf("Address %x RANGE START\n", addr);
+        fprintf(stderr, "Address 0x%x RANGE START\n", addr);
         goodaddr = 1;
       }
     }
 
     // Read a 1k buffer and search it for the supplied text string
-    if (read(pfd, buff, 1024) <= 0) {
+    if (read(pfd, buf, 1024) <= 0) {
       if (goodread == 1) {
-        printf("READ address %x RANGE END\n", addr);
+        printf("READ address 0x%x RANGE END\n", addr);
         goodread = 0;
       }
       continue;
     } else {
       if (goodread == 0) {
-        printf("READ address %x RANGE START\n", addr);
+        printf("READ address 0x%x RANGE START\n", addr);
         goodread = 1;
       }
       int jdx;
       for (jdx = 0; jdx < 1024; jdx++) {
-        if (memcmp(&buff[jdx], srchstr, srchlen) == 0) {
+        if (memcmp(&buf[jdx], srchstr, srchlen) == 0) {
           printf("*****Pattern found %x\n", addr + jdx);
-          buff[jdx] = 'A';
+          buf[jdx] = 'A';
         }
       }
     }
   }
-  printf("Stopped at address %x\n", addr);
+
+  printf("Stopped at address %x, %s\n", addr, goodread ? "pattern was found" : "nothing was found");
+
+  printf("press ENTER\n");
+  getchar();
+
+  // let child continue, detach, free..
+  ptrace(PTRACE_CONT, tracee_pid, NULL, NULL);
+  ptrace(PTRACE_DETACH, tracee_pid, NULL, NULL);
+  free(srchstr);
+
+  return 0;
 }
