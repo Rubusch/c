@@ -138,7 +138,7 @@ script:
   - cd 40__c__linux/ptrace__100-debugger-loop-instructions && make && cd -
 #  - cd 40__c__linux/ptrace__105-singlestep-snippet__FIXME && make && cd -
   - cd 40__c__linux/ptrace__110-debugger-watchpoint && make && cd -
-#  - cd 40__c__linux/ptrace__120-debugger-proc__FIXME && make && cd -
+  - cd 40__c__linux/ptrace__120-debugger-proc && make && cd -
 #  - cd 40__c__linux/ptrace__130-debugger-singlestep-multithreading__FIXME && make && cd -
   - cd 40__c__linux/asm__00-hello-world && make && cd -
   - cd 40__c__linux/asm__01-add-numbers && make && cd -
