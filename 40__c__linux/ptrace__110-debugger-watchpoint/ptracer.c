@@ -21,7 +21,7 @@
   of all code sections. Objdump(1) comes as part of the GCC toolset, but may
   not be available on all systems
 
-  
+  examples:
 
   $ nm ./rabbit.exe
     0000000000004038 B __bss_start
