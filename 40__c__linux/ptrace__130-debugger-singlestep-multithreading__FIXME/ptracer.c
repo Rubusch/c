@@ -56,9 +56,11 @@
 #endif
 
 
-/* Similar to getline(), except gets process pid task IDs.
- * Returns positive (number of TIDs in list) if success,
- * otherwise 0 with errno set. */
+/*
+  similar to getline(), except gets process pid task IDs
+  returns positive (number of TIDs in list) if success, otherwise 0 with errno
+  set
+ */
 size_t get_tids(pid_t **const listptr, size_t *const sizeptr, const pid_t pid)
 {
   char dirname[64];
@@ -102,17 +104,17 @@ size_t get_tids(pid_t **const listptr, size_t *const sizeptr, const pid_t pid)
       break;
     }
 
-    /* Parse TIDs. Ignore non-numeric entries. */
+    // Parse TIDs. Ignore non-numeric entries
     if (sscanf(ent->d_name, "%d%c", &value, &dummy) != 1) {
       continue;
     }
 
-    /* Ignore obviously invalid entries. */
+    // Ignore obviously invalid entries
     if (value < 1) {
       continue;
     }
 
-    /* Make sure there is room for another TID. */
+    // Make sure there is room for another TID
     if (used >= size) {
       size = (used | 127) + 128;
       list = realloc(list, size * sizeof list[0]);
@@ -125,7 +127,7 @@ size_t get_tids(pid_t **const listptr, size_t *const sizeptr, const pid_t pid)
       *sizeptr = size;
     }
 
-    /* Add to list. */
+    // Add to list
     list[used++] = ( pid_t )value;
   }
   if (errno) {
@@ -139,13 +141,13 @@ size_t get_tids(pid_t **const listptr, size_t *const sizeptr, const pid_t pid)
     return ( size_t )0;
   }
 
-  /* None? */
+  // None?
   if (used < 1) {
     errno = ESRCH;
     return ( size_t )0;
   }
 
-  /* Make sure there is room for a terminating (pid_t)0. */
+  // Make sure there is room for a terminating (pid_t)0
   if (used >= size) {
     size = used + 1;
     list = realloc(list, size * sizeof list[0]);
@@ -157,7 +159,7 @@ size_t get_tids(pid_t **const listptr, size_t *const sizeptr, const pid_t pid)
     *sizeptr = size;
   }
 
-  /* Terminate list; done. */
+  // Terminate list; done
   list[used] = ( pid_t )0;
   errno = 0;
   return used;
