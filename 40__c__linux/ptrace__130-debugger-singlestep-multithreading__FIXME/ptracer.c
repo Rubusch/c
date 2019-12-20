@@ -224,18 +224,18 @@ void show_registers(FILE *const out, pid_t tid, const char *const note)
 
 #if (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 64
   if (note && *note) {
-    fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx. %s\n", ( int )tid,
-            regs.rip, regs.rsp, note);
+    fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx. %s\n", (int) tid,
+           (long)regs.rip, (long)regs.rsp, note);
   } else {
-    fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx.\n", ( int )tid, regs.rip,
-            regs.rsp);
+    fprintf(out, "Task %d: RIP=0x%016lx, RSP=0x%016lx.\n", (int)tid,
+            (long)regs.rip, (long)regs.rsp);
   }
 #elif (defined(__x86_64__) || defined(__i386__)) && __WORDSIZE == 32
   if (note && *note) {
-    fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx. %s\n", ( int )tid,
+    fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx. %s\n", (int)tid,
             regs.eip, regs.esp, note);
   } else {
-    fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx.\n", ( int )tid, regs.eip,
+    fprintf(out, "Task %d: EIP=0x%08lxx, ESP=0x%08lx.\n", (int) tid, regs.eip,
             regs.esp);
   }
 #endif

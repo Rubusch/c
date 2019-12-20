@@ -21,6 +21,9 @@ ptracer.exe: $(OBJECTS)
 
 rabbit.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ rabbit.o -pthread
+	@echo ""
+	@echo "start the example by:"
+	@echo '$$ ./ptracer.exe ./rabbit.exe &'
 
 clean:
 	$(RM) $(OBJECTS) ptracer.exe rabbit.exe *~
