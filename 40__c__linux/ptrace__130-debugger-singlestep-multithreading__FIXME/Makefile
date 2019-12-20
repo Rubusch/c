@@ -3,9 +3,6 @@
 ## @author: Lothar Rubusch
 ## @email: L.Rubusch@gmx.ch
 ## @license: GPLv3 2013
-##
-## use -O, -O1, -O2 for optimization
-
 
 SOURCE = ptracer.c rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
@@ -14,7 +11,7 @@ CFLAGS += -W -Wall -O3 -fomit-frame-pointer
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
 
 all: ptracer.exe rabbit.exe
