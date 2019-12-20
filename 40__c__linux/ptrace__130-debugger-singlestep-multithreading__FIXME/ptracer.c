@@ -1,10 +1,9 @@
 /*
-  example of debugging multithreaded application
-  [example was taken from forum post, and slightly adapted]
+  debugging multithreaded application
 
 
-  this nice piece of ptrace usage is trying to apply ptrace on a thread basis
-  for multithreaded programs
+  this snippet based on a true example, applies ptrace on a thread basis for
+  multithreaded programs
 
 
   Compile both using e.g.
@@ -51,9 +50,11 @@
 #include <sys/user.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
 #ifndef SINGLESTEPS
 #define SINGLESTEPS 10
 #endif
+
 
 /* Similar to getline(), except gets process pid task IDs.
  * Returns positive (number of TIDs in list) if success,
@@ -182,6 +183,7 @@ static int wait_process(const pid_t pid, int *const statusptr)
 
   return errno = 0;
 }
+
 
 static int continue_process(const pid_t pid, int *const statusptr)
 {
