@@ -27,13 +27,15 @@
   obtain the pid, e.g. 24275
   $ kill -STOP 24275
 
+  ---
 
-  author: Lothar Rubusch
-  email: L.Rubusch@gmx.ch
 
-  original version: adapted from stackoverflow,
-     http://stackoverflow.com/questions/18577956/how-to-use-ptrace-to-get-a-consistent-view-of-multiple-threads
-     By "Nominal Animal" - original author
+  AUTHOR: Lothar Rubusch, (L.Rubusch@gmx.ch)
+
+
+  RESOURCES:
+  * based on a true example of "Nominal Animal" on StackOverflow,
+    http://stackoverflow.com/questions/18577956/how-to-use-ptrace-to-get-a-consistent-view-of-multiple-threads
 */
 
 
