@@ -293,23 +293,23 @@ int main(int argc, char *argv[])
 
   while (1) {
 
-    /* Wait for a child event. */
+    // Wait for a child event
     if (wait_process(child, &status)) {
       break;
     }
 
-    /* Exited? */
+    // Exited?
     if (WIFEXITED(status) || WIFSIGNALED(status)) {
       errno = 0;
       break;
     }
 
-    /* At this point, only stopped events are interesting. */
+    // At this point, only stopped events are interesting
     if (!WIFSTOPPED(status)) {
       continue;
     }
 
-    /* Obtain task IDs. */
+    // Obtain task IDs
     tids = get_tids(&tid, &tids_max, child);
     if (!tids) {
       break;
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
     printf("Process %d has %d tasks,", ( int )child, ( int )tids);
     fflush(stdout);
 
-    /* Attach to all tasks. */
+    // Attach to all tasks
     for (t = 0; t < tids; t++) {
       do {
         r = ptrace(PTRACE_ATTACH, tid[t], ( void * )0, ( void * )0);
@@ -331,14 +331,13 @@ int main(int argc, char *argv[])
             r = ptrace(PTRACE_DETACH, tid[t], ( void * )0, ( void * )0);
           } while (r == -1L &&
                    (errno == EBUSY || errno == EFAULT || errno == ESRCH));
-          /*
-            You see, most ptrace commands are only allowed when the task is
-            stopped. However, the task is not stopped when it is still
-            completing e.g. a single-step command. Thus, using the above loop --
-            perhaps adding a millisecond nanosleep or similar to avoid wasting
-            CPU -- makes sure the previous ptrace command has completed (and
-            thus the task stopped) before we try to supply the new one.
-           */
+
+       // You see, most ptrace commands are only allowed when the task is
+       // stopped. However, the task is not stopped when it is still
+       // completing e.g. a single-step command. Thus, using the above loop --
+       // perhaps adding a millisecond nanosleep or similar to avoid wasting
+       // CPU -- makes sure the previous ptrace command has completed (and
+       // thus the task stopped) before we try to supply the new one.
         }
         tids = 0;
         errno = saved_errno;
@@ -362,7 +361,7 @@ int main(int argc, char *argv[])
     printf(" attached to all.\n\n");
     fflush(stdout);
 
-    /* Dump the registers of each task. */
+    // Dump the registers of each task
     for (t = 0; t < tids; t++) {
       show_registers(stdout, tid[t], "");
     }
@@ -385,7 +384,7 @@ int main(int argc, char *argv[])
       }
     }
 
-    /* Detach from all tasks. */
+    // Detach from all tasks
     for (t = 0; t < tids; t++) {
       do {
         r = ptrace(PTRACE_DETACH, tid[t], ( void * )0, ( void * )0);
