@@ -1,6 +1,9 @@
 /*
   debugging multithreaded application
 
+  THIS IS JUST A SNIPPET AND NOT TESTED [anymore]
+  (due to a missing valid x86/32 platform and my patience)
+
 
   this snippet based on a true example, applies ptrace on a thread basis for
   multithreaded programs
