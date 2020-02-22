@@ -1,27 +1,22 @@
 # Makefile
-#
-#
-
 SOURCE = main.c dl_list.c lib/consoleinput.c
 HEADERS = dl_list.h lib/consoleinput.h
-OBJECTS = ${SOURCE:.c=.o}
-
+TARGET = dl_list.exe
+OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -std=c99 -pedantic -Werror
 RM = rm -f
 
 .c.o:
-	${CC} -o $@ -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -o $@ -c $<
 
-dl_list.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: dl_list.exe
+all: $(TARGET)
 
 .PHONY: clean
 
-clean: 
-	${RM} dl_list.exe *~ *.o ./lib/*~ ./lib/*.o core
-
-
+clean:
+	$(RM) $(TARGET) *~ *.o ./lib/*~ ./lib/*.o core
