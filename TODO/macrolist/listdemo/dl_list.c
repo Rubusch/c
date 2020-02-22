@@ -59,11 +59,13 @@ int appendelement(const char *data, const unsigned int data_size)
 
   // init
   if (0 != init(tmp, data, data_size)) {
+    discard(&tmp);
     return -1;
   }
 
   // append
   if (0 != append(tmp)) {
+    discard(&tmp);
     return -1;
   }
 
