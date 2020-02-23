@@ -215,7 +215,6 @@ int removeelement(const char *data, const unsigned int data_size)
 
   the following section are functions internally used in the list
 
-//
 ******************************************************************************/
 
 
@@ -224,17 +223,17 @@ int removeelement(const char *data, const unsigned int data_size)
 //*/
 int printlist()
 {
-  printf("content: ");
+  printf("content:\n\n\tfirst <=> ");
   element_t *tmp = first;
   if (NULL == tmp) {
-    printf(" -\n");
+    printf("NULL\n\n");
     return 0;
   }
   while (tmp) {
-    printf("%s  ", tmp->data);
+    printf("'%s' <=> ", tmp->data);
     tmp = tmp->next;
   }
-  printf("\n");
+  printf("NULL\n\n");
 
   return 0;
 }

@@ -82,61 +82,61 @@ int main()
       puts("create list (1)");
       readstring(ptr_data, strsize, "Enter some text as data content.");
       if (0 == appendelement(ptr_data, strsize)) {
-        printlist();
         puts("Ok.");
       } else {
         puts("Failed.");
       }
+      printlist();
 
     } else if (iSelect == 2) {
       puts("append element (2)");
       readstring(ptr_data, strsize, "Enter some text as data content.");
       if (0 == appendelement(ptr_data, strsize)) {
-        printlist();
         puts("Ok.");
       } else {
         puts("Failed.");
       }
+      printlist();
 
     } else if (iSelect == 3) {
       puts("prepend element (3)");
       readstring(ptr_data, strsize, "Enter some text as data content.");
       if (0 == insertelement(NULL, 0, ptr_data, strsize)) {
-        printlist();
         puts("Ok.");
       } else {
         puts("Failed.");
       }
+      printlist();
 
     } else if (iSelect == 4) {
       puts("insert element (4)");
       readstring(ptr_data, strsize, "Enter some text as data content.");
       readstring(ptr_prev_data, strsize, "After which element to place?");
       if (0 == insertelement(ptr_prev_data, strsize, ptr_data, strsize)) {
-        printlist();
         puts("Ok.");
       } else {
         puts("Failed.");
       }
+      printlist();
 
     } else if (iSelect == 5) {
       puts("delete an element (5)");
       readstring(ptr_data, strsize, "Enter some text as data content.");
       if (0 == removeelement(ptr_data, strsize)) {
-        printlist();
         puts("Ok.");
       } else {
         puts("Failed.");
       }
+      printlist();
 
     } else if (iSelect == 6) {
       puts("delete list (6)");
       if (0 == removeall()) {
-        printlist();
         puts("Ok.");
       } else {
         puts("Failed.");
       }
+      printlist();
 
     } else if (iSelect == 7) {
       puts("quit (7)");
