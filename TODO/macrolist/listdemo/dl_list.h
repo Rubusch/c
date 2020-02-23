@@ -9,6 +9,8 @@
                         \next->NULL
 //*/
 
+// TODO tests tests and tests... 
+
 #ifndef DOUBLE_LINKED_LIST
 #define DOUBLE_LINKED_LIST
 
@@ -23,9 +25,6 @@ typedef struct element {
   struct element *prev;
   char *data;
 } element_t;
-
-
-
 
 // internal usage
 static element_t *find(const char *, const unsigned int);
