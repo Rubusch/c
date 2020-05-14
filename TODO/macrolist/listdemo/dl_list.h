@@ -15,18 +15,17 @@
 typedef struct element {
   struct element *next;
   char data[DATASIZ];
-} element_t;
+} elements_t;
 
-static element_t *first = NULL;
-static element_t *last = first;
-
+static elements_t *first = NULL;
+static elements_t *last = NULL;
 
 /* append at the end of list */
-static int append(const char data[DATASIZ])
+static int elements__append(const char data[DATASIZ])
 {
-	element_t *elem;
+	elements_t *elem;
 
-	if (!elem = alloc(sizeof(*elem)))
+	if (NULL == (elem = malloc(sizeof(*elem))))
 		return -1;
 
 	elem->next = NULL;
@@ -43,16 +42,28 @@ static int append(const char data[DATASIZ])
 }
 
 /* remove at the specified position */
-static int discard(element_t **elem)
+static int elements__remove(const char data[DATASIZ])
+{
+	if (!first)
+		return -1;
+
+	
+	// TODO
+	return 0;
+}
+
+static int elements__removeall()
 {
 	// TODO
 	return 0;
 }
 
+
 /* print all elements (debugging) */
-static void printall()
+static void elements__print()
 {
 	// TODO
 }
+
 
 #endif
