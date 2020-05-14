@@ -22,19 +22,22 @@ static element_t *last = first;
 
 
 /* append at the end of list */
-static int append(element_t *elem_before, const char data[DATASIZ])
+static int append(const char data[DATASIZ])
 {
 	element_t *elem;
-	if (!first)
-		elem = first;
 
 	if (!elem = alloc(sizeof(*elem)))
 		return -1;
 
-	strcpy(elem->data, data);
 	elem->next = NULL;
+	strcpy(elem->data, data);
 
-	last->next = elem;
+	if (!first) {
+		first = elem;
+		last = elem;
+	} else {
+		last->next = elem;
+	}
 
 	return 0;
 }
