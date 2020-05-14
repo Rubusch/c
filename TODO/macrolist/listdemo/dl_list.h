@@ -1,15 +1,7 @@
 // dl_list.h
 /*
-  A double linked list works like that:
-
-  <-prev\
-  ->element<-prev\
-      \next->element<-prev\
-               \next->element
-                        \next->NULL
+  a simple single-linked queue example
 //*/
-
-// TODO tests tests and tests... 
 
 #ifndef DOUBLE_LINKED_LIST
 #define DOUBLE_LINKED_LIST
@@ -26,18 +18,26 @@ typedef struct element {
 } element_t;
 
 /* append at the end of list */
-static int append(element_t *);
+static int append(element_t *)
+{
+	// TODO
+	return 0;
+}
 
 /* remove at the specified position */
-static int discard(element_t **);
+static int discard(element_t **)
+{
+	// TODO
+	return 0;
+}
 
 /* print all elements (debugging) */
-static int printall();
+static void printall()
+{
+	// TODO
+}
 
 static element_t *first = NULL;
 static element_t *last = NULL;
-
-
-/*********************************************/
 
 #endif
