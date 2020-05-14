@@ -1,7 +1,7 @@
 # Makefile
 SOURCE = main.c
-HEADERS = dl_list.h
-TARGET = dl_list.exe
+HEADERS = macrolist.h
+TARGET = macrolist.exe
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
