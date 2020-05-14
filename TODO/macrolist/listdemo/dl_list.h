@@ -44,17 +44,36 @@ static int elements__append(const char data[DATASIZ])
 /* remove at the specified position */
 static int elements__remove(const char data[DATASIZ])
 {
+	elements_t *elem = first;
+	elements_t *elem_before = NULL;
+
 	if (!first)
 		return -1;
 
-	
-	// TODO
-	return 0;
+	while (elem) {
+		if (0 == strcmp(data, elem->data)) {
+			if (elem_before)
+				elem_before->next = elem->next;
+			free(elem);
+			return 0;
+		}
+		elem_before = elem;
+		elem = elem->next;
+	}
+
+	return -1;
 }
 
 static int elements__removeall()
 {
-	// TODO
+	elements_t *elem = first;
+
+	while (first) {
+		elem = first->next;
+		free(first);
+		first = elem;
+	}
+
 	return 0;
 }
 
@@ -62,7 +81,17 @@ static int elements__removeall()
 /* print all elements (debugging) */
 static void elements__print()
 {
-	// TODO
+	elements_t* elem = first;
+
+	if (!first) {
+		puts ("empty");
+		return;
+	}
+
+	while (elem) {
+		printf("%s(): element: '%s'\n", __func__, elem->data);
+		elem = elem->next;
+	}
 }
 
 
