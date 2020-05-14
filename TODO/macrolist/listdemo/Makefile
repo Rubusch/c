@@ -1,6 +1,6 @@
 # Makefile
-SOURCE = main.c lib/consoleinput.c
-HEADERS = dl_list.h lib/consoleinput.h
+SOURCE = main.c
+HEADERS = dl_list.h
 TARGET = dl_list.exe
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
