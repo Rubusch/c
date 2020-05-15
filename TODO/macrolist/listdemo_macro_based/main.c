@@ -8,41 +8,45 @@
 
 #include "macrolist.h"
 
+#ifndef GPIOS_LIST
+#define GPIOS_LIST
+CREATE_LIST(gpios)
+#endif
 
 int main()
 {
 	puts("uninitialized");
-	elements__print();
+	gpios__print();
 	printf("expected: [empty]\n\n");
 
 	puts("init 1");
-	elements__append("AAA");
-	elements__print();
-	printf("expected: [AAA]\n\n");
+	gpios__append("D01");
+	gpios__print();
+	printf("expected: [D01]\n\n");
 
 	puts("append another element");
-	elements__append("BBB");
-	elements__print();
-	printf("expected: [AAA, BBB]\n\n");
+	gpios__append("D02");
+	gpios__print();
+	printf("expected: [D01, D02]\n\n");
 
 	puts("append another element");
-	elements__append("CCC");
-	elements__print();
-	printf("expected: [AAA, BBB, CCC]\n\n");
+	gpios__append("D03");
+	gpios__print();
+	printf("expected: [D01, D02, D03]\n\n");
 
 	puts("remove element");
-	elements__remove("BBB");
-	elements__print();
-	printf("expected: [AAA, CCC]\n\n");
+	gpios__remove("D02");
+	gpios__print();
+	printf("expected: [D01, D03]\n\n");
 
 	puts("remove non-existend element");
-	elements__remove("BBB");
-	elements__print();
-	printf("expected: [AAA, CCC]\n\n");
+	gpios__remove("D02");
+	gpios__print();
+	printf("expected: [D01, D03]\n\n");
 
-	puts("remove all elements");
-	elements__removeall();
-	elements__print();
+	puts("remove all gpios");
+	gpios__removeall();
+	gpios__print();
 	printf("expected: [empty]\n\n");
 
 	exit(EXIT_FAILURE);
