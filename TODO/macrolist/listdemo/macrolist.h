@@ -20,7 +20,7 @@ typedef struct element {
 static elements_t *first = NULL;
 static elements_t *last = NULL;
 
-/* append at the end of list */
+/* append a new element containing data */
 static int elements__append(const char data[DATASIZ])
 {
 	elements_t *elem;
@@ -41,7 +41,7 @@ static int elements__append(const char data[DATASIZ])
 	return 0;
 }
 
-/* remove at the specified position */
+/* remove one element containing data */
 static int elements__remove(const char data[DATASIZ])
 {
 	elements_t *elem = first;
@@ -64,6 +64,7 @@ static int elements__remove(const char data[DATASIZ])
 	return -1;
 }
 
+/* remove all elements */
 static int elements__removeall()
 {
 	elements_t *elem = first;
@@ -77,8 +78,7 @@ static int elements__removeall()
 	return 0;
 }
 
-
-/* print all elements (debugging) */
+/* print all elements' data */
 static void elements__print()
 {
 	elements_t* elem = first;
@@ -93,6 +93,5 @@ static void elements__print()
 		elem = elem->next;
 	}
 }
-
 
 #endif
