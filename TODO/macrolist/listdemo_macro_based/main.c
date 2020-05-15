@@ -57,10 +57,16 @@ static int unique__remove_duplicates()
 	for (elem = unique__first; elem->next != NULL; elem = elem->next) {
 		for (unique_t *elem__runner = elem; elem__runner->next != NULL; elem__runner = elem__runner->next) {
 			if (0 == strcmp(elem->data, elem__runner->data)) {
-				unique__remove(elem->data);
+				elem = elem->next;
+				unique__remove(elem__runner->data);
+				if (!elem->next)
+					goto done;
+				break;
 			}
 		}
 	}
+	done:
+
 	return 0;
 }
 
