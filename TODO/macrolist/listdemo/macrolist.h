@@ -89,7 +89,7 @@ static void elements__print()
 	}
 
 	while (elem) {
-		printf("%s(): element: '%s'\n", __func__, elem->data);
+		printf("%s(): '%s'\n", __func__, elem->data);
 		elem = elem->next;
 	}
 }
