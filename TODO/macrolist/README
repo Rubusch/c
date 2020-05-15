@@ -1,4 +1,15 @@
-double linked list as macro list
+macro list
 
-example of a double linked list implementation to be transformed and maintained as macro concatenated list.
+the examples shall demonstrate how to put an implementation of a simple data
+structure into a preprocessor generator, to individually generate the
+implementation of e.g. a linked list, prefix the functions and in case extend
+by addional functions
+
+alternatively write a list implementation in a library (where the macro approach
+is not easily debuggable)
+
+this macro approach is a powerful way of generating data structure code using
+preprocessor concatenation, but use with care! the default should always be the
+plain library implementation
+
 
