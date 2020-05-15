@@ -60,7 +60,10 @@
 			if (0 == strcmp(data, elem->data)) {		\
 				if (elem_before)			\
 					elem_before->next = elem->next;	\
+				else					\
+					NAME##__first = elem->next;	\
 				free(elem);				\
+									\
 				return 0;				\
 			}						\
 			elem_before = elem;				\
@@ -80,6 +83,8 @@
 			free(NAME##__first);				\
 			NAME##__first = elem;				\
 		}							\
+		NAME##__first = NULL;					\
+		NAME##__last = NULL;					\
 									\
 		return 0;						\
 	}								\
