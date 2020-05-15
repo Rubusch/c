@@ -1,6 +1,17 @@
 // main.c
 /*
   main file to start the proggy
+
+  the preprocessor concatenation can be used to generate a fixed data structure
+  implementation, make it prefix with an identifier and it allows for extending
+  individually the list instances
+
+  the drawbacks will be debugging inside the data structure, anyway the data
+  strucutre can mature to a decent level as long as it is simple enough, so this
+  could be a reasonable solution in some applications
+
+  (the question if putting entire data structures into pre-processor space is
+  generally a good design or a weakness can be a major criticism)
 //*/
 
 #include <stdio.h>
