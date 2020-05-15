@@ -12,13 +12,15 @@
 
 #define DATASIZ 64
 
-typedef struct element {
-  struct element *next;
-  char data[DATASIZ];
+
+
+typedef struct elements {
+	struct elements *next;
+	char data[DATASIZ];
 } elements_t;
 
-static elements_t *first = NULL;
-static elements_t *last = NULL;
+static elements_t *elements__first = NULL;
+static elements_t *elements__last = NULL;
 
 /* append a new element containing data */
 static int elements__append(const char data[DATASIZ])
@@ -31,12 +33,12 @@ static int elements__append(const char data[DATASIZ])
 	elem->next = NULL;
 	strcpy(elem->data, data);
 
-	if (!first) {
-		first = elem;
+	if (!elements__first) {
+		elements__first = elem;
 	} else {
-		last->next = elem;
+		elements__last->next = elem;
 	}
-	last = elem;
+	elements__last = elem;
 
 	return 0;
 }
@@ -44,17 +46,19 @@ static int elements__append(const char data[DATASIZ])
 /* remove one element containing data */
 static int elements__remove(const char data[DATASIZ])
 {
-	elements_t *elem = first;
+	elements_t *elem = elements__first;
 	elements_t *elem_before = NULL;
 
-	if (!first)
+	if (!elements__first)
 		return -1;
-
 	while (elem) {
 		if (0 == strcmp(data, elem->data)) {
 			if (elem_before)
 				elem_before->next = elem->next;
+			else
+				elements__first = elem->next;
 			free(elem);
+
 			return 0;
 		}
 		elem_before = elem;
@@ -67,13 +71,15 @@ static int elements__remove(const char data[DATASIZ])
 /* remove all elements */
 static int elements__removeall()
 {
-	elements_t *elem = first;
+	elements_t *elem = elements__first;
 
-	while (first) {
-		elem = first->next;
-		free(first);
-		first = elem;
+	while (elements__first) {
+		elem = elements__first->next;
+		free(elements__first);
+		elements__first = elem;
 	}
+	elements__first = NULL;
+	elements__last = NULL;
 
 	return 0;
 }
@@ -81,9 +87,9 @@ static int elements__removeall()
 /* print all elements' data */
 static void elements__print()
 {
-	elements_t* elem = first;
+	elements_t* elem = elements__first;
 
-	if (!first) {
+	if (!elements__first) {
 		puts ("empty");
 		return;
 	}

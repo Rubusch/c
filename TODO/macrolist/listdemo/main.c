@@ -45,5 +45,6 @@ int main()
 	elements__print();
 	printf("expected: [empty]\n\n");
 
+	puts("READY.");
 	exit(EXIT_FAILURE);
 }
