@@ -3,18 +3,19 @@
   a simple single-linked queue example
 //*/
 
-#ifndef DOUBLE_LINKED_LIST
-#define DOUBLE_LINKED_LIST
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef LINKED_LIST
+#define LINKED_LIST
 #define DATASIZ 64
+#endif
 
 #define CREATE_LIST(NAME)						\
-	typedef struct #NAME {					\
-		struct #NAME *next;					\
+	typedef struct NAME {					\
+		struct NAME *next;					\
 		char data[DATASIZ];					\
 	} NAME##_t;							\
 									\
@@ -94,4 +95,4 @@
 		}							\
 	}
 
-#endif
+
