@@ -11,23 +11,31 @@
 
 int main()
 {
-	/* init */
+	puts("uninitialized");
+	elements__print();
+	puts("");
+
+	puts("init");
 	elements__append("AAA");
-	elements__append("BBB");
-	elements__append("CCC");
+//	elements__append("BBB");
+//	elements__append("CCC");
 	elements__print();
+	puts("");
 
-	/* remove element */
+	puts("remove element");
 	elements__remove("BBB");
 	elements__print();
+	puts("");
 
-	/* should fail */
+	puts("should fail");
 	elements__remove("BBB");
 	elements__print();
+	puts("");
 
-	/* cleanup */
+	puts("cleanup");
 	elements__removeall();
 	elements__print();
+	puts("");
 
 	exit(EXIT_FAILURE);
 }
