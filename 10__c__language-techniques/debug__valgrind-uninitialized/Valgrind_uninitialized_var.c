@@ -32,6 +32,8 @@ void func(int iVar)
   return;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 int main(int argc, char **argv)
 {
   printf("define but no init..\n");
@@ -43,7 +45,7 @@ int main(int argc, char **argv)
     func(iVar);
   return EXIT_SUCCESS;
 }
-
+#pragma GCC diagnostic pop
 
 /*
 // comparing a uninitialized variable with something works only by chance, gcc
