@@ -43,8 +43,9 @@ CREATE_LIST(some)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-
 CREATE_LIST(unique)
+
+#pragma GCC diagnostic pop
 
 /* add additional functions to the data structure */
 static int unique__remove_duplicates()
@@ -70,7 +71,6 @@ static int unique__remove_duplicates()
 	return 0;
 }
 
-#pragma GCC diagnostic pop
 #endif /* UNIQUE_LIST */
 
 
@@ -106,7 +106,7 @@ int main()
 	some__print();
 	printf("expected: [AAA, CCC]\n\n");
 
-	puts("remove all some");
+	puts("remove all");
 	some__removeall();
 	some__print();
 	printf("expected: [empty]\n\n");
@@ -124,6 +124,11 @@ int main()
 	unique__remove_duplicates();
 	unique__print();
 	printf("expected: [AAA, BBB]\n\n");
+
+	puts("remove all");
+	unique__removeall();
+	unique__print();
+	printf("expected: [empty]\n\n");
 
 
 	puts("READY.");
