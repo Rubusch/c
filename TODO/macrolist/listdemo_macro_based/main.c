@@ -74,10 +74,9 @@ static int unique__remove_duplicates()
 #endif /* UNIQUE_LIST */
 
 
-
-
 int main()
 {
+	/* first list */
 	puts("uninitialized");
 	some__print();
 	printf("expected: [empty]\n\n");
@@ -113,6 +112,7 @@ int main()
 	printf("expected: [empty]\n\n");
 
 
+	/* second list */
 	puts("init by 3 elements");
 	unique__append("AAA");
 	unique__append("BBB");
@@ -122,8 +122,8 @@ int main()
 
 	puts("remove duplicates");
 	unique__remove_duplicates();
+	unique__print();
 	printf("expected: [AAA, BBB]\n\n");
-// TODO
 
 
 	exit(EXIT_FAILURE);
