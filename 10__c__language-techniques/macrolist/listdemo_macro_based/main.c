@@ -127,5 +127,5 @@ int main()
 
 
 	puts("READY.");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }

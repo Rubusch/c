@@ -46,5 +46,5 @@ int main()
 	printf("expected: [empty]\n\n");
 
 	puts("READY.");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }
