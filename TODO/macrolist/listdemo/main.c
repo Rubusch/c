@@ -15,10 +15,14 @@ int main()
 	elements__print();
 	puts("");
 
-	puts("init");
+	puts("init 1");
 	elements__append("AAA");
-//	elements__append("BBB");
-//	elements__append("CCC");
+	elements__print();
+	puts("");
+
+	puts("append another 2");
+	elements__append("BBB");
+	elements__append("CCC");
 	elements__print();
 	puts("");
 
