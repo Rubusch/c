@@ -24,8 +24,8 @@
 		char data[DATASIZ];					\
 	} NAME##_t;							\
 									\
-	static NAME##_t *NAME##__first = NULL;					\
-	static NAME##_t *NAME##__last = NULL;					\
+	static NAME##_t *NAME##__first = NULL;				\
+	static NAME##_t *NAME##__last = NULL;				\
 									\
 	/* append a new element containing data */			\
 	static int NAME##__append(const char data[DATASIZ])		\
@@ -38,12 +38,12 @@
 		elem->next = NULL;					\
 		strcpy(elem->data, data);				\
 									\
-		if (!NAME##__first) {						\
-			NAME##__first = elem;					\
+		if (!NAME##__first) {					\
+			NAME##__first = elem;				\
 		} else {						\
-			NAME##__last->next = elem;				\
+			NAME##__last->next = elem;			\
 		}							\
-		NAME##__last = elem;						\
+		NAME##__last = elem;					\
 									\
 		return 0;						\
 	}								\
@@ -51,10 +51,10 @@
 	/* remove one element containing data */			\
 	static int NAME##__remove(const char data[DATASIZ])		\
 	{								\
-		NAME##_t *elem = NAME##__first;					\
+		NAME##_t *elem = NAME##__first;				\
 		NAME##_t *elem_before = NULL;				\
 									\
-		if (!NAME##__first)						\
+		if (!NAME##__first)					\
 			return -1;					\
 		while (elem) {						\
 			if (0 == strcmp(data, elem->data)) {		\
@@ -73,12 +73,12 @@
 	/* remove all elements */					\
 	static int NAME##__removeall()					\
 	{								\
-		NAME##_t *elem = NAME##__first;					\
+		NAME##_t *elem = NAME##__first;				\
 									\
-		while (NAME##__first) {						\
-			elem = NAME##__first->next;				\
-			free(NAME##__first);					\
-			NAME##__first = elem;					\
+		while (NAME##__first) {					\
+			elem = NAME##__first->next;			\
+			free(NAME##__first);				\
+			NAME##__first = elem;				\
 		}							\
 									\
 		return 0;						\
@@ -87,9 +87,9 @@
 	/* print all elements' data */					\
 	static void NAME##__print()					\
 	{								\
-		NAME##_t* elem = NAME##__first;					\
+		NAME##_t* elem = NAME##__first;				\
 									\
-		if (!NAME##__first) {						\
+		if (!NAME##__first) {					\
 			puts ("empty");					\
 			return;						\
 		}							\
@@ -99,6 +99,3 @@
 			elem = elem->next;				\
 		}							\
 	}
-
-
-
