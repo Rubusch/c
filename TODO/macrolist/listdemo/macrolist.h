@@ -33,10 +33,10 @@ static int elements__append(const char data[DATASIZ])
 
 	if (!first) {
 		first = elem;
-		last = elem;
 	} else {
 		last->next = elem;
 	}
+	last = elem;
 
 	return 0;
 }
