@@ -126,5 +126,6 @@ int main()
 	printf("expected: [AAA, BBB]\n\n");
 
 
+	puts("READY.");
 	exit(EXIT_FAILURE);
 }
