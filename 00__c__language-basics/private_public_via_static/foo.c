@@ -12,6 +12,9 @@ int public_function()
 
 	fprintf(stdout, "a 'static variable in .c file' is a private member to this compile unit: '%d'\n", private);
 
+	puts("call to public static function");
+	public_inlined_function();
+
 	return 0;
 }
 
