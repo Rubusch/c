@@ -12,13 +12,13 @@ int main()
 {
 	char func[] = "main";
 
-	fprintf(stdout, "%s(): call public funcion\n", func);
+	fprintf(stdout, "%s():\tcall public funcion\n", func);
 	if(!public_function())
-		fprintf(stderr, "%s(): public function failed\n", func);
+		fprintf(stderr, "%s():\tpublic function failed\n", func);
 
-	fprintf(stdout, "%s(): call public static function\n", func);
+	fprintf(stdout, "%s():\tcall public static function\n", func);
 	if(!public_inlined_function())
-		fprintf(stderr, "%s(): public static function failed\n", func);
+		fprintf(stderr, "%s():\tpublic static function failed\n", func);
 
 
 	puts("");
