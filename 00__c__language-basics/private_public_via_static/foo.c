@@ -4,6 +4,10 @@
 
 #include "foo.h"
 
+/*
+  the variable 'private' and functions using 'private' here
+  in the .c cannot be exported as function, only as macro!
+ */
 static int private = 777;
 
 int public_function()
@@ -21,5 +25,3 @@ int public_function()
 	puts("");
 	return 0;
 }
-
-
