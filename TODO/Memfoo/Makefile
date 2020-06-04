@@ -20,6 +20,6 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	$(RM) $(TARGET) *~ core
+	$(RM) $(TARGET) *.o *~ core
 
 
