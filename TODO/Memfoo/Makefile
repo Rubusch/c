@@ -2,8 +2,9 @@
 #
 #
 
-SOURCE = Memfoo.c
-OBJECTS = ${SOURCE:.c=.o}
+TARGET = memfoo.exe
+SOURCE = memfoo.c
+OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -11,14 +12,14 @@ CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) -c $(CFLAGS) $<
 
-Memfoo: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS) -lm
 
-all: Memfoo
+all: $(TARGET)
 
-clean: 
-	${RM} Memfoo.exe *~ core
+clean:
+	$(RM) $(TARGET) *~ core
 
 
