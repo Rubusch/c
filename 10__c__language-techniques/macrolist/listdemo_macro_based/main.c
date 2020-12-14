@@ -25,8 +25,8 @@
   THIS file
 */
 #ifndef SOME_LIST
-
 #define SOME_LIST
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 
