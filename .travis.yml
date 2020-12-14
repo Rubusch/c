@@ -178,6 +178,7 @@ script:
   - cd 40__c__linux/sharedobject__static-lib && make && cd -
   - cd 40__c__linux/timer && make && cd -
   - cd 40__c__linux/timer__measuring && make && cd -
+  - cd 40__c__linux/rc5_inputstring && make && cd -
 
 
 # after_success:
