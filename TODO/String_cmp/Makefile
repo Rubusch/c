@@ -1,25 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
-
 
 SOURCE = String_cmp.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -pedantic -std=c99
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $(SOURCE) $<
 
-String_cmp: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: String_cmp
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) String_cmp.exe *~ core
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~ core
 
 
