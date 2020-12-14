@@ -4,17 +4,26 @@
 
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-void some_function() { ; }
+
+// some function
+void some_function() { puts("READY."); }
 
 
 int main()
 {
-  typedef void (*funptr)();
 
-  funptr p_some_function;
+	// definition
+	typedef void (*funptr)();
+	funptr p_some_function;
 
-  p_some_function = &some_function;
+	// init
+	p_some_function = &some_function;
 
-  return 0;
+	// usage
+	p_some_function();
+
+	return 0;
 }

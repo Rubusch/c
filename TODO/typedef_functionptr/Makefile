@@ -1,25 +1,24 @@
 # Makefile (simple)
 #
-# use -O, -O1, -O2 for optimization 
-
 
 SOURCE = tdfuncptr.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -c $<
 
-tdfuncptr: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: tdfuncptr
+all: $(TARGET)
 
-clean: 
-	${RM} ${OBJECTS} tdfuncptr.exe *~ core
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~ core
 
 
