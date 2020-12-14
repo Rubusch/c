@@ -5,20 +5,22 @@
 
 SOURCE = rc5input.c
 OBJECTS = $(SOURCE:%.c=%.o)
+TARGET = $(SOURCE:%.c=%.exe)
+
 CC = gcc
-CFLAGS += -g # -Wchar-subscripts
-#CFLAGS += -g -Wall -std=c99 -pedantic
+#CFLAGS += -g # -Wchar-subscripts
+CFLAGS += -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-rc5input.exe: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: rc5input.exe
+all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) rc5input.exe *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: clean all
