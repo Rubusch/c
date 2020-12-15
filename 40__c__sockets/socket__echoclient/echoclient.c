@@ -37,7 +37,8 @@ int main(int argc, char **argv)
   char text[4096];
   memset(text, '\0', 4096);
 
-  strcpy(server_ip, "192.168.60.7");
+//  strcpy(server_ip, "192.168.60.7");
+  strcpy(server_ip, "127.0.0.1");
   strcpy(server_port, "12345");
 
   strcpy(text,
@@ -57,13 +58,13 @@ int main(int argc, char **argv)
   serveraddr.sin_addr.s_addr = inet_addr(server_ip);
   serveraddr.sin_port = htons(atoi(server_port));
 
-  puts("conect()");
+  puts("connect()");
   if (0 >
       connect(sockfd, ( struct sockaddr * )&serveraddr, sizeof(serveraddr))) {
     perror("connect() failed");
     exit(EXIT_FAILURE);
   }
-  puts("conect() - ok");
+  puts("connect() - ok");
 
   puts("send()");
   echolen = strlen(text);
