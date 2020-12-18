@@ -1,30 +1,21 @@
 # Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
 
-
-SOURCE = ../lib_socket/error.c ../lib_socket/hstrerror.c ../lib_socket/if_name_index.c ../lib_socket/lib_socket.c ../lib_socket/mcast.c ../lib_socket/pselect.c ../lib_socket/snprintf.c ../lib_socket/wrap_lib.c ../lib_socket/wrap_sock.c ../lib_socket/wrap_stdio.c ../lib_socket/wrap_unix.c ../lib_socket/gai_strerror.c server.c
-OBJECTS = ${SOURCE:.c=.o}
-HEADERS = ../lib_socket/config.h ../lib_socket/lib_socket.h ../lib_socket/addrinfo.h 
+SOURCE = server.c
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -o $@ -c ${CFLAGS} $<
+	$(CC) $(CFLAGS) -o $@ -c $<
 
-## without header:
-#.c.o:
-#	${CC} -c ${CFLAGS} $<
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
 
-server.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm -pthread
+all: $(TARGET)
 
-all: server.exe
-
-clean: 
-	${RM} $(OBJECTS) server.exe *~ core
-
-
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~ core
