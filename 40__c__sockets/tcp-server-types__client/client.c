@@ -216,6 +216,8 @@ void lothars__close(int fd)
 
   starts a bunch of children to connect to a server, sends some bytes
   and waits on answer from the server
+
+  a tcp server is expected on on 10.0.2.2, and listenes on port 27976
 */
 int main(int argc, char** argv)
 {
