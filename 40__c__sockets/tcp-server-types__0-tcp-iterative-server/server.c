@@ -120,7 +120,7 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 
 void lothars__listen(int fd, int backlog)
 {
-	char *ptr = NULL;
+//	char *ptr = NULL; // TODO rm
 
 // TODO needed here?
 //  // may override 2nd argument with environment variable (stevens)
