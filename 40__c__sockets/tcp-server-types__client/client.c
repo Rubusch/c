@@ -5,10 +5,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h> /* close() */
-
+#include <string.h>
+#include <sys/wait.h> /* wait() */
+#include <unistd.h> /* read(), close() */
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <stdarg.h>  // ANSI C
-//#include <syslog.h>  // syslog
 #include <errno.h>
 
 // TODO rm       
@@ -21,11 +23,16 @@
 
 // forwards
 pid_t _fork();
-ssize_t _read(int, void *, size_t);
+int _tcp_connect(const char*, const char*);
+int tcp_connect(const char*, const char*);
+ssize_t _readn(int, void *, size_t);
+ssize_t readn(int, void*, size_t);
 void _write(int, void *, size_t);
 void _close(int);
 
-static void err_doit(int, int, const char *, va_list);
+char *gai_strerror(int);
+
+static void err_doit(int, const char *, va_list);
 
 /*
    Miscellaneous constants
@@ -43,7 +50,7 @@ void err_sys(const char *fmt, ...)
 {
   va_list  ap;
   va_start(ap, fmt);
-  err_doit(1, LOG_ERR, fmt, ap);
+  err_doit(1, fmt, ap);
   va_end(ap);
   exit(1);
 }
@@ -55,15 +62,15 @@ void err_quit(const char *fmt, ...)
 {
   va_list  ap;
   va_start(ap, fmt);
-  err_doit(0, LOG_ERR, fmt, ap);
+  err_doit(0, fmt, ap);
   va_end(ap);
   exit(1);
 }
 
 /*
-   Print message and return to caller Caller specifies "errnoflag" and "level"
+   Print message and return to caller Caller specifies "errnoflag"
 */
-static void err_doit(int errnoflag, int level, const char *fmt, va_list ap)
+static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
   int errno_save, n_len;
   char buf[MAXLINE + 1];
@@ -83,13 +90,10 @@ static void err_doit(int errnoflag, int level, const char *fmt, va_list ap)
 
   strcat(buf, "\n");
 
-  if(daemon_proc){
-    syslog(level, buf);
-  }else{
-    fflush(stdout);  // in case stdout and stderr are the same
-    fputs(buf, stderr);
-    fflush(stderr);
-  }
+
+  fflush(stdout);  // in case stdout and stderr are the same
+  fputs(buf, stderr);
+  fflush(stderr);
 
   return;
 }
@@ -105,25 +109,93 @@ pid_t _fork(void)
   return(pid);
 }
 
-static ssize_t my_read(int fd, char *ptr)
+/*
+  We place the wrapper function here, not in wraplib.c, because some
+  XTI programs need to include wraplib.c, and it also defines
+  a Tcp_connect() function.
+*/
+int _tcp_connect(const char *host, const char *serv)
 {
-  if(0 >= read_cnt){
-  again:
-    if(0 > (read_cnt = read(fd, read_buf, sizeof(read_buf)))){
-      if(errno == EINTR){
-        goto again;
-      }
-      return -1;
-    }else if(read_cnt == 0){
-      return(0);
-    }
-    read_ptr = read_buf;
+  return(tcp_connect(host, serv));
+}
+
+/*
+  tcp_connect.c
+*/
+int tcp_connect(const char *host, const char *serv)
+{
+  int sockfd, eai;
+  struct addrinfo hints, *res, *ressave;
+
+  bzero(&hints, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if(0 != (eai = getaddrinfo(host, serv, &hints, &res))){
+    err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
   }
 
-  --read_cnt;
-  *ptr = *read_ptr++;
-  return 1;
+  ressave = res;
+
+  do{
+    if(0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))){
+      continue; // ignore this one
+    }
+
+    if(0 == connect(sockfd, res->ai_addr, res->ai_addrlen)){
+      break;  // success
+    }
+
+    _close(sockfd); // ignore this one
+  }while(NULL != (res = res->ai_next));
+
+  if(NULL == res){ // errno set from final connect()
+    err_sys("tcp_connect error for %s, %s", host, serv);
+  }
+
+  freeaddrinfo(ressave);
+
+  return(sockfd);
 }
+
+ssize_t _readn(int fd, void *ptr, size_t nbytes)
+{
+  ssize_t  res;
+  if(0 > (res = readn(fd, ptr, nbytes))){
+    err_sys("readn error");
+  }
+  return res;
+}
+
+/*
+  readn.c
+
+  Read "num" bytes from a descriptor.
+*/
+ssize_t readn(int fd, void *vptr, size_t num)
+{
+  size_t nleft;
+  ssize_t nread;
+  char *ptr=NULL;
+
+  ptr = vptr;
+  nleft = num;
+  while(nleft > 0){
+    if( (nread = read(fd, ptr, nleft)) < 0){
+      if(errno == EINTR){
+        nread = 0;  // and call read() again
+      }else{
+        return -1;
+      }
+    }else if(nread == 0){
+      break; // EOF
+    }
+    nleft -= nread;
+    ptr   += nread;
+  }
+  return (num - nleft);  // return >= 0
+}
+
 
 void _write(int fd, void *ptr, size_t nbytes)
 {
@@ -139,6 +211,23 @@ void _close(int fd)
   }
 }
 
+char* gai_strerror(int err)
+{
+  switch(err){
+  case EAI_ADDRFAMILY:return("address family for host not supported");
+  case EAI_AGAIN:  return("temporary failure in name resolution");
+  case EAI_BADFLAGS: return("invalid flags value");
+  case EAI_FAIL:  return("non-recoverable failure in name resolution");
+  case EAI_FAMILY: return("address family not supported");
+  case EAI_MEMORY: return("memory allocation failure");
+  case EAI_NODATA: return("no address associated with host");
+  case EAI_NONAME: return("host nor service provided, or not known");
+  case EAI_SERVICE: return("service not supported for socket type");
+  case EAI_SOCKTYPE: return("socket type not supported");
+  case EAI_SYSTEM: return("system error");
+  default:   return("unknown getaddrinfo() error");
+  }
+}
 
 
 int main(int argc, char** argv)
