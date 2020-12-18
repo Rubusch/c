@@ -5,7 +5,45 @@
   slowest TCP server type
 //*/
 
-#include "../lib_socket/lib_socket.h"
+
+
+
+/*
+  constants
+*/
+
+// TODO
+
+
+/*
+  forwards
+*/
+
+// TODO
+
+
+/*
+  internal helpers
+*/
+
+// TODO
+
+
+/*
+  helpers / wrappers
+
+  mainly to cover error handling and display error message
+*/
+
+// TODO
+
+
+/*
+  main
+
+  TODO
+ */
+
 
 
 /********************************************************************************************/

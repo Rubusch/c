@@ -5,7 +5,43 @@
   (with file lock to protect accept)
 //*/
 
-#include "../lib_socket/lib_socket.h"
+
+/*
+  constants
+*/
+
+// TODO
+
+
+/*
+  forwards
+*/
+
+// TODO
+
+
+/*
+  internal helpers
+*/
+
+// TODO
+
+
+/*
+  helpers / wrappers
+
+  mainly to cover error handling and display error message
+*/
+
+// TODO
+
+
+/*
+  main
+
+  TODO
+ */
+
 
 static int32_t n_children;
 static pid_t *pid_children;

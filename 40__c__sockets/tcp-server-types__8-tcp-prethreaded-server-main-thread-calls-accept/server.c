@@ -7,8 +7,44 @@
   TODO check
 //*/
 
-#include "../lib_socket/lib_pthread/lib_pthread.h"
 #include "thread.h"
+
+
+/*
+  constants
+*/
+
+// TODO
+
+
+/*
+  forwards
+*/
+
+// TODO
+
+
+/*
+  internal helpers
+*/
+
+// TODO
+
+
+/*
+  helpers / wrappers
+
+  mainly to cover error handling and display error message
+*/
+
+// TODO
+
+
+/*
+  main
+
+  TODO
+ */
 
 
 static int n_threads;

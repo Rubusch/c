@@ -2,23 +2,62 @@
 /*
   TCP iteractive server (no process control, faster is impossible!)
 
-  An iterative TCP server proceses each client's request completely 
+  An iterative TCP server proceses each client's request completely
   before moving on to the next client. Iterative TCP serers are rare!
 //*/
 
-#include "../lib_socket/lib_socket.h"
+/* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
+
 #include <time.h>
 
 
+
 /*
-//*/
+  constants
+*/
+
+// TODO
+
+
+/*
+  forwards
+*/
+// _socket()
+// _bind()
+// _listen()
+
+
+// TODO
+
+
+/*
+  internal helpers
+*/
+
+// TODO
+
+
+/*
+  helpers / wrappers
+
+  mainly to cover error handling and display error message
+*/
+
+// TODO
+
+
+/*
+  main
+
+  TODO
+ */
 int main(int argc, char** argv)
 {
   int fd_listen, fd_conn;
   struct sockaddr_in servaddr;
   char buf[MAXLINE];
   time_t ticks;
-  
+
   // set up listen socket
   fd_listen = _socket(AF_INET, SOCK_STREAM, 0);
 

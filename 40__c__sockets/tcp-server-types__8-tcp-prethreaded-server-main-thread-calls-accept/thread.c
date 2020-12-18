@@ -4,7 +4,6 @@
   (main thread calls accept)
 //*/
 
-#include "../lib_socket/lib_pthread/lib_pthread.h"
 #include "thread.h"
 
 
