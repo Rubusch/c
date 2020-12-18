@@ -17,57 +17,37 @@
 #include <errno.h>
 
 
-// max number of bytes to request from server
-#define MAXN 1234
+/*
+  constants
+*/
+#define MAXLINE  4096 /* max text line length */
+#define BUFFSIZE 8192 /* buffer size for reads and writes */
+#define MAXN 1234 /* max number of bytes to request from server */
 
 
-// forwards
-pid_t _fork();
-int _tcp_connect(const char*, const char*);
-int tcp_connect(const char*, const char*);
-ssize_t _readn(int, void *, size_t);
+/*
+  forwards
+*/
 ssize_t readn(int, void*, size_t);
-void _write(int, void *, size_t);
-void _close(int);
-
-
 static void err_doit(int, const char *, va_list);
 
+pid_t lothars__fork();
+int lothars__tcp_connect(const char*, const char*);
+ssize_t lothars__readn(int, void *, size_t);
+void lothars__write(int, void *, size_t);
+void lothars__close(int);
+
+
+
+
 /*
-   Miscellaneous constants
+  internal helpers
 */
-#define MAXLINE  4096                // max text line length
-#define BUFFSIZE 8192                // buffer size for reads and writes
-
-
-// internal helpers
 
 /*
-   Fatal error related to system call Print message and terminate
-*/
-void err_sys(const char *fmt, ...)
-{
-  va_list  ap;
-  va_start(ap, fmt);
-  err_doit(1, fmt, ap);
-  va_end(ap);
-  exit(1);
-}
+   print message and return to caller Caller specifies "errnoflag"
 
-/*
-   Fatal error unrelated to system call Print message and terminate
-*/
-void err_quit(const char *fmt, ...)
-{
-  va_list  ap;
-  va_start(ap, fmt);
-  err_doit(0, fmt, ap);
-  va_end(ap);
-  exit(1);
-}
-
-/*
-   Print message and return to caller Caller specifies "errnoflag"
+   error handling taken from "Unix Sockets" (Stevens)
 */
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
@@ -89,7 +69,6 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 
   strcat(buf, "\n");
 
-
   fflush(stdout);  // in case stdout and stderr are the same
   fputs(buf, stderr);
   fflush(stderr);
@@ -97,79 +76,9 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
   return;
 }
 
-// adjusted functions
-pid_t _fork(void)
-{
-  pid_t pid;
-
-  if(-1 == (pid = fork())){
-    err_sys("fork error");
-  }
-  return(pid);
-}
 
 /*
-  We place the wrapper function here, not in wraplib.c, because some
-  XTI programs need to include wraplib.c, and it also defines
-  a Tcp_connect() function.
-*/
-int _tcp_connect(const char *host, const char *serv)
-{
-  return(tcp_connect(host, serv));
-}
-
-/*
-  tcp_connect.c
-*/
-int tcp_connect(const char *host, const char *serv)
-{
-  int sockfd, eai;
-  struct addrinfo hints, *res, *ressave;
-
-  bzero(&hints, sizeof(struct addrinfo));
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-
-  if(0 != (eai = getaddrinfo(host, serv, &hints, &res))){
-    err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
-  }
-
-  ressave = res;
-
-  do{
-    if(0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))){
-      continue; // ignore this one
-    }
-
-    if(0 == connect(sockfd, res->ai_addr, res->ai_addrlen)){
-      break;  // success
-    }
-
-    _close(sockfd); // ignore this one
-  }while(NULL != (res = res->ai_next));
-
-  if(NULL == res){ // errno set from final connect()
-    err_sys("tcp_connect error for %s, %s", host, serv);
-  }
-
-  freeaddrinfo(ressave);
-
-  return(sockfd);
-}
-
-ssize_t _readn(int fd, void *ptr, size_t nbytes)
-{
-  ssize_t  res;
-  if(0 > (res = readn(fd, ptr, nbytes))){
-    err_sys("readn error");
-  }
-  return res;
-}
-
-/*
-  readn.c
-
-  Read "num" bytes from a descriptor.
+  read "num" bytes from a descriptor
 */
 ssize_t readn(int fd, void *vptr, size_t num)
 {
@@ -196,14 +105,105 @@ ssize_t readn(int fd, void *vptr, size_t num)
 }
 
 
-void _write(int fd, void *ptr, size_t nbytes)
+/*
+  helpers / wrappers
+
+  mainly to cover error handling and display error message
+*/
+
+/*
+   fatal error related to system call Print message and terminate
+*/
+void err_sys(const char *fmt, ...)
+{
+  va_list  ap;
+  va_start(ap, fmt);
+  err_doit(1, fmt, ap);
+  va_end(ap);
+  exit(1);
+}
+
+/*
+   fatal error unrelated to system call Print message and terminate
+*/
+void err_quit(const char *fmt, ...)
+{
+  va_list  ap;
+  va_start(ap, fmt);
+  err_doit(0, fmt, ap);
+  va_end(ap);
+  exit(1);
+}
+
+
+pid_t lothars__fork(void)
+{
+  pid_t pid;
+
+  if(-1 == (pid = fork())){
+    err_sys("fork error");
+  }
+
+  return(pid);
+}
+
+
+int lothars__tcp_connect(const char *host, const char *serv)
+{
+  int sockfd, eai;
+  struct addrinfo hints, *res, *ressave;
+
+  bzero(&hints, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if(0 != (eai = getaddrinfo(host, serv, &hints, &res))){
+    err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
+  }
+
+  ressave = res;
+
+  do{
+    if(0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))){
+      continue; // ignore this one
+    }
+
+    if(0 == connect(sockfd, res->ai_addr, res->ai_addrlen)){
+      break;  // success
+    }
+
+    lothars__close(sockfd); // ignore this one
+  }while(NULL != (res = res->ai_next));
+
+  if(NULL == res){ // errno set from final connect()
+    err_sys("tcp_connect error for %s, %s", host, serv);
+  }
+
+  freeaddrinfo(ressave);
+
+  return(sockfd);
+}
+
+
+ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
+{
+  ssize_t  res;
+  if(0 > (res = readn(fd, ptr, nbytes))){
+    err_sys("readn error");
+  }
+  return res;
+}
+
+
+void lothars__write(int fd, void *ptr, size_t nbytes)
 {
   if(nbytes != write(fd, ptr, nbytes)){
     err_sys("write error");
   }
 }
 
-void _close(int fd)
+
+void lothars__close(int fd)
 {
   if(-1 == close(fd)){
     err_sys("close error");
@@ -211,6 +211,12 @@ void _close(int fd)
 }
 
 
+/*
+  main()
+
+  starts a bunch of children to connect to a server, sends some bytes
+  and waits on answer from the server
+*/
 int main(int argc, char** argv)
 {
   int idx
@@ -237,27 +243,27 @@ int main(int argc, char** argv)
   snprintf(request, sizeof(request), "%d\n", n_bytes);
 
   // per child...
-  for(idx=0; idx<n_children; ++idx){
+  for (idx=0; idx<n_children; ++idx) {
 
     // if is not parent!
-    if(0 == (pid = _fork())){
+    if (0 == (pid = lothars__fork())) {
 
       // per loop...
-      for(jdx=0; jdx<n_loops; ++jdx){
+      for (jdx=0; jdx<n_loops; ++jdx) {
 
         // connect to 10.0.2.2 via port 27976
-        fd_connect = _tcp_connect("10.0.2.2", "27976");
+        fd_connect = lothars__tcp_connect("10.0.2.2", "27976");
 
         // write to socket
-        _write(fd_connect, request, strlen(request));
+        lothars__write(fd_connect, request, strlen(request));
 
         // read response
-        if(n_bytes != (bytes = _readn(fd_connect, reply, n_bytes))){
+        if (n_bytes != (bytes = lothars__readn(fd_connect, reply, n_bytes))) {
           err_quit("server returned %d bytes", bytes);
         }
 
         // close socket
-        _close(fd_connect);
+        lothars__close(fd_connect);
       }
       printf("child %d done\n", idx);
       exit(0);
