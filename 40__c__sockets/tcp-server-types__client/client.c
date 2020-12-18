@@ -3,18 +3,18 @@
   tcp server types - TCP testing client for all server types
  */
 
+/* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h> /* wait() */
 #include <unistd.h> /* read(), close() */
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdarg.h>  // ANSI C
+#include <sys/types.h> /* getaddrinfo() */
+#include <sys/socket.h> /* getaddrinfo() */
+#include <netdb.h> /* getaddrinfo() */
+#include <stdarg.h>
 #include <errno.h>
-
-// TODO rm       
-//#include "../lib_socket/lib_socket.h"       
 
 
 // max number of bytes to request from server
@@ -30,7 +30,6 @@ ssize_t readn(int, void*, size_t);
 void _write(int, void *, size_t);
 void _close(int);
 
-char *gai_strerror(int);
 
 static void err_doit(int, const char *, va_list);
 
@@ -208,24 +207,6 @@ void _close(int fd)
 {
   if(-1 == close(fd)){
     err_sys("close error");
-  }
-}
-
-char* gai_strerror(int err)
-{
-  switch(err){
-  case EAI_ADDRFAMILY:return("address family for host not supported");
-  case EAI_AGAIN:  return("temporary failure in name resolution");
-  case EAI_BADFLAGS: return("invalid flags value");
-  case EAI_FAIL:  return("non-recoverable failure in name resolution");
-  case EAI_FAMILY: return("address family not supported");
-  case EAI_MEMORY: return("memory allocation failure");
-  case EAI_NODATA: return("no address associated with host");
-  case EAI_NONAME: return("host nor service provided, or not known");
-  case EAI_SERVICE: return("service not supported for socket type");
-  case EAI_SOCKTYPE: return("socket type not supported");
-  case EAI_SYSTEM: return("system error");
-  default:   return("unknown getaddrinfo() error");
   }
 }
 
