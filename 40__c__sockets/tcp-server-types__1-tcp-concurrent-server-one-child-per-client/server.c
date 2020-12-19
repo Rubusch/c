@@ -21,7 +21,7 @@
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXN 1234 /*  max number of bytes to request from server */
@@ -30,9 +30,13 @@
 /*
   forwards
 */
-//_malloc()
-//_signal()
+void* lothars__malloc(size_t);
+Sigfunc* lothars__signal(int, Sigfunc*);
+ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
+void lothars__listen(int, int);
+int lothars__tcp_listen(const char*, const char*, socklen_t*);
+void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
 
@@ -105,11 +109,120 @@ void err_quit(const char *fmt, ...)
 }
 
 
+void* _malloc(size_t size)
+{
+	void *ptr = NULL;
+	if (NULL == (ptr = malloc(size))) {
+		err_sys("malloc error");
+	}
+	return ptr;
+}
+
+
+Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+{
+	Sigfunc *sigfunc = NULL;
+	if(SIG_ERR == (sigfunc = signal(signo, func))){
+		err_sys("signal error");
+	}
+	return sigfunc;
+}
+
+
+ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
+{
+	ssize_t bytes;
+	if (0 > (bytes = readline(fd, ptr, maxlen))) {
+		err_sys("readline error");
+	}
+	return(bytes);
+}
+
+
+pid_t lothars__fork(void)
+{
+	pid_t pid;
+	if (-1 == (pid = fork())) {
+		err_sys("fork error");
+	}
+	return pid;
+}
+
+
+void lothars__listen(int fd, int backlog)
+{
+	if (0 > listen(fd, backlog)) {
+		err_sys("listen error");
+	}
+}
+
+
+/*
+  tcp_listen() similar to W. Richard Stevens' implementation
+
+  We place the wrapper function here, not in wraplib.c, because some
+  XTI programs need to include wraplib.c, and it also defines
+  a Tcp_listen() function. (stevens)
+*/
+int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
+{
+	int listenfd, eai;
+	const int  on = 1;
+	struct addrinfo hints, *res = NULL, *ressave = NULL;
+
+	bzero(&hints, sizeof(struct addrinfo));
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
+		err_quit("tcp_listen error for %s, %s: %s", host, serv, gai_strerror(eai));
+	}
+
+	ressave = res;
+
+	do {
+		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		if (0 > listenfd) {
+			continue; // error, try next one
+		}
+		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+		// set socket no linger and reuse addresse to avoid zombie sockets lying around in Linux
+
+		if (0 == bind(listenfd, res->ai_addr, res->ai_addrlen)) { // try to bind to the client (tcp)
+			break; // success
+		}
+		lothars__close(listenfd); // bind error, close and try next one
+
+	} while (NULL != (res = res->ai_next)); // iterate over all clients obtained in address info (ai)
+
+	if (NULL == res) { // errno from final socket() or bind()
+		err_sys("tcp_listen error for %s, %s", host, serv);
+	}
+
+	lothars__listen(listenfd, LISTENQ);
+
+	if (addrlenp) {
+		*addrlenp = res->ai_addrlen; // return size of protocol address
+	}
+
+	freeaddrinfo(ressave); // free the gai stuff needed for listen
+
+	return listenfd; // returned bound fd
+}
+
+
+void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
+		err_sys("setsockopt error");
+	}
+}
 
 
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
-	if(nbytes != write(fd, ptr, nbytes)){
+	if (nbytes != write(fd, ptr, nbytes)) {
 		err_sys("write error");
 	}
 }
@@ -117,7 +230,7 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 
 void lothars__close(int fd)
 {
-	if(-1 == close(fd)){
+	if (-1 == close(fd)) {
 		err_sys("close error");
 	}
 }
@@ -128,8 +241,8 @@ void lothars__close(int fd)
 
 
 /*
-  example code: do anything, read, write, etc.. some action
-//*/
+  child routine: do anything, read, write, etc.. some action
+*/
 void child_routine(int fd_sock)
 {
 	int32_t towrite;
@@ -137,19 +250,19 @@ void child_routine(int fd_sock)
 	char line[MAXLINE], result[MAXN];
 
 	// server loop
-	while(1){
+	while (1) {
 		// read
-		if(0 == (n_read = _readline(fd_sock, line, MAXLINE))){
+		if (0 == (n_read = lothars__readline(fd_sock, line, MAXLINE))) {
 			// nothing more to read -> exit
 			fprintf(stdout, "reading over, %d returns\n", getpid());
 			return;
 		}
 
-		// get as long's
+		// get as number (long)
 		towrite = atol(line);
 
 		// check if valid
-		if((0 >= towrite) || (MAXN < towrite)){
+		if ((0 >= towrite) || (MAXN < towrite)) {
 			err_quit("client request for %d bytes", towrite);
 		}
 
@@ -163,32 +276,34 @@ void child_routine(int fd_sock)
   child signal handler - calls waitpid()
 
   called when a child process has terminated the work
-//*/
-void sig_chld(int signo){
+*/
+void sig_chld(int signo)
+{
 	pid_t pid;
 	int32_t status;
-
-	while(0 < (pid = waitpid(-1, &status, WNOHANG))){
+	while (0 < (pid = waitpid(-1, &status, WNOHANG))) {
 		printf("child %d terminated\n", pid);
 	}
 }
 
 
 /*
-  example code: print system time and usage at CTRL + C termination of server
-//*/
+  int signal hander: routine
+
+  print system time and usage at CTRL + C termination of server
+*/
 void pr_cpu_time()
 {
 	double user, sys;
 	struct rusage usage_parent, usage_child;
 
 	// init parent ressource usage
-	if(0 > getrusage(RUSAGE_SELF, &usage_parent)){
+	if (0 > getrusage(RUSAGE_SELF, &usage_parent)) {
 		err_sys("getrusage(parent) error");
 	}
 
 	// init child ressource usage
-	if(0 > getrusage(RUSAGE_CHILDREN, &usage_child)){
+	if (0 > getrusage(RUSAGE_CHILDREN, &usage_child)) {
 		err_sys("getrusage(child) error");
 	}
 
@@ -206,8 +321,8 @@ void pr_cpu_time()
 
 
 /*
-  final sig handler - action when server is shutdown by CTRL + c
-//*/
+  int sig handler - action when server is shutdown by CTRL + c
+*/
 void sig_int(int signo)
 {
 	pr_cpu_time();
@@ -227,7 +342,7 @@ int main(int argc, char** argv)
 	pid_t child_pid;
 	socklen_t clilen, addrlen;
 	struct sockaddr *cliaddr=NULL;
-	cliaddr = _malloc(addrlen);
+	cliaddr = lothars__malloc(addrlen);
 	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
@@ -238,25 +353,25 @@ int main(int argc, char** argv)
 	fprintf(stdout, "port: '%s'\n", port);
 
 	// set socket listen on port 27976
-	fd_listen = _tcp_listen(NULL, port, &addrlen);
+	fd_listen = lothars__tcp_listen(NULL, port, &addrlen);
 	// or alternatively, listen on host ip 10.0.2.15 and port 27976
-	//fd_listen = _tcp_listen("10.0.2.15", port, &addrlen);
+	//fd_listen = lothars__tcp_listen("10.0.2.15", port, &addrlen);
 
 	// set signal handlers
-	_signal(SIGCHLD, sig_chld);
-	_signal(SIGINT, sig_int);
+	lothars__signal(SIGCHLD, sig_chld);
+	lothars__signal(SIGINT, sig_int);
 
-	while(1){
+	while (1) {
 		clilen = addrlen;
-		if(0 > (fd_conn = accept(fd_listen, cliaddr, &clilen))){
-			if(errno == EINTR){
+		if (0 > (fd_conn = accept(fd_listen, cliaddr, &clilen))) {
+			if (errno == EINTR) {
 				continue;
 			}
 			// or
 			err_sys("accept() error");
 		}
 
-		if(0 == (child_pid = lothars__fork())){
+		if (0 == (child_pid = lothars__fork())) {
 			// child process
 
 			// close listening socket
@@ -273,10 +388,10 @@ int main(int argc, char** argv)
 		// closes connected socket
 		lothars__close(fd_conn);
 		fprintf(stdout, "READY.\n");
-		if(NULL != cliaddr) free(cliaddr); cliaddr = NULL;
+		if (NULL != cliaddr) free(cliaddr);
+		cliaddr = NULL;
 	}
 
 	// never reaches here
 	exit(EXIT_SUCCESS);
 }
-
