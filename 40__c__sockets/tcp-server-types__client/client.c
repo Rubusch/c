@@ -284,7 +284,8 @@ int main(int argc, char** argv)
 				// close socket
 				lothars__close(fd_connect);
 			}
-			printf("child %d done\n", idx);
+			fprintf(stdout, "child %d done\n", idx);
+			fprintf(stdout, "READY.\n");
 			exit(EXIT_FAILURE);
 		}
 
