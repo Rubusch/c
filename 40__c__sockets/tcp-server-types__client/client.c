@@ -1,7 +1,7 @@
 // client.c
 /*
   tcp server types - TCP testing client for all server types
- */
+*/
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
@@ -45,35 +45,35 @@ void lothars__close(int);
 */
 
 /*
-   print message and return to caller Caller specifies "errnoflag"
+  print message and return to caller Caller specifies "errnoflag"
 
-   error handling taken from "Unix Sockets" (Stevens)
+  error handling taken from "Unix Sockets" (Stevens)
 */
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
-  int errno_save, n_len;
-  char buf[MAXLINE + 1];
+	int errno_save, n_len;
+	char buf[MAXLINE + 1];
 
-  errno_save = errno; // value caller might want printed
+	errno_save = errno; // value caller might want printed
 
 #ifdef HAVE_VSNPRINTF
-  vsnprintf(buf, MAXLINE, fmt, ap); // safe
+	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 #else
-  vsprintf(buf, fmt, ap); // not safe
+	vsprintf(buf, fmt, ap); // not safe
 #endif
 
-  n_len = strlen(buf);
-  if(errnoflag){
-    snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
-  }
+	n_len = strlen(buf);
+	if(errnoflag){
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+	}
 
-  strcat(buf, "\n");
+	strcat(buf, "\n");
 
-  fflush(stdout);  // in case stdout and stderr are the same
-  fputs(buf, stderr);
-  fflush(stderr);
+	fflush(stdout);  // in case stdout and stderr are the same
+	fputs(buf, stderr);
+	fflush(stderr);
 
-  return;
+	return;
 }
 
 
@@ -82,26 +82,26 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 ssize_t readn(int fd, void *vptr, size_t num)
 {
-  size_t nleft;
-  ssize_t nread;
-  char *ptr=NULL;
+	size_t nleft;
+	ssize_t nread;
+	char *ptr=NULL;
 
-  ptr = vptr;
-  nleft = num;
-  while(nleft > 0){
-    if( (nread = read(fd, ptr, nleft)) < 0){
-      if(errno == EINTR){
-        nread = 0;  // and call read() again
-      }else{
-        return -1;
-      }
-    }else if(nread == 0){
-      break; // EOF
-    }
-    nleft -= nread;
-    ptr   += nread;
-  }
-  return (num - nleft);  // return >= 0
+	ptr = vptr;
+	nleft = num;
+	while(nleft > 0){
+		if( (nread = read(fd, ptr, nleft)) < 0){
+			if(errno == EINTR){
+				nread = 0;  // and call read() again
+			}else{
+				return -1;
+			}
+		}else if(nread == 0){
+			break; // EOF
+		}
+		nleft -= nread;
+		ptr   += nread;
+	}
+	return (num - nleft);  // return >= 0
 }
 
 
@@ -112,102 +112,102 @@ ssize_t readn(int fd, void *vptr, size_t num)
 */
 
 /*
-   fatal error related to system call Print message and terminate
+  fatal error related to system call Print message and terminate
 */
 void err_sys(const char *fmt, ...)
 {
-  va_list  ap;
-  va_start(ap, fmt);
-  err_doit(1, fmt, ap);
-  va_end(ap);
-  exit(EXIT_FAILURE);
+	va_list  ap;
+	va_start(ap, fmt);
+	err_doit(1, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
 }
 
 /*
-   fatal error unrelated to system call Print message and terminate
+  fatal error unrelated to system call Print message and terminate
 */
 void err_quit(const char *fmt, ...)
 {
-  va_list  ap;
-  va_start(ap, fmt);
-  err_doit(0, fmt, ap);
-  va_end(ap);
-  exit(EXIT_FAILURE);
+	va_list  ap;
+	va_start(ap, fmt);
+	err_doit(0, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
 }
 
 
 pid_t lothars__fork(void)
 {
-  pid_t pid;
+	pid_t pid;
 
-  if(-1 == (pid = fork())){
-    err_sys("fork error");
-  }
+	if(-1 == (pid = fork())){
+		err_sys("fork error");
+	}
 
-  return(pid);
+	return(pid);
 }
 
 
 int lothars__tcp_connect(const char *host, const char *serv)
 {
-  int sockfd, eai;
-  struct addrinfo hints, *res, *ressave;
+	int sockfd, eai;
+	struct addrinfo hints, *res, *ressave;
 
-  bzero(&hints, sizeof(struct addrinfo));
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
+	bzero(&hints, sizeof(struct addrinfo));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
 
-  if(0 != (eai = getaddrinfo(host, serv, &hints, &res))){
-    err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
-  }
+	if(0 != (eai = getaddrinfo(host, serv, &hints, &res))){
+		err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
+	}
 
-  ressave = res;
+	ressave = res;
 
-  do{
-    if(0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))){
-      continue; // ignore this one
-    }
+	do{
+		if(0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))){
+			continue; // ignore this one
+		}
 
-    if(0 == connect(sockfd, res->ai_addr, res->ai_addrlen)){
-      break;  // success
-    }
+		if(0 == connect(sockfd, res->ai_addr, res->ai_addrlen)){
+			break;  // success
+		}
 
-    lothars__close(sockfd); // ignore this one
-  }while(NULL != (res = res->ai_next));
+		lothars__close(sockfd); // ignore this one
+	}while(NULL != (res = res->ai_next));
 
-  if(NULL == res){ // errno set from final connect()
-    err_sys("tcp_connect error for %s, %s", host, serv);
-  }
+	if(NULL == res){ // errno set from final connect()
+		err_sys("tcp_connect error for %s, %s", host, serv);
+	}
 
-  freeaddrinfo(ressave);
+	freeaddrinfo(ressave);
 
-  return(sockfd);
+	return(sockfd);
 }
 
 
 ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 {
-  ssize_t  res;
-  if(0 > (res = readn(fd, ptr, nbytes))){
-    err_sys("readn error");
-  }
-  return res;
+	ssize_t  res;
+	if(0 > (res = readn(fd, ptr, nbytes))){
+		err_sys("readn error");
+	}
+	return res;
 }
 
 
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
-  if(nbytes != write(fd, ptr, nbytes)){
-    err_sys("write error");
-  }
+	if(nbytes != write(fd, ptr, nbytes)){
+		err_sys("write error");
+	}
 }
 
 
 void lothars__close(int fd)
 {
-  if(-1 == close(fd)){
-    err_sys("close error");
-  }
+	if(-1 == close(fd)){
+		err_sys("close error");
+	}
 }
 
 
@@ -221,64 +221,76 @@ void lothars__close(int fd)
 */
 int main(int argc, char** argv)
 {
-  int idx
-    , jdx
-    , fd_connect
-    , n_children
-    , n_loops
-    , n_bytes;
+	int idx
+		, jdx
+		, fd_connect
+		, n_children
+		, n_loops
+		, n_bytes;
 
-  pid_t pid;
-  ssize_t bytes;
-  char request[MAXLINE], reply[MAXN];
+	pid_t pid;
+	ssize_t bytes;
+	char request[MAXLINE], reply[MAXN];
+	char serverip[16]; memset(serverip, '\0', sizeof(serverip));
+	char port[16]; memset(port, '\0', sizeof(port));
 
-  // number of children
-  n_children = 7;
+	if (3 != argc) {
+		fprintf(stderr, "usage: %s <serverip> <port>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	strncpy(serverip, argv[1], sizeof(serverip));
+	fprintf(stdout, "serverip: '%s'\n", serverip);
 
-  // number of sockets to open, write, read and close again
-  n_loops = 20;
+	strncpy(port, argv[2], sizeof(port));
+	fprintf(stdout, "port: '%s'\n", port);
 
-  // number of max bytes to read
-  n_bytes = 64;
+	// number of children
+	n_children = 7;
 
-  // init request to send to server - ends with \n
-  snprintf(request, sizeof(request), "%d\n", n_bytes);
+	// number of sockets to open, write, read and close again
+	n_loops = 20;
 
-  // per child...
-  for (idx=0; idx<n_children; ++idx) {
+	// number of max bytes to read
+	n_bytes = 64;
 
-    // if is not parent!
-    if (0 == (pid = lothars__fork())) {
+	// init request to send to server - ends with \n
+	snprintf(request, sizeof(request), "%d\n", n_bytes);
 
-      // per loop...
-      for (jdx=0; jdx<n_loops; ++jdx) {
+	// per child...
+	for (idx=0; idx<n_children; ++idx) {
 
-        // connect to 10.0.2.2 via port 27976
-        fd_connect = lothars__tcp_connect("10.0.2.2", "27976");
+		// if is not parent!
+		if (0 == (pid = lothars__fork())) {
 
-        // write to socket
-        lothars__write(fd_connect, request, strlen(request));
+			// per loop...
+			for (jdx=0; jdx<n_loops; ++jdx) {
 
-        // read response
-        if (n_bytes != (bytes = lothars__readn(fd_connect, reply, n_bytes))) {
-          err_quit("server returned %d bytes", bytes);
-        }
+				// connect to serverip and port
+				fd_connect = lothars__tcp_connect(serverip, port);
 
-        // close socket
-        lothars__close(fd_connect);
-      }
-      printf("child %d done\n", idx);
-      exit(EXIT_FAILURE);
-    }
+				// write to socket
+				lothars__write(fd_connect, request, strlen(request));
 
-  } // parent loops around to fork() again
+				// read response
+				if (n_bytes != (bytes = lothars__readn(fd_connect, reply, n_bytes))) {
+					err_quit("server returned %d bytes", bytes);
+				}
 
-  while(0 < wait(NULL))
-    ;
+				// close socket
+				lothars__close(fd_connect);
+			}
+			printf("child %d done\n", idx);
+			exit(EXIT_FAILURE);
+		}
 
-  if(errno != ECHILD){
-    err_sys("wait error");
-  }
+	} // parent loops around to fork() again
 
-  exit(EXIT_SUCCESS);
+	while(0 < wait(NULL))
+		;
+
+	if(errno != ECHILD){
+		err_sys("wait error");
+	}
+
+	exit(EXIT_SUCCESS);
 }
