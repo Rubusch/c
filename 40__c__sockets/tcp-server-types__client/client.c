@@ -23,10 +23,10 @@
 #define MAXN 1234 /* max number of bytes to request from server */
 #define NCHILDREN 7 /* number of children */
 #define NLOOPS 20 /* number of sockets to open, write, read and close again */
-#define NBYTES 16 /* number of max bytes to read, NB: if this is too
-		   * high, readn will always fail (read less),
-		   * consequence is a "Connection reset by peer" error
-		   * message */
+#define NBYTES 24 /* number of max bytes to read,
+		     NB: if this is greater than 24
+		     readn will always fail consequence is a
+		     "Connection reset by peer" error message */
 
 
 
@@ -284,8 +284,8 @@ int main(int argc, char** argv)
 				// close socket
 				lothars__close(fd_connect);
 			}
-			fprintf(stdout, "child %d done\n", idx);
-			fprintf(stdout, "READY.\n");
+			fprintf(stdout, "child %d: received '%s'\n", idx, reply);
+			fprintf(stdout, "child %d: READY.\n", idx);
 			exit(EXIT_FAILURE);
 		}
 
