@@ -7,12 +7,17 @@
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
-#include <stdio.h>
+#include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> /* read(), write(), close() */
+#include <sys/types.h> /* freeadddrinfo() */
+#include <sys/socket.h> /* freeadddrinfo() */
+#include <netdb.h> /* freeadddrinfo() */
 #include <arpa/inet.h> /* htons(), htonl(), accept(), socket(),... */
 #include <stdarg.h> /* va_start(), va_end(),... */
+#include <sys/wait.h> /* waitpid() */
+#include <sys/resource.h> /* getrusage() */
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
@@ -25,6 +30,8 @@
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXN 1234 /*  max number of bytes to request from server */
+
+typedef void Sigfunc(int); /* convenience: for signal handlers */
 
 
 /*
@@ -78,6 +85,60 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 }
 
 
+// used "private" (.c file static) variables for the limited readline implementation
+static int read_cnt;
+static char *read_ptr;
+static char read_buf[MAXLINE];
+
+static ssize_t special_read(int fd, char *ptr)
+{
+	if (0 >= read_cnt) {
+	again:
+		if (0 > (read_cnt = read(fd, read_buf, sizeof(read_buf)))) { // use read() to construct a readline() with size limits
+			if (errno == EINTR) goto again; // only in case of interrrupted, try again
+			return -1; // else return as error code
+		} else if (read_cnt == 0) {
+			return 0;
+		}
+		read_ptr = read_buf;
+	}
+
+	--read_cnt;
+	*ptr = *read_ptr++;
+	return 1;
+}
+
+
+/*
+  a pimped readline() version respecting maxlen and dealing with some
+  erros, based on read()
+*/
+ssize_t limited_readline(int fd, void *vptr, size_t maxlen)
+{
+	ssize_t cnt, rc;
+	char chr, *ptr = NULL;
+
+	ptr = vptr;
+	for (cnt = 1; cnt < maxlen; ++cnt) {
+		if (1 == (rc = special_read(fd, &chr))) { // main approach in special_read
+			*ptr++ = chr;
+			if (chr == '\n')
+				break; // newline is stored, like fgets()
+
+		} else if (rc == 0) {
+			*ptr = 0;
+			return (cnt - 1); // EOF, n - 1 bytes were read
+
+		} else {
+			return -1;  // error, errno set by read()
+		}
+	}
+
+	*ptr = 0; // null terminate like fgets()
+	return cnt;
+}
+
+
 /*
   helpers / wrappers
 
@@ -109,7 +170,7 @@ void err_quit(const char *fmt, ...)
 }
 
 
-void* _malloc(size_t size)
+void* lothars__malloc(size_t size)
 {
 	void *ptr = NULL;
 	if (NULL == (ptr = malloc(size))) {
@@ -132,10 +193,10 @@ Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 {
 	ssize_t bytes;
-	if (0 > (bytes = readline(fd, ptr, maxlen))) {
+	if (0 > (bytes = limited_readline(fd, ptr, maxlen))) {
 		err_sys("readline error");
 	}
-	return(bytes);
+	return bytes;
 }
 
 
@@ -342,7 +403,8 @@ int main(int argc, char** argv)
 	pid_t child_pid;
 	socklen_t clilen, addrlen;
 	struct sockaddr *cliaddr=NULL;
-	cliaddr = lothars__malloc(addrlen);
+
+	cliaddr = lothars__malloc(sizeof(addrlen));        
 	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
