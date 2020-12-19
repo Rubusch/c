@@ -28,15 +28,17 @@
 
 #define MAXLINE  4096 /* max text line length */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
+#define LISTENQ 1024 /* 2nd argument to listen()
 
-// TODO avoid this for readability        
-#define SA struct sockaddr
+  the listen queue - serving as backlog for listen
 
-/*
-  Following could be derived from SOMAXCONN in <sys/socket.h>, but many
-  kernels still #define it as 5, while actually supporting many more 
+  NB: stevens also provides the alternative to initialize LISTENQ by env
+  variable inside listen() wrapper
+
+  NB: LISTENQ could be derived from SOMAXCONN in <sys/socket.h>, but
+  many kernels still #define it as 5, while actually supporting many
+  more (stevens)
 */
-#define LISTENQ  1024                // 2nd argument to listen()
 
 
 /*
@@ -44,12 +46,11 @@
 */
 
 int lothars__socket(int, int, int);
-void lothars__bind(int, const SA *, socklen_t);
+void lothars__bind(int, const struct sockaddr *, socklen_t);
 void lothars__listen(int, int);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
-// TODO
 
 
 /*
@@ -88,8 +89,6 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	return;
 }
 
-// TODO
-
 
 /*
   helpers / wrappers
@@ -120,14 +119,6 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 
 void lothars__listen(int fd, int backlog)
 {
-//	char *ptr = NULL; // TODO rm
-
-// TODO needed here?
-//  // may override 2nd argument with environment variable (stevens)
-//  if (NULL != (ptr = getenv("LISTENQ"))) {
-//    backlog = atoi(ptr);
-//  }
-
 	if(0 > listen(fd, backlog)){
 		err_sys("listen error");
 	}
@@ -178,20 +169,26 @@ void lothars__close(int fd)
 		err_sys("close error");
 	}
 }
-// TODO
 
 
 /*
   main
 
-  TODO
+  the actual tcp echo server implementation, listenes on any address
 */
 int main(int argc, char** argv)
 {
 	int fd_listen, fd_conn;
 	struct sockaddr_in servaddr;
-	char buf[MAXLINE];
+	char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
+	int port;
 	time_t ticks;
+
+	if (2 != argc) {
+		fprintf(stderr, "usage: %s <port>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	port = atoi(argv[1]);
 
 	// set up listen socket
 	fd_listen = lothars__socket(AF_INET, SOCK_STREAM, 0);
@@ -200,11 +197,10 @@ int main(int argc, char** argv)
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-// TODO magic number - fix this         
-	servaddr.sin_port = htons(27976); // connect to port 27976
+	servaddr.sin_port = htons(port); // connect to provided port
 
 	// bind "listen socket" to the "server address"
-	lothars__bind(fd_listen, (SA*) &servaddr, sizeof(servaddr));
+	lothars__bind(fd_listen, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
 	// listen on socket (queue length == LISTENQ == 1024)
 	lothars__listen(fd_listen, LISTENQ);
@@ -212,15 +208,19 @@ int main(int argc, char** argv)
 	// server loop
 	while(1){
 		// accept (blocking!) - ...listen socket to connection socket
-		fd_conn = lothars__accept(fd_listen, (SA*) NULL, NULL);
-    
+		fd_conn = lothars__accept(fd_listen, (struct sockaddr*) NULL, NULL);
+
 		// example action: send a string containing the system time
 		ticks = time(NULL);
 		snprintf(buf, sizeof(buf), "%.24s", ctime(&ticks));
 		fprintf(stdout, "sending \"%s\"\n", buf);
 		lothars__write(fd_conn, buf, strlen(buf));
-    
+
 		// close connection after sending
 		lothars__close(fd_conn);
+		fprintf(stdout, "READY.");
 	}
+
+	// never reaches here
+	exit(EXIT_SUCCESS);
 }
