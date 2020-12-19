@@ -9,11 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h> /* wait() */
-#include <unistd.h> /* read(), close() */
-#include <sys/types.h> /* getaddrinfo() */
-#include <sys/socket.h> /* getaddrinfo() */
-#include <netdb.h> /* getaddrinfo() */
-#include <stdarg.h>
+#include <unistd.h> /* read(), write(), fork(), close() */
+#include <netdb.h> /* socket(), SOCK_STREAM, AF_UNSPEC, getaddrinfo() */
+#include <stdarg.h> /* va_start(), va_end(),... */
 #include <errno.h>
 
 
