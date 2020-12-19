@@ -219,7 +219,7 @@ int main(int argc, char** argv)
 
 		// close connection after sending
 		lothars__close(fd_conn);
-		fprintf(stdout, "READY.");
+		fprintf(stdout, "READY.\n");
 	}
 
 	// never reaches here
