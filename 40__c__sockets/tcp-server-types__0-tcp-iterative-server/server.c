@@ -11,14 +11,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h> /* wait() */
-#include <unistd.h> /* read(), close() */
-#include <sys/types.h> /* getaddrinfo() */
-#include <sys/socket.h> /* getaddrinfo(), bind() */
-#include <netdb.h> /* getaddrinfo() */
-#include <arpa/inet.h> /* htons(), htonl(),... */
-#include <stdarg.h>
-#include <time.h>
+//#include <sys/wait.h> /* wait() */ // TODO rm            
+#include <unistd.h> /* read(), write(), close() */
+//#include <sys/types.h> /* getaddrinfo() */ // TODO rm            
+//#include <sys/socket.h> /* getaddrinfo(), bind() */ // TODO rm            
+//#include <netdb.h> /* getaddrinfo() */ // TODO rm            
+#include <arpa/inet.h> /* htons(), htonl(), accept(), socket(),... */
+#include <stdarg.h> /* va_start(), va_end(),... */
+#include <time.h> /* time(), ctime() */
 #include <errno.h>
 
 
@@ -65,7 +65,7 @@ void lothars__close(int);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1];
+	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 
@@ -105,7 +105,7 @@ void err_sys(const char *fmt, ...)
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 
@@ -128,7 +128,6 @@ void lothars__listen(int fd, int backlog)
 int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
 	int res;
-
 again:
 	if(0 > (res = accept(fd, sa, salenptr))){
 #ifdef EPROTO
@@ -174,7 +173,9 @@ void lothars__close(int fd)
 /*
   main
 
-  the actual tcp echo server implementation, listenes on any address
+  the actual tcp server implementation answering an incoming connection with a timestring
+
+  listenes on any address
 */
 int main(int argc, char** argv)
 {
