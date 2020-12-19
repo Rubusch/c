@@ -18,6 +18,7 @@
 /*
   constants
 */
+
 #define MAXLINE  4096 /* max text line length */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
 #define MAXN 1234 /* max number of bytes to request from server */
@@ -33,16 +34,14 @@
 /*
   forwards
 */
-ssize_t readn(int, void*, size_t);
-static void err_doit(int, const char *, va_list);
+//ssize_t readn(int, void*, size_t);
+//static void err_doit(int, const char *, va_list);
 
 pid_t lothars__fork();
 int lothars__tcp_connect(const char*, const char*);
 ssize_t lothars__readn(int, void *, size_t);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
-
-
 
 
 /*
@@ -57,7 +56,7 @@ void lothars__close(int);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1];
+	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 
