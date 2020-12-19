@@ -11,11 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <sys/wait.h> /* wait() */ // TODO rm            
 #include <unistd.h> /* read(), write(), close() */
-//#include <sys/types.h> /* getaddrinfo() */ // TODO rm            
-//#include <sys/socket.h> /* getaddrinfo(), bind() */ // TODO rm            
-//#include <netdb.h> /* getaddrinfo() */ // TODO rm            
 #include <arpa/inet.h> /* htons(), htonl(), accept(), socket(),... */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <time.h> /* time(), ctime() */
