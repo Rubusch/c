@@ -107,7 +107,7 @@ void err_sys(const char *fmt, ...)
 
 void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
-	if(0 > bind(fd, sa, salen)){
+	if (0 > bind(fd, sa, salen)) {
 		err_sys("bind error");
 	}
 }
@@ -115,7 +115,7 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 
 void lothars__listen(int fd, int backlog)
 {
-	if(0 > listen(fd, backlog)){
+	if (0 > listen(fd, backlog)) {
 		err_sys("listen error");
 	}
 }
@@ -125,25 +125,25 @@ int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
 	int res;
 again:
-	if(0 > (res = accept(fd, sa, salenptr))){
+	if (0 > (res = accept(fd, sa, salenptr))) {
 #ifdef EPROTO
-		if((errno == EPROTO) || (errno == ECONNABORTED)){
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) {
 #else
-		if(errno == ECONNABORTED){
+		if (errno == ECONNABORTED) {
 #endif
 			goto again;
-		}else{
+		} else {
 			err_sys("accept error");
 		}
 	}
-	return(res);
+	return res;
 }
 
 
 int lothars__socket(int family, int type, int protocol)
 {
 	int res;
-	if(0 > (res = socket(family, type, protocol))){
+	if (0 > (res = socket(family, type, protocol))) {
 		err_sys("socket error");
 	}
 	return res;
@@ -152,7 +152,7 @@ int lothars__socket(int family, int type, int protocol)
 
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
-	if(nbytes != write(fd, ptr, nbytes)){
+	if (nbytes != write(fd, ptr, nbytes)) {
 		err_sys("write error");
 	}
 }
@@ -160,7 +160,7 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 
 void lothars__close(int fd)
 {
-	if(-1 == close(fd)){
+	if (-1 == close(fd)) {
 		err_sys("close error");
 	}
 }
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
 	lothars__listen(fd_listen, LISTENQ);
 
 	// server loop
-	while(1){
+	while (1) {
 		// accept (blocking!) - ...listen socket to connection socket
 		fd_conn = lothars__accept(fd_listen, (struct sockaddr*) NULL, NULL);
 
