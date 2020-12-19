@@ -25,7 +25,11 @@
 #define MAXN 1234 /* max number of bytes to request from server */
 #define NCHILDREN 7 /* number of children */
 #define NLOOPS 20 /* number of sockets to open, write, read and close again */
-#define NBYTES 64 /* number of max bytes to read */
+#define NBYTES 16 /* number of max bytes to read, NB: if this is too
+		   * high, readn will always fail (read less),
+		   * consequence is a "Connection reset by peer" error
+		   * message */
+
 
 
 /*
