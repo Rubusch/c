@@ -23,6 +23,9 @@
 #define MAXLINE  4096 /* max text line length */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
 #define MAXN 1234 /* max number of bytes to request from server */
+#define NCHILDREN 7 /* number of children */
+#define NLOOPS 20 /* number of sockets to open, write, read and close again */
+#define NBYTES 64 /* number of max bytes to read */
 
 
 /*
@@ -245,13 +248,13 @@ int main(int argc, char** argv)
 	fprintf(stdout, "port: '%s'\n", port);
 
 	// number of children
-	n_children = 7;
+	n_children = NCHILDREN;
 
 	// number of sockets to open, write, read and close again
-	n_loops = 20;
+	n_loops = NLOOPS;
 
 	// number of max bytes to read
-	n_bytes = 64;
+	n_bytes = NBYTES;
 
 	// init request to send to server - ends with \n
 	snprintf(request, sizeof(request), "%d\n", n_bytes);
