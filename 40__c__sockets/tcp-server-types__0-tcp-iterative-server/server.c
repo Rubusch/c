@@ -4,7 +4,17 @@
 
   An iterative TCP server proceses each client's request completely
   before moving on to the next client. Iterative TCP serers are rare!
-//*/
+
+
+  the listen queue
+
+  NB: stevens also provides the alternative to initialize LISTENQ by env
+  variable inside listen() wrapper
+
+  NB: LISTENQ could be derived from SOMAXCONN in <sys/socket.h>, but
+  many kernels still #define it as 5, while actually supporting many
+  more (stevens)
+ */
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
@@ -24,17 +34,7 @@
 
 #define MAXLINE  4096 /* max text line length */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
-#define LISTENQ 1024 /* 2nd argument to listen()
-
-  the listen queue - serving as backlog for listen
-
-  NB: stevens also provides the alternative to initialize LISTENQ by env
-  variable inside listen() wrapper
-
-  NB: LISTENQ could be derived from SOMAXCONN in <sys/socket.h>, but
-  many kernels still #define it as 5, while actually supporting many
-  more (stevens)
-*/
+#define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 
 
 /*
@@ -169,9 +169,11 @@ void lothars__close(int fd)
 /*
   main
 
-  the actual tcp server implementation answering an incoming connection with a timestring
+  the server answers an incoming connection with a timestring,
+  listening on any address
 
-  listenes on any address
+  the iterative tcp server implementation is a server w/o fork(),
+  it has the fastest response times, but is very limited
 */
 int main(int argc, char** argv)
 {
