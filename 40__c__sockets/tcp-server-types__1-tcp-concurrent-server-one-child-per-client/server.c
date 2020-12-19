@@ -110,10 +110,11 @@ static ssize_t special_read(int fd, char *ptr)
 
 
 /*
-  a pimped readline() version respecting maxlen and dealing with some
-  erros, based on read()
+  a pimped readline() version, reading from an filedescriptor (fd),
+  into anything (vptr), respecting a maxlen and dealing with some
+  erros, implementation is based on read()
 */
-ssize_t limited_readline(int fd, void *vptr, size_t maxlen)
+ssize_t fd_readline(int fd, void *vptr, size_t maxlen)
 {
 	ssize_t cnt, rc;
 	char chr, *ptr = NULL;
@@ -193,7 +194,7 @@ Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 {
 	ssize_t bytes;
-	if (0 > (bytes = limited_readline(fd, ptr, maxlen))) {
+	if (0 > (bytes = fd_readline(fd, ptr, maxlen))) {
 		err_sys("readline error");
 	}
 	return bytes;
@@ -309,13 +310,17 @@ void child_routine(int fd_sock)
 	int32_t towrite;
 	ssize_t n_read;
 	char line[MAXLINE], result[MAXN];
+	time_t ticks;
+
+	memset(line, '\0', sizeof(line));
+	memset(result, '\0', sizeof(result));
 
 	// server loop
 	while (1) {
 		// read
 		if (0 == (n_read = lothars__readline(fd_sock, line, MAXLINE))) {
 			// nothing more to read -> exit
-			fprintf(stdout, "reading over, %d returns\n", getpid());
+			fprintf(stdout, "child %d: read '%s', n_read '%ld' - reading over, return\n", getpid(), line, n_read);
 			return;
 		}
 
@@ -326,8 +331,12 @@ void child_routine(int fd_sock)
 		if ((0 >= towrite) || (MAXN < towrite)) {
 			err_quit("client request for %d bytes", towrite);
 		}
-
 		// if ok, write and return the received message back to socket
+
+		// example action: send a string containing the system time
+		ticks = time(NULL);
+		snprintf(result, sizeof(result), "%.24s", ctime(&ticks));
+		fprintf(stdout, "child %d: sending \"%s\"\n", getpid(), result);
 		lothars__write(fd_sock, result, towrite);
 	}
 }
@@ -343,7 +352,7 @@ void sig_chld(int signo)
 	pid_t pid;
 	int32_t status;
 	while (0 < (pid = waitpid(-1, &status, WNOHANG))) {
-		printf("child %d terminated\n", pid);
+		printf("child %d READY.\n", pid);
 	}
 }
 
@@ -449,7 +458,7 @@ int main(int argc, char** argv)
 
 		// closes connected socket
 		lothars__close(fd_conn);
-		fprintf(stdout, "READY.\n");
+		fprintf(stdout, "parent: READY.\n");
 		if (NULL != cliaddr) free(cliaddr);
 		cliaddr = NULL;
 	}
