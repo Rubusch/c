@@ -90,7 +90,7 @@ static int read_cnt;
 static char *read_ptr;
 static char read_buf[MAXLINE];
 
-static ssize_t special_read(int fd, char *ptr)
+static ssize_t fd_read(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
 	again:
@@ -121,7 +121,7 @@ ssize_t fd_readline(int fd, void *vptr, size_t maxlen)
 
 	ptr = vptr;
 	for (cnt = 1; cnt < maxlen; ++cnt) {
-		if (1 == (rc = special_read(fd, &chr))) { // main approach in special_read
+		if (1 == (rc = fd_read(fd, &chr))) { // main approach in fd_read
 			*ptr++ = chr;
 			if (chr == '\n')
 				break; // newline is stored, like fgets()
@@ -299,8 +299,7 @@ void lothars__close(int fd)
 
 
 /********************************************************************************************/
-// example code - code for some demo actions, not necessarily related to the server type
-
+// child implementation
 
 /*
   child routine: do anything, read, write, etc.. some action
@@ -421,7 +420,7 @@ int main(int argc, char** argv)
 	strncpy(port, argv[1], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-	// set socket listen on port 27976
+	// set socket listen on provided port
 	fd_listen = lothars__tcp_listen(NULL, port, &addrlen);
 	// or alternatively, listen on host ip 10.0.2.15 and port
 	// (in case provide ip via argv)
