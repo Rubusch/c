@@ -30,7 +30,6 @@
 		     "Connection reset by peer" error message */
 
 
-
 /*
   forwards
 */
@@ -67,7 +66,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 #endif
 
 	n_len = strlen(buf);
-	if(errnoflag){
+	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
 	}
 
@@ -92,14 +91,14 @@ ssize_t readn(int fd, void *vptr, size_t num)
 
 	ptr = vptr;
 	nleft = num;
-	while(nleft > 0){
-		if( (nread = read(fd, ptr, nleft)) < 0){
-			if(errno == EINTR){
+	while (nleft > 0) {
+		if (0 > (nread = read(fd, ptr, nleft))) {
+			if (errno == EINTR) {
 				nread = 0;  // and call read() again
-			}else{
+			} else {
 				return -1;
 			}
-		}else if(nread == 0){
+		}else if (nread == 0) {
 			break; // EOF
 		}
 		nleft -= nread;
@@ -143,12 +142,10 @@ void err_quit(const char *fmt, ...)
 pid_t lothars__fork(void)
 {
 	pid_t pid;
-
-	if(-1 == (pid = fork())){
+	if (-1 == (pid = fork())) {
 		err_sys("fork error");
 	}
-
-	return(pid);
+	return pid;
 }
 
 
@@ -161,38 +158,38 @@ int lothars__tcp_connect(const char *host, const char *serv)
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if(0 != (eai = getaddrinfo(host, serv, &hints, &res))){
+	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
 		err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
 	}
 
 	ressave = res;
 
-	do{
-		if(0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))){
+	do {
+		if (0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))) {
 			continue; // ignore this one
 		}
 
-		if(0 == connect(sockfd, res->ai_addr, res->ai_addrlen)){
+		if (0 == connect(sockfd, res->ai_addr, res->ai_addrlen)) {
 			break;  // success
 		}
 
 		lothars__close(sockfd); // ignore this one
-	}while(NULL != (res = res->ai_next));
+	} while (NULL != (res = res->ai_next));
 
-	if(NULL == res){ // errno set from final connect()
+	if (NULL == res) { // errno set from final connect()
 		err_sys("tcp_connect error for %s, %s", host, serv);
 	}
 
 	freeaddrinfo(ressave);
 
-	return(sockfd);
+	return sockfd;
 }
 
 
 ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 {
 	ssize_t  res;
-	if(0 > (res = readn(fd, ptr, nbytes))){
+	if (0 > (res = readn(fd, ptr, nbytes))) {
 		err_sys("readn error");
 	}
 	return res;
@@ -201,7 +198,7 @@ ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
-	if(nbytes != write(fd, ptr, nbytes)){
+	if (nbytes != write(fd, ptr, nbytes)) {
 		err_sys("write error");
 	}
 }
@@ -209,7 +206,7 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 
 void lothars__close(int fd)
 {
-	if(-1 == close(fd)){
+	if (-1 == close(fd)) {
 		err_sys("close error");
 	}
 }
@@ -290,10 +287,10 @@ int main(int argc, char** argv)
 
 	} // parent loops around to fork() again
 
-	while(0 < wait(NULL))
+	while (0 < wait(NULL))
 		;
 
-	if(errno != ECHILD){
+	if (errno != ECHILD) {
 		err_sys("wait error");
 	}
 
