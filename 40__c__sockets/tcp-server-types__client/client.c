@@ -219,8 +219,8 @@ void lothars__close(int fd)
 /*
   main()
 
-  starts a bunch of children to connect to a server, sends some bytes
-  and waits on answer from the server
+  starts a bunch of connections to a server (provided ip and port),
+  sends some bytes and waits on answer from the server
 
   a tcp server is expected, serverip and port needs to be provided
 */
