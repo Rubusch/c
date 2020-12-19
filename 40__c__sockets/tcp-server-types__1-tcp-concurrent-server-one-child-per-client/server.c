@@ -412,8 +412,6 @@ int main(int argc, char** argv)
 	pid_t child_pid;
 	socklen_t clilen, addrlen;
 	struct sockaddr *cliaddr=NULL;
-
-	cliaddr = lothars__malloc(sizeof(addrlen));        
 	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
@@ -425,8 +423,12 @@ int main(int argc, char** argv)
 
 	// set socket listen on port 27976
 	fd_listen = lothars__tcp_listen(NULL, port, &addrlen);
-	// or alternatively, listen on host ip 10.0.2.15 and port 27976
+	// or alternatively, listen on host ip 10.0.2.15 and port
+	// (in case provide ip via argv)
 	//fd_listen = lothars__tcp_listen("10.0.2.15", port, &addrlen);
+
+	// addrlen initialized by tcp_listen(), now alloc memory for cliaddr
+	cliaddr = lothars__malloc(addrlen);
 
 	// set signal handlers
 	lothars__signal(SIGCHLD, sig_chld);
