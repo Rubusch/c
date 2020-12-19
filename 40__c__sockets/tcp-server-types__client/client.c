@@ -120,7 +120,7 @@ void err_sys(const char *fmt, ...)
   va_start(ap, fmt);
   err_doit(1, fmt, ap);
   va_end(ap);
-  exit(1);
+  exit(EXIT_FAILURE);
 }
 
 /*
@@ -132,7 +132,7 @@ void err_quit(const char *fmt, ...)
   va_start(ap, fmt);
   err_doit(0, fmt, ap);
   va_end(ap);
-  exit(1);
+  exit(EXIT_FAILURE);
 }
 
 
@@ -268,7 +268,7 @@ int main(int argc, char** argv)
         lothars__close(fd_connect);
       }
       printf("child %d done\n", idx);
-      exit(0);
+      exit(EXIT_FAILURE);
     }
 
   } // parent loops around to fork() again
@@ -280,5 +280,5 @@ int main(int argc, char** argv)
     err_sys("wait error");
   }
 
-  exit(0);
+  exit(EXIT_SUCCESS);
 }
