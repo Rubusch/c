@@ -35,6 +35,7 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
   forwards
 */
 
+void* lothars__malloc(size_t size);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);

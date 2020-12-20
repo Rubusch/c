@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> /* read(), write(), close() */
-#include <fcntl.h> /* fcntl() */
+#include <fcntl.h> /* fcntl(), FD_SET(), FD_ZERO(), FD_ISSET(),... */
 #include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
@@ -36,6 +36,7 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
   forwards
 */
 
+void* lothars__malloc(size_t size);
 Sigfunc* lothars__signal(int, Sigfunc*);
 void lothars__unlink(const char *);
 int lothars__mkstemp(char *);
