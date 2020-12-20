@@ -53,6 +53,8 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
    we need the newer CMSG_LEN() and CMSG_SPACE() macros, but few
    implementations support them today.  These two macros really need
    an ALIGN() macro, but each implementation does this differently
+
+   (macros taken from stevens 1996)
 */
 #ifndef CMSG_LEN
 # define CMSG_LEN(size)  (sizeof(struct cmsghdr) + (size))
