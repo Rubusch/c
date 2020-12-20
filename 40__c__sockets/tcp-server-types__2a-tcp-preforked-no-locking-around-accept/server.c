@@ -442,7 +442,7 @@ void pr_cpu_time()
 
 /*
   final action when server is shutdown by CTRL + c
-//*/
+*/
 void sig_int(int32_t signo)
 {
 	int32_t idx;
@@ -472,7 +472,7 @@ void sig_int(int32_t signo)
 
   the pre-allocating server implementation
 */
-int main(int32_t argc, char** argv)
+int main(int argc, char** argv)
 {
 	int32_t fd_listen, idx;
 	socklen_t addrlen;
