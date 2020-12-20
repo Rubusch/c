@@ -575,7 +575,7 @@ void pr_cpu_time()
 	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
 	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
 
-	printf("\nuser time = %gs, sys time = %gs\n", user, sys);
+	fprintf(stdout, "\nuser time = %gs, sys time = %gs\n", user, sys);
 }
 
 
