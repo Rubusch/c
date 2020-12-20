@@ -234,7 +234,7 @@ again:
 			err_sys("accept error");
 		}
 	}
-	return(res);
+	return res;
 }
 
 
@@ -317,8 +317,6 @@ void lothars__close(int fd)
 }
 
 
-
-
 /********************************************************************************************/
 // child implementation
 
@@ -329,7 +327,7 @@ static pid_t *pid_children;
   child - routine
 
   do anything, read, write, etc.. some action
-//*/
+*/
 void child_routine(int32_t fd_sock)
 {
 	int32_t towrite;
@@ -511,3 +509,4 @@ int main(int argc, char** argv)
 
 	exit(EXIT_SUCCESS);
 }
+
