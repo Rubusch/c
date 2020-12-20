@@ -11,13 +11,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> /* read(), write(), close() */
-#include <sys/types.h> /* freeadddrinfo() */
-#include <sys/socket.h> /* freeadddrinfo() */
-#include <netdb.h> /* freeadddrinfo() */
-#include <arpa/inet.h> /* htons(), htonl(), accept(), socket(),... */
+#include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
 #include <stdarg.h> /* va_start(), va_end(),... */
-#include <sys/wait.h> /* waitpid() */
-#include <sys/resource.h> /* getrusage() */
+#include <sys/wait.h> /* waitpid(), SIGINT,... */
+#include <sys/resource.h> /* getrusage(), struct rusage,... */
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
@@ -375,7 +372,7 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	socklen_t clilen;
 	struct sockaddr cliaddr[addrlen];
 
-	fprintf(stdout, "child %d starting\n", getpid());
+	fprintf(stdout, "child %d: starting\n", getpid());
 
 	while (1) {
 
