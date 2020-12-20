@@ -204,19 +204,9 @@ void lothars__unlink(const char *pathname)
 int lothars__mkstemp(char *template)
 {
 	int idx;
-
-//#ifdef HAVE_MKSTEMP
 	if (0 > (idx = mkstemp(template))) {
 		err_quit("mkstemp error, returned -1");
 	}
-//#else
-//	if((mktemp(template) == NULL) || (template[0] == 0)){
-//		err_quit("mktemp error, NULL or not defined");
-//	}
-//
-//	idx = Open(template, O_CREAT | O_WRONLY, FILE_MODE);
-//#endif
-
 	return idx;
 }
 
@@ -265,7 +255,7 @@ again:
 			err_sys("accept error");
 		}
 	}
-	return(res);
+	return res;
 }
 
 
@@ -346,8 +336,6 @@ void lothars__close(int fd)
 		err_sys("close error");
 	}
 }
-
-
 
 
 /********************************************************************************************/
@@ -464,15 +452,17 @@ void lock_init(char* pathname)
 {
 	char lock_file[1024];
 
+	memset(lock_file, '\0', sizeof(lock_file));
+
 	// must copy caller's string, in case it's a constant
-	if ((1024 - 7) <= strlen(pathname)) {
+	if ((sizeof(lock_file) - 7) <= strlen(pathname)) {
 		exit(1);
 	}
 
-	// mkstemp() - tmp file MUST end with "XXXXXX"
-	strncpy(lock_file, pathname, sizeof(lock_file));
-//	strncat(lock_file, "XXXXXX", 1024);                   
-	strncat(lock_file, "XXXXXX", 1023);
+	// mkstemp()
+        // NB: tmp file MUST end with "XXXXXX"!!! (remember the issues at files and tmp_files...)
+	strncpy(lock_file, pathname, sizeof(lock_file)-1);
+	strncat(lock_file, "XXXXXX", sizeof(lock_file)-1);
 
 	//  lock_file[strlen(lock_file+1)] = '\0';
 	lock_fd = lothars__mkstemp(lock_file);
@@ -598,8 +588,8 @@ int main(int argc, char** argv)
 	// set number of children
 	pid_children = lothars__malloc(NCHILDREN * sizeof(*pid_children));
 
-	// init file lock
-	lock_init("/tmp/lock.1234567"); // one lock file for all children
+	// init the unique file lock here...
+	lock_init("/tmp/lock.1234567"); // i.e. one lock file for all children (of course)!!!
 
 	for (idx=0; idx<NCHILDREN; ++idx) {
 		// create children, only parent returns
@@ -615,3 +605,4 @@ int main(int argc, char** argv)
 
 	exit(EXIT_SUCCESS);
 }
+
