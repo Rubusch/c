@@ -40,8 +40,8 @@ Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
 void lothars__listen(int, int);
-int lothars__accept(int, struct sockaddr *, socklen_t *);
 int lothars__tcp_listen(const char*, const char*, socklen_t*);
+int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
@@ -324,7 +324,9 @@ void lothars__close(int fd)
 // child implementation
 
 /*
-  child sub, called by child main (do some read, and echo write)
+  child - routine
+
+  do anything, read, write, etc.. some action
 //*/
 void child_routine(int32_t fd_sock)
 {
@@ -364,7 +366,7 @@ void child_routine(int32_t fd_sock)
 
 
 /*
-  child main
+  child - main function
 */
 void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
@@ -399,7 +401,7 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 
 /*
-  fork
+  child - creator
 */
 pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
@@ -407,17 +409,17 @@ pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 	if (0 == (pid = lothars__fork())) {
 		// child
-		child_main(idx, fd_listen, addrlen);
-		// never returns
+		child_main(idx, fd_listen, addrlen); // never returns
 	}
 
 	// parent
 	return pid;
 }
 
+
 /*
-  example code: print system times when shutting down by CTRL + c
-//*/
+  print user time and system time on shutting down
+*/
 void pr_cpu_time()
 {
 	double user, sys;
