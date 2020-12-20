@@ -3,7 +3,7 @@
   TCP preforked server, no locking around accept
 
   (each child calling accept)
-//*/
+*/
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
@@ -30,19 +30,18 @@
 
 typedef void Sigfunc(int); /* convenience: for signal handlers */
 
-static pid_t *pid_children;
-
 
 /*
   forwards
 */
+
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
+void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__listen(int, int);
 int lothars__tcp_listen(const char*, const char*, socklen_t*);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
-void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
 
@@ -322,6 +321,9 @@ void lothars__close(int fd)
 
 /********************************************************************************************/
 // child implementation
+
+
+static pid_t *pid_children;
 
 /*
   child - routine
