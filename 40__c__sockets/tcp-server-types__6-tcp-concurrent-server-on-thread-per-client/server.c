@@ -35,9 +35,15 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
   forwards
 */
 
-// _pthread_create()
-// _pthread_detach()
+// error handling
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
 
+// pthreads
+void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
+void lothars__pthread_detach(pthread_t);
+
+// commons
 void* lothars__malloc(size_t);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
@@ -47,9 +53,6 @@ int lothars__tcp_listen(const char*, const char*, socklen_t*);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
-
-void err_sys(const char *, ...);
-void err_quit(const char *, ...);
 
 
 /*
@@ -173,6 +176,31 @@ void err_quit(const char *fmt, ...)
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
+}
+
+
+void lothars__pthread_create( pthread_t *tid
+			      , const pthread_attr_t *attr
+			      , void * (*func)(void *)
+			      , void *arg)
+{
+	int  res;
+	if (0 == (res = pthread_create(tid, attr, func, arg))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_create error");
+}
+
+
+void lothars__pthread_detach(pthread_t tid)
+{
+	int res;
+	if (0 == (res = pthread_detach(tid))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_detach error");
 }
 
 
@@ -367,14 +395,21 @@ void child_routine(int32_t fd_sock)
 void* thread_handler(void *arg)
 {
 	// detach thread, to run and finish separately
-	_pthread_detach(pthread_self());
-
+	lothars__pthread_detach(pthread_self());
+/*
 	// do something, never returns..
-	child_routine((int32_t) arg);
+	child_routine((int32_t) arg);  
 
 	// close socket
-	lothars__close((int32_t) arg);
+	lothars__close((int32_t) arg);  
+/*/
+	// do something, never returns..
+	child_routine(*(int32_t*) arg); // cast void* to int32_t
 
+	// close socket
+	lothars__close(*(int32_t*) arg);
+
+//*/
 	return NULL;
 }
 
@@ -458,7 +493,11 @@ int main(int argc, char** argv)
 		fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
 		// 2. create thread for client
-		_pthread_create(&tid, NULL, &thread_handler, (void*) fd_conn);
+/*
+		lothars__pthread_create(&tid, NULL, &thread_handler, (void*) fd_conn); // TODO rm
+/*/
+		lothars__pthread_create(&tid, NULL, (void*) &thread_handler, (void*) &fd_conn);
+//*/
 	}
 
 	exit(EXIT_SUCCESS);
