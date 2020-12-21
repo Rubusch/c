@@ -411,7 +411,7 @@ ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 		err_sys("write_fd error");
 	}
 
-	return(bytes);
+	return bytes;
 }
 
 
@@ -485,7 +485,7 @@ ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 	if (-1 == (bytes = read(fd, ptr, nbytes))) {
 		err_sys("read error");
 	}
-	return(bytes);
+	return bytes;
 }
 
 
@@ -572,6 +572,10 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	fprintf(stdout, "child %d: starting\n", getpid());
 
 	while (1) {
+		// the child does not call accept() [to be blocked],
+		// instead the child blocks in a call to read_fd(),
+		// waiting for the parent to pass it a connected
+		// socket descriptor to process
 		if (0 == (num = lothars__read_fd(STDERR_FILENO, &chr, 1, &fd_conn))) {
 			err_quit("read_fd() returned 0");
 		}
@@ -582,9 +586,10 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 		// process request
 		child_routine(fd_conn);
+		fprintf(stdout, "child %d: READY.\n", getpid());
 		lothars__close(fd_conn);
 
-		// tell parent we're ready again
+		// tell parent we're ready again (STDERR_FILENO-trick answer)
 		lothars__write(STDERR_FILENO, "", 1);
 	}
 }
@@ -726,7 +731,7 @@ int main(int argc, char** argv)
 	FD_ZERO(&set_master);
 	FD_SET(fd_listen, &set_master);
 
-	// TODO
+	// highest fd is now fd_listen
 	fd_max = fd_listen;
 
 	cliaddr = lothars__malloc(addrlen);
@@ -734,6 +739,22 @@ int main(int argc, char** argv)
 	child_ptr = lothars__malloc(NCHILDREN * sizeof(*child_ptr));
 
 	// prefork all the children
+	//
+	// setup the following:
+	//                                      | parent
+	// +----------+    stream pipe          |
+	// | children |<------+-------------->listenfd
+	// +----------+       |                 |
+	// +----------+       |                 |
+	// | children |<------+
+	// +----------+       |
+	// +----------+       |
+	// | children |<------+
+	// +----------+       |
+	// +----------+       |
+	// | children |<------+
+	// +----------+
+	//
 	int32_t idx;
 	for (idx=0; idx<NCHILDREN; ++idx) {
 		child_make(idx, fd_listen, addrlen); // only parent returns
@@ -747,21 +768,28 @@ int main(int argc, char** argv)
 	while (1) {
 		set_r = set_master;
 		if (0 >= n_avail) {
-			// turn off if no available children
+			// n_avail - keeps track of the number of
+			// available children, if this counter is 0
+			// the listening socket is turned off, in the
+			// descriptor set for select(); this prevents
+			// us from doing accept() on a new connection
+			// for which there is no child available
 			FD_CLR(fd_listen, &set_r);
 		}
 
-		// the select I/O multiplexing
+		// the select I/O multiplexing - tell the parent when we are ready
 		n_sel = lothars__select(fd_max+1, &set_r, NULL, NULL, NULL);
 
 		// check for new connections
 		if (FD_ISSET(fd_listen, &set_r)) {
+			// if the listening socket is readable, a new
+			// connection is ready to accept()
 			clilen = addrlen;
 			fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
 			// get next available child index
 			for (idx=0; idx<NCHILDREN; ++idx) {
-				if (child_ptr[idx].child_status == 0) {
+				if (0 == child_ptr[idx].child_status) {
 					break; // available
 				}
 			}
@@ -775,7 +803,9 @@ int main(int argc, char** argv)
 			++child_ptr[idx].child_count;
 			--n_avail;
 
-			// TODO
+			// we found the first available child, now we
+			// pass the connected socket to the child
+			// using write_fd()
 			num = lothars__write_fd(child_ptr[idx].child_fd_pipe, "", 1, fd_conn);
 
 			// TODO
@@ -787,9 +817,16 @@ int main(int argc, char** argv)
 			}
 		}
 
-		// find any newly-available children
+		// check for newly-available children
 		for (idx=0; idx<NCHILDREN; ++idx) {
 			if (FD_ISSET(child_ptr[idx].child_fd_pipe, &set_r)) {
+				// we see that our child_main() writes
+				// a single byte back to the parent
+				// across the stream pipe when the
+				// child has finished with a client,
+				// that makes the parent's end of the
+				// stream pipe readable
+
 				if (0 == (num = lothars__read(child_ptr[idx].child_fd_pipe, &rc, 1))) {
 					err_quit("child %d terminated unexepctedly", idx);
 				}
