@@ -36,6 +36,12 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 /*
   forwards
 */
+
+// error handling
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
+
+// commons
 void* lothars__malloc(size_t);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
@@ -45,9 +51,6 @@ void lothars__listen(int, int);
 int lothars__tcp_listen(const char*, const char*, socklen_t*);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
-
-void err_sys(const char *, ...);
-void err_quit(const char *, ...);
 
 
 /*
