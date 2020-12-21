@@ -17,6 +17,8 @@
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
 #include <time.h> /* time(), ctime() */
 #include <pthread.h> /* pthread_mutex_lock(), pthread_mutex_unlock(),... */
+#include <fcntl.h> /* open() */
+#include <sys/mman.h> /* mmap() */
 #include <errno.h>
 
 
@@ -42,11 +44,18 @@ void err_quit(const char *, ...);
 // pthreads
 void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
 void lothars__pthread_detach(pthread_t);
+void lothars__pthread_mutexattr_init(pthread_mutexattr_t *);
+void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *, int);
+void lothars__pthread_mutex_init(pthread_mutex_t *, pthread_mutexattr_t *);
+void lothars__pthread_mutex_lock(pthread_mutex_t *);
+void lothars__pthread_mutex_unlock(pthread_mutex_t *);
 
 // commons
 void* lothars__malloc(size_t);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
+int lothars__open(const char *, int, mode_t);
+void* lothars__mmap(void *, size_t, int, int, int, off_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__listen(int, int);
 int lothars__tcp_listen(const char*, const char*, socklen_t*);
@@ -204,6 +213,65 @@ void lothars__pthread_detach(pthread_t tid)
 }
 
 
+void lothars__pthread_mutexattr_init(pthread_mutexattr_t *attr)
+{
+	int res;
+	if (0 == (res = pthread_mutexattr_init(attr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutexattr_init error");
+}
+
+
+void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr
+                                   , int flag)
+{
+	int res;
+	if (0 == (res = pthread_mutexattr_setpshared(attr, flag))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutexattr_setpshared error");
+}
+
+
+void lothars__pthread_mutex_init(pthread_mutex_t *mptr
+                         , pthread_mutexattr_t *attr)
+{
+	int res;
+	if (0 == (res = pthread_mutex_init(mptr, attr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutex_init error");
+}
+
+
+
+void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
+{
+	int res;
+	if (0 == (res = pthread_mutex_lock(mptr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutex_lock error");
+}
+
+
+
+void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
+{
+	int res;
+	if (0 == (res = pthread_mutex_unlock(mptr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutex_unlock error");
+}
+
+
 void* lothars__malloc(size_t size)
 {
 	void *ptr = NULL;
@@ -231,6 +299,32 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 		err_sys("readline error");
 	}
 	return bytes;
+}
+
+
+int lothars__open(const char *pathname, int oflag, mode_t mode)
+{
+	int  fd;
+	if (-1 == (fd = open(pathname, oflag, mode))) {
+		err_sys("open error for %s", pathname);
+	}
+	return fd;
+}
+
+
+/*
+  mmap() - memory map wrapper
+
+  checking the return object of mmap() against a void* typedef'd equivalent to '-1'
+  i.e. mmap() was fail
+*/
+void* lothars__mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
+{
+	void *ptr = NULL;
+	if (((void *) -1) == (ptr = mmap(addr, len, prot, flags, fd, offset))) {
+		err_sys("mmap error");
+	}
+	return ptr;
 }
 
 
@@ -347,6 +441,11 @@ void lothars__close(int fd)
 
 static struct sockaddr* cliaddr; /* client address pointer */
 
+void lock_init(char*);
+void lock_wait();
+void lock_release();
+
+
 /*
   child - routine
 
@@ -396,21 +495,55 @@ void* thread_handler(void *arg)
 {
 	// detach thread, to run and finish separately
 	lothars__pthread_detach(pthread_self());
-/*
-	// do something, never returns..
-	child_routine((int32_t) arg);  
 
-	// close socket
-	lothars__close((int32_t) arg);  
-/*/
+fprintf(stderr, "%s(): arg(fd_conn) %d\n", __func__, *(int32_t*) arg);              
 	// do something, never returns..
 	child_routine(*(int32_t*) arg); // cast void* to int32_t
 
 	// close socket
 	lothars__close(*(int32_t*) arg);
 
-//*/
 	return NULL;
+}
+
+
+// mutex pointer as "private" (global static in .c)
+static pthread_mutex_t *mx_ptr;
+
+
+/*
+  init pthread mutexes
+*/
+void lock_init(char* pathname)
+{
+	pthread_mutexattr_t mxattr;
+
+	int32_t fd = lothars__open("/dev/zero", O_RDWR, 0);
+	mx_ptr = lothars__mmap(0, sizeof(pthread_mutex_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+	lothars__close(fd);
+
+	lothars__pthread_mutexattr_init(&mxattr);
+	lothars__pthread_mutexattr_setpshared(&mxattr, PTHREAD_PROCESS_SHARED);
+	lothars__pthread_mutex_init(mx_ptr, &mxattr);
+}
+
+
+/*
+  lock blocking
+*/
+void lock_wait()
+{
+	lothars__pthread_mutex_lock(mx_ptr);
+}
+
+
+/*
+  release lock
+*/
+void lock_release()
+{
+	lothars__pthread_mutex_unlock(mx_ptr);
 }
 
 
@@ -476,6 +609,9 @@ int main(int argc, char** argv)
 	strncpy(port, argv[1], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
+	// init file lock
+	lock_init("/tmp/lock.1234567"); // one lock file for all children
+
 	// set socket listen on provided port
 	fd_listen = lothars__tcp_listen(NULL, port, &addrlen);
 	// or alternatively, listen on host ip 10.0.2.15 and port
@@ -487,17 +623,43 @@ int main(int argc, char** argv)
 	lothars__signal(SIGINT, sig_int);
 
 	while (1) { // loops
+
 		clilen = addrlen;
+
+
+		// TODO: lock              
+		lock_wait();
 
 		// 1. accept client
 		fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
+		// TODO: unlock             
+		lock_release();
+
+
 		// 2. create thread for client
-/*
-		lothars__pthread_create(&tid, NULL, &thread_handler, (void*) fd_conn); // TODO rm
-/*/
-		lothars__pthread_create(&tid, NULL, (void*) &thread_handler, (void*) &fd_conn);
-//*/
+
+
+/* FIXME: concurrence is broken in this simple pthread approach!
+
+   what is happening here?
+
+   single client connections work. clients w/ delay work, too.
+
+   using the multiple client seems to DOS this server, first fd_conn
+   won't ever be passed, the following fd_conns won't be served
+   correctly
+
+   a sleep(1) [server] makes the server stay on the first fd_conn, but
+   no correct service either
+
+   naive approoach with lock around accept() fails, no difference
+
+   TODO fixme          
+ */
+
+fprintf(stderr, "%s(): fd_conn %d\n", __func__, fd_conn);             
+		lothars__pthread_create(&tid, NULL, &thread_handler, (void*) &fd_conn);
 	}
 
 	exit(EXIT_SUCCESS);
