@@ -46,6 +46,9 @@ int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
 
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
+
 
 /*
   internal helpers
@@ -89,7 +92,7 @@ static int read_cnt;
 static char *read_ptr;
 static char read_buf[MAXLINE];
 
-static ssize_t fd_read(int fd, char *ptr)
+static ssize_t readline_fd_doit(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
 	again:
@@ -113,14 +116,14 @@ static ssize_t fd_read(int fd, char *ptr)
   into anything (vptr), respecting a maxlen and dealing with some
   erros, implementation is based on read()
 */
-ssize_t fd_readline(int fd, void *vptr, size_t maxlen)
+ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 {
 	ssize_t cnt, rc;
 	char chr, *ptr = NULL;
 
 	ptr = vptr;
 	for (cnt = 1; cnt < maxlen; ++cnt) {
-		if (1 == (rc = fd_read(fd, &chr))) { // main approach in fd_read
+		if (1 == (rc = readline_fd_doit(fd, &chr))) { // main approach in readline_fd_doit
 			*ptr++ = chr;
 			if (chr == '\n')
 				break; // newline is stored, like fgets()
@@ -194,7 +197,7 @@ Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 {
 	ssize_t bytes;
-	if (0 > (bytes = fd_readline(fd, ptr, maxlen))) {
+	if (0 > (bytes = readline_fd(fd, ptr, maxlen))) {
 		err_sys("readline error");
 	}
 	return bytes;
