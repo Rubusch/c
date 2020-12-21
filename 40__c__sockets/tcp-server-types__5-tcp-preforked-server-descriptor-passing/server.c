@@ -8,8 +8,6 @@
   of the children the file lock or the mutex lock. The results also
   show that the OS that we are measuring does this in a fair,
   round-robin fashion.
-
-  FIXME!                                                                              
 */
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
@@ -808,10 +806,18 @@ int main(int argc, char** argv)
 			// using write_fd()
 			num = lothars__write_fd(child_ptr[idx].child_fd_pipe, "", 1, fd_conn);
 
-			// TODO
+			// we write one byte along with the
+			// descriptor, but the recipient does not look
+			// at the contents of this byte; the parent
+			// closes the connected socket
 			lothars__close(fd_conn);
 
-			// TODO
+			// we always start looking for an available
+			// child with the first entry in the array of
+			// Child structures, i.e. the first children
+			// in the array always receive new connections
+			// to process before later elements in the
+			// array
 			if (--n_sel == 0) {
 				continue; // all done with select() results
 			}
