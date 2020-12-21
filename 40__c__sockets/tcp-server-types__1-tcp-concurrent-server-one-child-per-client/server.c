@@ -27,7 +27,6 @@
 */
 
 #define MAXLINE 4096 /* max text line length */
-#define BUFFSIZE 8192 /* buffer size for reads and writes */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXN 1234 /*  max number of bytes to request from server */
 
@@ -40,12 +39,15 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 void* lothars__malloc(size_t);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
+void lothars__setsockopt(int, int, int, const void *, socklen_t);
 pid_t lothars__fork();
 void lothars__listen(int, int);
 int lothars__tcp_listen(const char*, const char*, socklen_t*);
-void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
+
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
 
 
 /*
@@ -90,7 +92,7 @@ static int read_cnt;
 static char *read_ptr;
 static char read_buf[MAXLINE];
 
-static ssize_t fd_read(int fd, char *ptr)
+static ssize_t readline_fd_doit(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
 	again:
@@ -114,14 +116,14 @@ static ssize_t fd_read(int fd, char *ptr)
   into anything (vptr), respecting a maxlen and dealing with some
   erros, implementation is based on read()
 */
-ssize_t fd_readline(int fd, void *vptr, size_t maxlen)
+ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 {
 	ssize_t cnt, rc;
 	char chr, *ptr = NULL;
 
 	ptr = vptr;
 	for (cnt = 1; cnt < maxlen; ++cnt) {
-		if (1 == (rc = fd_read(fd, &chr))) { // main approach in fd_read
+		if (1 == (rc = readline_fd_doit(fd, &chr))) { // main approach in readline_fd_doit
 			*ptr++ = chr;
 			if (chr == '\n')
 				break; // newline is stored, like fgets()
@@ -157,6 +159,7 @@ void err_sys(const char *fmt, ...)
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
+
 
 /*
   fatal error unrelated to system call Print message and terminate
@@ -194,7 +197,7 @@ Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 {
 	ssize_t bytes;
-	if (0 > (bytes = fd_readline(fd, ptr, maxlen))) {
+	if (0 > (bytes = readline_fd(fd, ptr, maxlen))) {
 		err_sys("readline error");
 	}
 	return bytes;
