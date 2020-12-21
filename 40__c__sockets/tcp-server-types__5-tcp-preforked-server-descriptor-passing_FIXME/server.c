@@ -190,7 +190,6 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	struct iovec iov[1];
 	ssize_t cnt;
 
-//#ifdef HAVE_MSGHDR_MSG_CONTROL
 	union{
 		struct cmsghdr cm;
 		char control[CMSG_SPACE(sizeof(int))];
@@ -198,11 +197,6 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	struct cmsghdr *cmptr = NULL;
 	msg.msg_control = control_un.control;
 	msg.msg_controllen = sizeof(control_un.control);
-//#else
-//	int newfd;
-//	msg.msg_accrights = (caddr_t) &newfd;
-//	msg.msg_accrightslen = sizeof(int);
-//#endif
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -216,7 +210,6 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 		return cnt;
 	}
 
-//#ifdef HAVE_MSGHDR_MSG_CONTROL
 	if ( (NULL != (cmptr = CMSG_FIRSTHDR(&msg))) && (cmptr->cmsg_len == CMSG_LEN(sizeof(int)))) {
 		if (cmptr->cmsg_level != SOL_SOCKET) {
 			err_quit("control level != SOL_SOCKET");
@@ -229,13 +222,6 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	} else {
 		*recvfd = -1;  // descriptor was not passed
 	}
-//#else
-//	if (msg.msg_accrightslen == sizeof(int)) {
-//		*recvfd = newfd;
-//	} else {
-//		*recvfd = -1;  // descriptor was not passed
-//	}
-//#endif
 
 	return cnt;
 }
@@ -246,8 +232,6 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	struct msghdr msg;
 	struct iovec iov[1];
 
-// TODO check out and simplify                                 
-//#ifdef HAVE_MSGHDR_MSG_CONTROL
 	union {
 		struct cmsghdr cm;
 		char    control[CMSG_SPACE(sizeof(int))];
@@ -262,10 +246,6 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	cmptr->cmsg_level = SOL_SOCKET;
 	cmptr->cmsg_type = SCM_RIGHTS;
 	*((int *) CMSG_DATA(cmptr)) = sendfd;
-//#else
-//	msg.msg_accrights = (caddr_t) &sendfd;
-//	msg.msg_accrightslen = sizeof(int);
-//#endif
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -531,7 +511,7 @@ void lothars__close(int fd)
 
 typedef struct{
 	pid_t child_pid;   // process ID
-	int32_t fd_child_pipe; // parent's stream pipe to / from child
+	int32_t child_fd_pipe; // parent's stream pipe to / from child
 	int32_t child_status;  // 0 = ready
 	long child_count;  // number of connections handled
 } Child_t;
@@ -620,30 +600,46 @@ pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	int32_t fd_sock[2];
 	pid_t pid;
 
+	// create a stream pipe (a.k.a named pipe): fd_sock - a unix
+	// domain stream socket before calling fork
 	lothars__socketpair(AF_LOCAL, SOCK_STREAM, 0, fd_sock);
 
-	if (0 < (pid = lothars__fork())) {            
+	if (0 < (pid = lothars__fork())) {
 		/* parent */
 
-		// close other end of pipe
+		// parent: close childs pipe descriptor fd_sock[1]
 		lothars__close(fd_sock[1]);
 
-		// init Child_t struct to be passed via the pipe
+		// parent: init Child_t struct to be passed via the pipe
 		child_ptr[idx].child_pid = pid;
-		child_ptr[idx].fd_child_pipe = fd_sock[0];
+		child_ptr[idx].child_fd_pipe = fd_sock[0];
 		child_ptr[idx].child_status = 0;
 
-		// parent returns
+		// parent: return
 		return pid;
 	}
 
 	/* child */
-// TODO receive fd via full pipe from parent after accept                
 
-	// child's stream pipe to parent
-	lothars__dup2(fd_sock[idx], STDERR_FILENO);
+	// child: close parents pipe descriptor fd_sock[0], and do the
+	// STDERR_FILENO-trick
+	//
+	// furthermore, the child duplicates its end of the stream
+	// pipe fd_sock[1] onto standard error STDERR_FILENO, so taht
+	// each child just reads and writes to standard error to
+	// communicates with the parent
+	//
+	// STDERR_FILENO-trick: gives the following arrangement:
+	//
+	// +----------+                      +----------+
+	// | child    |     stream pipe      |   parent |
+	// |       stderr<---------------->sockfd[0]    |
+	// |          |                      |          |
+	// +----------+                      +----------+
+	//
+	lothars__dup2(fd_sock[1], STDERR_FILENO);
 
-	// close pipe
+	// child: now close the listening sockets
 	lothars__close(fd_sock[0]);
 	lothars__close(fd_sock[1]);
 
@@ -741,8 +737,8 @@ int main(int argc, char** argv)
 	int32_t idx;
 	for (idx=0; idx<NCHILDREN; ++idx) {
 		child_make(idx, fd_listen, addrlen); // only parent returns
-		FD_SET(child_ptr[idx].fd_child_pipe, &set_master);
-		fd_max = max(fd_max, child_ptr[idx].fd_child_pipe);
+		FD_SET(child_ptr[idx].child_fd_pipe, &set_master);
+		fd_max = max(fd_max, child_ptr[idx].child_fd_pipe);
 	}
 
 	// signal handler, set up only once in parent for children
@@ -780,7 +776,7 @@ int main(int argc, char** argv)
 			--n_avail;
 
 			// TODO
-			num = lothars__write_fd(child_ptr[idx].fd_child_pipe, "", 1, fd_conn);
+			num = lothars__write_fd(child_ptr[idx].child_fd_pipe, "", 1, fd_conn);
 
 			// TODO
 			lothars__close(fd_conn);
@@ -793,8 +789,8 @@ int main(int argc, char** argv)
 
 		// find any newly-available children
 		for (idx=0; idx<NCHILDREN; ++idx) {
-			if (FD_ISSET(child_ptr[idx].fd_child_pipe, &set_r)) {
-				if (0 == (num = lothars__read(child_ptr[idx].fd_child_pipe, &rc, 1))) {
+			if (FD_ISSET(child_ptr[idx].child_fd_pipe, &set_r)) {
+				if (0 == (num = lothars__read(child_ptr[idx].child_fd_pipe, &rc, 1))) {
 					err_quit("child %d terminated unexepctedly", idx);
 				}
 				child_ptr[idx].child_status = 0;
