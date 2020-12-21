@@ -15,9 +15,10 @@
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
+#include <time.h> /* time(), ctime() */
+#include <pthread.h> /* pthread_mutex_lock(), pthread_mutex_unlock(),... */
 #include <fcntl.h> /* open() */
 #include <sys/mman.h> /* mmap() */
-
 #include <errno.h>
 
 
@@ -37,13 +38,19 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
   forwards
 */
 
+// error handling
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
+
+// pthreads
 void lothars__pthread_mutexattr_init(pthread_mutexattr_t *);
 void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *, int);
 void lothars__pthread_mutex_init(pthread_mutex_t *, pthread_mutexattr_t *);
 void lothars__pthread_mutex_lock(pthread_mutex_t *);
 void lothars__pthread_mutex_unlock(pthread_mutex_t *);
 
-void* lothars__malloc(size_t size);
+// commons
+void* lothars__malloc(size_t);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
@@ -55,9 +62,6 @@ int lothars__tcp_listen(const char*, const char*, socklen_t*);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__write(int, void *, size_t);
 void lothars__close(int);
-
-void err_sys(const char *, ...);
-void err_quit(const char *, ...);
 
 
 /*
