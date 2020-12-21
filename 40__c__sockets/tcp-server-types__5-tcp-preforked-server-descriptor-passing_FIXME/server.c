@@ -130,7 +130,6 @@ static int read_cnt;
 static char *read_ptr;
 static char read_buf[MAXLINE];
 
-// TODO readline_fd_doit(    
 static ssize_t readline_fd_doit(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
@@ -155,7 +154,6 @@ static ssize_t readline_fd_doit(int fd, char *ptr)
   into anything (vptr), respecting a maxlen and dealing with some
   erros, implementation is based on read()
 */
-// TODO rn readline_fd(       
 ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 {
 	ssize_t cnt, rc;
