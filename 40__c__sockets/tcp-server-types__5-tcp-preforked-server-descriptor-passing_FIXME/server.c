@@ -610,6 +610,8 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 /*
   child - creator
+
+  opening a full pipe to parent
 */
 pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
@@ -618,7 +620,9 @@ pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 	lothars__socketpair(AF_LOCAL, SOCK_STREAM, 0, fd_sock);
 
-	if (0 < (pid = lothars__fork())) {
+	if (0 < (pid = lothars__fork())) {            
+		/* parent */
+
 		// close other end of pipe
 		lothars__close(fd_sock[1]);
 
@@ -630,6 +634,9 @@ pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		// parent returns
 		return pid;
 	}
+
+	/* child */
+// TODO receive fd via full pipe from parent after accept                
 
 	// child's stream pipe to parent
 	lothars__dup2(fd_sock[idx], STDERR_FILENO);
@@ -727,7 +734,7 @@ int main(int argc, char** argv)
 	cliaddr = lothars__malloc(addrlen);
 	n_avail = NCHILDREN;
 	child_ptr = lothars__malloc(NCHILDREN * sizeof(*child_ptr));
-  
+
 	// prefork all the children
 	int32_t idx;
 	for (idx=0; idx<NCHILDREN; ++idx) {
