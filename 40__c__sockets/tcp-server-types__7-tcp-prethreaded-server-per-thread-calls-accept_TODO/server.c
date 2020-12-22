@@ -3,6 +3,7 @@
   TCP Prethreaded Server, per-Thread accept()
 
   faster than concurrent server - one of the fastest implementations
+*/
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
@@ -15,6 +16,9 @@
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
 #include <time.h> /* time(), ctime() */
+#include <pthread.h> /* pthread_mutex_lock(), pthread_mutex_unlock(),... */
+#include <fcntl.h> /* open() */
+#include <sys/mman.h> /* mmap() */
 #include <errno.h>
 
 
@@ -38,11 +42,15 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
+// pthreads
+void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
+void lothars__pthread_mutex_lock(pthread_mutex_t *);
+void lothars__pthread_mutex_unlock(pthread_mutex_t *);
+
 // commons
 void* lothars__malloc(size_t);
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
-pid_t lothars__fork();
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__listen(int, int);
 int lothars__tcp_listen(const char*, const char*, socklen_t*);
@@ -175,6 +183,42 @@ void err_quit(const char *fmt, ...)
 }
 
 
+void lothars__pthread_create( pthread_t *tid
+			      , const pthread_attr_t *attr
+			      , void * (*func)(void *)
+			      , void *arg)
+{
+	int  res;
+	if (0 == (res = pthread_create(tid, attr, func, arg))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_create error");
+}
+
+
+void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
+{
+	int res;
+	if (0 == (res = pthread_mutex_lock(mptr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutex_lock error");
+}
+
+
+void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
+{
+	int res;
+	if (0 == (res = pthread_mutex_unlock(mptr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutex_unlock error");
+}
+
+
 void* lothars__malloc(size_t size)
 {
 	void *ptr = NULL;
@@ -202,16 +246,6 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 		err_sys("readline error");
 	}
 	return bytes;
-}
-
-
-pid_t lothars__fork(void)
-{
-	pid_t pid;
-	if (-1 == (pid = fork())) {
-		err_sys("fork error");
-	}
-	return pid;
 }
 
 
@@ -387,28 +421,33 @@ void* thread_main(void* arg)
 {
 	int32_t fd_conn;
 	socklen_t clilen;
+	int32_t idx = *(int*) arg;
 
-	struct sockaddr* cliaddr = _malloc(addrlen); // TODO                 
-	printf("thread %d starting\n", (int32_t) arg);
+	struct sockaddr* cliaddr = lothars__malloc(addrlen); // free happenes somewhere else..
+	fprintf(stdout, "thread %d starting\n", idx);
 	while (1) {
 		clilen = addrlen;
 
 		// lock
-		_pthread_mutex_lock(&mx_lock);
+		lothars__pthread_mutex_lock(&mx_lock);
 
 		// accept
-		fd_conn = _accept(fd_listen, cliaddr, &clilen);
+		fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
 		// unlock
-		_pthread_mutex_unlock(&mx_lock);
+		lothars__pthread_mutex_unlock(&mx_lock);
 
-		++thread_ptr[(int32_t) arg].thread_count;
+		thread_ptr[idx].thread_count++;
 
 		child_routine(fd_conn);
 
-		lothars__close(fd_conn);
 		fprintf(stdout, "child %d: READY.\n", getpid());
+		lothars__close(fd_conn);
 	}
+
+	// never reaches here, the next lines are pure decoration
+	free(arg);
+	return NULL;
 }
 
 
@@ -417,7 +456,19 @@ void* thread_main(void* arg)
 */
 void thread_make(int32_t idx)
 {
-	_pthread_create(&thread_ptr[idx].thread_tid, NULL, &thread_main, (void*) idx);
+	// NEVER PASS STACK VARIABLES TO PTHREAD_CREATE!!!
+	//
+	// if pthread_create(..,..,..,idx) was passed as a stack
+	// variable 'idx' as argument, then creating many threads in
+	// short time simply kicks out some of the old stack values
+	//
+	// fix: either signal access to the passed stack variable via
+	// conditional, or allocate some memory on the heap, then copy
+	// the content of the variable into the heap memory
+	int32_t* ptr = lothars__malloc(sizeof(idx));
+	*ptr = idx;
+
+	lothars__pthread_create(&thread_ptr[idx].thread_tid, NULL, &thread_main, ptr);
 }
 
 
@@ -482,7 +533,6 @@ char port[16]; memset(port, '\0', sizeof(port));
 	// or alternatively, listen on host ip 10.0.2.15 and port
 	// (in case provide ip via argv)
 	//fd_listen = lothars__tcp_listen("10.0.2.15", port, &addrlen);
-
 
 	thread_ptr = lothars__malloc(NTHREADS * sizeof(*thread_ptr));
 
