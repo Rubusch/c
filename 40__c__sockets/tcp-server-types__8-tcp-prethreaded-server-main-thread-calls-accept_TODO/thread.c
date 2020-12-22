@@ -1,8 +1,8 @@
 // thread.c
 /*
-  thread function used in the prethreaded tcp server application 
+  thread function used in the prethreaded tcp server application
   (main thread calls accept)
-//*/
+*/
 
 #include "thread.h"
 
@@ -16,34 +16,34 @@ void web_child(int fd_sock);
 */
 void* thread_main(void* arg)
 {
-  int fd_conn;
-  printf("thread %d starting\n", (int) arg);
+	int fd_conn;
+	printf("thread %d starting\n", (int) arg);
 
-  for(;;){
+	for(;;){
 
-    _pthread_mutex_lock(&mutex_fd_cli);
+		_pthread_mutex_lock(&mutex_fd_cli);
 
-    // check if thread index comes to main thread index -> wait
-    while(idx_thread == idx_mainthread){
-      _pthread_cond_wait(&cond_fd_cli, &mutex_fd_cli);
-    }
+		// check if thread index comes to main thread index -> wait
+		while(idx_thread == idx_mainthread){
+			_pthread_cond_wait(&cond_fd_cli, &mutex_fd_cli);
+		}
 
-    // connected socket to service
-    fd_conn = fd_cli[idx_thread]; 
+		// connected socket to service
+		fd_conn = fd_cli[idx_thread];
 
-    // increment idx_thread, go to next thread
-    if(++idx_thread == MAXNCLI) idx_thread = 0;
-    
-    _pthread_mutex_unlock(&mutex_fd_cli);
-   
+		// increment idx_thread, go to next thread
+		if(++idx_thread == MAXNCLI) idx_thread = 0;
 
-    ++thread_ptr[(int) arg].thread_count;
-    
-    // process request
-    web_child(fd_conn); 
+		_pthread_mutex_unlock(&mutex_fd_cli);
 
-    _close(fd_conn);
-  }
+
+		++thread_ptr[(int) arg].thread_count;
+
+		// process request
+		web_child(fd_conn);
+
+		_close(fd_conn);
+	}
 }
 
 
@@ -52,5 +52,6 @@ void* thread_main(void* arg)
 */
 void thread_make(int idx)
 {
-  _pthread_create(&thread_ptr[idx].thread_tid, NULL, &thread_main, (void*) idx);
+	// TODO alloc mem for ptr, pass ptr (heap) to pthread_create() as argument                         
+	_pthread_create(&thread_ptr[idx].thread_tid, NULL, &thread_main, (void*) idx);
 }

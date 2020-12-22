@@ -1,8 +1,8 @@
 # Makefile (simple)
 
-SOURCE = server.c
+SOURCE = server.c thread.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = server.exe
 
 .PREFIXES = .c .o
 CC = gcc
