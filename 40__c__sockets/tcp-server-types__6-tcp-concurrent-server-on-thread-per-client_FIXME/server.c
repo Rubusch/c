@@ -260,7 +260,6 @@ void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
 }
 
 
-
 void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
 {
 	int res;
