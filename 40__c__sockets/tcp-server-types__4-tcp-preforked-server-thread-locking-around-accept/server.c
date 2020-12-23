@@ -42,7 +42,7 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
-// common
+// commons
 void* lothars__malloc(size_t);
 int lothars__open(const char *, int, mode_t);
 void* lothars__mmap(void *, size_t, int, int, int, off_t);
