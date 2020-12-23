@@ -64,13 +64,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
-
-#ifdef HAVE_VSNPRINTF
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-#else
-	vsprintf(buf, fmt, ap); // not safe
-#endif
-
 	n_len = strlen(buf);
 	if(errnoflag){
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
@@ -126,11 +120,7 @@ int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 	int res;
 again:
 	if (0 > (res = accept(fd, sa, salenptr))) {
-#ifdef EPROTO
 		if ((errno == EPROTO) || (errno == ECONNABORTED)) {
-#else
-		if (errno == ECONNABORTED) {
-#endif
 			goto again;
 		} else {
 			err_sys("accept error");
