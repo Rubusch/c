@@ -43,6 +43,8 @@ void err_quit(const char *, ...);
 
 // commons
 void* lothars__malloc(size_t);
+
+// socket
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
