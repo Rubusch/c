@@ -575,7 +575,7 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		}
 
 		// process request
-		child_routine(fd_conn);
+		worker_routine(fd_conn);
 		fprintf(stdout, "child %d: READY.\n", getpid());
 		lothars__close(fd_conn);
 
@@ -684,7 +684,7 @@ void pr_cpu_time()
 void sig_int(int32_t signo)
 {
 	pr_cpu_time();
-	if(NULL != child_ptr){
+	if (NULL != child_ptr) {
 		free(child_ptr);
 		child_ptr = NULL;
 	}
@@ -750,8 +750,8 @@ int main(int argc, char** argv)
 	// +----------+
 	//
 	int32_t idx;
-	for (idx=0; idx<NWORKE; ++idx) {
-		child_make(idx, fd_listen, addrlen); // only parent returns
+	for (idx=0; idx<NWORKER; ++idx) {
+		worker_make(idx, fd_listen, addrlen); // only parent returns
 		FD_SET(child_ptr[idx].child_fd_pipe, &set_master);
 		fd_max = max(fd_max, child_ptr[idx].child_fd_pipe);
 	}
