@@ -307,9 +307,9 @@ int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 	int res;
 again:
 	if (0 > (res = accept(fd, sa, salenptr))) {
-		if((errno == EPROTO) || (errno == ECONNABORTED)){ // deal with some POSIX.1 errors...
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
 			goto again;
-		}else{
+		} else {
 			err_sys("accept error");
 		}
 	}
@@ -402,9 +402,7 @@ void* thread_handler(void* arg)
 
 
 /*
-  int signal hander: routine
-
-  print system time and usage at CTRL + C termination of server
+  print user time and system time on shutting down
 */
 void pr_cpu_time()
 {
