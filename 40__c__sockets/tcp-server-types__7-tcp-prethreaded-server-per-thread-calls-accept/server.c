@@ -29,7 +29,7 @@
 #define MAXLINE 4096 /* max text line length */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXN 1234 /*  max number of bytes to request from server */
-#define NTHREADS 7 /* number of pre-allocated threads */
+#define NWORKER 7 /* number of pre-allocated threads */
 
 typedef void Sigfunc(int); /* convenience: for signal handlers */
 
@@ -42,13 +42,15 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
+// commons
+void* lothars__malloc(size_t);
+
 // pthreads
 void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
 void lothars__pthread_mutex_lock(pthread_mutex_t *);
 void lothars__pthread_mutex_unlock(pthread_mutex_t *);
 
-// commons
-void* lothars__malloc(size_t);
+// socket
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
@@ -74,15 +76,9 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
-
-#ifdef HAVE_VSNPRINTF
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-#else
-	vsprintf(buf, fmt, ap); // not safe
-#endif
-
 	n_len = strlen(buf);
-	if(errnoflag){
+	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
 	}
 
@@ -183,6 +179,16 @@ void err_quit(const char *fmt, ...)
 }
 
 
+void* lothars__malloc(size_t size)
+{
+	void *ptr = NULL;
+	if (NULL == (ptr = malloc(size))) {
+		err_sys("malloc error");
+	}
+	return ptr;
+}
+
+
 void lothars__pthread_create( pthread_t *tid
 			      , const pthread_attr_t *attr
 			      , void * (*func)(void *)
@@ -219,16 +225,6 @@ void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
 }
 
 
-void* lothars__malloc(size_t size)
-{
-	void *ptr = NULL;
-	if (NULL == (ptr = malloc(size))) {
-		err_sys("malloc error");
-	}
-	return ptr;
-}
-
-
 Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc = NULL;
@@ -249,31 +245,19 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 }
 
 
+void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
+		err_sys("setsockopt error");
+	}
+}
+
+
 void lothars__listen(int fd, int backlog)
 {
 	if (0 > listen(fd, backlog)) {
 		err_sys("listen error");
 	}
-}
-
-
-int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
-{
-	int res;
-
-again:
-	if (0 > (res = accept(fd, sa, salenptr))) {
-#ifdef EPROTO
-		if((errno == EPROTO) || (errno == ECONNABORTED)){
-#else
-		if(errno == ECONNABORTED){
-#endif
-			goto again;
-		}else{
-			err_sys("accept error");
-		}
-	}
-	return res;
 }
 
 
@@ -332,11 +316,18 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 }
 
 
-void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
-	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
-		err_sys("setsockopt error");
+	int res;
+again:
+	if (0 > (res = accept(fd, sa, salenptr))) {
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+			goto again;
+		} else {
+			err_sys("accept error");
+		}
 	}
+	return res;
 }
 
 
@@ -357,7 +348,7 @@ void lothars__close(int fd)
 
 
 /********************************************************************************************/
-// child implementation
+// worker implementation
 
 
 pthread_mutex_t mx_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -373,11 +364,11 @@ socklen_t addrlen;
 
 
 /*
-  child - routine
+  worker - routine
 
   do anything, read, write, etc.. some action
 */
-void child_routine(int32_t fd_sock)
+void worker_routine(int32_t fd_sock)
 {
 	int32_t towrite;
 	ssize_t n_read;
@@ -417,7 +408,7 @@ void child_routine(int32_t fd_sock)
 /*
   worker - main function
 */
-void* thread_main(void* arg)
+void* worker_main(void* arg)
 {
 	int32_t fd_conn;
 	socklen_t clilen;
@@ -439,7 +430,7 @@ void* thread_main(void* arg)
 
 		thread_ptr[idx].thread_count++;
 
-		child_routine(fd_conn);
+		worker_routine(fd_conn);
 
 		fprintf(stdout, "child %d: READY.\n", getpid());
 		lothars__close(fd_conn);
@@ -452,9 +443,9 @@ void* thread_main(void* arg)
 
 
 /*
-  worker - creator
+  worker - constructor
 */
-void thread_make(int32_t idx)
+void worker_make(int32_t idx)
 {
 	// NEVER PASS STACK VARIABLES TO PTHREAD_CREATE!!!
 	//
@@ -468,7 +459,7 @@ void thread_make(int32_t idx)
 	int32_t* ptr = lothars__malloc(sizeof(idx));
 	*ptr = idx;
 
-	lothars__pthread_create(&thread_ptr[idx].thread_tid, NULL, &thread_main, ptr);
+	lothars__pthread_create(&thread_ptr[idx].thread_tid, NULL, &worker_main, ptr);
 }
 
 
@@ -479,17 +470,22 @@ void pr_cpu_time()
 {
 	double user, sys;
 	struct rusage usage_parent, usage_child;
+
+	// init parent ressource usage
 	if (0 > getrusage(RUSAGE_SELF, &usage_parent)) {
 		err_sys("getrusage(parent) error");
 	}
 
+	// init child ressource usage
 	if (0 > getrusage(RUSAGE_CHILDREN, &usage_child)) {
 		err_sys("getrusage(child) error");
 	}
 
+	// calculate user time
 	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
 	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
 
+	// calculate system time
 	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
 	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
 
@@ -498,7 +494,7 @@ void pr_cpu_time()
 
 
 /*
-  final action when server is shutdown by CTRL + c
+  int sig handler - action when server is shutdown by CTRL + c
 */
 void sig_int(int32_t signo)
 {
@@ -534,12 +530,12 @@ char port[16]; memset(port, '\0', sizeof(port));
 	// (in case provide ip via argv)
 	//fd_listen = lothars__tcp_listen("10.0.2.15", port, &addrlen);
 
-	thread_ptr = lothars__malloc(NTHREADS * sizeof(*thread_ptr));
+	thread_ptr = lothars__malloc(NWORKER * sizeof(*thread_ptr));
 
 	// start all threads
 	int32_t idx;
-	for (idx=0; idx<NTHREADS; ++idx) {
-		thread_make(idx); // only main thread returns
+	for (idx=0; idx<NWORKER; ++idx) {
+		WORKER_make(idx); // only main thread returns
 	}
 
 	// signal handler, set up only once in parent for children
