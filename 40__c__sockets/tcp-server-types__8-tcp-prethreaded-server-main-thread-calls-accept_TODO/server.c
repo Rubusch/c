@@ -5,6 +5,8 @@
   prethreaded, main thread calls accept (blocking)
 
   fastest server, handling several threads / processes
+
+FIXME: this server approach may work, but may hang up not reproducibly (needs investigation)          
 */
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
@@ -27,9 +29,12 @@
 */
 
 #define MAXLINE 4096 /* max text line length */
+#define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXNCLI 32 /* max number of threads running */
-#define NTHREADS 7
-#define MAXN 1234
+#define NWORKER 7
+#define MAXN 1234 /*  max number of bytes to request from server */
+
+typedef void Sigfunc(int); /* convenience: for signal handlers */
 
 
 /*
@@ -40,15 +45,17 @@
 void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
-// pthreads
-void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
-// lothars__pthread_mutex_lock()
-// lothars__pthread_mutex_unlock()
-// lothars__pthread_cond_wait()
-// lothars__pthread_cond_signal()
-
 // commons
 void* lothars__malloc(size_t);
+
+// pthreads
+void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
+void lothars__pthread_mutex_lock(pthread_mutex_t *);
+void lothars__pthread_mutex_unlock(pthread_mutex_t *);
+void lothars__pthread_cond_signal(pthread_cond_t *);
+void lothars__pthread_cond_wait(pthread_cond_t *, pthread_mutex_t *);
+
+// socket
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
@@ -74,13 +81,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
-
-//#ifdef HAVE_VSNPRINTF
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-//#else
-//	vsprintf(buf, fmt, ap); // not safe
-//#endif
-
 	n_len = strlen(buf);
 	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
@@ -183,6 +184,16 @@ void err_quit(const char *fmt, ...)
 }
 
 
+void* lothars__malloc(size_t size)
+{
+	void *ptr = NULL;
+	if (NULL == (ptr = malloc(size))) {
+		err_sys("malloc error");
+	}
+	return ptr;
+}
+
+
 void lothars__pthread_create( pthread_t *tid
 			      , const pthread_attr_t *attr
 			      , void * (*func)(void *)
@@ -197,13 +208,43 @@ void lothars__pthread_create( pthread_t *tid
 }
 
 
-void* lothars__malloc(size_t size)
+void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
 {
-	void *ptr = NULL;
-	if (NULL == (ptr = malloc(size))) {
-		err_sys("malloc error");
+	int res;
+	if (0 == (res = pthread_mutex_lock(mptr))) {
+		return;
 	}
-	return ptr;
+	errno = res;
+	err_sys("pthread_mutex_lock error");
+}
+
+
+
+void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
+{
+	int res;
+	if (0 == (res = pthread_mutex_unlock(mptr))) {
+		return;
+	}
+	errno = res;
+	err_sys("pthread_mutex_unlock error");
+}
+
+
+void lothars__pthread_cond_signal(pthread_cond_t *cptr)
+{
+	if (0 != (errno = pthread_cond_signal(cptr))) {
+		err_sys("pthread_cond_signal error");
+	}
+}
+
+
+void lothars__pthread_cond_wait(pthread_cond_t *cptr
+                        , pthread_mutex_t *mptr)
+{
+	if (0 != (errno = pthread_cond_wait(cptr, mptr))) {
+		err_sys("pthread_cond_wait error");
+	}
 }
 
 
@@ -303,9 +344,9 @@ int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 	int res;
 again:
 	if (0 > (res = accept(fd, sa, salenptr))) {
-		if((errno == EPROTO) || (errno == ECONNABORTED)){ // deal with some POSIX.1 errors...
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
 			goto again;
-		}else{
+		} else {
 			err_sys("accept error");
 		}
 	}
@@ -354,8 +395,8 @@ pthread_mutex_t mutex_fd_cli = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond_fd_cli = PTHREAD_COND_INITIALIZER;
 
 // forward declarations to avoid warnings
-void thread_make(int);
-void* thread_main(void*);
+void worker_make(int);
+void* worker_main(void*);
 
 
 /*
@@ -401,12 +442,13 @@ void worker_routine(int32_t fd_sock)
 
 
 /*
-  worker - main
+  worker - main function
 */
-void* thread_main(void* arg)
+void* worker_main(void* arg)
 {
 	int fd_conn;
-	printf("thread %d starting\n", (int) arg);
+	int32_t idx = *(int*) arg;
+	fprintf(stdout, "thread %d starting\n", idx);
 
 	while (1) {
 
@@ -422,16 +464,14 @@ void* thread_main(void* arg)
 
 		// increment idx_thread, go to next thread
 		if(++idx_thread == MAXNCLI) idx_thread = 0;
-
 		lothars__pthread_mutex_unlock(&mutex_fd_cli);
-
-
-		++thread_ptr[(int) arg].thread_count;
+		++thread_ptr[idx].thread_count;
 
 		// process request
 		worker_routine(fd_conn);
 
 		lothars__close(fd_conn);
+		fprintf(stdout, "child %d: READY.\n", getpid());
 	}
 }
 
@@ -441,10 +481,12 @@ void* thread_main(void* arg)
 
   only main thread returns
 */
-void thread_make(int idx)
+void worker_make(int idx)
 {
-	// TODO alloc mem for ptr, pass ptr (heap) to pthread_create() as argument                         
-	lothars__pthread_create(&thread_ptr[idx].thread_tid, NULL, &thread_main, (void*) idx);
+	// NB: try to avoid passing stack variables to pthread_create(),
+	// prefer heap variables the alternative approach is to signal
+	// via conditional wait/signal mechanism, as shown here
+	lothars__pthread_create(&thread_ptr[idx].thread_tid, NULL, &worker_main, (void*) &idx);
 }
 
 
@@ -455,17 +497,22 @@ void pr_cpu_time()
 {
 	double user, sys;
 	struct rusage usage_parent, usage_child;
+
+	// init parent ressource usage
 	if (0 > getrusage(RUSAGE_SELF, &usage_parent)) {
 		err_sys("getrusage(parent) error");
 	}
 
+	// init child ressource usage
 	if (0 > getrusage(RUSAGE_CHILDREN, &usage_child)) {
 		err_sys("getrusage(child) error");
 	}
 
+	// calculate user time
 	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
 	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
 
+	// calculate system time
 	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
 	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
 
@@ -474,7 +521,7 @@ void pr_cpu_time()
 
 
 /*
-  final action when server is shutdown by CTRL + c
+  int sig handler - action when server is shutdown by CTRL + c
 */
 void sig_int(int32_t signo)
 {
@@ -515,12 +562,12 @@ int main(int argc, char** argv)
 	cliaddr = lothars__malloc(addrlen);
 
 	// init thread pointer, number of threads = 7
-	thread_ptr = lothars__malloc(NTHREADS * sizeof(*thread_ptr));
+	thread_ptr = lothars__malloc(NWORKER * sizeof(*thread_ptr));
 	idx_thread = idx_mainthread = 0;
 
-	// create threadpool with NTHREADS threads
-	for(idx=0; idx < NTHREADS; ++idx){
-		thread_make(idx); // only main thread returns
+	// create threadpool with NWORKER threads
+	for(idx=0; idx < NWORKER; ++idx){
+		worker_make(idx); // only main thread returns
 	}
 
 	// wake thread in case thread index (idx_thread) was main thread index
