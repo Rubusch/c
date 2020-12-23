@@ -477,6 +477,7 @@ int main(int argc, char** argv)
 
 	cliaddr = lothars__malloc(addrlen);
 
+	// signal handler, set up only once in parent for children
 	lothars__signal(SIGINT, sig_int);
 
 	while (1) {
