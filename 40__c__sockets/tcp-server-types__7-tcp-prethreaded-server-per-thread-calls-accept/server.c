@@ -3,6 +3,10 @@
   TCP Prethreaded Server, per-Thread accept()
 
   faster than concurrent server - one of the fastest implementations
+
+  FIXME: basically works, but has non-reproducible issues, i.e. may
+  hung up at too many requests (needs investigation, and fix, in case
+  limitation)                        
 */
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
@@ -535,7 +539,7 @@ char port[16]; memset(port, '\0', sizeof(port));
 	// start all threads
 	int32_t idx;
 	for (idx=0; idx<NWORKER; ++idx) {
-		WORKER_make(idx); // only main thread returns
+		worker_make(idx); // only main thread returns
 	}
 
 	// signal handler, set up only once in parent for children
