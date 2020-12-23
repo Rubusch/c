@@ -42,9 +42,11 @@ void err_quit(const char *, ...);
 
 // commons
 void* lothars__malloc(size_t);
-Sigfunc* lothars__signal(int, Sigfunc*);
 void lothars__unlink(const char *);
 int lothars__mkstemp(char *);
+
+// socket
+Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
@@ -183,16 +185,6 @@ void* lothars__malloc(size_t size)
 }
 
 
-Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
-{
-	Sigfunc *sigfunc = NULL;
-	if(SIG_ERR == (sigfunc = signal(signo, func))){
-		err_sys("signal error");
-	}
-	return sigfunc;
-}
-
-
 void lothars__unlink(const char *pathname)
 {
 	if (-1 == unlink(pathname)) {
@@ -208,6 +200,16 @@ int lothars__mkstemp(char *template)
 		err_quit("mkstemp error, returned -1");
 	}
 	return idx;
+}
+
+
+Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+{
+	Sigfunc *sigfunc = NULL;
+	if(SIG_ERR == (sigfunc = signal(signo, func))){
+		err_sys("signal error");
+	}
+	return sigfunc;
 }
 
 
