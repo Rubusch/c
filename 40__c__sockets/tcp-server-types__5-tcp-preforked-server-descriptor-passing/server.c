@@ -32,7 +32,7 @@
 #define MAXLINE 4096 /* max text line length */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXN 1234 /*  max number of bytes to request from server */
-#define NCHILDREN 7 /* number of pre-allocated threads */
+#define NWORKER 7 /* number of pre-allocated threads */
 
 typedef void Sigfunc(int); /* convenience: for signal handlers */
 
@@ -74,9 +74,11 @@ void err_quit(const char *, ...);
 // commons
 void* lothars__malloc(size_t);
 void lothars__dup2(int, int);
+int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+
+// socket
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
-int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 pid_t lothars__fork();
 void lothars__socketpair(int, int, int, int *);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
@@ -105,15 +107,9 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
-
-#ifdef HAVE_VSNPRINTF
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-#else
-	vsprintf(buf, fmt, ap); // not safe
-#endif
-
 	n_len = strlen(buf);
-	if(errnoflag){
+	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
 	}
 
@@ -290,6 +286,16 @@ void err_quit(const char *fmt, ...)
 }
 
 
+void* lothars__malloc(size_t size)
+{
+	void *ptr = NULL;
+	if (NULL == (ptr = malloc(size))) {
+		err_sys("malloc error");
+	}
+	return ptr;
+}
+
+
 /*
   NB: dup2 implicitely allocates memory!
 */
@@ -301,13 +307,17 @@ void lothars__dup2(int fd1, int fd2)
 }
 
 
-void* lothars__malloc(size_t size)
+int lothars__select(int nfds
+		    , fd_set *readfds
+		    , fd_set *writefds
+		    , fd_set *exceptfds
+		    , struct timeval *timeout)
 {
-	void *ptr = NULL;
-	if (NULL == (ptr = malloc(size))) {
-		err_sys("malloc error");
+	int  res;
+	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
+		err_sys("select error");
 	}
-	return ptr;
+	return res;  // can return 0 on timeout
 }
 
 
@@ -331,19 +341,6 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 }
 
 
-int lothars__select(int nfds
-		    , fd_set *readfds
-		    , fd_set *writefds
-		    , fd_set *exceptfds
-		    , struct timeval *timeout)
-{
-	int  res;
-	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
-		err_sys("select error");
-	}
-	return res;  // can return 0 on timeout
-}
-
 
 pid_t lothars__fork(void)
 {
@@ -363,53 +360,19 @@ void lothars__socketpair(int family, int type, int protocol, int *fd)
 }
 
 
+void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
+		err_sys("setsockopt error");
+	}
+}
+
+
 void lothars__listen(int fd, int backlog)
 {
 	if (0 > listen(fd, backlog)) {
 		err_sys("listen error");
 	}
-}
-
-
-int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
-{
-	int res;
-
-again:
-	if (0 > (res = accept(fd, sa, salenptr))) {
-#ifdef EPROTO
-		if((errno == EPROTO) || (errno == ECONNABORTED)){
-#else
-		if(errno == ECONNABORTED){
-#endif
-			goto again;
-		}else{
-			err_sys("accept error");
-		}
-	}
-	return res;
-}
-
-
-ssize_t lothars__read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
-{
-	ssize_t cnt;
-	if (0 > (cnt = read_fd(fd, ptr, nbytes, recvfd))) {
-		err_sys("read_fd error");
-	}
-	return cnt;
-}
-
-
-ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
-{
-	ssize_t  bytes;
-
-	if (0 > (bytes = write_fd(fd, ptr, nbytes, sendfd))) {
-		err_sys("write_fd error");
-	}
-
-	return bytes;
 }
 
 
@@ -468,11 +431,40 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 }
 
 
-void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
-	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
-		err_sys("setsockopt error");
+	int res;
+again:
+	if (0 > (res = accept(fd, sa, salenptr))) {
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+			goto again;
+		} else {
+			err_sys("accept error");
+		}
 	}
+	return res;
+}
+
+
+ssize_t lothars__read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
+{
+	ssize_t cnt;
+	if (0 > (cnt = read_fd(fd, ptr, nbytes, recvfd))) {
+		err_sys("read_fd error");
+	}
+	return cnt;
+}
+
+
+ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
+{
+	ssize_t  bytes;
+
+	if (0 > (bytes = write_fd(fd, ptr, nbytes, sendfd))) {
+		err_sys("write_fd error");
+	}
+
+	return bytes;
 }
 
 
@@ -504,7 +496,7 @@ void lothars__close(int fd)
 
 
 /********************************************************************************************/
-// child implementation
+// worker implementation
 
 
 typedef struct{
@@ -517,11 +509,11 @@ Child_t* child_ptr;
 
 
 /*
-  child - routine
+  worker - routine
 
   do anything, read, write, etc.. some action
 */
-void child_routine(int32_t fd_sock)
+void worker_routine(int32_t fd_sock)
 {
 	int32_t towrite;
 	ssize_t n_read;
@@ -559,9 +551,9 @@ void child_routine(int32_t fd_sock)
 
 
 /*
-  child - main function
+  worker - main function
 */
-void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
+void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
 	char chr;
 	int32_t fd_conn;
@@ -594,11 +586,11 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 
 /*
-  child - creator
+  child - constructor
 
   opening a full pipe to parent
 */
-pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
+pid_t worker_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
 	int32_t fd_sock[2];
 	pid_t pid;
@@ -650,7 +642,7 @@ pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	lothars__close(fd_listen);
 
 	// never returns!!
-	child_main(idx, fd_listen, addrlen);
+	worker_main(idx, fd_listen, addrlen);
 
 	return pid;
 }
@@ -663,17 +655,22 @@ void pr_cpu_time()
 {
 	double user, sys;
 	struct rusage usage_parent, usage_child;
+
+	// init parent ressource usage
 	if (0 > getrusage(RUSAGE_SELF, &usage_parent)) {
 		err_sys("getrusage(parent) error");
 	}
 
+	// init child ressource usage
 	if (0 > getrusage(RUSAGE_CHILDREN, &usage_child)) {
 		err_sys("getrusage(child) error");
 	}
 
+	// calculate user time
 	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
 	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
 
+	// calculate system time
 	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
 	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
 
@@ -682,7 +679,7 @@ void pr_cpu_time()
 
 
 /*
-  final action when server is shutdown by CTRL + c
+  int sig handler - action when server is shutdown by CTRL + c
 */
 void sig_int(int32_t signo)
 {
@@ -700,7 +697,6 @@ void sig_int(int32_t signo)
 
 /*
   main
-
 
 */
 int main(int argc, char** argv)
@@ -733,8 +729,8 @@ int main(int argc, char** argv)
 	fd_max = fd_listen;
 
 	cliaddr = lothars__malloc(addrlen);
-	n_avail = NCHILDREN;
-	child_ptr = lothars__malloc(NCHILDREN * sizeof(*child_ptr));
+	n_avail = NWORKER;
+	child_ptr = lothars__malloc(NWORKER * sizeof(*child_ptr));
 
 	// prefork all the children
 	//
@@ -754,7 +750,7 @@ int main(int argc, char** argv)
 	// +----------+
 	//
 	int32_t idx;
-	for (idx=0; idx<NCHILDREN; ++idx) {
+	for (idx=0; idx<NWORKE; ++idx) {
 		child_make(idx, fd_listen, addrlen); // only parent returns
 		FD_SET(child_ptr[idx].child_fd_pipe, &set_master);
 		fd_max = max(fd_max, child_ptr[idx].child_fd_pipe);
@@ -786,14 +782,14 @@ int main(int argc, char** argv)
 			fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
 			// get next available child index
-			for (idx=0; idx<NCHILDREN; ++idx) {
+			for (idx=0; idx<NWORKER; ++idx) {
 				if (0 == child_ptr[idx].child_status) {
 					break; // available
 				}
 			}
 
 			// exit, in case index ran throu..
-			if (idx == NCHILDREN) {
+			if (idx == NWORKER) {
 				err_quit("no available children");
 			}
 
@@ -824,7 +820,7 @@ int main(int argc, char** argv)
 		}
 
 		// check for newly-available children
-		for (idx=0; idx<NCHILDREN; ++idx) {
+		for (idx=0; idx<NWORKER; ++idx) {
 			if (FD_ISSET(child_ptr[idx].child_fd_pipe, &set_r)) {
 				// we see that our child_main() writes
 				// a single byte back to the parent
