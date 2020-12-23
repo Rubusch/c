@@ -42,12 +42,14 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
+// commons
+void* lothars__malloc(size_t);
+
 // pthreads
 void lothars__pthread_create(pthread_t *, const pthread_attr_t *, void * (*)(void *), void *);
 void lothars__pthread_detach(pthread_t);
 
-// commons
-void* lothars__malloc(size_t);
+// socket
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
@@ -176,6 +178,16 @@ void err_quit(const char *fmt, ...)
 }
 
 
+void* lothars__malloc(size_t size)
+{
+	void *ptr = NULL;
+	if (NULL == (ptr = malloc(size))) {
+		err_sys("malloc error");
+	}
+	return ptr;
+}
+
+
 void lothars__pthread_create( pthread_t *tid
 			      , const pthread_attr_t *attr
 			      , void * (*func)(void *)
@@ -198,16 +210,6 @@ void lothars__pthread_detach(pthread_t tid)
 	}
 	errno = res;
 	err_sys("pthread_detach error");
-}
-
-
-void* lothars__malloc(size_t size)
-{
-	void *ptr = NULL;
-	if (NULL == (ptr = malloc(size))) {
-		err_sys("malloc error");
-	}
-	return ptr;
 }
 
 
@@ -437,12 +439,10 @@ void pr_cpu_time()
 void sig_int(int32_t signo)
 {
 	pr_cpu_time();
-
 	if (NULL != cliaddr) {
 		free(cliaddr);
 		cliaddr = NULL;
 	}
-
 	exit(EXIT_SUCCESS);
 }
 
