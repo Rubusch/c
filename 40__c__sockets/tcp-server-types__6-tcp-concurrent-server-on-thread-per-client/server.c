@@ -6,6 +6,10 @@
   filedescriptor 'fd_conn' to the thread via heap argument
 
   fastest server, handling several threads / processes
+
+  FIXME: basically works, anyway has not reproducible issues in not
+  server all requests (starving requests) and in repeted runs, may
+  hung up (needs investigation and fix)          
 */
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
