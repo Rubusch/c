@@ -41,9 +41,11 @@ void err_quit(const char *, ...);
 
 // commons
 void* lothars__malloc(size_t);
+int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+
+// socket
 Sigfunc* lothars__signal(int, Sigfunc*);
 ssize_t lothars__readline(int, void *, size_t);
-int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 pid_t lothars__fork();
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__listen(int, int);
@@ -181,6 +183,20 @@ void* lothars__malloc(size_t size)
 }
 
 
+int lothars__select(int nfds
+		    , fd_set *readfds
+		    , fd_set *writefds
+		    , fd_set *exceptfds
+		    , struct timeval *timeout)
+{
+	int  res;
+	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
+		err_sys("select error");
+	}
+	return res;  // can return 0 on timeout
+}
+
+
 Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc = NULL;
@@ -198,20 +214,6 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 		err_sys("readline error");
 	}
 	return bytes;
-}
-
-
-int lothars__select(int nfds
-		    , fd_set *readfds
-		    , fd_set *writefds
-		    , fd_set *exceptfds
-		    , struct timeval *timeout)
-{
-	int  res;
-	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
-		err_sys("select error");
-	}
-	return res;  // can return 0 on timeout
 }
 
 
