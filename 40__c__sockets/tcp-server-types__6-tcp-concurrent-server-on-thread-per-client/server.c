@@ -73,13 +73,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
-
-//#ifdef HAVE_VSNPRINTF
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-//#else
-//	vsprintf(buf, fmt, ap); // not safe
-//#endif
-
 	n_len = strlen(buf);
 	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
@@ -408,23 +402,30 @@ void* thread_handler(void* arg)
 
 
 /*
-  print user time and system time on shutting down
+  int signal hander: routine
+
+  print system time and usage at CTRL + C termination of server
 */
 void pr_cpu_time()
 {
 	double user, sys;
 	struct rusage usage_parent, usage_child;
+
+	// init parent ressource usage
 	if (0 > getrusage(RUSAGE_SELF, &usage_parent)) {
 		err_sys("getrusage(parent) error");
 	}
 
+	// init child ressource usage
 	if (0 > getrusage(RUSAGE_CHILDREN, &usage_child)) {
 		err_sys("getrusage(child) error");
 	}
 
+	// calculate user time
 	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
 	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
 
+	// calculate system time
 	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
 	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
 
@@ -433,7 +434,7 @@ void pr_cpu_time()
 
 
 /*
-  final action when server is shutdown by CTRL + c
+  int sig handler - action when server is shutdown by CTRL + c
 */
 void sig_int(int32_t signo)
 {
