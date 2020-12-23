@@ -26,7 +26,7 @@
 #define MAXLINE 4096 /* max text line length */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
 #define MAXN 1234 /*  max number of bytes to request from server */
-#define NCHILDREN 7 /* number of pre-allocated threads */
+#define NWORKER 7 /* number of pre-allocated threads */
 
 typedef void Sigfunc(int); /* convenience: for signal handlers */
 
@@ -67,15 +67,9 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
-
-#ifdef HAVE_VSNPRINTF
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-#else
-	vsprintf(buf, fmt, ap); // not safe
-#endif
-
 	n_len = strlen(buf);
-	if(errnoflag){
+	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
 	}
 
@@ -206,6 +200,14 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 }
 
 
+void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
+		err_sys("setsockopt error");
+	}
+}
+
+
 pid_t lothars__fork(void)
 {
 	pid_t pid;
@@ -221,26 +223,6 @@ void lothars__listen(int fd, int backlog)
 	if (0 > listen(fd, backlog)) {
 		err_sys("listen error");
 	}
-}
-
-
-int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
-{
-	int res;
-
-again:
-	if (0 > (res = accept(fd, sa, salenptr))) {
-#ifdef EPROTO
-		if((errno == EPROTO) || (errno == ECONNABORTED)){
-#else
-		if(errno == ECONNABORTED){
-#endif
-			goto again;
-		}else{
-			err_sys("accept error");
-		}
-	}
-	return res;
 }
 
 
@@ -299,11 +281,18 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 }
 
 
-void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
-	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
-		err_sys("setsockopt error");
+	int res;
+again:
+	if (0 > (res = accept(fd, sa, salenptr))) {
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+			goto again;
+		} else {
+			err_sys("accept error");
+		}
 	}
+	return res;
 }
 
 
@@ -324,17 +313,18 @@ void lothars__close(int fd)
 
 
 /********************************************************************************************/
-// child implementation
+// worker implementation
 
 
 static pid_t *pid_children;
 
+
 /*
-  child - routine
+  worker - routine
 
   do anything, read, write, etc.. some action
 */
-void child_routine(int32_t fd_sock)
+void worker_routine(int32_t fd_sock)
 {
 	int32_t towrite;
 	ssize_t n_read;
@@ -372,9 +362,9 @@ void child_routine(int32_t fd_sock)
 
 
 /*
-  child - main function
+  worker - main function
 */
-void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
+void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
 	int32_t fd_conn;
 	socklen_t clilen;
@@ -398,7 +388,7 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		// blocks...
 		fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
-		child_routine(fd_conn);
+		worker_routine(fd_conn);
 
 		lothars__close(fd_conn);
 		fprintf(stdout, "child %d: READY.\n", getpid());
@@ -407,15 +397,15 @@ void child_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 
 /*
-  child - creator
+  worker - constructor
 */
-pid_t child_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
+pid_t worker_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 {
 	pid_t pid;
 
 	if (0 == (pid = lothars__fork())) {
 		// child
-		child_main(idx, fd_listen, addrlen); // never returns
+		worker_main(idx, fd_listen, addrlen); // never returns
 	}
 
 	// parent
@@ -430,17 +420,22 @@ void pr_cpu_time()
 {
 	double user, sys;
 	struct rusage usage_parent, usage_child;
+
+	// init parent ressource usage
 	if (0 > getrusage(RUSAGE_SELF, &usage_parent)) {
 		err_sys("getrusage(parent) error");
 	}
 
+	// init child ressource usage
 	if (0 > getrusage(RUSAGE_CHILDREN, &usage_child)) {
 		err_sys("getrusage(child) error");
 	}
 
+	// calculate user time
 	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
 	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
 
+	// calculate system time
 	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
 	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
 
@@ -449,13 +444,13 @@ void pr_cpu_time()
 
 
 /*
-  final action when server is shutdown by CTRL + c
+  int sig handler - action when server is shutdown by CTRL + c
 */
 void sig_int(int32_t signo)
 {
 	int32_t idx;
 
-	for (idx=0; idx<NCHILDREN; ++idx) {
+	for (idx=0; idx<NWORKER; ++idx) {
 		kill(pid_children[idx], SIGTERM);
 	}
 	free(pid_children); pid_children = NULL;
@@ -500,10 +495,10 @@ int main(int argc, char** argv)
 	//fd_listen = lothars__tcp_listen("10.0.2.15", port, &addrlen);
 
 	// set number of children
-	pid_children = lothars__malloc(NCHILDREN * sizeof(*pid_children));
-	for (idx=0; idx<NCHILDREN; ++idx) {
+	pid_children = lothars__malloc(NWORKER * sizeof(*pid_children));
+	for (idx=0; idx<NWORKER; ++idx) {
 		// create children, only parent returns
-		pid_children[idx] = child_make(idx, fd_listen, addrlen);
+		pid_children[idx] = worker_make(idx, fd_listen, addrlen);
 	}
 
 	// signal handler, set up only once in parent for children
