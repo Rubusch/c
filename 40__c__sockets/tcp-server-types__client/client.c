@@ -33,8 +33,6 @@
 /*
   forwards
 */
-//ssize_t readn(int, void*, size_t);
-//static void err_doit(int, const char *, va_list);
 
 pid_t lothars__fork();
 int lothars__tcp_connect(const char*, const char*);
@@ -56,15 +54,8 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
-
 	errno_save = errno; // value caller might want printed
-
-#ifdef HAVE_VSNPRINTF
-	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-#else
-	vsprintf(buf, fmt, ap); // not safe
-#endif
-
+	vsnprintf(buf, MAXLINE, fmt, ap);
 	n_len = strlen(buf);
 	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
