@@ -188,7 +188,7 @@ int main(int argc, char** argv)
 		while (lothars__fgets(sendline, MAXLINE, stdin) != NULL) {
 			lothars__sendto(fd_sock, sendline, strlen(sendline), 0, pservaddr, sizeof(servaddr));
 			n_bytes = lothars__recvfrom(fd_sock, recvline, MAXLINE, 0, NULL, NULL);
-			recvline[n_bytes] = 0; // null terminate
+			recvline[n_bytes] = 0; // null terminate TODO check '\0'
 			lothars__fputs(recvline, stdout);
 		}
 	}
