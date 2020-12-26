@@ -510,6 +510,7 @@ int main(int argc, char** argv)
 		pause();
 	}
 
+	fprint(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
 
