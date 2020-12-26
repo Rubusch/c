@@ -1,26 +1,171 @@
 // server.c
 /*
-  UDP echo server using select()
+  UDP echo server using select() and tcp connection establishemt/listen
 
   demonstrates usage of select
 */
 
-//#include "../lib_socket/lib_socket.h"
+/* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
-// MAXLINE
-// LISTENQ
+#include <stdio.h> /* readline() */
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h> /* read(), write(), close() */
+#include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
+#include <stdarg.h> /* va_start(), va_end(),... */
+#include <sys/wait.h> /* waitpid(), SIGINT,... */
+#include <sys/resource.h> /* getrusage(), struct rusage,... */
+#include <time.h> /* time(), ctime() */
+#include <errno.h>
 
-// forwards
+
+/*
+  constants
+*/
+
+#define MAXLINE 4096 /* max text line length */
+#define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
+
+typedef void Sigfunc(int); /* convenience: for signal handlers */
+
+
+/*
+  forwards
+*/
+
+// error handling
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
+
+// socket
+Sigfunc* lothars__signal(int, Sigfunc*);
+pid_t lothars__fork();
 // lothars__sendto()    
-// lothars__setsockopt()    
 // lothars__recvfrom()   
-// lothars__close()    
-// lothars__fork()    
-// lothars__accept()    
-// lothars__signal()    
+void lothars__setsockopt(int, int, int, const void *, socklen_t);
+int lothars__accept(int, struct sockaddr *, socklen_t *);
+void lothars__close(int);
 // lothars__bind()    
 // lothars__socket()    
 
+
+/*
+  internal helpers
+*/
+
+/*
+  print message and return to caller Caller specifies "errnoflag"
+
+  error handling taken from "Unix Sockets" (Stevens)
+*/
+static void err_doit(int errnoflag, const char *fmt, va_list ap)
+{
+	int errno_save, n_len;
+	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+
+	errno_save = errno; // value caller might want printed
+	vsnprintf(buf, MAXLINE, fmt, ap); // safe
+	n_len = strlen(buf);
+	if (errnoflag) {
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+	}
+
+	strcat(buf, "\n");
+
+	fflush(stdout);  // in case stdout and stderr are the same
+	fputs(buf, stderr);
+	fflush(stderr);
+
+	return;
+}
+
+
+/*
+  helpers / wrappers
+
+  mainly to cover error handling and display error message
+*/
+
+/*
+  fatal error related to system call Print message and terminate
+*/
+void err_sys(const char *fmt, ...)
+{
+	va_list  ap;
+	va_start(ap, fmt);
+	err_doit(1, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
+}
+
+
+/*
+  fatal error unrelated to system call Print message and terminate
+*/
+void err_quit(const char *fmt, ...)
+{
+	va_list  ap;
+	va_start(ap, fmt);
+	err_doit(0, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
+}
+
+
+
+Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+{
+	Sigfunc *sigfunc = NULL;
+	if(SIG_ERR == (sigfunc = signal(signo, func))){
+		err_sys("signal error");
+	}
+	return sigfunc;
+}
+
+
+void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
+		err_sys("setsockopt error");
+	}
+}
+
+
+pid_t lothars__fork(void)
+{
+	pid_t pid;
+	if (-1 == (pid = fork())) {
+		err_sys("fork error");
+	}
+	return pid;
+}
+
+
+int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
+{
+	int res;
+again:
+	if (0 > (res = accept(fd, sa, salenptr))) {
+		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+			goto again;
+		} else {
+			err_sys("accept error");
+		}
+	}
+	return res;
+}
+
+
+void lothars__close(int fd)
+{
+	if (-1 == close(fd)) {
+		err_sys("close error");
+	}
+}
+
+
+/********************************************************************************************/
+// worker implementation
 
 /*
   mini signal handler, calls waitpid to avoid zombies
@@ -34,6 +179,9 @@ void sig_child(int signo)
 		printf("child %d terminated\n", pid);
 	}
 }
+
+
+/********************************************************************************************/
 
 
 /*
