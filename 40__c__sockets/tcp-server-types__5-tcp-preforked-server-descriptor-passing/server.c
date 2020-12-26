@@ -841,6 +841,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
 
