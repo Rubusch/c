@@ -42,6 +42,9 @@ void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, so
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 int lothars__socket(int, int, int);
 
+// lothars__sendto()
+// lothars__recvfrom()
+
 char* lothars__sock_ntop(const struct sockaddr *, socklen_t);
 
 // ifi headers
@@ -488,7 +491,7 @@ struct ifi_info* lothars__get_ifi_info(int family, int doaliases)
 /*
   worker
 */
-void server_dg_echo(int fd_sock, SA* pcliaddr, socklen_t clilen, SA* serveraddr)
+void server_dg_echo(int fd_sock, struct sockaddr* pcliaddr, socklen_t clilen, struct sockaddr* serveraddr)
 {
 	int cnt;
 	char mesg[MAXLINE];
@@ -496,11 +499,11 @@ void server_dg_echo(int fd_sock, SA* pcliaddr, socklen_t clilen, SA* serveraddr)
 
 	while (1) {
 		len = clilen;
-		cnt = _recvfrom(fd_sock, mesg, MAXLINE, 0, pcliaddr, &len);
-		fprintf(stdout, "child %d, datagram from %s", getpid(), _sock_ntop(pcliaddr, len));
-		fprintf(stdout, ", to %s\n", _sock_ntop(serveraddr, clilen));
+		cnt = lothars__recvfrom(fd_sock, mesg, MAXLINE, 0, pcliaddr, &len);
+		fprintf(stdout, "child %d, datagram from %s", getpid(), lothars__sock_ntop(pcliaddr, len));
+		fprintf(stdout, ", to %s\n", lothars__sock_ntop(serveraddr, clilen));
 
-		_sendto(fd_sock, mesg, cnt, 0, pcliaddr, len);
+		lothars__sendto(fd_sock, mesg, cnt, 0, pcliaddr, len);
 	}
 }
 
