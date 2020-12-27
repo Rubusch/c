@@ -42,7 +42,6 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 
 // error handling
 void err_sys(const char *, ...);
-void err_quit(const char *, ...);
 
 // socket
 Sigfunc* lothars__signal(int, Sigfunc*);
@@ -107,18 +106,6 @@ void err_sys(const char *fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-
-/*
-  fatal error unrelated to system call Print message and terminate
-*/
-void err_quit(const char *fmt, ...)
-{
-	va_list  ap;
-	va_start(ap, fmt);
-	err_doit(0, fmt, ap);
-	va_end(ap);
-	exit(EXIT_FAILURE);
-}
 
 
 Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
