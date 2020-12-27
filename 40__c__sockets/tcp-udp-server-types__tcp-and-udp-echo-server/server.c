@@ -304,9 +304,9 @@ void lothars__close(int fd)
 
 void worker__echo_serv(int fd_sock)
 {
-	ssize_t n_bytes;
+	ssize_t n_bytes = -1;
 	char buf[MAXLINE];
-//	fprintf(stdout, "%s() - XXX\n", __func__);        
+
 again:
 	memset(buf, '\0', sizeof(buf));
 
@@ -315,10 +315,14 @@ again:
 		lothars__writen(fd_sock, buf, n_bytes);
 	}
 
-	if (n_bytes < 0 && errno == EINTR)
-		goto again;
-	else
-		err_sys("%s() read error", __func__);
+	if (n_bytes < 0) {
+		if (errno == EINTR) {
+			fprintf(stdout, "%s() interrupt caught\n", __func__);
+			goto again;
+		} else {
+			err_sys("%s() read error", __func__);
+		}
+	}
 }
 
 
@@ -361,6 +365,8 @@ int main(int argc, char** argv)
 	strncpy(port, argv[1], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
+	/* tcp */
+
 	// socket - create listening TCP socket!
 	fd_listen = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
@@ -377,6 +383,8 @@ int main(int argc, char** argv)
 	// listen (tcp)
 	lothars__listen(fd_listen, LISTENQ);
 
+	/* udp */
+
 	// create UDP socket
 	fd_udp = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -387,7 +395,11 @@ int main(int argc, char** argv)
 
 	lothars__bind(fd_udp, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
+	/* signals / waitpid */
+
 	lothars__signal(SIGCHLD, sig_child); // must call waitpid()
+
+	/* multiplexing */
 
 	// 1. zero fd_set - select()
 	FD_ZERO(&rset);
@@ -397,13 +409,16 @@ int main(int argc, char** argv)
 
 	while (1) {
 		// reset
+		fprintf(stdout, "%s() reset\n", __func__);
 		memset(msg, '\0', sizeof(msg));
 
 		// 2. add descriptors to the fd_set - select()
+		fprintf(stdout, "%s() FD_SET()\n", __func__);
 		FD_SET(fd_listen, &rset);
 		FD_SET(fd_udp, &rset);
 
 		// 3. select() multiplexing
+		fprintf(stdout, "%s() select()\n", __func__);
 		if (0 > (n_ready = select(maxfdpl, &rset, NULL, NULL, NULL))) {
 			if (errno == EINTR) { // caught interrupt
 				// NB: if this is not desired, take lothars__select()
@@ -415,16 +430,16 @@ int main(int argc, char** argv)
 
 		// 4. select case "fd_listen"
 		if (FD_ISSET(fd_listen, &rset)) {
+			fprintf(stdout, "%s() FD_ISSET() -> tcp\n", __func__);
 			len = sizeof(cliaddr);
 
 			// accept (tcp)
 			fd_conn = lothars__accept(fd_listen, (struct sockaddr*) &cliaddr, &len);
-
 			if (0 == (childpid = lothars__fork())) {
 				// child process (tcp)
 				lothars__close(fd_listen);
 				worker__echo_serv(fd_conn);
-//				worker_main(fd_conn);
+				fprintf(stdout, "tcp: READY.\n");
 				exit(EXIT_SUCCESS);
 			}
 
@@ -434,14 +449,16 @@ int main(int argc, char** argv)
 
 		// 4. select case "fd_udp"
 		if (FD_ISSET(fd_udp, &rset)) {
+			fprintf(stdout, "%s() FD_ISSET() -> udp\n", __func__);
 			len = sizeof(cliaddr);
 
 			n_bytes = lothars__recvfrom(fd_udp, msg, MAXLINE, 0, (struct sockaddr*) &cliaddr, &len);
 			fprintf(stdout, "udp:\t%s", msg);
 
 			lothars__sendto(fd_udp, msg, n_bytes, 0, (struct sockaddr*) &cliaddr, len);
+			fprintf(stdout, "udp: READY.\n");
 		}
-	} /* while(1) */
+	} /* while (1) */
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
