@@ -12,6 +12,7 @@
 #include <unistd.h> /* read(), write(), fork(), close() */
 #include <netdb.h> /* socket(), SOCK_STREAM, AF_UNSPEC, getaddrinfo() */
 #include <stdarg.h> /* va_start(), va_end(),... */
+#include <arpa/inet.h> /* inet_pton(), inet_ntop(),.. */
 #include <errno.h>
 
 
@@ -20,23 +21,22 @@
 */
 
 #define MAXLINE  4096 /* max text line length */
-#define BUFFSIZE 8192 /* buffer size for reads and writes */
-#define MAXN 1234 /* max number of bytes to request from server */
-#define NBYTES 24 /* number of max bytes to read,
-		     NB: if this is greater than 24
-		     readn will always fail consequence is a
-		     "Connection reset by peer" error message */
 
 
 /*
   forwards
 */
 
-pid_t lothars__fork();
-int lothars__tcp_connect(const char*, const char*);
-ssize_t lothars__readn(int, void *, size_t);
-void lothars__write(int, void *, size_t);
-void lothars__close(int);
+void err_sys(const char *, ...);
+void err_quit(const char *fmt, ...);
+
+void lothars__connect(int, const struct sockaddr *, socklen_t);
+int lothars__socket(int, int, int);
+char* lothars__fgets(char *, int, FILE *);
+void lothars__fputs(const char *, FILE *);
+void lothars__inet_pton(int, const char *, void *);
+ssize_t lothars__readline_fd(int, void *, size_t);
+void lothars__writen(int, void *, size_t);
 
 
 /*
@@ -66,34 +66,6 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	fflush(stderr);
 
 	return;
-}
-
-
-/*
-  read "num" bytes from a descriptor
-*/
-ssize_t readn(int fd, void *vptr, size_t num)
-{
-	size_t nleft;
-	ssize_t nread;
-	char *ptr=NULL;
-
-	ptr = vptr;
-	nleft = num;
-	while (nleft > 0) {
-		if (0 > (nread = read(fd, ptr, nleft))) {
-			if (errno == EINTR) {
-				nread = 0;  // and call read() again
-			} else {
-				return -1;
-			}
-		}else if (nread == 0) {
-			break; // EOF
-		}
-		nleft -= nread;
-		ptr   += nread;
-	}
-	return (num - nleft);  // return >= 0
 }
 
 
@@ -128,77 +100,182 @@ void err_quit(const char *fmt, ...)
 }
 
 
-pid_t lothars__fork(void)
+void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 {
-	pid_t pid;
-	if (-1 == (pid = fork())) {
-		err_sys("fork error");
+	if (0 > connect(fd, sa, salen)) {
+		err_sys("connect error");
 	}
-	return pid;
 }
 
 
-int lothars__tcp_connect(const char *host, const char *serv)
+int lothars__socket(int family, int type, int protocol)
 {
-	int sockfd, eai;
-	struct addrinfo hints, *res, *ressave;
-
-	bzero(&hints, sizeof(struct addrinfo));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-
-	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
-	}
-
-	ressave = res;
-
-	do {
-		if (0 > (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol))) {
-			continue; // ignore this one
-		}
-
-		if (0 == connect(sockfd, res->ai_addr, res->ai_addrlen)) {
-			break;  // success
-		}
-
-		lothars__close(sockfd); // ignore this one
-	} while (NULL != (res = res->ai_next));
-
-	if (NULL == res) { // errno set from final connect()
-		err_sys("tcp_connect error for %s, %s", host, serv);
-	}
-
-	freeaddrinfo(ressave);
-
-	return sockfd;
-}
-
-
-ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
-{
-	ssize_t  res;
-	if (0 > (res = readn(fd, ptr, nbytes))) {
-		err_sys("readn error");
+	int res;
+	if (0 > (res = socket(family, type, protocol))) {
+		err_sys("socket error");
 	}
 	return res;
 }
 
 
-void lothars__write(int fd, void *ptr, size_t nbytes)
+char* lothars__fgets(char *ptr, int n, FILE *stream)
 {
-	if (nbytes != write(fd, ptr, nbytes)) {
-		err_sys("write error");
+	char *rptr = NULL;
+	if ( (NULL == (rptr = fgets(ptr, n, stream))) && ferror(stream)) {
+		err_sys("fgets error");
+	}
+	return rptr;
+}
+
+
+void lothars__fputs(const char *ptr, FILE *stream)
+{
+	if (EOF == fputs(ptr, stream)) {
+		err_sys("fputs error");
 	}
 }
 
 
-void lothars__close(int fd)
+void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
-	if (-1 == close(fd)) {
-		err_sys("close error");
+	int res;
+	if (0 > (res = inet_pton(family, strptr, addrptr))) {
+		err_sys("inet_pton error for %s", strptr); // errno set
+	} else if (0 == res) {
+		err_quit("inet_pton error for %s", strptr); // errno not set
 	}
 }
+
+
+/*
+  readline_fd
+
+  readline via file descriptor, while the lib readline() does not take
+  a filedescriptor
+*/
+static int read_cnt;
+static char *read_ptr;
+static char read_buf[MAXLINE];
+
+
+static ssize_t readline_fd_read(int fd, char *ptr)
+{
+	if (0 >= read_cnt) {
+	again:
+		if (0 > (read_cnt = read(fd, read_buf, sizeof(read_buf)))) {
+			if (errno == EINTR) {
+				goto again;
+			}
+			return -1;
+		}else if (read_cnt == 0) {
+			return 0;
+		}
+		read_ptr = read_buf;
+	}
+
+	--read_cnt;
+	*ptr = *read_ptr++;
+	return 1;
+}
+
+
+ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
+{
+	ssize_t cnt, rc;
+	char chr, *ptr;
+
+	ptr = vptr;
+	for (cnt = 1; cnt < maxlen; ++cnt) {
+		if (1 == (rc = readline_fd_read(fd, &chr))) {
+			*ptr++ = chr;
+			if (chr == '\n') {
+				break; // newline is stored, like fgets()
+			}
+
+		} else if(rc == 0) {
+			*ptr = 0;
+			return (cnt - 1); // EOF, n - 1 bytes were read
+
+		} else {
+			return -1;  // error, errno set by read()
+		}
+	}
+
+	*ptr = 0; /* null terminate like fgets() */
+	return cnt;
+}
+
+
+ssize_t lothars__readline_fd(int fd, void *ptr, size_t maxlen)
+{
+	ssize_t bytes;
+	if (0 > (bytes = readline_fd(fd, ptr, maxlen))) {
+		err_sys("readline error");
+	}
+	return bytes;
+}
+
+
+/*
+  writen
+
+  write "num" bytes to a descriptor
+*/
+ssize_t writen(int fd, const void *vptr, size_t num)
+{
+	size_t nleft;
+	ssize_t nwritten;
+	const char *ptr;
+
+	ptr = vptr;
+	nleft = num;
+	while (0 < nleft) {
+		if (0 >= (nwritten = write(fd, ptr, nleft))) {
+			if ((nwritten < 0) && (errno == EINTR)) {
+				// and call write() again
+				nwritten = 0;
+			} else {
+				// error
+				return -1;
+			}
+		}
+
+		nleft -= nwritten;
+		ptr += nwritten;
+	}
+	return num;
+}
+
+
+void lothars__writen(int fd, void *ptr, size_t nbytes)
+{
+	if (writen(fd, ptr, nbytes) != nbytes) {
+		err_sys("writen error");
+	}
+}
+
+
+/********************************************************************************************/
+// worker implementation
+
+
+void worker__echo_cli(FILE *fp, int fd_sock)
+{
+	char sendline[MAXLINE], recvline[MAXLINE];
+
+	memset(sendline, '\0', sizeof(sendline));
+	memset(recvline, '\0', sizeof(recvline));
+	while (NULL != lothars__fgets(sendline, sizeof(sendline), fp)) {
+		lothars__writen(fd_sock, sendline, strlen(sendline));
+		if (0 == lothars__readline_fd(fd_sock, recvline, sizeof(recvline)))
+			err_quit("%s(): server terminated prematurely\n", __func__);
+
+		lothars__fputs(recvline, stdout);
+	}
+}
+
+
+/********************************************************************************************/
 
 
 /*
@@ -210,11 +287,8 @@ void lothars__close(int fd)
 */
 int main(int argc, char** argv)
 {
-	int fd_connect, n_bytes;
-
-	pid_t pid;
-	ssize_t bytes;
-	char request[MAXLINE], reply[MAXN];
+	int fd_sock;
+	struct sockaddr_in servaddr;
 	char serverip[16]; memset(serverip, '\0', sizeof(serverip));
 	char port[16]; memset(port, '\0', sizeof(port));
 
@@ -228,39 +302,17 @@ int main(int argc, char** argv)
 	strncpy(port, argv[2], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-	// number of max bytes to read
-	n_bytes = NBYTES;
 
-	// init request to send to server - ends with \n
-	snprintf(request, sizeof(request), "%d\n", n_bytes);
+	fd_sock = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
-	// if is not parent!
-	if (0 == (pid = lothars__fork())) {
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(atoi(port));
+	lothars__inet_pton(AF_INET, serverip, &servaddr.sin_addr);
 
-		// connect to serverip and port
-		fd_connect = lothars__tcp_connect(serverip, port);
+	lothars__connect(fd_sock, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
-		// write to socket
-		lothars__write(fd_connect, request, strlen(request));
-
-		// read response
-		if (n_bytes != (bytes = lothars__readn(fd_connect, reply, n_bytes))) {
-			err_quit("server returned %d bytes", bytes);
-		}
-
-		// close socket
-		lothars__close(fd_connect);
-
-		fprintf(stdout, "READY.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	while (0 < wait(NULL))
-		;
-
-	if (errno != ECHILD) {
-		err_sys("wait error");
-	}
+	worker__echo_cli(stdin, fd_sock);
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
