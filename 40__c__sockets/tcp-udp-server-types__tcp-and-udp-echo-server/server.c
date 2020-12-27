@@ -45,6 +45,7 @@ void err_sys(const char *, ...);
 
 // socket
 Sigfunc* lothars__signal(int, Sigfunc*);
+ssize_t lothars__readn(int, void *, size_t);
 void lothars__writen(int, void *, size_t);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__bind(int, const struct sockaddr *, socklen_t);
@@ -115,6 +116,46 @@ Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 		err_sys("signal error");
 	}
 	return sigfunc;
+}
+
+
+/*
+  readn
+
+  read "num" bytes from a descriptor
+*/
+ssize_t readn(int fd, void *vptr, size_t num)
+{
+	size_t nleft;
+	ssize_t nread;
+	char *ptr=NULL;
+
+	ptr = vptr;
+	nleft = num;
+	while (nleft > 0) {
+		if ( (nread = read(fd, ptr, nleft)) < 0) {
+			if (errno == EINTR) {
+				nread = 0;  // and call read() again
+			} else {
+				return -1;
+			}
+		} else if (nread == 0) {
+			break; // EOF
+		}
+		nleft -= nread;
+		ptr   += nread;
+	}
+	return (num - nleft);  // return >= 0
+}
+
+
+ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
+{
+	ssize_t  res;
+	if (0 > (res = readn(fd, ptr, nbytes))) {
+		err_sys("readn error");
+	}
+	return res;
 }
 
 
@@ -261,24 +302,23 @@ void lothars__close(int fd)
 /********************************************************************************************/
 // worker implementation
 
-void worker_main(int fd_sock)
+void worker__echo_serv(int fd_sock)
 {
-	ssize_t res;
+	ssize_t n_bytes;
 	char buf[MAXLINE];
+//	fprintf(stdout, "%s() - XXX\n", __func__);        
+again:
 	memset(buf, '\0', sizeof(buf));
 
-// FIXME: tcp echoing buggy, check out and fix bug                 
-again:
-	while (0 < (res = read(fd_sock, buf, MAXLINE))) {
-		fprintf(stdout, "tcp connected - received and echoing: '%s'\n", buf);
-		lothars__writen(fd_sock, buf, res);
+	while (0 < (n_bytes = read(fd_sock, buf, sizeof(buf)))) {
+		fprintf(stdout, "tcp:\t%s", buf);
+		lothars__writen(fd_sock, buf, n_bytes);
 	}
 
-	if ((0 > res) && (errno == EINTR)) {
+	if (n_bytes < 0 && errno == EINTR)
 		goto again;
-	} else if (0 > res) {
-		err_sys("%s(): read error", __func__);
-	}
+	else
+		err_sys("%s() read error", __func__);
 }
 
 
@@ -291,7 +331,7 @@ void sig_child(int signo)
 	int status;
 
 	while (0 < (pid = waitpid(-1, &status, WNOHANG))) {
-		printf("child %d terminated\n", pid);
+		fprintf(stdout, "child %d terminated\n", pid);
 	}
 }
 
@@ -308,7 +348,7 @@ int main(int argc, char** argv)
 	char msg[MAXLINE];
 	pid_t childpid;
 	fd_set rset;
-	ssize_t num;
+	ssize_t n_bytes;
 	socklen_t len;
 	const int on = 1;
 	struct sockaddr_in cliaddr, servaddr;
@@ -383,7 +423,8 @@ int main(int argc, char** argv)
 			if (0 == (childpid = lothars__fork())) {
 				// child process (tcp)
 				lothars__close(fd_listen);
-				worker_main(fd_conn);
+				worker__echo_serv(fd_conn);
+//				worker_main(fd_conn);
 				exit(EXIT_SUCCESS);
 			}
 
@@ -394,11 +435,13 @@ int main(int argc, char** argv)
 		// 4. select case "fd_udp"
 		if (FD_ISSET(fd_udp, &rset)) {
 			len = sizeof(cliaddr);
-			num = lothars__recvfrom(fd_udp, msg, MAXLINE, 0, (struct sockaddr*) &cliaddr, &len);
-			fprintf(stdout, "udp connected - received and echoing: '%s'\n", msg);
-			lothars__sendto(fd_udp, msg, num, 0, (struct sockaddr*) &cliaddr, len);
+
+			n_bytes = lothars__recvfrom(fd_udp, msg, MAXLINE, 0, (struct sockaddr*) &cliaddr, &len);
+			fprintf(stdout, "udp:\t%s", msg);
+
+			lothars__sendto(fd_udp, msg, n_bytes, 0, (struct sockaddr*) &cliaddr, len);
 		}
-	}
+	} /* while(1) */
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
