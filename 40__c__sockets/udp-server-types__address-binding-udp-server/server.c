@@ -3,16 +3,30 @@
   binding interface addresses with udp server
 */
 
+// TODO check the HAVE_ macros (haddr unitialized w/o any HAVE_ enabled... )           
+
+
+
+
+
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
+
+#define _XOPEN_SOURCE /* SIOCGIFFLAGS, SIOCGIFCONF,... */
 
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> /* memset() */
+#include <strings.h> /* bzero() */
+#include <stropts.h> /* ioctl() */
+#include <linux/sockios.h> /* SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
+#include <arpa/inet.h> /* inet_ntop(), inet_pton() */
 #include <unistd.h> /* read(), write(), close() */
 #include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
+#include <sys/socket.h> /* sockets,... */
+#include <sys/un.h>  /* unix sockets */
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
@@ -30,10 +44,13 @@
 
 // error
 void err_sys(const char *, ...);
+void err_quit(const char *, ...);
 
 // unix
 void lothars__close(int);
+int lothars__ioctl(int, int, void *);
 pid_t lothars__fork();
+void* lothars__malloc(size_t);
 
 // sock
 void lothars__bind(int, const struct sockaddr *, socklen_t);
@@ -42,32 +59,30 @@ void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, so
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 int lothars__socket(int, int, int);
 
-// lothars__sendto()
-// lothars__recvfrom()
-
 char* lothars__sock_ntop(const struct sockaddr *, socklen_t);
 
 // ifi headers
-#include <net/if.h>
+//#include <net/if.h>
+#include <linux/if.h>
 
-#define IFI_NAME 16 // same as IFNAMSIZ in <net/if.h>
-#define IFI_HADDR  8 // allow for 64-bit EUI-64 in future
+#define IFI_NAME 16 /* same as IFNAMSIZ in <linux/if.h> */
+#define IFI_HADDR  8 /* allow for 64-bit EUI-64 in future */
 
-struct ifi_info{
-	char ifi_name[IFI_NAME]; // interface name, null-terminated
-	short ifi_index; // interface index
-	short ifi_mtu; // interface MTU
-	u_char ifi_haddr[IFI_HADDR]; // hardware address
-	u_short ifi_hlen; // # bytes in hardware address: 0, 6, 8
-	short ifi_flags; // IFF_xxx constants from <net/if.h>
-	short ifi_myflags; // our own IFI_xxx flags
-	struct sockaddr *ifi_addr; // primary address
-	struct sockaddr *ifi_brdaddr; // broadcast address
-	struct sockaddr *ifi_dstaddr; // destination address
-	struct ifi_info *ifi_next; // next of these structures
+struct ifi_info {
+	char ifi_name[IFI_NAME]; /* interface name, null-terminated */
+	short ifi_index; /* interface index */
+	short ifi_mtu; /* interface MTU */
+	uint8_t ifi_haddr[IFI_HADDR]; /* hardware address */
+	uint16_t ifi_hlen; /* # bytes in hardware address: 0, 6, 8 */
+	short ifi_flags; /* IFF_xxx constants from <net/if.h> */
+	short ifi_myflags; /* our own IFI_xxx flags */
+	struct sockaddr *ifi_addr; /* primary address */
+	struct sockaddr *ifi_brdaddr; /* broadcast address */
+	struct sockaddr *ifi_dstaddr; /* destination address */
+	struct ifi_info *ifi_next; /* next of these structures */
 };
 
-#define IFI_ALIAS 1   // ifi_addr is an alias
+#define IFI_ALIAS 1   /* ifi_addr is an alias */
 
 struct ifi_info* get_ifi_info(int, int);
 struct ifi_info* lothars__get_ifi_info(int, int);
@@ -124,11 +139,34 @@ void err_sys(const char *fmt, ...)
 }
 
 
+/*
+   fatal error unrelated to system call Print message and terminate
+*/
+void err_quit(const char *fmt, ...)
+{
+	va_list  ap;
+	va_start(ap, fmt);
+	err_doit(0, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
+}
+
+
 void lothars__close(int fd)
 {
 	if (-1 == close(fd)) {
 		err_sys("close error");
 	}
+}
+
+
+int lothars__ioctl(int fd, int request, void *arg)
+{
+	int  res;
+	if (-1 == (res = ioctl(fd, request, arg))) {
+		err_sys("ioctl error");
+	}
+	return res; // streamio of I_LIST returns value
 }
 
 
@@ -146,6 +184,34 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
 	if (0 > bind(fd, sa, salen)) {
 		err_sys("bind error");
+	}
+}
+
+
+ssize_t lothars__recvfrom(int fd
+		  , void *ptr
+		  , size_t nbytes
+		  , int flags
+		  , struct sockaddr *sa
+		  , socklen_t *salenptr)
+{
+	ssize_t  res;
+	if (0 > (res = recvfrom(fd, ptr, nbytes, flags, sa, salenptr))) {
+		err_sys("recvfrom error");
+	}
+	return res;
+}
+
+
+void lothars__sendto( int fd
+	      , const void *ptr
+	      , size_t nbytes
+	      , int flags
+	      , const struct sockaddr *sa
+	      , socklen_t salen)
+{
+	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
+		err_sys("sendto error");
 	}
 }
 
@@ -220,6 +286,7 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 		   OK to have no pathname bound to the socket: happens on
 		   every connect() unless client calls bind() first.
 		*/
+//		if (0 == unp->sun_path[0]) { // FIXME
 		if (0 == unp->sun_path[0]) {
 			strcpy(str, "(no pathname bound)");
 		} else {
@@ -229,7 +296,7 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 	}
 #endif
 
-#ifdef HAVE_SOCKADDR_DL_STRUCT
+#ifdef HAVE_SOCKADDR_DL_STRUCT  
 	case AF_LINK:
 	{
 		struct sockaddr_dl *sdl = (struct sockaddr_dl *) sa;
@@ -265,6 +332,7 @@ char* lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
 }
 
 
+/* ifi */
 struct ifi_info* get_ifi_info(int family, int doaliases)
 {
 	struct ifi_info *ifi
@@ -291,12 +359,12 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 	struct sockaddr_in *sinptr;
 	struct sockaddr_in6 *sin6ptr;
 
-	fd_sock = _socket(AF_INET, SOCK_DGRAM, 0);
+	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 
 	lastlen = 0;
 	len = 100 * sizeof(struct ifreq); // initial buffer size guess
 	while (1) {
-		buf = _malloc(len);
+		buf = lothars__malloc(len);
 		ifc.ifc_len = len;
 		ifc.ifc_buf = buf;
 		if (0 > ioctl(fd_sock, SIOCGIFCONF, &ifc)) {
@@ -320,7 +388,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 	for(ptr = buf; ptr < buf + ifc.ifc_len; ){
 		ifr = (struct ifreq *) ptr;
 
-#ifdef HAVE_SOCKADDR_SA_LEN
+#ifdef HAVE_SOCKADDR_SA_LEN  
 		len = max(sizeof(struct sockaddr), ifr->ifr_addr.sa_len);
 #else
 		switch (ifr->ifr_addr.sa_family){
@@ -338,7 +406,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 #endif // HAVE_SOCKADDR_SA_LEN
 		ptr += sizeof(ifr->ifr_name) + len; // for next one in buffer
 
-#ifdef HAVE_SOCKADDR_DL_STRUCT
+#ifdef HAVE_SOCKADDR_DL_STRUCT  
 		// assumes that AF_LINK precedes AF_INET or AF_INET6
 		if (ifr->ifr_addr.sa_family == AF_LINK) {
 			struct sockaddr_dl *sdl = (struct sockaddr_dl *)&ifr->ifr_addr;
@@ -373,7 +441,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			continue; // ignore if interface not up
 		}
 
-		ifi = _calloc(1, sizeof(struct ifi_info));
+		ifi = lothars__malloc(sizeof(struct ifi_info));
 		*ifipnext = ifi;   // prev points to this new one
 		ifipnext = &ifi->ifi_next; // pointer to next one goes here
 
@@ -407,14 +475,14 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		switch (ifr->ifr_addr.sa_family) {
 		case AF_INET:
 			sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
-			ifi->ifi_addr = _calloc(1, sizeof(struct sockaddr_in));
+			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in));
 			memcpy(ifi->ifi_addr, sinptr, sizeof(struct sockaddr_in));
 
 #ifdef SIOCGIFBRDADDR
 			if (flags & IFF_BROADCAST) {
 				lothars__ioctl(fd_sock, SIOCGIFBRDADDR, &ifrcopy);
 				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_broadaddr;
-				ifi->ifi_brdaddr = _calloc(1, sizeof(struct sockaddr_in));
+				ifi->ifi_brdaddr = lothars__malloc(sizeof(struct sockaddr_in));
 				memcpy(ifi->ifi_brdaddr, sinptr, sizeof(struct sockaddr_in));
 			}
 #endif
@@ -423,7 +491,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			if (flags & IFF_POINTOPOINT) {
 				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
 				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_dstaddr;
-				ifi->ifi_dstaddr = _calloc(1, sizeof(struct sockaddr_in));
+				ifi->ifi_dstaddr = lothars__malloc(sizeof(struct sockaddr_in));
 				memcpy(ifi->ifi_dstaddr, sinptr, sizeof(struct sockaddr_in));
 			}
 #endif
@@ -431,14 +499,14 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 		case AF_INET6:
 			sin6ptr = (struct sockaddr_in6 *) &ifr->ifr_addr;
-			ifi->ifi_addr = _calloc(1, sizeof(struct sockaddr_in6));
+			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in6));
 			memcpy(ifi->ifi_addr, sin6ptr, sizeof(struct sockaddr_in6));
 
 #ifdef SIOCGIFDSTADDR
 			if (flags & IFF_POINTOPOINT) {
 				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
 				sin6ptr = (struct sockaddr_in6 *) &ifrcopy.ifr_dstaddr;
-				ifi->ifi_dstaddr = _calloc(1, sizeof(struct sockaddr_in6));
+				ifi->ifi_dstaddr = lothars__malloc(sizeof(struct sockaddr_in6));
 				memcpy(ifi->ifi_dstaddr, sin6ptr, sizeof(struct sockaddr_in6));
 			}
 #endif
@@ -485,6 +553,7 @@ struct ifi_info* lothars__get_ifi_info(int family, int doaliases)
 }
 
 
+
 /********************************************************************************************/
 // worker implementation
 
@@ -519,7 +588,7 @@ int main(int argc, char** argv)
 	int fd_sock;
 	const int on = 1;
 	pid_t pid;
-	struct ifi_info *ifi, *ifi_head;
+	struct ifi_info *ifi; //, *ifi_head;
 	struct sockaddr_in *sa, cliaddr, wildaddr;
 	char port[16]; memset(port, '\0', sizeof(port));
 
@@ -531,7 +600,7 @@ int main(int argc, char** argv)
 	strncpy(port, argv[1], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-	for (ifi_head = ifi = lothars__get_ifi_info(AF_INET, 1)
+	for (/*ifi_head =*/ ifi = lothars__get_ifi_info(AF_INET, 1)
 		    ; ifi != NULL
 		    ; ifi = ifi->ifi_next) {
 		// bind unicast address
@@ -540,11 +609,11 @@ int main(int argc, char** argv)
 
 		sa = (struct sockaddr_in*) ifi->ifi_addr;
 		sa->sin_family = AF_INET;
-		sa->sin_port = htons(SERV_PORT);
+		sa->sin_port = htons(atoi(port));
 		lothars__bind(fd_sock, (struct sockaddr*) sa, sizeof(*sa));
 		fprintf(stdout, "bound %s\n", lothars__sock_ntop((struct sockaddr*) sa, sizeof(*sa)));
 
-		if (0 == (pid = _fork())) {
+		if (0 == (pid = lothars__fork())) {
 			// child
 			server_dg_echo(fd_sock, (struct sockaddr*) &cliaddr, sizeof(cliaddr), (struct sockaddr*) sa);
 			exit(EXIT_SUCCESS); // never executed
@@ -559,12 +628,12 @@ int main(int argc, char** argv)
 
 		if (ifi->ifi_flags & IFF_BROADCAST) {
 			// try to bind broadcast address
-			fd_sock = _socket(AF_INET, SOCK_DGRAM, 0);
+			fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 			lothars__setsockopt(fd_sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
 			sa = (struct sockaddr_in*) ifi->ifi_brdaddr;
 			sa->sin_family = AF_INET;
-			sa->sin_port = htons(SERV_PORT);
+			sa->sin_port = htons(atoi(port));
 			if (0 > bind(fd_sock, (struct sockaddr*) sa, sizeof(*sa))) {
 				if (errno == EADDRINUSE) {
 					fprintf(stdout, "EADDRINUSE: %s\n", lothars__sock_ntop((struct sockaddr*) sa, sizeof(*sa)));
@@ -577,7 +646,7 @@ int main(int argc, char** argv)
 
 			fprintf(stdout, "bound %s\n", lothars__sock_ntop((struct sockaddr*) sa, sizeof(*sa)));
 
-			if (0 == (pid = _fork())) {
+			if (0 == (pid = lothars__fork())) {
 				// child
 				server_dg_echo(fd_sock, (struct sockaddr*) &cliaddr, sizeof(cliaddr), (struct sockaddr*) sa);
 				exit(EXIT_SUCCESS); // never executed
@@ -593,7 +662,7 @@ int main(int argc, char** argv)
 	bzero(&wildaddr, sizeof(wildaddr));
 	wildaddr.sin_family = AF_INET;
 	wildaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	wildaddr.sin_port = htons(SERV_PORT);
+	wildaddr.sin_port = htons(atoi(port));
 	lothars__bind(fd_sock, (struct sockaddr*) &wildaddr, sizeof(wildaddr));
 
 	fprintf(stdout, "bound %s\n", lothars__sock_ntop((struct sockaddr*) &wildaddr, sizeof(wildaddr)));
