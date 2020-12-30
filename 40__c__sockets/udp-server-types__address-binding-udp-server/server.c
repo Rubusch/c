@@ -667,7 +667,7 @@ int main(int argc, char** argv)
 	struct ifi_info *ifi; //, *ifi_head;
 	struct sockaddr_in *sa, cliaddr, wildaddr;
 	char port[16]; memset(port, '\0', sizeof(port));
-
+	
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -675,7 +675,7 @@ int main(int argc, char** argv)
 
 	strncpy(port, argv[1], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
-
+	
 	for (/*ifi_head =*/ ifi = lothars__get_ifi_info(AF_INET, 1)
 		    ; ifi != NULL
 		    ; ifi = ifi->ifi_next) {
