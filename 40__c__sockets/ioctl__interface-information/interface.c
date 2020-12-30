@@ -292,7 +292,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		   are the same.
 		 */
 		fprintf(stdout, "\t1.) and 3.) Issue SIOCGIFCONF request to ioctl\n");
-		if (0 > ioctl(fd_sock, SIOCGIFCONF, &ifc)) {
+		if (0 > ioctl(fd_sock, SIOCGIFCONF, &ifc)) { // NB: direct call to ioctl()
 			if ((errno != EINVAL) || (lastlen != 0)) {
 				err_sys("ioctl error");
 			}
@@ -312,9 +312,10 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 	// initialize linked list pointers
 	ifihead = NULL;
 	ifipnext = &ifihead;
-	lastname[0] = 0;
+	lastname[0] = '\0';
 	sdlname = NULL;
 
+	/* main loop */
 	for (ptr = buf; ptr < buf + ifc.ifc_len; ) {
 		ifr = (struct ifreq *) ptr;
 
@@ -376,8 +377,9 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 		/* allocate and initialize ifi_info structure */
 		ifi = lothars__malloc(sizeof(struct ifi_info));
-		*ifipnext = ifi;   // prev points to this new one
-		ifipnext = &ifi->ifi_next; // pointer to next one goes here
+// TODO check the following is working correctly       
+		*ifipnext = ifi;   // prev points to this new one  
+		ifipnext = &ifi->ifi_next; // pointer to next one goes here  
 
 		// pre-init in order to make free() working consistently
 // TODO test if this works for the first element                
