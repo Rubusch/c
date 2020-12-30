@@ -335,9 +335,9 @@ char* lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
 /* ifi */
 struct ifi_info* get_ifi_info(int family, int doaliases)
 {
-	struct ifi_info *ifi
-		, *ifihead
-		, **ifipnext;
+	struct ifi_info *ifi;
+	struct ifi_info *ifihead;
+	struct ifi_info **ifipnext;
 
 	int fd_sock
 		, len
@@ -355,10 +355,11 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		, *sdlname;
 
 	struct ifconf ifc;
-	struct ifreq *ifr, ifrcopy;
+	struct ifreq *ifr, ifrcopy; /* NB: ifrcopy is NOT a pointer! */
 	struct sockaddr_in *sinptr;
 	struct sockaddr_in6 *sin6ptr;
 
+	/* create an UDP socket for using with ioctl() */
 	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 
 	lastlen = 0;
@@ -367,59 +368,94 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		buf = lothars__malloc(len);
 		ifc.ifc_len = len;
 		ifc.ifc_buf = buf;
+		/* issue SIOCGIFCONF request in a loop
+
+		   One fundamental problem with the SCIOCGIFCONF
+		   request is that some implementations did not return
+		   an error if the buffer was not large enough to hold
+		   the result.
+
+		   Instead the result was truncated and success is
+		   returned (a return value of 0 from ioctl()),
+		   i.e. the only way to know if the buffer is large
+		   enough is the following:
+
+		   1.) issue the request,
+		   2.) save the return length,
+		   3.) issue the request again with a larger buffer and
+		   4.) compare the length with the saved value
+
+		   The buffer is large enough only if the two lengths
+		   are the same.
+		 */
+		fprintf(stdout, "1.) and 3.) Issue SIOCGIFCONF request to ioctl\n");
 		if (0 > ioctl(fd_sock, SIOCGIFCONF, &ifc)) {
 			if ((errno != EINVAL) || (lastlen != 0)) {
 				err_sys("ioctl error");
 			}
 		} else {
 			if (ifc.ifc_len == lastlen) {
+				fprintf(stdout, "4.) Comparison of lengthes were equal - ok\n");
 				break;  // success, len has not changed
 			}
+			fprintf(stdout, "2.) Save the ioctl return value\n");
 			lastlen = ifc.ifc_len;
 		}
-		len += 10 * sizeof(struct ifreq); // increment
+		// each time around the loop, increase the buffer size to hold 10 more 'struct ifreq's
+		len += 10 * sizeof(struct ifreq);
 		free(buf);
 	}
+
+	// initialize linked list pointers
 	ifihead = NULL;
 	ifipnext = &ifihead;
 	lastname[0] = 0;
 	sdlname = NULL;
 
-	for(ptr = buf; ptr < buf + ifc.ifc_len; ){
+	for (ptr = buf; ptr < buf + ifc.ifc_len; ) {
 		ifr = (struct ifreq *) ptr;
 
-#ifdef HAVE_SOCKADDR_SA_LEN  
-		len = max(sizeof(struct sockaddr), ifr->ifr_addr.sa_len);
-#else
+//#ifdef HAVE_SOCKADDR_SA_LEN /* if there is sockaddr sa_len available.. */
+// TODO test out         
+//		len = max(sizeof(struct sockaddr), ifr->ifr_addr.sa_len);
+//#else
 		switch (ifr->ifr_addr.sa_family){
-#ifdef IPV6
-		case AF_INET6:
-			len = sizeof(struct sockaddr_in6);
-			break;
-#endif
+//#ifdef IPV6 /* guess we have ipv6, then we need the sockaddr_sa_len
+//		field, since the other addressing would be 16-byte for
+//		IPv4 addresses, but too small for 28-byte IPv6
+//		addresses */ case AF_INET6: len = sizeof(struct
+//		sockaddr_in6); break; #endif
 
 		case AF_INET:
 		default:
 			len = sizeof(struct sockaddr);
 			break;
 		}
-#endif // HAVE_SOCKADDR_SA_LEN
+//#endif // HAVE_SOCKADDR_SA_LEN
+
 		ptr += sizeof(ifr->ifr_name) + len; // for next one in buffer
 
-#ifdef HAVE_SOCKADDR_DL_STRUCT  
-		// assumes that AF_LINK precedes AF_INET or AF_INET6
-		if (ifr->ifr_addr.sa_family == AF_LINK) {
-			struct sockaddr_dl *sdl = (struct sockaddr_dl *)&ifr->ifr_addr;
-			sdlname = ifr->ifr_name;
-			idx = sdl->sdl_index;
-			haddr = sdl->sdl_data + sdl->sdl_nlen;
-			hlen = sdl->sdl_alen;
-		}
-#endif
+
+
+// no AF_LINK available                          
+//#ifdef HAVE_SOCKADDR_DL_STRUCT
+//		// assumes that AF_LINK precedes AF_INET or AF_INET6
+//		if (ifr->ifr_addr.sa_family == AF_LINK) {
+//			struct sockaddr_dl *sdl = (struct sockaddr_dl *)&ifr->ifr_addr;
+//			sdlname = ifr->ifr_name;
+//			idx = sdl->sdl_index;
+//			haddr = sdl->sdl_data + sdl->sdl_nlen;
+//			hlen = sdl->sdl_alen;
+//		}
+//#endif
+
+
+// TODO else, haddr uninitialized?!!!            
 
 		if (ifr->ifr_addr.sa_family != family) {
 			continue; // ignore if not desired address family
 		}
+
 
 		myflags = 0;
 		if (NULL != (cptr = strchr(ifr->ifr_name, ':'))) {
@@ -434,6 +470,17 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		}
 		memcpy(lastname, ifr->ifr_name, IFNAMSIZ);
 
+		/*
+		  issue an SIOCGIFFLAGS to ioctl() to fetch the
+		  interface flags
+
+		  make a copy of the 'struct ifreq' instance before
+		  issuing the ioctl(), becaues if not, this request
+		  would overwrite the IP address of the interface
+		  since both are members of the same union
+
+		  NB: ifrcopy is a instance on the stack
+		*/
 		ifrcopy = *ifr;
 		lothars__ioctl(fd_sock, SIOCGIFFLAGS, &ifrcopy);
 		flags = ifrcopy.ifr_flags;
@@ -441,6 +488,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			continue; // ignore if interface not up
 		}
 
+		/* allocate and initialize ifi_info structure */
 		ifi = lothars__malloc(sizeof(struct ifi_info));
 		*ifipnext = ifi;   // prev points to this new one
 		ifipnext = &ifi->ifi_next; // pointer to next one goes here
@@ -448,7 +496,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		ifi->ifi_flags = flags;  // IFF_xxx values
 		ifi->ifi_myflags = myflags; // IFI_xxx values
 
-#if defined(SIOCGIFMTU) && defined(HAVE_STRUCT_IFREQ_IFR_MTU)
+#if defined(SIOCGIFMTU) // && defined(HAVE_STRUCT_IFREQ_IFR_MTU) TODO rm, =1
 		lothars__ioctl(fd_sock, SIOCGIFMTU, &ifrcopy);
 		ifi->ifi_mtu = ifrcopy.ifr_mtu;
 #else
@@ -475,19 +523,34 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		switch (ifr->ifr_addr.sa_family) {
 		case AF_INET:
 			sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+			/*
+			  copy the IP address that was returned from
+			  the original SIOCGIFCONF request
+			 */
 			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in));
 			memcpy(ifi->ifi_addr, sinptr, sizeof(struct sockaddr_in));
 
 #ifdef SIOCGIFBRDADDR
+			/*
+			  if the interface supports broadcasting,
+			  fetch the broadcast address with an ioctl()
+			  of SIOCGIFBRDADDR
+			*/
 			if (flags & IFF_BROADCAST) {
 				lothars__ioctl(fd_sock, SIOCGIFBRDADDR, &ifrcopy);
 				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_broadaddr;
+//				ifi->ifi_brdaddr = lothars__calloc(1, sizeof(struct sockaddr_in)); // TODO rm
 				ifi->ifi_brdaddr = lothars__malloc(sizeof(struct sockaddr_in));
 				memcpy(ifi->ifi_brdaddr, sinptr, sizeof(struct sockaddr_in));
 			}
 #endif
 
 #ifdef SIOCGIFDSTADDR
+			/*
+			  if the interface is a point-to-point
+			  interface, the SIOCGIFDSTADDR returns the IP
+			  adddress of the other end of the link
+			 */
 			if (flags & IFF_POINTOPOINT) {
 				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
 				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_dstaddr;
@@ -497,8 +560,12 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 #endif
 			break;
 
+			/*
+			  similar to IPv4, but IPv6 does not support broadcasting, thus no SIOCGIFBRDADDR
+			*/
 		case AF_INET6:
 			sin6ptr = (struct sockaddr_in6 *) &ifr->ifr_addr;
+//			ifi->ifi_addr = lothars__calloc(1, sizeof(struct sockaddr_in6)); // TODO rm
 			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in6));
 			memcpy(ifi->ifi_addr, sin6ptr, sizeof(struct sockaddr_in6));
 
@@ -506,6 +573,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			if (flags & IFF_POINTOPOINT) {
 				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
 				sin6ptr = (struct sockaddr_in6 *) &ifrcopy.ifr_dstaddr;
+//				ifi->ifi_dstaddr = lothars__calloc(1, sizeof(struct sockaddr_in6)); // TODO rm
 				ifi->ifi_dstaddr = lothars__malloc(sizeof(struct sockaddr_in6));
 				memcpy(ifi->ifi_dstaddr, sin6ptr, sizeof(struct sockaddr_in6));
 			}
