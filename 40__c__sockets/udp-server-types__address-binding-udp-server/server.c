@@ -180,6 +180,16 @@ pid_t lothars__fork(void)
 }
 
 
+void* lothars__malloc(size_t size)
+{
+	void *ptr;
+	if (NULL == (ptr = malloc(size))) {
+		err_sys("malloc error");
+	}
+	return ptr;
+}
+
+
 void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
 	if (0 > bind(fd, sa, salen)) {
@@ -333,11 +343,12 @@ char* lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
 
 
 /* ifi */
+
 struct ifi_info* get_ifi_info(int family, int doaliases)
 {
-	struct ifi_info *ifi;
-	struct ifi_info *ifihead;
-	struct ifi_info **ifipnext;
+	struct ifi_info *ifi = NULL;
+	struct ifi_info *ifihead = NULL;
+	struct ifi_info **ifipnext = NULL;
 
 	int fd_sock
 		, len
@@ -350,14 +361,14 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 	char *ptr
 		, *buf
 		, lastname[IFNAMSIZ]
-		, *cptr
-		, *haddr
-		, *sdlname;
+		, *cptr = NULL
+		, *haddr = NULL
+		, *sdlname = NULL;
 
 	struct ifconf ifc;
-	struct ifreq *ifr, ifrcopy; /* NB: ifrcopy is NOT a pointer! */
-	struct sockaddr_in *sinptr;
-	struct sockaddr_in6 *sin6ptr;
+	struct ifreq *ifr = NULL, ifrcopy; /* NB: ifrcopy is NOT a pointer! */
+	struct sockaddr_in *sinptr = NULL;
+	struct sockaddr_in6 *sin6ptr = NULL;
 
 	/* create an UDP socket for using with ioctl() */
 	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
@@ -539,7 +550,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			if (flags & IFF_BROADCAST) {
 				lothars__ioctl(fd_sock, SIOCGIFBRDADDR, &ifrcopy);
 				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_broadaddr;
-//				ifi->ifi_brdaddr = lothars__calloc(1, sizeof(struct sockaddr_in)); // TODO rm
 				ifi->ifi_brdaddr = lothars__malloc(sizeof(struct sockaddr_in));
 				memcpy(ifi->ifi_brdaddr, sinptr, sizeof(struct sockaddr_in));
 			}
@@ -565,7 +575,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			*/
 		case AF_INET6:
 			sin6ptr = (struct sockaddr_in6 *) &ifr->ifr_addr;
-//			ifi->ifi_addr = lothars__calloc(1, sizeof(struct sockaddr_in6)); // TODO rm
 			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in6));
 			memcpy(ifi->ifi_addr, sin6ptr, sizeof(struct sockaddr_in6));
 
@@ -573,7 +582,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			if (flags & IFF_POINTOPOINT) {
 				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
 				sin6ptr = (struct sockaddr_in6 *) &ifrcopy.ifr_dstaddr;
-//				ifi->ifi_dstaddr = lothars__calloc(1, sizeof(struct sockaddr_in6)); // TODO rm
 				ifi->ifi_dstaddr = lothars__malloc(sizeof(struct sockaddr_in6));
 				memcpy(ifi->ifi_dstaddr, sin6ptr, sizeof(struct sockaddr_in6));
 			}
