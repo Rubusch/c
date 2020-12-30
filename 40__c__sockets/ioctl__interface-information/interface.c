@@ -11,18 +11,11 @@
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h> /* memset() */
-#include <strings.h> /* bzero() */
 #include <stropts.h> /* ioctl() */
 #include <linux/sockios.h> /* SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <arpa/inet.h> /* inet_ntop(), inet_pton() */
-#include <unistd.h> /* read(), write(), close() */
-#include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
 #include <stdarg.h> /* va_start(), va_end(),... */
-#include <sys/wait.h> /* waitpid(), SIGINT,... */
-#include <sys/resource.h> /* getrusage(), struct rusage,... */
-#include <sys/socket.h> /* sockets,... */
 #include <sys/un.h>  /* unix sockets */
-#include <time.h> /* time(), ctime() */
 #include <errno.h>
 
 
@@ -537,7 +530,7 @@ int main(int argc, char** argv)
 	int do_aliases;
 
 	if (3 != argc) {
-		fprintf(stderr, "usage: %s <inet4|inet6> <do aliases>", argv[0]);
+		fprintf(stderr, "usage: %s <inet4|inet6> <do aliases>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
