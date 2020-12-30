@@ -522,12 +522,12 @@ struct ifi_info* lothars__get_ifi_info(int family, int doaliases)
 int main(int argc, char** argv)
 {
 	struct ifi_info *ifi=NULL;
-	struct ifi_info *ifi_head=NULL;
+	struct ifi_info *ifihead=NULL;
 	struct sockaddr *sa=NULL;
 	uint8_t *ptr=NULL;
 	int idx;
 	int family;
-	int do_aliases;
+	int doaliases;
 
 	if (3 != argc) {
 		fprintf(stderr, "usage: %s <inet4|inet6> <do aliases>\n", argv[0]);
@@ -542,9 +542,9 @@ int main(int argc, char** argv)
 		err_quit("invalid address family, '%s'", argv[1]);
 	}
 
-	do_aliases = atoi(argv[2]);
+	doaliases = atoi(argv[2]);
 
-	for (ifi_head = ifi = lothars__get_ifi_info(family, do_aliases); ifi != NULL ; ifi = ifi->ifi_next) {
+	for (ifihead = ifi = lothars__get_ifi_info(family, doaliases); ifi != NULL ; ifi = ifi->ifi_next) {
 		fprintf(stdout, "%s: ", ifi->ifi_name);
 
 		if (ifi->ifi_index != 0) fprintf(stdout, "(%d) ", ifi->ifi_index);
@@ -569,7 +569,7 @@ int main(int argc, char** argv)
 		if (NULL != (sa = ifi->ifi_brdaddr)) fprintf(stdout, "  broadcast addr: %s\n", lothars__sock_ntop_host(sa, sizeof(*sa)));
 		if (NULL != (sa = ifi->ifi_dstaddr)) fprintf(stdout, "  destination addr: %s\n", lothars__sock_ntop_host(sa, sizeof(*sa)));
 	}
-	free_ifi_info(ifi_head);
+	free_ifi_info(ifihead);
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
