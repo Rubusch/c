@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h> /* memset() */
 #include <stropts.h> /* ioctl() */
-#include <linux/sockios.h> /* SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
+#include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <arpa/inet.h> /* inet_ntop(), inet_pton() */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/un.h>  /* unix sockets */
@@ -298,7 +298,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			}
 		} else {
 			if (ifc.ifc_len == lastlen) {
-				fprintf(stdout, "\t4.) Comparison of lengthes were equal - ok\n");
+				fprintf(stdout, "\t4.) Comparison of lengthes were equal - ok! ifc.ifc_len is now set\n");
 				break;  // success, len has not changed
 			}
 			fprintf(stdout, "\t2.) Save the ioctl return value\n");
@@ -343,7 +343,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			continue; // ignore if not desired address family
 		}
 
-
 		myflags = 0;
 		if (NULL != (cptr = strchr(ifr->ifr_name, ':'))) {
 			*cptr = 0;  // replace colon with null
@@ -382,7 +381,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		ifipnext = &ifi->ifi_next; // pointer to next one goes here  
 
 		// pre-init in order to make free() working consistently
-// TODO test if this works for the first element                
 		ifi->ifi_addr = NULL;
 		ifi->ifi_brdaddr = NULL;
 		ifi->ifi_dstaddr = NULL;
