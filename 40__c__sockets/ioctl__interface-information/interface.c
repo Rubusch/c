@@ -178,11 +178,9 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	static char str[128];  // Unix domain is largest
 
 	switch (sa->sa_family) {
-//	case AF_INET: // TODO rm
 	case PF_INET:
 	{
 		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-// 		if (NULL == inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) { // TODO rm
 		if (NULL == inet_ntop(PF_INET, &sin->sin_addr, str, sizeof(str))) {
 			return NULL;
 		}
@@ -190,11 +188,9 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	}
 
 #ifdef IPV6
-//	case AF_INET6: // TODO rm
 	case PF_INET6:
 	{
 		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
-//		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str, sizeof(str))) { // TODO rm
 		if (NULL == inet_ntop(PF_INET6, &sin6->sin6_addr, str, sizeof(str))) {
 			return NULL;
 		}
@@ -202,9 +198,7 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	}
 #endif
 
-//#ifdef AF_UNIX // TODO rm
 #ifdef PF_UNIX
-//	case AF_UNIX: // TODO rm
 	case PF_UNIX:
 	{
 		struct sockaddr_un *unp = (struct sockaddr_un *) sa;
@@ -269,12 +263,12 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 	struct sockaddr_in6 *sin6ptr=NULL;
 
 	/* create an UDP socket for using with ioctl() */
-//	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0); // TODO rm
 	fd_sock = lothars__socket(PF_INET, SOCK_DGRAM, 0);
 
 
 	/* figure out the size of ifc.ifc_buf i.e. ifc.ifc_len, and
-	 * allocate corresponding amount of memory via ioctl() call */
+	 * allocate corresponding amount of memory via ioctl() call
+	 */
 	lastlen = 0;
 	len = 100 * sizeof(struct ifreq); // initial buffer size guess
 	while (1) {
@@ -322,30 +316,13 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 	// initialize linked list pointers
 	ifihead = NULL;
 	ifipnext = &ifihead;
-	//lastname[0] = '\0';
 	memset(lastname, '\0', sizeof(lastname));
 	sdlname = NULL;
 
 	/* main loop */
 
-//*
-	// FIXME: simplified walker over the interfaces, something in the arithmetics changed to 64 bit technology....
-	int i;
-	ptr = buf;
-	ifr = (struct ifreq *) ptr; // should correspond to ifc.ifc_req!!!
-	for (i=0; i<ifc.ifc_len; ) {
-		len = sizeof(*ifr);
-		fprintf(stdout, "%s\n", ifr->ifr_name);
-		ifr = (struct ifreq*)((char*)ifr+len);
-		i+=len;
-	}
-	return 0;
-// */
-	
-//if 0 /* DEBUGGING, TODO rm */
-        
 	for (ptr = buf; ptr < buf + ifc.ifc_len; ) {
-		ifr = (struct ifreq *) ptr; // should correspond to ifc.ifc_req!!!
+		ifr = (struct ifreq *) ptr; // update to the (next) ifreq instance
 
 		switch (ifr->ifr_addr.sa_family){
 #ifdef IPV6
@@ -355,30 +332,18 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		  for IPv4 addresses, but too small for 28-byte IPv6
 		  addresses
 		*/
-//		case AF_INET6: // TODO rm
 		case PF_INET6:
-			len = sizeof(struct sockaddr_in6);
+			//len = sizeof(struct sockaddr_in6); // NB: this is probably not working, better use 'sizeof(*ifr)'
 			break;
 #endif
-//		case AF_INET: // TODO rm
 		case PF_INET:
 		default:
-			len = sizeof(struct sockaddr);
+			len = sizeof(*ifr); // NB: on some UNIX and Darwin better use 'sockaddr.sa_len + IFNAMSIZ'
 			break;
 		}
 
-		
-		fprintf(stderr, "AAA ptr = %p; sizeof(ifr->ifr_name) = %ld; len = %d\n", ptr, sizeof(ifr->ifr_name), len);
-		fprintf(stderr, "AAA IFNAMSIZ = %d\n", IFNAMSIZ);
-//		fprintf(stderr, "AAA IFNAMSIZ = %d; ifr->ifr_addr.sa_len = %d\n", IFNAMSIZ, ifr->ifr_addr.sa_len );
-		
-		ptr += sizeof(ifr->ifr_name) + len; // for next one in buffer
-//		ptr += sizeof(ifr->ifr_name) + len + 48; // for next one in buffer needs an additional shift on 64bit realities..                     
-		
-		fprintf(stderr, "BBB ptr = %p; sizeof(ifr->ifr_name) = %ld; len = %d\n", ptr, sizeof(ifr->ifr_name), len);
-		
-		if (ifr->ifr_addr.sa_family != family) { // TODO why does this get triggered?             
-//		if (ifr->ifr_addr.sa_family != AF_INET) { // TODO why does this get triggered?             
+		ptr += len;
+		if (ifr->ifr_addr.sa_family != family) {
 			continue; // ignore if not desired address family
 		}
 
@@ -393,11 +358,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			}
 			myflags = IFI_ALIAS;
 		}
-//*
 		memcpy(lastname, ifr->ifr_name, IFNAMSIZ);
-/*/
-		strcpy(lastname, ifr->ifr_name);
-// */
 
 		/*
 		  issue an SIOCGIFFLAGS to ioctl() to fetch the
@@ -410,13 +371,9 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 		  NB: ifrcopy is a instance on the stack
 		*/
-//*
+
 		ifrcopy = *ifr;
 		lothars__ioctl(fd_sock, SIOCGIFFLAGS, &ifrcopy);
-/*/ // TODO rm
-		lothars__ioctl(fd_sock, SIOCGIFFLAGS, ifr);
-		ifrcopy = *ifr;
-// */
 		flags = ifrcopy.ifr_flags;
 		if ((flags & IFF_UP) == 0) {
 			continue; // ignore if interface not up
@@ -424,9 +381,8 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 		/* allocate and initialize ifi_info structure */
 		ifi = lothars__malloc(sizeof(*ifi));
-// TODO check the following is working correctly       
-		*ifipnext = ifi;   // prev points to this new one  
-		ifipnext = &ifi->ifi_next; // pointer to next one goes here  
+		*ifipnext = ifi; // prev points to this new one
+		ifipnext = &ifi->ifi_next; // pointer of pointer to next one goes here
 
 		// pre-init in order to make free() working consistently
 		ifi->ifi_addr = NULL;
@@ -461,7 +417,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		}
 
 		switch (ifr->ifr_addr.sa_family) {
-//		case AF_INET: // TODO rm
 		case PF_INET:
 			sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
 			/*
@@ -503,7 +458,6 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			/*
 			  similar to IPv4, but IPv6 does not support broadcasting, thus no SIOCGIFBRDADDR
 			*/
-//		case AF_INET6: // TODO rm
 		case PF_INET6:
 			sin6ptr = (struct sockaddr_in6 *) &ifr->ifr_addr;
 			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in6));
@@ -523,9 +477,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			break;
 		}
 	}
-       
-//#endif /* DEBUGGING, TODO rm */
-      
+
 	free(buf); buf = NULL;
 	return ifihead; // pointer to first structure in linked list
 }
@@ -588,10 +540,8 @@ int main(int argc, char** argv)
 	}
 
 	if (0 == strncmp(argv[1], "inet4", sizeof("inet4"))) {
-//		family = AF_INET; // TODO rm
 		family = PF_INET;
 	} else if (strncmp(argv[1], "inet6", sizeof("inet6"))) {
-//		family = AF_INET6; // TODO rm
 		family = PF_INET6;
 	} else {
 		err_quit("invalid address family, '%s'", argv[1]);
