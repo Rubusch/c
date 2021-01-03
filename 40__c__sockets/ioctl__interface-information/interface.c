@@ -295,17 +295,17 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		   The buffer is large enough only if the two lengths
 		   are the same.
 		 */
-		fprintf(stdout, "\t1.) and 3.) Issue SIOCGIFCONF request to ioctl\n");
+		//fprintf(stdout, "\t1.) and 3.) Issue SIOCGIFCONF request to ioctl\n");
 		if (0 > ioctl(fd_sock, SIOCGIFCONF, &ifc)) { // NB: direct call to ioctl()
 			if ((errno != EINVAL) || (lastlen != 0)) {
 				err_sys("ioctl error");
 			}
 		} else {
 			if (ifc.ifc_len == lastlen) {
-				fprintf(stdout, "\t4.) Comparison of lengthes were equal - ok! ifc.ifc_len is now set, ifc.ifc_buf has the correct allocated size\n");
+				//fprintf(stdout, "\t4.) Comparison of lengthes were equal - ok! ifc.ifc_len is now set, ifc.ifc_buf has the correct allocated size\n");
 				break;  // success, len has not changed
 			}
-			fprintf(stdout, "\t2.) Save the ioctl return value\n");
+			//fprintf(stdout, "\t2.) Save the ioctl return value\n");
 			lastlen = ifc.ifc_len;
 		}
 		// each time around the loop, increase the buffer size to hold 10 more 'struct ifreq's
