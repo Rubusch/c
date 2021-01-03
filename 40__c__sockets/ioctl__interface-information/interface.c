@@ -1,6 +1,9 @@
 // interface.c
 /*
   getting interface information
+
+  NB: only interfaces with an assigned IPv4 or IPv6 address, others
+  are ignored
 */
 
 
@@ -540,7 +543,7 @@ int main(int argc, char** argv)
 
 	if (0 == strncmp(argv[1], "inet4", sizeof("inet4"))) {
 		family = PF_INET;
-	} else if (strncmp(argv[1], "inet6", sizeof("inet6"))) {
+	} else if (0 == strncmp(argv[1], "inet6", sizeof("inet6"))) {
 		family = PF_INET6;
 	} else {
 		err_quit("invalid address family, '%s'", argv[1]);
