@@ -1,4 +1,4 @@
-// interface.c
+// Interface.c
 /*
   getting interface information
 */
@@ -13,13 +13,23 @@
 #include <stdlib.h>
 #include <string.h> /* memcpy() */
 #include <stropts.h> /* ioctl() */
-#include <linux/if_arp.h> /* struct arpreq */
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/un.h>  /* unix sockets, close() */
+#include <sys/socket.h> /* */
+#include <netinet/in.h> /* */
+#include <arpa/inet.h> /* */
 #include <unistd.h> /* close() */
-#include <linux/if.h> /* struct ifreq, struct ifconf, getnameinfo(), NI_NUMERICHOST,... NB: turn off <net/if.h> when using <linux/if.h> */
 #include <netdb.h> /* NI_NUMERICHOST,... */
+
+#include <sys/ioctl.h> /* */
+/*
+#include <linux/if.h> // struct ifreq, struct ifconf, getnameinfo(), NI_NUMERICHOST,... NB: turn off <net/if.h> when using <linux/if.h>
+#include <linux/if_arp.h> // struct arpreq
+/*/
+#include <net/if_arp.h>
+#include <net/if.h>
+// */
 #include <errno.h>
 
 
@@ -178,24 +188,25 @@ void get_interfaces(int family)
 		// on some other unices there might be something possible like
 		//len = IFNAMSIZ + ifr->ifr_addr.sa_len;
 
-		// name of interface
-		fprintf(stdout, "%-32s", ifr->ifr_name);
+		/* name of interface */
+		fprintf(stdout, "%-16s", ifr->ifr_name);
 		{
-			struct ifreq ifr_tmp;
+			/* host ip */
+			struct ifreq ifr_ifaddr;
 			char host[128];
 			memset(host, '\0', sizeof(host));
-			memset(&ifr_tmp, 0, sizeof(ifr_tmp));
+			memset(&ifr_ifaddr, 0, sizeof(ifr_ifaddr));
 
 			// details to interface
-			strncpy(ifr_tmp.ifr_name, ifr->ifr_name, IFNAMSIZ);
+			strncpy(ifr_ifaddr.ifr_name, ifr->ifr_name, IFNAMSIZ);
 
-			lothars__ioctl(fd_sock, SIOCGIFADDR, &ifr_tmp);
+			lothars__ioctl(fd_sock, SIOCGIFADDR, &ifr_ifaddr);
 
-			switch (ifr_tmp.ifr_addr.sa_family) {
+			switch (ifr_ifaddr.ifr_addr.sa_family) {
 			case AF_INET:
 			case AF_INET6:
-				getnameinfo(&ifr_tmp.ifr_addr
-					    , sizeof(ifr_tmp.ifr_addr)
+				getnameinfo(&ifr_ifaddr.ifr_addr
+					    , sizeof(ifr_ifaddr.ifr_addr)
 					    , host
 					    , sizeof(host)
 					    , 0
@@ -208,22 +219,41 @@ void get_interfaces(int family)
 			}
 			fprintf(stdout, "%s", host);
 		}
+		fprintf(stdout, "\t");
 
 
-/* // TODO                    
 		{
+                        /* obtain mac address */
+/*
+// Unix: note - R. Stevens describes the following approach for unix (SUN, HP-UX,...)
 			struct sockaddr_in *sin;
 			struct arpreq arpreq;
 			uint8_t *parp = NULL;
+
 			sin = (struct sockaddr_in*) &arpreq.arp_pa;
-			memcpy(sin, (char*)&ifr->ifr_addr, sizeof(*sin));
-			lothars__ioctl(fd_sock, SIOCGARP, &arpreq);
-			parp = (uint8_t*) &arpreq.arp_ha.sa_data[0];
-//			parp = arpreq.arp_ha.sa_data;    
-			fprintf(stdout, " %x:%x:%x:%x:%x:%x", *parp, *(parp + 1), *(parp + 2), *(parp + 3), *(parp + 4), *(parp + 5));
-		}
+			memcpy(sin, (char*) &ifr->ifr_addr, sizeof(*sin));
+			if (0 <= ioctl(fd_sock, SIOCGARP, (caddr_t) &arpreq)) {
+				parp = (uint8_t*) &arpreq.arp_ha.sa_data[0];
+				fprintf(stdout, " %x:%x:%x:%x:%x:%x", *parp, *(parp + 1), *(parp + 2), *(parp + 3), *(parp + 4), *(parp + 5));
+/*/
+// Linux: usage of SIOCGARP seems to be rather a Unix approach, where Linux uses SIOCGIFHWADDR
+//        (not all interfaces have a mac!)
+			struct ifreq ifr_hwifaddr;
+			uint8_t *mac = NULL;
+
+			strncpy(ifr_hwifaddr.ifr_name, ifr->ifr_name, IFNAMSIZ);
+
+			lothars__ioctl(fd_sock, SIOCGIFHWADDR, &ifr_hwifaddr);
+
+			if (ARPHRD_ETHER == ifr_hwifaddr.ifr_hwaddr.sa_family) {
+				mac = (uint8_t*) &ifr_hwifaddr.ifr_hwaddr.sa_data;
+				fprintf(stdout, "%x:%x:%x:%x:%x:%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 // */
-		
+			} else {
+				fprintf(stdout, "<unknown>");
+			}
+
+		}
 		fprintf(stdout, "\n");
 
 		// HACK: move the char-ized pointer to ifr by len bytes (i.e. obtain next element)
