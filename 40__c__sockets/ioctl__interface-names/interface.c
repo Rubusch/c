@@ -163,7 +163,8 @@ void get_interfaces(int family)
 	/* show interfaces */
 
 	// get ifc.ifc_buf allocated by ifc.ifc_len amount of memory
-	ifc.ifc_buf = lothars__malloc(110 * sizeof(*ifr)); // HACK: a mere guess, following R. Stevens
+	ifc.ifc_len = 110 * sizeof(*ifr);
+	ifc.ifc_buf = lothars__malloc(ifc.ifc_len); // HACK: a mere guess, following R. Stevens
 
 	lothars__ioctl(fd_sock, SIOCGIFCONF, &ifc);
 
