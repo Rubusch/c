@@ -16,14 +16,10 @@
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/un.h>  /* unix sockets, close() */
-#include <sys/socket.h> /* */
-#include <netinet/in.h> /* */
-#include <arpa/inet.h> /* */
 #include <unistd.h> /* close() */
 #include <netdb.h> /* NI_NUMERICHOST,... */
-
-#include <sys/ioctl.h> /* */
-/*
+// here both header families (linux and posix) seem to be ok
+//*
 #include <linux/if.h> // struct ifreq, struct ifconf, getnameinfo(), NI_NUMERICHOST,... NB: turn off <net/if.h> when using <linux/if.h>
 #include <linux/if_arp.h> // struct arpreq
 /*/
