@@ -165,10 +165,10 @@ void get_interfaces(int family)
 	/* show interfaces */
 
 	// get ifc.ifc_buf allocated by ifc.ifc_len amount of memory
-	ifc.ifc_buf = lothars__malloc(110 * sizeof(*ifr)); // HACK: a mere guess, following R. Stevens
+        ifc.ifc_len = 110 * sizeof(*ifr);
+	ifc.ifc_buf = lothars__malloc(ifc.ifc_len); // HACK: a mere guess, following R. Stevens
 
 	lothars__ioctl(fd_sock, SIOCGIFCONF, &ifc);
-
 	ifr = ifc.ifc_req;
 
 	for (idx=0, len=0; idx < ifc.ifc_len; ) {
@@ -188,6 +188,7 @@ void get_interfaces(int family)
 
 			// details to interface
 			strncpy(ifr_tmp.ifr_name, ifr->ifr_name, IFNAMSIZ);
+
 			lothars__ioctl(fd_sock, SIOCGIFADDR, &ifr_tmp);
 
 			switch (ifr_tmp.ifr_addr.sa_family) {
@@ -209,7 +210,7 @@ void get_interfaces(int family)
 		}
 
 
-// TODO                    
+/* // TODO                    
 		{
 			struct sockaddr_in *sin;
 			struct arpreq arpreq;
@@ -221,6 +222,7 @@ void get_interfaces(int family)
 //			parp = arpreq.arp_ha.sa_data;    
 			fprintf(stdout, " %x:%x:%x:%x:%x:%x", *parp, *(parp + 1), *(parp + 2), *(parp + 3), *(parp + 4), *(parp + 5));
 		}
+// */
 		
 		fprintf(stdout, "\n");
 
@@ -234,7 +236,7 @@ void get_interfaces(int family)
 	if (NULL != ifc.ifc_buf) free(ifc.ifc_buf);
 	ifc.ifc_buf = NULL;
 
-	lothars__close(fd_sock);
+//	lothars__close(fd_sock);
 }
 
 
