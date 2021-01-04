@@ -309,7 +309,6 @@ int main(int argc, char** argv)
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(atoi(port));
 	lothars__inet_pton(AF_INET, serverip, &servaddr.sin_addr);
-
 	lothars__connect(fd_sock, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
 	worker__echo_cli(stdin, fd_sock);
