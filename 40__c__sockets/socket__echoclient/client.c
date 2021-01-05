@@ -32,6 +32,11 @@
 // errors
 void err_sys(const char *, ...);
 
+// sock
+void lothars__connect(int, const struct sockaddr *, socklen_t);
+void lothars__send(int, const void *, size_t, int);
+int lothars__socket(int, int, int);
+
 
 /*
   internal helpers
@@ -99,7 +104,7 @@ void err_sys(const char *fmt, ...)
 */
 int main(int argc, char *argv[])
 {
-	int sockfd;
+	int fd_sock;
 	struct sockaddr_in serveraddr;
 	char buf[MAXSIZE]; memset(buf, '\0', MAXSIZE);
 	unsigned int echolen;
@@ -125,28 +130,29 @@ int main(int argc, char *argv[])
 	       "name=\"agentname\" />\n </DATA_OUT>\n </TASK>");
 
 	fprintf(stdout, "socket()\n");
-	if (0 > (sockfd = socket(PF_INET, SOCK_STREAM,  
-				 IPPROTO_TCP))) { // PF_INET for packets
-		perror("socket() failed");
-		exit(EXIT_FAILURE);
-	}
+	fd_sock = lothars__socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+//	if (0 > (fd_sock = socket(PF_INET, SOCK_STREAM,  
+//				 IPPROTO_TCP))) { // PF_INET for packets
+//		perror("socket() failed");
+//		exit(EXIT_FAILURE);
+//	}
 
+	fprintf(stdout, "connect()\n");
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET; // AF_INET for addresses
 	serveraddr.sin_addr.s_addr = inet_addr(serverip);
 	serveraddr.sin_port = htons(atoi(port));
-
-	fprintf(stdout, "connect()\n");
-	if (0 >
-	    connect(sockfd, ( struct sockaddr * )&serveraddr, sizeof(serveraddr))) {  
-		perror("connect() failed");
-		exit(EXIT_FAILURE);
-	}
+	lothars__connect(fd_sock, ( struct sockaddr * )&serveraddr, sizeof(serveraddr));
+//	if (0 >
+//	    connect(fd_sock, ( struct sockaddr * )&serveraddr, sizeof(serveraddr))) {  
+//		perror("connect() failed");
+//		exit(EXIT_FAILURE);
+//	}
 	fprintf(stdout, "connect() - ok\n");
 
 	fprintf(stdout, "send()\n");
 	echolen = strlen(text);
-	if (echolen != send(sockfd, text, echolen, 0)) {  
+	if (echolen != send(fd_sock, text, echolen, 0)) {  
 		perror("send() failed");
 		exit(EXIT_FAILURE);
 	}
@@ -156,7 +162,7 @@ int main(int argc, char *argv[])
 	while (nbytes < echolen) {
 		read = 0;
 		puts("recv()");
-		if (1 > (read = recv(sockfd, buf, MAXSIZE - 1, 0))) { 
+		if (1 > (read = recv(fd_sock, buf, MAXSIZE - 1, 0))) { 
 			perror("recv() failed");
 			exit(EXIT_FAILURE);
 		}
@@ -165,7 +171,7 @@ int main(int argc, char *argv[])
 		buf[read] = '\0';
 		puts(buf);
 	}
-	close(sockfd); 
+	close(fd_sock); 
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
