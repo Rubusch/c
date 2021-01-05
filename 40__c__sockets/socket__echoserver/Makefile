@@ -1,6 +1,6 @@
 # Makefile
 
-SOURCE = echoserver.c
+SOURCE = server.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)
 
