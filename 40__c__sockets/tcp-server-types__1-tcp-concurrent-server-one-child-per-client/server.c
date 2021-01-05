@@ -301,7 +301,7 @@ void lothars__close(int fd)
 
 
 /********************************************************************************************/
-// child implementation
+// worker implementation
 
 /*
   worker - routine
