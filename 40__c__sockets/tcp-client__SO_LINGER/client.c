@@ -247,19 +247,20 @@ void lothars__close(int fd)
 void work_client(int fd_sock)
 {
         ssize_t num;
-        char buf[BUFSIZE]; memset(buf, '\0', BUFSIZE);
+	const int buflen = strlen("ping") + 1;
+        char buf[buflen];
 
+	// send "ping"
+	memset(buf, '\0', buflen);
         strcpy( buf, "ping" );
-        num = strlen(buf) + 1; // will wait untill buffer fills up to BUFSIZE
-        //num = BUFSIZE;
-
-        // send
-        fprintf(stdout, "send \'%s' with size \'%ld\'\n", buf, num);
+        num = strlen(buf) + 1; // will wait untill buffer fills up to buflen
         lothars__writen(fd_sock, buf, num);
+        fprintf(stdout, "client sent \'%s' with size \'%ld\'\n", buf, num);
 
-        // receive
-        lothars__readn(fd_sock, buf, BUFSIZE);
-        fprintf(stderr, "server says '%s'\n", buf);
+        // receive "ping"
+	memset(buf, '\0', buflen);
+        lothars__readn(fd_sock, buf, sizeof("ping"));
+        fprintf(stderr, "server said '%s'\n", buf);
 }
 
 
