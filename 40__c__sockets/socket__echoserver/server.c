@@ -1,15 +1,18 @@
-// echoserver.c
+/*
+  tcp echo server
 
-#include <errno.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
+  implements a simple tcp echo server as forked concurent server (one
+  child per client)
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <netinet/ip.h> /* PF_INET, IPPROTO_TCP,... */
+#include <string.h> /* strerror(), memset(),... */
 #include <stdarg.h> /* va_start(), va_end(),... */
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <unistd.h> /* fork(), close(),... */
+#include <errno.h>
+
 
 /*
   constants
