@@ -663,7 +663,7 @@ void recv_all(int fd_recv, socklen_t salen)
 
 		// '\0' termination
 		line[idx] = '\0';
-		printf("from %s: %s", lothars__sock_ntop(safrom, len), line);
+		fprintf(stdout, "from %s: %s", lothars__sock_ntop(safrom, len), line);
 	}
 }
 
@@ -684,7 +684,7 @@ int main(int argc, char** argv)
 	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (3 != argc) {
-		fprintf(stderr, "usage: %s <hostip> <port>\n", argv[0]);
+		fprintf(stderr, "usage: %s <multicastip> <port>\ne.g.\n$> %s 239.255.1.2 8080\n", argv[0], argv[0]);
 		exit(EXIT_FAILURE);
 	}
 	strncpy(hostip, argv[1], sizeof(hostip));
