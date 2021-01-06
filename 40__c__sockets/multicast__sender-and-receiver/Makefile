@@ -1,5 +1,4 @@
-# Makefile (simple)
-
+# Makefile
 SOURCE = mcastsockets.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)
