@@ -53,6 +53,7 @@
   14: global
 
 
+  ---
 
   Especially in the case of streaming multimedia, the combination of
   an IP multicast address (either IPv4 or IPv6) and a transport-layer
@@ -62,10 +63,16 @@
   groups for flexibility in choice when receiving.
 
 
- ---
+  Usage - connect to an existing MCAST group
 
- References: Unix Network Programming, Stevens (1996) and developer
- manpages, e.g. on die.net
+  $> ./mcastsockets.exe 239.255.1.2 12345
+      from 172.24.37.78:51297: macosx, 21891
+      (...)
+
+  ---
+
+  References: Unix Network Programming, Stevens (1996) and developer
+  manpages, e.g. on die.net
 */
 
 #include <stdio.h> /* readline() */
