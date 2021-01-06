@@ -75,19 +75,17 @@
   manpages, e.g. on die.net
 */
 
+
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h>
-#include <sys/utsname.h>
-#include <unistd.h> /* read(), write(), close() */
-#include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
+#include <sys/utsname.h> /* uname() */
+#include <unistd.h> /* getpid(), fork(), sleep() */
+#include <netdb.h> /* freeadddrinfo(), getaddrinfo(), gai_strerror() */
 #include <stdarg.h> /* va_start(), va_end(),... */
-#include <sys/wait.h> /* waitpid(), SIGINT,... */
-#include <sys/resource.h> /* getrusage(), struct rusage,... */
-#include <arpa/inet.h> /* inet_ntop(),... */
-#include <sys/un.h>  /* unix sockets, close() */
+#include <arpa/inet.h> /* inet_ntop() */
+#include <sys/un.h>  /* struct sockaddr_un, close() */
 #include <net/if.h> /* if_nametoindex() */
-#include <time.h> /* time(), ctime() */
 #include <errno.h>
 
 
@@ -419,24 +417,6 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 			strcpy(str, "(no pathname bound)");
 		} else {
 			snprintf(str, sizeof(str), "%s", unp->sun_path);
-		}
-		return str;
-	}
-#endif
-
-#ifdef HAVE_SOCKADDR_DL_STRUCT
-	case AF_LINK:
-	{
-		struct sockaddr_dl *sdl = (struct sockaddr_dl *) sa;
-		if (sdl->sdl_nlen > 0) {
-			snprintf(str
-				 , sizeof(str)
-				 , "%*s (index %d)"
-				 , sdl->sdl_nlen
-				 , &sdl->sdl_data[0]
-				 , sdl->sdl_index);
-		} else {
-			snprintf(str, sizeof(str), "AF_LINK, index=%d", sdl->sdl_index);
 		}
 		return str;
 	}
