@@ -9,8 +9,9 @@
   TODO           
 */
 
-
+#define _POSIX_C_SOURCE 1
 #define _XOPEN_SOURCE
+#define _POSIX_SOURCE
 
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
@@ -26,6 +27,7 @@
 //#include <net/if.h> /* if_nametoindex() */
 #include <linux/if.h> /* ifi */
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
@@ -73,13 +75,16 @@ void err_quit(const char *, ...);
 // sock
 void lothars__bind(int, const struct sockaddr *, socklen_t);
 ssize_t lothars__recvfrom(int, void *, size_t, int, struct sockaddr *, socklen_t *);
+int lothars__socket(int, int, int);
 
 // unix
 void lothars__gettimeofday(struct timeval *);
+int lothars__ioctl(int, int, void *);
 void* lothars__malloc(size_t);
 
 // socket demo
 int lothars__udp_client(const char*, const char*, struct sockaddr**, socklen_t*);
+void sock_set_addr(struct sockaddr*, socklen_t, const void*);
 void sock_set_wild(struct sockaddr*, socklen_t);
 char* lothars__sock_ntop(const struct sockaddr*, socklen_t);
 
@@ -203,6 +208,31 @@ ssize_t lothars__recvfrom(int fd
 
 
 /*
+  The socket() function shall create an unbound socket in a
+  communications domain, and return a file descriptor that can be used
+  in later function calls that operate on sockets.
+
+  #include <sys/socket.h>
+
+  @family: Specifies the communications domain in which a socket is to
+      be created.
+  @type: Specifies the type of socket to be created.
+  @protocol: Specifies a particular protocol to be used with the
+      socket. Specifying a protocol of 0 causes socket() to use an
+      unspecified default protocol appropriate for the requested
+      socket type.
+*/
+int lothars__socket(int family, int type, int protocol)
+{
+	int res;
+	if (0 > (res = socket(family, type, protocol))) {
+                err_sys("%s() error", __func__);
+	}
+	return res;
+}
+
+
+/*
   The gettimeofday() function shall obtain the current time, expressed
   as seconds and microseconds since the Epoch, and store it in the
   timeval structure pointed to by tv. The resolution of the system
@@ -217,6 +247,26 @@ void lothars__gettimeofday(struct timeval *tv)
 	if (-1 == gettimeofday(tv, NULL)) { // if 'tzp' is not a NULL pointer, the behavior is unspecified
 		err_sys("gettimeofday error");
 	}
+}
+
+
+/*
+  The ioctl() function shall perform a variety of control functions on
+  STREAMS devices.
+
+  #include <stropts.h>
+
+  @fd: The file descriptor on the stream.
+  @request: The ioctl() request (see manpages).
+  @arg: An optional argument.
+*/
+int lothars__ioctl(int fd, int request, void *arg)
+{
+	int  res;
+	if (-1 == (res = ioctl(fd, request, arg))) {
+                err_sys("%s() error", __func__);
+	}
+	return res; // streamio of I_LIST returns value
 }
 
 
@@ -274,6 +324,31 @@ int lothars__udp_client(const char *host, const char *serv, struct sockaddr **sa
 	freeaddrinfo(ressave);
 
 	return fd_sock;
+}
+
+
+/*
+  sock_set_addr.c
+*/
+void sock_set_addr(struct sockaddr *sa, socklen_t salen, const void *addr)
+{
+	switch (sa->sa_family) {
+	case AF_INET:
+	{
+		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+		memcpy(&sin->sin_addr, addr, sizeof(struct in_addr));
+		return;
+	}
+
+#ifdef IPV6
+	case AF_INET6:
+	{
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+		memcpy(&sin6->sin6_addr, addr, sizeof(struct in6_addr));
+		return;
+	}
+#endif
+	}
 }
 
 
@@ -791,7 +866,7 @@ void sntp_proc(char *buf, ssize_t num, struct timeval *nowptr)
 	struct ntpdata *ntp=NULL;
 
 	if (num < (ssize_t) sizeof(struct ntpdata)) {
-		fprintf(stdout, "\npacket too small: %d bytes\n", num);
+		fprintf(stdout, "\npacket too small: %ld bytes\n", num);
 		return;
 	}
 

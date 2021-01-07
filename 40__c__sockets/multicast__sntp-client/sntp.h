@@ -19,9 +19,9 @@ struct s_fixedpt{
 
 // NTP header
 struct ntpdata{
-	u_char status;
-	u_char stratum;
-	u_char ppoll;
+	uint8_t status;
+	uint8_t stratum;
+	uint8_t ppoll;
 	int precision:8;
 	struct s_fixedpt distance;
 	struct s_fixedpt dispersion;
