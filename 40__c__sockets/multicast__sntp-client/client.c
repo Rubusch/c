@@ -847,15 +847,15 @@ int main(int argc, char** argv)
 	struct sockaddr *mcastsa=NULL, *wild=NULL, *from=NULL;
 	struct timeval now;
 
-	fd_sock = _udp_client("10.0.2.2", "ntp", (void*) &mcastsa, &salen);
+	fd_sock = lothars__udp_client("10.0.2.2", "ntp", (void*) &mcastsa, &salen);
 
-	wild = _malloc(salen);
+	wild = lothars__malloc(salen);
 
 	// copy family and port
 	memcpy(wild, mcastsa, salen);
 
 	sock_set_wild(wild, salen);
-	_bind(fd_sock, wild, salen);
+	lothars__bind(fd_sock, wild, salen);
 
 #ifdef MCAST
 	// obtain interface list and process each one
@@ -863,16 +863,16 @@ int main(int argc, char** argv)
 		    ; ifi != NULL
 		    ; ifi = ifi->ifi_next) {
 		if (ifi->ifi_flags & IFF_MULTICAST) {
-			_mcast_join(fd_sock, mcastsa, salen, ifi->ifi_name, 0);
-			fprintf(stdout, "joined %s on %s\n", _sock_ntop(mcastsa, salen), ifi->ifi_name);
+			lothars__mcast_join(fd_sock, mcastsa, salen, ifi->ifi_name, 0);
+			fprintf(stdout, "joined %s on %s\n", lothars__sock_ntop(mcastsa, salen), ifi->ifi_name);
 		}
 	}
 #endif
 
-	from = _malloc(salen);
+	from = lothars__malloc(salen);
 	while (1) {
 		len = salen;
-		num = _recvfrom(fd_sock, buf, sizeof(buf), 0, from, &len);
+		num = lothars__recvfrom(fd_sock, buf, sizeof(buf), 0, from, &len);
 		lothars__gettimeofday(&now);
 		sntp_proc(buf, num, &now);
 	}
