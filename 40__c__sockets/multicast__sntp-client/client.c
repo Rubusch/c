@@ -16,19 +16,27 @@
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h> /* bzero() */
 #include <sys/utsname.h>
 #include <unistd.h> /* read(), write(), close() */
-#include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
 #include <arpa/inet.h> /* inet_ntop(),... */
 #include <sys/un.h>  /* unix sockets, close() */
-//#include <net/if.h> /* if_nametoindex() */
-#include <linux/if.h> /* ifi */
-#include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
+#include <stropts.h> /* ioctl() */
+#include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <time.h> /* time(), ctime() */
+#include <sys/time.h> /* gettimeofday() */
+//* // linux and posix
+#include <linux/if.h> // struct ifreq, struct ifconf, getnameinfo(), NI_NUMERICHOST,... NB: turn off <net/if.h> when using <linux/if.h>
+// */
+#include <net/if.h>
+// */
+
 #include <errno.h>
 
 #include "sntp.h"
@@ -293,12 +301,14 @@ void* lothars__malloc(size_t size)
 /*
   udp_client.c
 */
+// TODO struct addrinfo           
 int lothars__udp_client(const char *host, const char *serv, struct sockaddr **saptr, socklen_t *lenp)
 {
 	int fd_sock, eai;
 	struct addrinfo hints, *res=NULL, *ressave=NULL;
 
-	bzero(&hints, sizeof(struct addrinfo));
+//	bzero(&hints, sizeof(struct addrinfo)); // TODO rm
+	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
 
