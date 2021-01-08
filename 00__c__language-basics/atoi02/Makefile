@@ -1,27 +1,19 @@
-## Makefile
-##
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3
-##
-
 SOURCE = xtoi.c
-OBJECTS = ${SOURCE:.c =.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -O2 -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	$(CC) $(CFLAGS) -c $(SOURCE) $<
 
-xtoi.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: xtoi.exe
+all: $(TARGET)
 
 clean:
-	-${RM} xtoi.exe *.o *~ core
-
-
+	-$(RM) $(TARGET) *.o core
