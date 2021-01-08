@@ -38,33 +38,25 @@
 #include <stdalign.h> /* C11: alignof */
 
 
-void header(char* txt)
-{
-	printf("\n\n");
-	printf(txt);
-	printf("\n\n");
-}
-
 int main(void)
 {
-	header("C11: type max_align_t");
+	printf("\nC11: type max_align_t\n");
 	size_t a = alignof(max_align_t);
-	printf("Alignment of max_align_t is %zu (%#zx)\n", a, a);
+	printf("\tAlignment of max_align_t is %zu (%#zx)\n", a, a);
 
 	void *p = malloc(123);
-	printf("The address obtained from malloc(123) is %#" PRIxPTR"\n", (uintptr_t)p);
+	printf("\tThe address obtained from malloc(123) is %#" PRIxPTR"\n", (uintptr_t)p);
 	free(p);
 
 
-	header("C11: operator alignof()");
-	printf("Alignment of char = %zu\n", alignof(char));
-	printf("Alignment of max_align_t = %zu\n", alignof(max_align_t));
-	printf("alignof(float[10]) = %zu\n", alignof(float[10]));
+	printf("\nC11: operator alignof()\n");
+	printf("\tAlignment of char = %zu\n", alignof(char));
+	printf("\tAlignment of max_align_t = %zu\n", alignof(max_align_t));
+	printf("\t\talignof(float[10]) = %zu\n", alignof(float[10]));
 
-	printf("alignof(struct{char c; int n;}) = %zu\n", alignof(struct {char c; int n;}));
+	printf("\t\talignof(struct{char c; int n;}) = %zu\n", alignof(struct {char c; int n;}));
 
 
-	printf("\n");
-	printf("READY.\n");
+	printf("\nREADY.\n");
 	exit(EXIT_SUCCESS);
 }
