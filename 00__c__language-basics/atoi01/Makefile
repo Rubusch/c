@@ -16,4 +16,4 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	-$(RM) $(TARGET) *.o core
+	-$(RM) $(TARGET) *.o *~ core
