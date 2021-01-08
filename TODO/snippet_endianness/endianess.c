@@ -3,7 +3,7 @@
   endianness and portable code
   int is guaranteed to have 16 bit at least,
   long is guaranteed to have at least 32 bit
-  
+
   x86 - is intel / little endian
   powerpc - is motorola / big endian
 //*/
