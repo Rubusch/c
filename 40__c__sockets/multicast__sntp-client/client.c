@@ -9,26 +9,41 @@
   TODO           
 */
 
-#define _POSIX_C_SOURCE 1
-#define _XOPEN_SOURCE
-#define _POSIX_SOURCE
+//#define _POSIX_C_SOURCE 1
+#define _XOPEN_SOURCE 600 /* struct iconf, freeaddrinfo(), getaddrinfo(), gai_strerror() */
+//#define _POSIX_SOURCE 600
+
+
+
 
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h> /* bzero() */
+
+/* // FIXME struct group_req unknown storage size                            
+#define __UAPI_DEF_IP_MREQ 1
+#define __UAPI_DEF_SOCKADDR_IN 0
+#define __UAPI_DEF_IN_ADDR 0
+#define __UAPI_DEF_IPPROTO 0
+
+//#include <linux/libc-compat.h>
+// */
+
+// TODO try to fix the include order         
 #include <sys/utsname.h>
 #include <unistd.h> /* read(), write(), close() */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
-#include <arpa/inet.h> /* inet_ntop(),... */
+#include <arpa/inet.h> /* inet_ntop(),... */       
 #include <sys/un.h>  /* unix sockets, close() */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
 #include <stropts.h> /* ioctl() */
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
+#include <linux/in.h> /* struct ip_mreqn */   
 #include <time.h> /* time(), ctime() */
 #include <sys/time.h> /* gettimeofday() */
 //* // linux and posix
@@ -92,6 +107,7 @@ void* lothars__malloc(size_t);
 
 // socket demo
 int lothars__udp_client(const char*, const char*, struct sockaddr**, socklen_t*);
+int lothars__family_to_level(int);
 void sock_set_addr(struct sockaddr*, socklen_t, const void*);
 void sock_set_wild(struct sockaddr*, socklen_t);
 char* lothars__sock_ntop(const struct sockaddr*, socklen_t);
@@ -104,7 +120,8 @@ void free_ifi_info(struct ifi_info *);
 // mcast
 void lothars__mcast_join(int, const struct sockaddr *, socklen_t, const char *, uint32_t);
 
-
+            
+//lothars__family_to_level(
 
 
 
@@ -301,7 +318,6 @@ void* lothars__malloc(size_t size)
 /*
   udp_client.c
 */
-// TODO struct addrinfo           
 int lothars__udp_client(const char *host, const char *serv, struct sockaddr **saptr, socklen_t *lenp)
 {
 	int fd_sock, eai;
@@ -334,6 +350,27 @@ int lothars__udp_client(const char *host, const char *serv, struct sockaddr **sa
 	freeaddrinfo(ressave);
 
 	return fd_sock;
+}
+
+
+/*
+  demo snippet - family to level
+*/
+int lothars__family_to_level(int family)
+{
+	switch (family) {
+	case AF_INET:
+		return IPPROTO_IP;
+
+#ifdef IPV6
+	case AF_INET6:
+		return IPPROTO_IPV6;
+#endif
+
+	default:
+		err_sys("%s() error", __func__);
+		return -1;
+	}
 }
 
 
@@ -762,7 +799,9 @@ int mcast_join( int fd_sock
                 , uint32_t ifindex)
 {
 #ifdef MCAST_JOIN_GROUP
-	struct group_req req;
+
+//	struct group_req req; FIXME             
+	struct group_req req; // FIXME
 	if (0 < ifindex) {
 		req.gr_interface = ifindex;
 	} else if (NULL != ifname) {
@@ -785,8 +824,8 @@ int mcast_join( int fd_sock
 	switch(grp->sa_family){
 	case AF_INET:
 	{
-		struct ip_mreq  mreq;
-		struct ifreq  ifreq;
+		struct ip_mreqn mreq; // TODO update lib          
+		struct ifreq ifreq;
 
 		memcpy(&mreq.imr_multiaddr, &((const struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
 
@@ -841,6 +880,7 @@ int mcast_join( int fd_sock
 		return -1;
 	}
 #endif
+	return 0; // TODO update     
 }
 
 
@@ -928,7 +968,6 @@ int main(int argc, char** argv)
 	char buf[MAXLINE];
 	ssize_t num;
 	socklen_t salen, len;
-	struct ifi_info *ifi=NULL;
 	struct sockaddr *mcastsa=NULL, *wild=NULL, *from=NULL;
 	struct timeval now;
 
@@ -943,8 +982,10 @@ int main(int argc, char** argv)
 	lothars__bind(fd_sock, wild, salen);
 
 #ifdef MCAST
+	struct ifi_info *ifi=NULL;
+
 	// obtain interface list and process each one
-	for (ifi=_get_ifi_info(mcastsa->sa_family, 1)
+	for (ifi =_get_ifi_info(mcastsa->sa_family, 1)
 		    ; ifi != NULL
 		    ; ifi = ifi->ifi_next) {
 		if (ifi->ifi_flags & IFF_MULTICAST) {
