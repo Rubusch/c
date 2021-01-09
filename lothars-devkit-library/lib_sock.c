@@ -1,56 +1,17 @@
 /*
-  Socket wrapper functions.
-  These could all go into separate files, so only the ones needed cause
-  the corresponding function to be added to the executable.  If sockets
-  are a library (SVR4) this might make a difference (?), but if sockets
-  are in the kernel (BSD) it doesn't matter.
+  sock
 
-  These wrapper functions also use the same prototypes as POSIX.1g,
-  which might differ from many implementations (i.e., POSIX.1g specifies
-  the fourth argument to getsockopt() as "void *", not "char *").
+  socket wrapper functions to Linux / POSIX library calls
 
-  If your system's headers are not correct [i.e., the Solaris 2.5
-  <sys/socket.h> omits the "const" from the second argument to both
-  bind() and connect()], you'll get warnings of the form:
+  Lothar Rubusch
 
-  warning: passing arg 2 of `bind' discards `const' from pointer target type
-  warning: passing arg 2 of `connect' discards `const' from pointer target type
+  ---
+  References:
+  Unix Network Programming, Stevens
 */
 
+#include "lib_sock.h"
 
-
-// constants
-
-#define LISTENQ 1024 /* the listen queue - serving as backlog for listen, can also be provided as env var */
-
-
-
-// forwards
-
-int lothars__accept(int, struct sockaddr *, socklen_t *);
-void lothars__bind(int, const struct sockaddr *, socklen_t);
-void lothars__connect(int, const struct sockaddr *, socklen_t);
-void lothars__getpeername(int, struct sockaddr *, socklen_t *);
-void lothars__getsockname(int, struct sockaddr *, socklen_t *);
-void lothars__getsockopt(int, int, int, void *, socklen_t *);
-void lothars__listen(int, int);
-int lothars__poll(struct pollfd *, unsigned long, int);
-ssize_t lothars__recv(int, void *, size_t, int);
-ssize_t lothars__recvfrom(int, void *, size_t, int, struct sockaddr *, socklen_t *);
-ssize_t lothars__recvmsg(int, struct msghdr *, int);
-int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
-void lothars__send(int, const void *, size_t, int);
-void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
-void lothars__sendmsg(int, const struct msghdr *, int);
-void lothars__setsockopt(int, int, int, const void *, socklen_t);
-void lothars__shutdown(int, int);
-int lothars__sockatmark(int);
-int lothars__socket(int, int, int);
-void lothars__socketpair(int, int, int, int *);
-
-
-
-// implementation
 
 /*
   The accept() function shall extract the first connection on the
