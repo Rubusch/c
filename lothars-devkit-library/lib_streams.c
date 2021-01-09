@@ -1,21 +1,17 @@
-// wrap_stdio.c
 /*
+  streams
+
   wrapper for streams and file streams
+
+  Lothar Rubusch
+
+  ---
+  References:
+  Unix Network Programming, Stevens
 */
 
+#include "lib_streams.h"
 
-
-// forwards
-
-void lothars__fclose(FILE *);
-FILE* lothars__fdopen(int, const char *);
-char* lothars__fgets(char *, int, FILE *);
-FILE* lothars__fopen(const char *, const char *);
-void lothars__fputs(const char *, FILE *);
-
-
-
-// implementation
 
 /*
   The fclose() function flushes the stream pointed to by fp (writing
