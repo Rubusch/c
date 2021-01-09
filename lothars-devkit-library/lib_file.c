@@ -1,5 +1,3 @@
-// fo.c
-
 /**************************************************************************
 
   implementations of some common file operations
@@ -7,7 +5,7 @@
 **************************************************************************/
 
 
-#include "fo.h"
+#include "lib_file.h"
 
 // use for debugging output
 //#define DEBUG

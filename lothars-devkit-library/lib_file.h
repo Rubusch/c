@@ -1,6 +1,3 @@
-// fo.h
-
-
 #ifndef FILEOPERATIONS
 #define FILEOPERATIONS
 
