@@ -1,61 +1,18 @@
-//  wrap_unix.c
 /*
+  Unix / POSIX calls
+
   Socket wrapper functions.
-  These could all go into separate files, so only the ones needed cause
-  the corresponding function to be added to the executable.  If sockets
-  are a library (SVR4) this might make a difference (?), but if sockets
-  are in the kernel (BSD) it doesn't matter.
 
-  These wrapper functions also use the same prototypes as POSIX.1g,
-  which might differ from many implementations (i.e., POSIX.1g specifies
-  the fourth argument to getsockopt() as "void *", not "char *").
+  Lothar Rubusch, GPL
 
-  If your system's headers are not correct [i.e., the Solaris 2.5
-  <sys/socket.h> omits the "const" from the second argument to both
-  bind() and connect()], you'll get warnings of the form:
+  ---
+  References:
+  Unix Network Programming, Stevens
+  Unix Interprocess Communication, Stevens
 */
 
 
-
-// forwards
-
-void* lothars__calloc(size_t, size_t);
-void lothars__close(int);
-void lothars__dup2(int, int);
-int lothars__fcntl(int, int, int);
-void lothars__gettimeofday(struct timeval *);
-int lothars__ioctl(int, int, void *);
-pid_t lothars__fork();
-void* lothars__malloc(size_t);
-int lothars__mkstemp(char *);
-void* lothars__mmap(void *, size_t, int, int, int, off_t);
-int lothars__open(const char *, int, mode_t);
-void lothars__pipe(int *fds);
-void lothars__sigaddset(sigset_t *, int);
-void lothars__sigdelset(sigset_t *, int);
-void lothars__sigemptyset(sigset_t *);
-void lothars__sigfillset(sigset_t *);
-int lothars__sigismember(const sigset_t *, int);
-Sigfunc* lothars__signal(int, Sigfunc*);
-Sigfunc* lothars__signal_intr(int, Sigfunc*);  // missing
-void lothars__sigpending(sigset_t *);
-void lothars__sigprocmask(int, const sigset_t *, sigset_t *);
-char* lothars__strdup(const char *);
-long lothars__sysconf(int);
-void lothars__sysctl(int *, uint32_t, void *, size_t *, void *, size_t);
-void lothars__unlink(const char *);
-pid_t lothars__wait(int *);
-pid_t lothars__waitpid(pid_t, int *, int);
-
-/*
-  min / max - improve using __typeof__
-*/
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
-
-
-
-// implementation
+#include "lib_unix.h"
 
 /*
   The calloc() function allocates memory for an array of nmemb
