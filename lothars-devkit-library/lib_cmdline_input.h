@@ -1,7 +1,6 @@
-// console_input.h
 /*
-  console input functions
-//*/
+  commandline input functions
+*/
 
 #ifndef CONSOLE_INPUT
 #define CONSOLE_INPUT
