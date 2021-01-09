@@ -661,7 +661,7 @@ void recv_all(int fd_recv, socklen_t salen)
 /*
   main
 */
-int main(int argc, char** argv)
+int main(int argc, char *argv[])
 {
 	int fd_send, fd_recv;
 	const int on = 1;
