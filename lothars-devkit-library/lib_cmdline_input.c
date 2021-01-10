@@ -5,12 +5,25 @@
 #include "lib_cmdline_input.h"
 
 
-int isnumber(const char *szNum, const unsigned int szNum_size)
+/*
+  isdigit() checks for a digit (0 through 9).
+
+  This wrapper checks a string if it is a number with one or more
+  digits.
+
+  #include <ctype.h>
+
+  @strnum: The number as a string.
+  @strnum_size: The size of the string representing a number.
+
+  Returns the int representation of the number.
+*/
+int isnumber(const char *strnum, const unsigned int strnum_size)
 {
-	char arr[szNum_size];
-	memset(arr, '\0', szNum_size);
-	strncpy(arr, szNum, szNum_size);
-	arr[szNum_size - 1] = '\0';
+	char arr[strnum_size];
+	memset(arr, '\0', strnum_size);
+	strncpy(arr, strnum, strnum_size);
+	arr[strnum_size - 1] = '\0';
 
 	const unsigned int len = strlen(arr);
 	if (0 == len)
@@ -27,51 +40,72 @@ int isnumber(const char *szNum, const unsigned int szNum_size)
 }
 
 
-void readstring(char *cTxt, const unsigned int txtSize, const char *comment)
+/*
+  fgetc() reads the next character from stream and returns it as an
+  unsigned char cast to an int, or EOF on end of file or error.
+
+  This wrapper reads a string from stdin input via fgetc by a given
+  size.
+
+  #include <stdio.h>
+
+  @str: Where the read string is stored to.
+  @strsize: The size of the string to read.
+  @prompt: Some text to ask for input, no terminating EOL is needed.
+*/
+void readstring(char *str, const unsigned int strsize, const char *prompt)
 {
-	if (NULL == comment) {
+	if (NULL == prompt) {
 		perror("text is NULL");
 		return;
 	}
-	if (NULL == cTxt) {
+	if (NULL == str) {
 		perror("iTxt is NULL");
 		return;
 	}
 
 	do {
 		// reset
-		memset(cTxt, '\0', txtSize);
-		puts(comment);
+		memset(str, '\0', strsize);
+		fprintf(stdout, prompt);
+		fprintf(stdout, "\n");
 
 		// read in
 		register unsigned int c;
 		register unsigned int idx = 0;
 
-		// in case of exceeding the size of the variable - put a '\0' at the end
-		// and read until '\n', but don't store the characters for cleaning the
-		// stream
+		// in case of exceeding the size of the variable - put
+		// a '\0' at the end and read until '\n', but don't
+		// store the characters for cleaning the stream
 		for (idx = 0; ('\n' != (c = fgetc(stdin))); ++idx) {
-			if ((txtSize - 1) > idx)
-				cTxt[idx] = c;
-			else if ((txtSize - 1) == idx) {
-				puts("input too long - will be reset");
-				memset(cTxt, '\0', txtSize);
-				// or cut here:
-				// cTxt[idx] = '\0';
+			if ((strsize - 1) > idx) {
+				// append to string
+				str[idx] = c;
+			} else if ((strsize - 1) == idx) {
+				/* // either: input too long, reset all
+				fprintf(stdout, "input too long - will be reset\n");
+				memset(str, '\0', strsize);
+				/*/ // or: terminate string
+				str[idx] = '\0';
+				// */
 			}
 		}
 
-	} while (0 == strlen(cTxt));
+	} while (0 == strlen(str));
 }
 
 
+/*
+  TODO   
+*/
 void readdigit(unsigned int *iVal, const char *comment)
 {
 	char cChr[3];
 	do {
 		// reset
 		memset(cChr, '\0', 3);
-		puts(comment);
+		fprintf(stdout, comment);
+		fprintf(stdout, "\n");
 
 		// read
 		fgets(cChr, 3, stdin);
@@ -86,7 +120,7 @@ void readdigit(unsigned int *iVal, const char *comment)
 
 		} else {
 			// '\n' still in stdin - clean up
-			puts("input too long - will reset");
+			fprintf(stdout, "input too long - will reset\n");
 			memset(cChr, '\0', 3);
 			while ('\n' != fgetc(stdin))
 				;
@@ -103,8 +137,10 @@ void readdigit(unsigned int *iVal, const char *comment)
 }
 
 
-void readnumber(unsigned int *iVal, const unsigned int digits,
-                const char *comment)
+/*
+  TODO
+*/
+void readnumber(unsigned int *iVal, const unsigned int digits, const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -120,7 +156,8 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 	do {
 		// reset
 		memset(cTxt, '\0', size);
-		puts(comment);
+		fprintf(stdout, comment);
+		frpintf(stdout, "\n");
 
 		// read in
 		register unsigned int c;
@@ -133,7 +170,7 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 			if ((size - 1) > idx)
 				cTxt[idx] = c;
 			else if ((size - 1) == idx) {
-				puts("input too long - will be reset");
+				fprintf(stdout, "input too long - will be reset\n");
 				memset(cTxt, '\0', size);
 				// or cut here:
 				// cTxt[idx] = '\0';
@@ -144,8 +181,10 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 }
 
 
-void readlongnumber(unsigned long int *iVal, const unsigned int digits,
-                    const char *comment)
+/*
+  TODO
+*/
+void readlongnumber(unsigned long int *iVal, const unsigned int digits, const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -161,7 +200,8 @@ void readlongnumber(unsigned long int *iVal, const unsigned int digits,
 	do {
 		// reset
 		memset(cTxt, '\0', size);
-		puts(comment);
+		fprintf(stdout, comment);
+		fprintf(stdout, "\n");
 
 		// read in
 		register unsigned int c;
@@ -174,7 +214,7 @@ void readlongnumber(unsigned long int *iVal, const unsigned int digits,
 			if ((size - 1) > idx)
 				cTxt[idx] = c;
 			else if ((size - 1) == idx) {
-				puts("input too long - will be reset");
+				fprintf(stdout, "input too long - will be reset\n");
 				memset(cTxt, '\0', size);
 				// or cut here:
 				// cTxt[idx] = '\0';
