@@ -1,24 +1,5 @@
-/*
-  read / write functions
+#include "lib_read_write.h"
 
-*/
-
-
-
-// forwards
-
-ssize_t lothars__read(int, void *, size_t);
-ssize_t lothars__readline_fd(int, void *, size_t);
-ssize_t lothars__readn(int, void *, size_t);
-ssize_t lothars__read_fd(int, void*, size_t, int *);
-
-void lothars__write(int, void *, size_t);
-void lothars__writen(int, void *, size_t);
-ssize_t lothars__write_fd(int, void*, size_t, int);
-
-
-
-// implementation
 
 /*
   The read() function shall attempt to read nbyte bytes from the file
