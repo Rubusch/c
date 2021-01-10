@@ -62,6 +62,7 @@
   Some of the explanations are taken from tenouk's tutorial, to
   be found here: https://www.tenouk.com/Module41c.html
  */
+// TODO builds and seems to work, currently (after refac) no mcast capable environment to verify         
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
