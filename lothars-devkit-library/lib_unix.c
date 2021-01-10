@@ -31,7 +31,7 @@ void* lothars__calloc(size_t n, size_t size)
 	void *ptr = NULL;
 
 	if (NULL == (ptr = calloc(n, size))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return ptr;
 }
@@ -59,7 +59,7 @@ void* lothars__calloc(size_t n, size_t size)
 void lothars__close(int fd)
 {
 	if (-1 == close(fd)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -93,7 +93,7 @@ void lothars__close(int fd)
 void lothars__dup2(int fd1, int fd2)
 {
 	if (-1 == dup2(fd1, fd2)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -114,7 +114,7 @@ int lothars__fcntl(int fd, int cmd, int arg)
 {
 	int res;
 	if (-1 == (res = fcntl(fd, cmd, arg))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -133,7 +133,7 @@ int lothars__fcntl(int fd, int cmd, int arg)
 void lothars__gettimeofday(struct timeval *tv)
 {
 	if (-1 == gettimeofday(tv, NULL)) { // if 'tzp' is not a NULL pointer, the behavior is unspecified
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -152,7 +152,7 @@ int lothars__ioctl(int fd, int request, void *arg)
 {
 	int  res;
 	if (-1 == (res = ioctl(fd, request, arg))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res; // streamio of I_LIST returns value
 }
@@ -167,7 +167,7 @@ pid_t lothars__fork(void)
 {
 	pid_t pid;
 	if (-1 == (pid = fork())) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return pid;
 }
@@ -187,7 +187,7 @@ void* lothars__malloc(size_t size)
 {
 	void *ptr;
 	if (NULL == (ptr = malloc(size))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return ptr;
 }
@@ -269,7 +269,7 @@ void* lothars__mmap(void *addr, size_t len, int prot, int flags, int fd, off_t o
 {
 	void *ptr;
 	if (((void *) -1) == (ptr = mmap(addr, len, prot, flags, fd, offset))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return ptr;
 }
@@ -318,7 +318,7 @@ int lothars__open(const char *pathname, int oflag, mode_t mode)
 void lothars__pipe(int fds[2])
 {
 	if (0 > pipe(fds)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -336,7 +336,7 @@ void lothars__pipe(int fds[2])
 void lothars__sigaddset(sigset_t *set, int signo)
 {
 	if (-1 == sigaddset(set, signo)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -354,7 +354,7 @@ void lothars__sigaddset(sigset_t *set, int signo)
 void lothars__sigdelset(sigset_t *set, int signo)
 {
 	if (-1 == sigdelset(set, signo)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -371,7 +371,7 @@ void lothars__sigdelset(sigset_t *set, int signo)
 void lothars__sigemptyset(sigset_t *set)
 {
 	if (-1 == sigemptyset(set)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
