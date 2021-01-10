@@ -14,13 +14,19 @@
 #include <string.h>
 
 // FILE pointer to a stream
-int get_read_write_file_pointer(FILE **, char[]);
-int get_read_file_pointer(FILE **, char[]);
-int get_write_file_pointer(FILE **, char[]);
-int get_append_file_pointer(FILE **, char[]);
+FILE* lothars__fopen(FILE **fp, char *path, const char *mode)
+//int get_read_write_file_pointer(FILE **, char[]); // TODO rm
+int lothars__fopen_rw(FILE**, char[]);
+//int get_read_file_pointer(FILE **, char[]); // TODO rm
+int lothars__fopen_r(FILE **, char[]);
+//int get_write_file_pointer(FILE **, char[]); // TODO rm
+int lothars__fopen_w(FILE **, char[]);
+//int get_append_file_pointer(FILE **, char[]); // TODO rm
+int lothars__fopen_a(File **, char[]);
 
 // close a FILE pointer to a stream
-int close_stream(FILE **);
+//int close_stream(FILE **); // TODO rm
+int lothars__fclose_null(FILE **);
 
 // reading from a file stream
 int read_char(FILE *, char **, unsigned long int *);

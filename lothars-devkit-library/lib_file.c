@@ -11,49 +11,38 @@
 
 TODO needs revision, refac, and testing
 TODO check references
+TODO remove debugging
 */
 
 
 #include "lib_file.h"
 
-// use for debugging output
-//#define DEBUG
-
 /***
-    extern's
-//*/
-/*
-  extern char* strncat(char*, const char*, size_t); // better thant strcat(), same
-  reason extern size_t strlen(const char*); extern char* strstr(const char*, const
-  char*); extern void* memset(void*, const void*, size_t);
-//*/
-/***
-
-    get a FILE pointer
-
+    file pointer
 ***/
 
 
 /*
-  sets a valid read/write file pointer, 0 - ok, -1 - failed
-//*/
-// CHECKED - OK
-int get_read_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
-{
-#ifdef DEBUG
-	printf("\tfo::get_read_write_file_pointer(**fp, filename[])\n");
-	printf("\t%i - fp == NULL\n", (*fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t\'%s\' - filename\n", filename);
-#endif
-	if (*fp != NULL)
-		return -1;
+  The fopen() function opens the file whose name is the string pointed
+  to by path and associates a stream with it.
 
-	if (filename == NULL)
+  #include <stdio.h>
+
+  @fp: The file pointer to be initialized.
+  @path: The valid path.
+  @mode: The mode to open the file pointer.
+
+  Returns 0 for ok, or -1 when failed.
+*/
+// TODO in case check that fp is not NULL
+FILE* lothars__fopen(FILE **fp, char *path, const char *mode)
+{
+	if (0 == strlen(path)) {
+		err_msg("%s() path empty", __func__);
 		return -1;
-	if ((*fp = fopen(filename, "rw")) == NULL) {
-		fprintf(stderr,
-			"fo::get_read_write_file_pointer(FILE**, char[]) - Failed!\n");
+	}
+	if (NULL == (*fp = fopen(path, mode))) {
+		err_msg("%s() error", __func__);
 		return -1;
 	}
 	return 0;
@@ -61,85 +50,101 @@ int get_read_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
 
 
 /*
-  sets a valid read FILE*, 0 - ok, -1 - failed
-//*/
-// CHECKED - OK
-int get_read_file_pointer(FILE **fp, char filename[FILENAME_MAX])
+  The wrapper inits a valid FILE file pointer to read and write.
+
+  @fp: The file pointer to be initialized.
+  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  path length limit, for ext4 4096 bytes).
+
+  Returns 0 for ok, or -1 when failed.
+*/
+int lothars__fopen_rw(FILE **fp, char path[FILENAME_MAX])
 {
-#ifdef DEBUG
-	printf("\tfo::get_read_file_pointer(**fp, filename[])\n");
-	printf("\t%i - fp == NULL\n", (*fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t\'%s\' - filename\n", filename);
-#endif
-	if (*fp != NULL)
-		return -1;
-	if (filename == NULL)
-		return -1;
-
-	if ((*fp = fopen(filename, "r")) == NULL) {
-		perror("fo::get_read_file_pointer(FILE**, char[] - Failed!");
-		return -1;
-	}
-
-	return 0;
+	return lothars__fopen(fp, path, "rw");
 }
 
 
 /*
-  sets a write file pointer, 0 - ok, -1 - failed
-//*/
-// CHECKED - OK
-int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
+  The wrapper inits a valid FILE file pointer to read.
+
+  @fp: The file pointer to be initialized.
+  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  path length limit, for ext4 4096 bytes).
+
+  Returns 0 for ok, or -1 when failed.
+*/
+int lothars__fopen_r(FILE **fp, char path[FILENAME_MAX])
 {
-#ifdef DEBUG
-	printf("\tfo::get_write_file_pointer(**fp, filename[])\n");
-	printf("\t%i - fp == NULL\n", (*fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t\'%s\' - filename\n", filename);
-#endif
-	if (*fp != NULL)
-		return -1;
-	if (filename == NULL)
-		return -1;
-
-	if ((*fp = fopen(filename, "w")) == NULL) {
-		fprintf(stderr, "fo::get_write_file_pointer(FILE**, char[]) - Failed!\n");
-		return -1;
-	}
-
-#ifdef DEBUG
-	printf("\t%i - &*fp\n", &*fp);
-#endif
-
-	return 0;
+	return lothars__fopen(fp, path, "r");
 }
 
 
 /*
-  sets an append file pointer, 0 - ok, -1 - failed
-//*/
-// CHECKED - OK
-int get_append_file_pointer(FILE **fp, char filename[FILENAME_MAX])
-{
-#ifdef DEBUG
-	printf("\tfo::get_append_file_pointer(**fp, filename[])\n");
-	printf("\t%i - fp == NULL\n", (*fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t\'%s\' - filename\n", filename);
-#endif
-	if (*fp != NULL)
-		return -1;
-	if (filename == NULL)
-		return -1;
+  The wrapper inits a valid FILE file pointer to write.
 
-	if ((*fp = fopen(filename, "a")) == NULL) {
-		fprintf(stderr, "fo::get_apprend_file_pointer(FILE**, char[]) - Failed!\n");
+  @fp: The file pointer to be initialized.
+  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  path length limit, for ext4 4096 bytes).
+
+  Returns 0 for ok, or -1 when failed.
+*/
+int lothars__fopen_w(FILE **fp, char path[FILENAME_MAX])
+{
+	return lothars__fopen(fp, path, "w");
+}
+
+
+/*
+  The wrapper inits a valid FILE file pointer to append.
+
+  @fp: The file pointer to be initialized.
+  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  path length limit, for ext4 4096 bytes).
+
+  Returns 0 for ok, or -1 when failed.
+*/
+int lothars__fopen_a(FILE **fp, char path[FILENAME_MAX])
+{
+	return lothars__fopen(fp, path, "a");
+}
+
+
+/*
+  The fclose() function flushes the stream pointed to by fp (writing
+  any buffered output data using fflush(3)) and closes the underlying
+  file descriptor.
+
+  Note that fclose() only flushes the user-space buffers provided by
+  the C library. To ensure that the data is physically stored on disk
+  the kernel buffers must be flushed too, for example, with sync(2) or
+  fsync(2).
+
+  The wrapper nulls the fp, and executes sync() as available.
+
+  #include <stdio.h>
+
+  @fp: The file pointer to close.
+
+  Returns 0 upon completion, else -1.
+*/
+int lothars__fclose_null(FILE **fp)
+{
+	int res = -1;
+	if (NULL == *fp) {
+		err_msg("%() fp was already null", __func__);
 		return -1;
 	}
-
-	return 0;
+	if (0 != (res = fclose(*fp))) {
+		err_msg("%() error", __func__);
+		return -1;
+	}
+	*fp = NULL;
+#ifdef _BSD_SOURCE || _XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+	sync();
+#endif
+	return res;
 }
+
 
 
 /***
@@ -483,7 +488,8 @@ int create_file(const char *filename, const unsigned long int SIZE)
 	}
 	fseek(fp, SIZE - 1, SEEK_SET);
 	putc('x', fp);
-	fclose(fp);
+//	fclose(fp); // TODO rm
+	lothars__fclose_null(&fp);
 
 	return 0;
 }
@@ -531,7 +537,8 @@ int shred_file(const char *path)
 		fseek(fp, 0L, SEEK_END);
 		count = ftell(fp);
 		fwrite("", 1, count, fp);
-		fclose(fp);
+//		fclose(fp); // TODO rm
+		lothars__fclose_null(&fp);
 		return remove_file(path);
 	}
 	return -1;
@@ -607,8 +614,10 @@ int copy_characterwise_unbuffered(const char *src, const char *dest)
 	while ((c = getc(fpSrc)) != EOF)
 		putc(c, fpDest);
 
-	fclose(fpSrc);
-	fclose(fpDest);
+//	fclose(fpSrc); // TODO rm
+	lothars__fclose_null(&fpSrc);
+//	fclose(fpDest); // TODO rm
+	lothars__fclose_null(&fpDest);
 
 	return 0;
 }
@@ -664,8 +673,10 @@ int copy_characterwise_buffered(const char *src, const char *dest,
 	while ((c = getc(fpSrc)) != EOF)
 		putc(c, fpDest);
 
-	fclose(fpSrc);
-	fclose(fpDest);
+//	fclose(fpSrc); // TODO rm
+	lothars__fclose_null(&fpSrc);
+//	fclose(fpDest); // TODO rm
+	lothars__fclose_null(&fpDest);
 
 	return 0;
 }
@@ -769,29 +780,6 @@ return 0;
     other operations
 
 ***/
-
-
-/*
-  closes the open FILE*
-//*/
-// CHECKED - OK
-int close_stream(FILE **fp)
-{
-#ifdef DEBUG
-	printf("\tfo::close_stream(**fp)\n");
-	printf("\t%i - *fp == NULL\n", (*fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-#endif
-	if (*fp == NULL)
-		return -1;
-	int iRes = fclose(*fp);
-	*fp = NULL;
-#ifdef DEBUG
-	printf("\t%i - *fp == NULL\n", (*fp == NULL));
-#endif
-
-	return iRes;
-}
 
 
 /*
