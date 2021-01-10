@@ -1,6 +1,23 @@
 #ifndef FILEOPERATIONS
 #define FILEOPERATIONS
 
+/*
+  file operations
+
+  implementation of some common file operations
+
+  Lothar Rubusch, 2006
+
+  ---
+  References:
+  various?!
+
+TODO needs revision, refac, and testing
+TODO check references
+TODO remove debugging
+*/
+
+
 #ifdef __unix__
 
 #define _GNU_SOURCE

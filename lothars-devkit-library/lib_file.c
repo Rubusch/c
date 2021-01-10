@@ -1,20 +1,3 @@
-/*
-  file operations
-
-  implementation of some common file operations
-
-  Lothar Rubusch, 2006
-
-  ---
-  References:
-  various?!
-
-TODO needs revision, refac, and testing
-TODO check references
-TODO remove debugging
-*/
-
-
 #include "lib_file.h"
 
 /***
@@ -155,37 +138,37 @@ int lothars__fclose_null(FILE **fp)
 
 
 /*
-  read characterwise into a char*
-//*/
-// CHECKED - OK
+  TODO       
+
+  This wrapper reads from a file pointer via fgetc() characterwise
+
+  @fp: 
+  @content: 
+  @content_size: 
+
+  Returns 0 if successful, or -1 alternatively.
+*/
 int read_char(FILE *fp, char **content, unsigned long int *content_size)
 {
-#ifdef DEBUG
-	printf("\tfo::read_char(*fp, **content, *content_size)\n");
-	printf("\t%i - fp == NULL\n", (fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t%i - *content == NULL\n", (*content == NULL));
-	printf("\t%i - *content_size\n", *content_size);
-#endif
-	if (fp == NULL)
-		return -1;
-	if (*content_size == 0)
-		return -1;
-	int c = 0;
+	int ch = 0;
 	unsigned long int idx = 0;
 	const unsigned long int INITIAL_SIZE = *content_size;
 
+	if (NULL == fp) {
+		fprintf(stderr, "%s() error: fp was NULL\n", __func__);
+		return -1;
+	}
+	if (0 == INITIAL_SIZE) {
+		fprintf(stderr, "%s() error: content_size was 0\n", __func__);
+		return -1;
+	}
+
 	// if pTemp full, append and allocate new space
-	while ((c = fgetc(fp)) != EOF) {
-#ifdef DEBUG
-		putchar(c); // print out on screen
-#endif
-		(*content)[idx] = c;
+	while (EOF != (ch = fgetc(fp))) {
+		(*content)[idx] = ch;
 		if (idx >= (*content_size) - 2) {
 			if (get_more_space(content, content_size, INITIAL_SIZE) == -1) {
-				fprintf(stderr,
-					"fo::read_char(*fp, char**, unsigned long int*) - Failed!\n");
-				exit(EXIT_FAILURE);
+				err_sys("%s() error", __func__);
 			}
 		}
 		++idx;
