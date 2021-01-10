@@ -250,14 +250,14 @@ void lothars__setsockopt(int fd
       the dest_addr argument.
 */
 void lothars__sendto( int fd
-	      , const void *ptr
-	      , size_t nbytes
-	      , int flags
-	      , const struct sockaddr *sa
-	      , socklen_t salen)
+		, const void *ptr
+		, size_t nbytes
+		, int flags
+		, const struct sockaddr *sa
+		, socklen_t salen)
 {
 	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -296,7 +296,7 @@ int lothars__inet_aton(const char *cp, struct in_addr *inp)
 	if (0 == (res = inet_aton(cp, inp))) {
 		err_sys("%s() invalid address", __func__);
 	}
-        /*
+	/*
 	  NB: in case of failure there's no close(fd_sock)
 	  when the program exits, resources are going to be freed by OS, anyway
 
