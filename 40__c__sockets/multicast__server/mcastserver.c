@@ -1,4 +1,7 @@
 /*
+  Receiver/client multicast Datagram example
+  ------------------------------------------
+
   Send Multicast Datagram code example.
 
   Sending and receiving a multicast datagram
@@ -49,6 +52,7 @@
   datagrams.  The steps needed to send a multicast datagram differ
   from the steps needed to receive a multicast datagram.
 
+  NB: Make sure the system is multicast capable!
 
   ---
   References:
