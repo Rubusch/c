@@ -64,7 +64,7 @@ again:
 void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
 	if (0 > bind(fd, sa, salen)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -84,7 +84,7 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 {
 	if (0 > connect(fd, sa, salen)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -104,7 +104,7 @@ void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 void lothars__getpeername(int fd, struct sockaddr *address, socklen_t *address_len)
 {
 	if (0 > getpeername(fd, address, address_len)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -124,7 +124,7 @@ void lothars__getpeername(int fd, struct sockaddr *address, socklen_t *address_l
 void lothars__getsockname(int fd, struct sockaddr *address, socklen_t *address_len)
 {
 	if (0 > getsockname(fd, address, address_len)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -152,7 +152,7 @@ void lothars__getsockname(int fd, struct sockaddr *address, socklen_t *address_l
 void lothars__getsockopt(int fd, int level, int optname, void *optval, socklen_t *optlenptr)
 {
 	if (0 > getsockopt(fd, level, optname, optval, optlenptr)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -177,7 +177,7 @@ void lothars__listen(int fd, int backlog)
 	}
 
 	if (0 > listen(fd, backlog)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -203,7 +203,7 @@ int lothars__poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
 {
 	int res;
 	if (0 > (res = poll(fdarray, nfds, timeout))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -246,7 +246,7 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
 {
 	ssize_t res;
 	if (0 > (res = recv(fd, ptr, nbytes, flags))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -279,7 +279,7 @@ ssize_t lothars__recvfrom(int fd
 {
 	ssize_t  res;
 	if (0 > (res = recvfrom(fd, ptr, nbytes, flags, sa, salenptr))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -305,7 +305,7 @@ ssize_t lothars__recvmsg(int fd, struct msghdr *msg, int flags)
 {
 	ssize_t  res;
 	if (0 > (res = recvmsg(fd, msg, flags))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -364,7 +364,7 @@ int lothars__select(int nfds
 {
 	int  res;
 	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;  /* can return 0 on timeout */
 }
@@ -399,7 +399,7 @@ void lothars__send( int fd
 	    , int flags)
 {
 	if ((ssize_t) nbytes != send(fd, ptr, nbytes, flags)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -429,7 +429,7 @@ void lothars__sendto( int fd
 	      , socklen_t salen)
 {
 	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -461,7 +461,7 @@ void lothars__sendmsg(int fd, const struct msghdr *msg, int flags)
 	}
 
 	if (nbytes != sendmsg(fd, msg, flags)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -492,7 +492,7 @@ void lothars__setsockopt(int fd
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 //		lothars__close(fd_sock); /* strict */
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -510,7 +510,7 @@ void lothars__setsockopt(int fd
 void lothars__shutdown(int fd, int how)
 {
 	if (0 > shutdown(fd, how)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
@@ -531,7 +531,7 @@ int lothars__sockatmark(int fd)
 {
 	int res;
 	if (0 > (res = sockatmark(fd))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -556,7 +556,7 @@ int lothars__socket(int family, int type, int protocol)
 {
 	int res;
 	if (0 > (res = socket(family, type, protocol))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
@@ -579,7 +579,7 @@ int lothars__socket(int family, int type, int protocol)
 void lothars__socketpair(int family, int type, int protocol, int fd[2])
 {
 	if (0 > socketpair(family, type, protocol, fd)) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 }
 
