@@ -5,23 +5,7 @@
   any other logger.
 */
 
-// constants
-
-#define MAXLINE 4096 /* max text line length */
-
-
-// forwards
-
-static void err_doit(int, const char *, va_list);
-
-void err_dump(const char *, ...);
-void err_msg(const char *, ...);
-void err_quit(const char *, ...);
-void err_ret(const char *, ...);
-void err_sys(const char *, ...);
-
-
-// implementation
+#include "lib_error.h"
 
 /*
    nonfatal error related to system call Print message and return
