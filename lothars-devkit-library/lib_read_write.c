@@ -9,7 +9,7 @@
 
   #include <unistd.h>
 
-  @fd: The filedescriptor to read from (fildes).
+  @fd: The file descriptor to read from (fildes).
   @ptr: A pointer to the buffer to read into (buf).
   @nbytes: The number of bytes to read.
 
@@ -36,7 +36,7 @@ ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
   has the final newline removed, so only the text of the line remains.
 
   The readline_fd() reads via file descriptor, while the lib
-  readline() does not take a filedescriptor. It is implemented by the
+  readline() does not take a file descriptor. It is implemented by the
   use of read(), thus there is no allocation with malloc()
   happening. Buffer and size must be provided by arguments.
 
@@ -111,19 +111,29 @@ ssize_t lothars__readline_fd(int fd, void *ptr, size_t maxlen)
 
 
 /*
-  read exactly nbytes
+  The read() function shall attempt to read nbyte bytes from the file
+  associated with the open file descriptor, fildes, into the buffer
+  pointed to by buf. The behavior of multiple concurrent reads on the
+  same pipe, FIFO, or terminal device is unspecified.
 
-  Read "num" bytes from a descriptor. Return not before number of
-  bytes are read from the stream.
+  This wrapper reads exactly nbytes.
+
+  #include <unistd.h>
+
+  @fd: The file descriptor to read from (fildes).
+  @ptr: A pointer to the buffer to read into (buf).
+  @nbytes: The number of bytes to read.
+
+  Return not before number of bytes are read from the stream.
 */
-ssize_t readn(int fd, void *vptr, size_t num)
+ssize_t readn(int fd, void *vptr, size_t nbytes)
 {
 	size_t nleft;
 	ssize_t nread;
 	char *ptr=NULL;
 
 	ptr = vptr;
-	nleft = num;
+	nleft = nbytes;
 	while (nleft > 0) {
 		if ( (nread = read(fd, ptr, nleft)) < 0) {
 			if (errno == EINTR) {
@@ -137,7 +147,7 @@ ssize_t readn(int fd, void *vptr, size_t num)
 		nleft -= nread;
 		ptr   += nread;
 	}
-	return (num - nleft);  // return >= 0
+	return (nbytes - nleft);  // return >= 0
 }
 ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 {
@@ -151,19 +161,36 @@ ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 
 
 /*
-  read_fd
+  The recvfrom() function shall receive a message from a
+  connection-mode or connectionless-mode socket. It is normally used
+  with connectionless-mode sockets because it permits the application
+  to retrieve the source address of received data.
 
-  read via file descriptor
+  CMSG_SPACE() returns the number of bytes an ancillary element with
+  payload of the passed data length occupies. This is a constant
+  expression.
+
+  This wrapper reads via file descriptor.
+
+  #include <sys/socket.h>
+
+  @fd: Specifies the socket file descriptor (socket).
+  @ptr: Points to the buffer where the message should be stored
+      (buffer).
+  @nbytes: Specifies the length in bytes of the buffer pointed to by
+      the buffer argument (length).
+  @recvfd: The received file descriptor to read from.
+
+  Returns the number of bytes read.
 */
-// TODO investigate HAVE_MSGHDR_MSG_CONTROL
-// TODO CMSG_SPACE() macros
+// TODO verify that cmsghdr is working and remove marked sections
 ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 {
 	struct msghdr msg;
 	struct iovec iov[1];
 	ssize_t cnt;
 
-#ifdef HAVE_MSGHDR_MSG_CONTROL
+//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, struct cmsghdr should be available under Linux
 	union {
 		struct cmsghdr cm;
 		char control[CMSG_SPACE(sizeof(int))];
@@ -171,11 +198,11 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	struct cmsghdr *cmptr = NULL;
 	msg.msg_control = control_un.control;
 	msg.msg_controllen = sizeof(control_un.control);
-#else
-	int newfd;
-	msg.msg_accrights = (caddr_t) &newfd;
-	msg.msg_accrightslen = sizeof(int);
-#endif
+//#else // TODO rm, struct cmsghdr should be available under Linux
+//	int newfd;
+//	msg.msg_accrights = (caddr_t) &newfd;
+//	msg.msg_accrightslen = sizeof(int);
+//#endif
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -189,7 +216,7 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 		return cnt;
 	}
 
-#ifdef HAVE_MSGHDR_MSG_CONTROL
+//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, struct cmsghdr should be available under Linux
 	if ((NULL != (cmptr = CMSG_FIRSTHDR(&msg))) && (cmptr->cmsg_len == CMSG_LEN(sizeof(int)))) {
 		if (cmptr->cmsg_level != SOL_SOCKET) {
 			err_quit("control level != SOL_SOCKET");
@@ -202,13 +229,13 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	} else {
 		*recvfd = -1;  // descriptor was not passed
 	}
-#else
-	if (msg.msg_accrightslen == sizeof(int)) {
-		*recvfd = newfd;
-	} else {
-		*recvfd = -1;  // descriptor was not passed
-	}
-#endif
+//#else // TODO rm, struct cmsghdr should be available under Linux
+//	if (msg.msg_accrightslen == sizeof(int)) {
+//		*recvfd = newfd;
+//	} else {
+//		*recvfd = -1;  // descriptor was not passed
+//	}
+//#endif
 
 	return cnt;
 }
@@ -223,9 +250,15 @@ ssize_t lothars__read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 
 
 /*
-  write
+  The write() function shall attempt to write nbyte bytes from the
+  buffer pointed to by buf to the file associated with the open file
+  descriptor, fildes.
 
-  wrapper around lib's write()
+  #include <unistd.h>
+
+  @fd: The associated open file descriptor.
+  @ptr: Points to the buffer to write to.
+  @nbytes: The number of bytes to write.
 */
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
@@ -236,9 +269,17 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 
 
 /*
-  writen
+  The write() function shall attempt to write nbyte bytes from the
+  buffer pointed to by buf to the file associated with the open file
+  descriptor, fildes.
 
-  write "num" bytes to a descriptor
+  This wrapper writes exactly number of bytes to the descriptor.
+
+  #include <unistd.h>
+
+  @fd: The associated open file descriptor.
+  @ptr: Points to the buffer to write to.
+  @nbytes: The number of bytes to write.
 */
 ssize_t writen(int fd, const void *vptr, size_t num)
 {
@@ -273,9 +314,26 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 
 
 /*
-  write_fd
+  The sendmsg() function shall send a message through a
+  connection-mode or connectionless-mode socket. If the socket is
+  connectionless-mode, the message shall be sent to the address
+  specified by msghdr. If the socket is connection-mode, the
+  destination address in msghdr shall be ignored.
 
-  write on a file descriptor
+  CMSG_DATA() returns a pointer to the data portion of a cmsghdr.
+
+  This wrapper writes on a file descriptor.
+
+  #include <sys/socket.h>
+
+  @fd: Specifies the socket file descriptor (socket).
+  @ptr: Points to the buffer where the message should be stored
+      (buffer).
+  @nbytes: Specifies the length in bytes of the buffer pointed to by
+      the buffer argument (length).
+  @sendfd: The sending file descriptor to write to.
+
+  Returns number of bytes written, or stops the program.
 */
 // TODO investigate HAVE_MSGHDR_MSG_CONTROL       
 ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
@@ -283,7 +341,7 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	struct msghdr msg;
 	struct iovec iov[1];
 
-#ifdef HAVE_MSGHDR_MSG_CONTROL
+//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, after verification  
 	union{
 		struct cmsghdr cm;
 		char    control[CMSG_SPACE(sizeof(int))];
@@ -298,10 +356,10 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	cmptr->cmsg_level = SOL_SOCKET;
 	cmptr->cmsg_type = SCM_RIGHTS;
 	*((int *) CMSG_DATA(cmptr)) = sendfd;
-#else
-	msg.msg_accrights = (caddr_t) &sendfd;
-	msg.msg_accrightslen = sizeof(int);
-#endif
+//#else // TODO rm, after verification  
+//	msg.msg_accrights = (caddr_t) &sendfd;
+//	msg.msg_accrightslen = sizeof(int);
+//#endif
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -316,10 +374,8 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {
 	ssize_t  bytes;
-
 	if (0 > (bytes = write_fd(fd, ptr, nbytes, sendfd))) {
 		err_sys("write_fd error");
 	}
-
 	return bytes;
 }
