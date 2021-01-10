@@ -1,6 +1,18 @@
 #include "lib_pthread.h"
 
+/*
+  The pthread_create() function starts a new thread in the calling
+  process. The new thread starts execution by invoking
+  start_routine(); arg is passed as the sole argument of
+  start_routine().
 
+  #include <pthread.h>
+
+  @tid: The thread id.
+  @attr: The optional thread attributes.
+  @func: The routine function for the thread to create.
+  @arg: The arguments for the routine function.
+*/
 void lothars__pthread_create( pthread_t *tid
 			      , const pthread_attr_t *attr
 			      , void * (*func)(void *)
@@ -14,7 +26,8 @@ void lothars__pthread_create( pthread_t *tid
 }
 
 
-
+/*
+*/
 void lothars__pthread_join(pthread_t tid
 			   , void **status)
 {
@@ -26,7 +39,8 @@ void lothars__pthread_join(pthread_t tid
 }
 
 
-
+/*
+*/
 void lothars__pthread_detach(pthread_t tid)
 {
 	int res;
@@ -37,7 +51,8 @@ void lothars__pthread_detach(pthread_t tid)
 }
 
 
-
+/*
+*/
 void lothars__pthread_kill(pthread_t tid, int signo)
 {
 	int  res;
@@ -48,6 +63,8 @@ void lothars__pthread_kill(pthread_t tid, int signo)
 }
 
 
+/*
+*/
 void lothars__pthread_mutexattr_init(pthread_mutexattr_t *attr)
 {
 	int res;
@@ -58,6 +75,8 @@ void lothars__pthread_mutexattr_init(pthread_mutexattr_t *attr)
 }
 
 
+/*
+*/
 void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr
 					   , int flag)
 {
@@ -69,6 +88,8 @@ void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr
 }
 
 
+/*
+*/
 void lothars__pthread_mutex_init(pthread_mutex_t *mptr
 				 , pthread_mutexattr_t *attr)
 {
@@ -80,6 +101,8 @@ void lothars__pthread_mutex_init(pthread_mutex_t *mptr
 }
 
 
+/*
+*/
 void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
 {
 	int res;
@@ -90,6 +113,8 @@ void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
 }
 
 
+/*
+*/
 void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
 {
 	int res;
@@ -100,7 +125,8 @@ void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
 }
 
 
-
+/*
+*/
 void lothars__pthread_cond_broadcast(pthread_cond_t *cptr)
 {
 	int res;
@@ -111,6 +137,8 @@ void lothars__pthread_cond_broadcast(pthread_cond_t *cptr)
 }
 
 
+/*
+*/
 void lothars__pthread_cond_signal(pthread_cond_t *cptr)
 {
 	int res;
@@ -121,6 +149,8 @@ void lothars__pthread_cond_signal(pthread_cond_t *cptr)
 }
 
 
+/*
+*/
 void lothars__pthread_cond_wait(pthread_cond_t *cptr
 				, pthread_mutex_t *mptr)
 {
@@ -131,7 +161,8 @@ void lothars__pthread_cond_wait(pthread_cond_t *cptr
 	}
 }
 
-
+/*
+*/
 void lothars__pthread_cond_timedwait(pthread_cond_t *cptr
 				     , pthread_mutex_t *mptr
 				     , const struct timespec *tsptr)
@@ -144,6 +175,8 @@ void lothars__pthread_cond_timedwait(pthread_cond_t *cptr
 }
 
 
+/*
+*/
 void lothars__pthread_once(pthread_once_t *ptr
 			   , void (*func)(void))
 {
@@ -155,6 +188,8 @@ void lothars__pthread_once(pthread_once_t *ptr
 }
 
 
+/*
+*/
 void lothars__pthread_key_create(pthread_key_t *key
 				 , void (*func)(void *))
 {
@@ -166,6 +201,8 @@ void lothars__pthread_key_create(pthread_key_t *key
 }
 
 
+/*
+*/
 void lothars__pthread_setspecific(pthread_key_t key
 				  , const void *value)
 {
