@@ -25,6 +25,8 @@
 int TEST__IS_FD_OPEN(int fd)
 {
 	return (0 <= fcntl(fd, F_GETFL)); // avoid function calls inside macros
+//	int res = (0 <= fcntl(fd, F_GETFL)); // avoid function calls inside macros
+//	return 0 <= res && (res & FD_CLOEXEC) == 0;
 }
 
 
@@ -85,12 +87,26 @@ TEST__BEGIN(lothars__dup2) {
 } TEST__END
 
 TEST__BEGIN(lothars__fcntl) {
+	int a;
+	a = open("/dev/null", O_WRONLY, 0600);
+	assert(STDERR_FILENO < a);
+	assert(TEST__IS_FD_OPEN(a));
+
+	assert((0 <= lothars__fcntl(a, F_GETFL, 0)));
+
+	assert(0 != a);
+	close(a);
+	assert(!TEST__IS_FD_OPEN(a));
+//	assert(!(0 <= lothars__fcntl(a, F_GETFL, 0))); // cannot fail, will abort!!
+
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__gettimeofday) {
 } TEST__END
 
 TEST__BEGIN(lothars__ioctl) {
+
 } TEST__END
 
 TEST__BEGIN(lothars__fork) {
