@@ -138,13 +138,11 @@ int lothars__fclose_null(FILE **fp)
 
 
 /*
-  TODO       
-
   This wrapper reads from a file pointer via fgetc() characterwise
 
-  @fp: 
-  @content: 
-  @content_size: 
+  @fp: The file/stream descriptor to read from via fgetc().
+  @content: The text to be read.
+  @content_size: The size of the text read.
 
   Returns 0 if successful, or -1 alternatively.
 */
@@ -163,11 +161,10 @@ int read_char(FILE *fp, char **content, unsigned long int *content_size)
 		return -1;
 	}
 
-	// if pTemp full, append and allocate new space
 	while (EOF != (ch = fgetc(fp))) {
 		(*content)[idx] = ch;
 		if (idx >= (*content_size) - 2) {
-			if (get_more_space(content, content_size, INITIAL_SIZE) == -1) {
+			if (-1 == get_more_space(content, content_size, INITIAL_SIZE)) {
 				err_sys("%s() error", __func__);
 			}
 		}
@@ -185,38 +182,32 @@ int read_char(FILE *fp, char **content, unsigned long int *content_size)
   fscanf() reads into the buffer but if there is no more space, it
   will continue to write into that buffer!!!
   Therefore the magic number of e.g. 128 tokens is necessary here!!!
-//*/
-// CHECKED - OK
+*/
 int read_without_spaces(FILE *fp, char **content,
                         unsigned long int *content_size)
 {
-#ifdef DEBUG
-	printf("\tfo::read_formated(*fp, **content, *content_size)\n");
-	printf("\t%i - fp == NULL\n", (fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t%i - *content == NULL\n", (*content == NULL));
-	printf("\t%i - *content_size\n", *content_size);
-#endif
-
-	if (fp == NULL)
+	if (NULL == fp) {
+		fprintf(stderr, "%s() error: fp was NULL\n", __func__);
 		return -1;
-	char pBuf[128]; // uses magic number ;-)
+	}
+
+	char pBuf[128]; // FIXME uses magic number        
 	// strcpy(pBuf, "\0");
-	memset(pBuf, '\0', 128);
+	memset(pBuf, '\0', 128); // FIXME uses magic number        
 
 	const unsigned long int INITIAL_SIZE = *content_size;
 	unsigned long int idx = 1; // for the '\0' token
-	while ((fscanf(fp, "%127s", pBuf)) != EOF) {
-		pBuf[128] = '\0';
+	while ((fscanf(fp, "%127s", pBuf)) != EOF) { // FIXME uses magic number        
+		pBuf[128] = '\0'; // FIXME uses magic number        
 		idx += strlen(pBuf);
 		if (idx >= *content_size) {
-			if (get_more_space(content, content_size, INITIAL_SIZE) == -1) {
+			if (-1 == get_more_space(content, content_size, INITIAL_SIZE)) {
 				fprintf(stderr, "fo::read_without_spaces(*fp, char**, unsigned long "
 					"int*) - Failed!\n");
 				exit(EXIT_FAILURE);
 			}
 		}
-		strncat(*content, pBuf, 128);
+		strncat(*content, pBuf, 128); // FIXME uses magic number        
 	}
 #ifdef DEBUG
 	printf("%s", *content);
@@ -952,29 +943,28 @@ int read_lines(FILE *fp, char *lines, const unsigned long int LINES_SIZE,
 
 
 /*
-  reads lines into char* that contain a certain pattern (also within a word)
-//*/
-// CHECKED - OK
+  Reads lines into char* that contain a certain pattern (also within a
+  word).
+
+  @fp: The file descriptor to read from.
+  @lines: The string to be appended to.
+  @lines_size: The size of the string to append.
+  @pattern: The pattern to watch for.
+
+  Returns o in case of success, alternatively -1 is returned.
+*/
 int read_lines_with_pattern(FILE *fp, char *lines,
-                            const unsigned long int LINES_SIZE, char *pattern)
+                            const unsigned long int lines_size, char *pattern)
 {
-#ifdef DEBUG
-	printf("\tfo::read_lines_with_pattern(*fp, *lines, *pattern)\n");
-	printf("\t%i - fp == NULL\n", (fp == NULL));
-	printf("\t%i - &*fp\n", &*fp);
-	printf("\t%i - lines == NULL\n", (lines == NULL));
-	printf("\t%i - LINES_SIZE\n", LINES_SIZE);
-	printf("\t\'%s\' - pattern\n", pattern);
-#endif
-	if (fp == NULL)
+	if (NULL == fp)
 		return -1;
 	rewind(fp); // reset filestream
-	if (pattern == NULL)
+	if (NULL == pattern)
 		return -1;
-	char temp[LINES_SIZE];
-	while (fgets(temp, LINES_SIZE, fp) != NULL) {
-		if (strstr(temp, pattern) != 0) {
-			strncat(lines, temp, LINES_SIZE);
+	char temp[lines_size];
+	while (NULL != fgets(temp, lines_size, fp)) {
+		if (0 != strstr(temp, pattern)) {
+			strncat(lines, temp, lines_size);
 			strncat(lines, "\n", 2);
 			// counter++; // for linenumbers
 		}
@@ -991,52 +981,36 @@ int read_lines_with_pattern(FILE *fp, char *lines,
 
 
 /*
-  get the BUFSIZE - the read/write buffer size (dependent on the compiler)
-//*/
-// CHECKED - OK
-int get_bufsize()
-{
-#ifdef DEBUG
-	printf("\tfo::get_bufsize()\n");
-#endif
+  does a save re-allocation for char - or is supposed to do so.
 
-	return BUFSIZ;
-}
+  @str: Points to the string to be extended.
+  @str_size: The size of the string.
+  @nbytes: How many bytes more?
 
-
-/*
-  does a save re-allocation for char - or is supposed to do so, returns 0 in
-  case of success and -1 in case of error
-//*/
-// CHECKED - OK
+  Returns 0 in case of success and -1 in case of error.
+*/
 int get_more_space(char **str, unsigned long int *str_size,
-                   const unsigned long int how_much_more)
+                   const unsigned long int nbytes)
 {
-#ifdef DEBUG
-	printf("\tfo::get_more_space(**str, *str_size, how_much_more)\n");
-	printf("\t\'%s\' - *str\n", *str);
-	printf("\t%i - *str_size\n", *str_size);
-	printf("\t%i - how_much_more\n", how_much_more);
-#endif
 	char *tmp = NULL;
 
 	// using realloc makes using strncat() here unnecessary
-	if ((tmp = realloc(*str, (*str_size + how_much_more))) == NULL) {
-		if (tmp != NULL)
+	if (NULL == (tmp = realloc(*str, (*str_size + nbytes)))) {
+		if (NULL != tmp)
 			free(tmp);
 		tmp = NULL;
 		return -1;
 	}
 	// using realloc makes free(*str) here unnecessary
 	*str = tmp;
-	*str_size += how_much_more;
+	*str_size += nbytes;
 	return 0;
 }
 
 
 /*
-writes a struct blockwise into a "w+b" opened FILE* from a char*
-this method needs either a typedef or a struct by the name "Data"
+  writes a struct blockwise into a "w+b" opened FILE* from a char*
+  this method needs either a typedef or a struct by the name "Data"
 
 // CHECKED - OK (not used, used for writing structs blockwise!)
 int write_blockwise(FILE* fp, struct Data content)
