@@ -30,8 +30,6 @@
 
 typedef void Sigfunc(int); /* give signal handlers a type instead of void* */
 
-#define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
-
 
 // forwards
 

@@ -1,7 +1,7 @@
 /*
-  Unix / POSIX calls
+  Linux / Unix / POSIX calls
 
-  Socket wrapper functions.
+  Wrapper collection for common Linux library functions.
 
   Lothar Rubusch, GPL
 
@@ -11,7 +11,6 @@
   Unix Interprocess Communication, Stevens
 */
 
-//typedef void Sigfunc(int); /* for signal handlers */
 
 #include "lib_unix.h"
 
@@ -24,14 +23,13 @@
 
   #include <stdlib.h>
 
-  @n: Number of elements
+  @nmemb: Number of elements
   @size: Size of element
 */
-void* lothars__calloc(size_t n, size_t size)
+void* lothars__calloc(size_t nmemb, size_t size)
 {
 	void *ptr = NULL;
-
-	if (NULL == (ptr = calloc(n, size))) {
+	if (NULL == (ptr = calloc(nmemb, size))) {
 		err_sys("%s() error", __func__);
 	}
 	return ptr;
@@ -213,6 +211,7 @@ void* lothars__malloc(size_t size)
 
   @template: The filename.
 */
+#define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 int lothars__mkstemp(char *template)
 {
 	int idx;
@@ -491,7 +490,6 @@ Sigfunc* signal(int signo, Sigfunc *func)
   @signo: The signal number.
   @func: The handler function to be called.
 */
-//typedef void Sigfunc(int); /* for signal handlers */
 Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc=NULL;
