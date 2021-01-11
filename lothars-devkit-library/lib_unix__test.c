@@ -6,28 +6,8 @@
 //#define NDEBUG /* uncomment this, turn off assert testing */
 #include <assert.h>
 
+#include "test.h"
 
-// test helpers
-
-#define TEST__BEGIN(FUNC)					\
-	void test__##FUNC()					\
-	{							\
-	char test_res[8] = "TODO";				\
-	fprintf(stdout, "executing test__%s()...", #FUNC);
-
-
-#define TEST__END					\
-	fprintf(stdout, "%s\n", test_res);		\
-	}
-
-#define TEST__OK strcpy(test_res, "OK");
-
-int TEST__IS_FD_OPEN(int fd)
-{
-	return (0 <= fcntl(fd, F_GETFL)); // avoid function calls inside macros
-//	int res = (0 <= fcntl(fd, F_GETFL)); // avoid function calls inside macros
-//	return 0 <= res && (res & FD_CLOEXEC) == 0;
-}
 
 
 // test definitions
@@ -48,41 +28,42 @@ TEST__BEGIN(lothars__close_null) {
 	a = open("/dev/null", O_WRONLY, 0600);
 	backup = a;
 	assert(STDERR_FILENO < a);
-	assert(TEST__IS_FD_OPEN(a));
-	assert(!TEST__IS_FD_OPEN(a+1)); /* verify no other fds leaked into this process */
-	assert(!TEST__IS_FD_OPEN(a+2));
+	assert(is_fd_open(a));
+	assert(!is_fd_open(a+1)); /* verify no other fds leaked into this process */
+	assert(!is_fd_open(a+2));
 	assert(0 != a);
 
 	lothars__close_null(&a);
 
 	assert(0 == a);
-	assert(!TEST__IS_FD_OPEN(backup));
+	assert(!is_fd_open(backup));
 	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__dup2) {
 	int a;
-	int backup;
+	int backup=0;
 	a = open("/dev/null", O_WRONLY, 0600);
 	backup = a;
 	assert(STDERR_FILENO < a);
-	assert(TEST__IS_FD_OPEN(a));
-	assert(!TEST__IS_FD_OPEN(a+1)); /* verify no other fds leaked into this process */
-	assert(!TEST__IS_FD_OPEN(a+2));
+	assert(is_fd_open(a));
+	assert(!is_fd_open(a+1)); /* verify no other fds leaked into this process */
+	assert(!is_fd_open(a+2));
 	assert(0 != a); /* pre-condition */
 
 	lothars__dup2(a, a); /* must be a no-op */
 
-	assert(TEST__IS_FD_OPEN(a));
+	assert(is_fd_open(a));
 
 	errno = 0;
 	lothars__dup2(a, a+2); /* dup2 can scip fds */
 
-	assert(TEST__IS_FD_OPEN(a));
-	assert(!TEST__IS_FD_OPEN(a+1));
-	assert(TEST__IS_FD_OPEN(a+2));
+	assert(is_fd_open(a));
+	assert(!is_fd_open(a+1));
+	assert(is_fd_open(a+2));
 
 	close(a);
+	close(backup);
 	TEST__OK;
 } TEST__END
 
@@ -90,86 +71,127 @@ TEST__BEGIN(lothars__fcntl) {
 	int a;
 	a = open("/dev/null", O_WRONLY, 0600);
 	assert(STDERR_FILENO < a);
-	assert(TEST__IS_FD_OPEN(a));
+	assert(is_fd_open(a));
 
 	assert((0 <= lothars__fcntl(a, F_GETFL, 0)));
+	/* invalid fds will abort the program */
 
 	assert(0 != a);
 	close(a);
-	assert(!TEST__IS_FD_OPEN(a));
-//	assert(!(0 <= lothars__fcntl(a, F_GETFL, 0))); // cannot fail, will abort!!
-
 	TEST__OK;
 } TEST__END
 
+
+
+#include <time.h> /* struct tm, ... */
 TEST__BEGIN(lothars__gettimeofday) {
+	int res = -1;
+	time_t t = 0;
+	struct tm *lt;
+	struct tm saved_lt;
+	struct timeval tv;
+	lt = localtime (&t);
+	saved_lt = *lt;
+
+//	gettimeofday (&tv, NULL);
+	lothars__gettimeofday(&tv);
+
+	if (memcmp (lt, &saved_lt, sizeof (struct tm)) != 0)
+	{
+		fprintf (stderr, "gettimeofday still clobbers the localtime buffer!\n");
+		res = 1;
+	}
+	res = 0;
+	assert(0 == res);
+	TEST__OK
 } TEST__END
 
 TEST__BEGIN(lothars__ioctl) {
-
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__fork) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__malloc) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__mkstemp) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__mmap) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__open) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__pipe) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigaddset) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigdelset) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigemptyset) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigfillset) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigismember) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__signal) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__signal_intr) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigpending) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sigprocmask) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__strdup) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sysconf) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__sysctl) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__unlink) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__wait) {
+// TODO
 } TEST__END
 
 TEST__BEGIN(lothars__waitpid) {
+// TODO
 } TEST__END
 
 
@@ -180,7 +202,7 @@ int main(int argc, char* argv[])
 {
 	test__lothars__calloc();
 	test__lothars__close_null();
-	test__lothars__dup2();    
+	test__lothars__dup2();
 	test__lothars__fcntl();
 	test__lothars__gettimeofday();
 	test__lothars__ioctl();
@@ -205,7 +227,6 @@ int main(int argc, char* argv[])
 	test__lothars__unlink();
 	test__lothars__wait();
 	test__lothars__waitpid();
-	// TODO
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_FAILURE);
