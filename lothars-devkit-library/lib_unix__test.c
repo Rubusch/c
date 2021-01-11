@@ -28,6 +28,8 @@ int TEST__IS_FD_OPEN(int fd)
 }
 
 
+// test definitions
+
 TEST__BEGIN(lothars__calloc) {
 	int* ptr = NULL;
 	size_t nmemb = MAXLINE;
