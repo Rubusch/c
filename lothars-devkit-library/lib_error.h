@@ -2,6 +2,17 @@
 #define DEVKIT_LIB_ERROR
 
 
+// includes
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
+#include <stdarg.h> /* va_list, va_start,... */
+#include <stdint.h>
+#include <string.h>
+#include <signal.h>
+#include <errno.h>
+
+
 // constants
 
 #define MAXLINE 4096 /* max text line length */
@@ -9,7 +20,7 @@
 
 // forwards
 
-static void err_doit(int, const char *, va_list);
+//static void err_doit(int, const char *, va_list);
 
 void err_dump(const char *, ...);
 void err_msg(const char *, ...);

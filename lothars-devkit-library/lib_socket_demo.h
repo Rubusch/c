@@ -10,7 +10,6 @@
 #define MAXLINE  4096 /* max text line length */
 #define MAXFD 64 /* max file descriptors */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
-#define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 // default file access permissions for new files
 
 #define DIR_MODE (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)

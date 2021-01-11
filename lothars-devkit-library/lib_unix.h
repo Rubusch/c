@@ -1,6 +1,40 @@
 #ifndef DEVKIT_LIB_UNIX
 #define DEVKIT_LIB_UNIX
 
+
+// includes
+
+//#define _XOPEN_SOURCE 600
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
+#include <stdarg.h> /* va_list, va_start,... */
+#include <stdint.h>
+#include <string.h>
+#include <signal.h>
+
+#include <unistd.h>
+#include <fcntl.h> /* fcntl() */
+#include <stropts.h> /* ioctl() */
+#include <sys/mman.h> /* mmap() */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/time.h> /* gettimeofday() */
+#include <sys/wait.h>
+
+#include "lib_error.h"
+
+
+// constants
+
+typedef void Sigfunc(int); /* give signal handlers a type instead of void* */
+
+#define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+
+
+// forwards
+
 void* lothars__calloc(size_t, size_t);
 void lothars__close(int);
 void lothars__dup2(int, int);

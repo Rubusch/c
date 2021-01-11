@@ -7,6 +7,38 @@
 
 #include "lib_error.h"
 
+
+/*
+   Print message and return to caller. Caller specifies "errnoflag".
+
+   #include <stdarg.h>
+
+   @errnoflag: The flag for the errno number.
+   @fmt: The format.
+   @ap: The argument pointer for further arguments in va_list.
+*/
+static void err_doit(int errnoflag, const char *fmt, va_list ap)
+{
+	int errno_save, n_len;
+	char buf[MAXLINE + 1];
+
+	errno_save = errno; // value caller might want printed
+
+	vsnprintf(buf, MAXLINE, fmt, ap); // safe
+//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
+
+	n_len = strlen(buf);
+	if (errnoflag) {
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+	}
+
+	strcat(buf, "\n");
+	fflush(stdout);  // in case stdout and stderr are the same
+	fputs(buf, stderr);
+	fflush(stderr);
+}
+
+
 /*
    Nonfatal error related to system call. Print message and return.
 */
@@ -72,33 +104,3 @@ void err_quit(const char *fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-
-/*
-   Print message and return to caller. Caller specifies "errnoflag".
-
-   #include <stdarg.h>
-
-   @errnoflag: The flag for the errno number.
-   @fmt: The format.
-   @ap: The argument pointer for further arguments in va_list.
-*/
-static void err_doit(int errnoflag, const char *fmt, va_list ap)
-{
-	int errno_save, n_len;
-	char buf[MAXLINE + 1];
-
-	errno_save = errno; // value caller might want printed
-
-	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
-
-	n_len = strlen(buf);
-	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
-	}
-
-	strcat(buf, "\n");
-	fflush(stdout);  // in case stdout and stderr are the same
-	fputs(buf, stderr);
-	fflush(stderr);
-}

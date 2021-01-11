@@ -11,6 +11,7 @@
   Unix Interprocess Communication, Stevens
 */
 
+//typedef void Sigfunc(int); /* for signal handlers */
 
 #include "lib_unix.h"
 
@@ -216,8 +217,7 @@ int lothars__mkstemp(char *template)
 {
 	int idx;
 
-//#ifdef HAVE_MKSTEMP
-#ifdef _BSD_SOURCE || _SVID_SOURCE || _XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED || _POSIX_C_SOURCE >= 200112L
+#if defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || _XOPEN_SOURCE >= 500 || defined(_XOPEN_SOURCE) && defined(_XOPEN_SOURCE_EXTENDED) || _POSIX_C_SOURCE >= 200112L
 	if (0 > (idx = mkstemp(template))) {
 		err_quit("mkstemp error, returned -1");
 	}
@@ -226,7 +226,7 @@ int lothars__mkstemp(char *template)
 		err_quit("mktemp error, NULL or not defined");
 	}
 
-	idx = lothars_open(template, O_CREAT | O_WRONLY, FILE_MODE);
+	idx = lothars__open(template, O_CREAT | O_WRONLY, FILE_MODE);
 #endif
 	return idx;
 }
@@ -491,7 +491,7 @@ Sigfunc* signal(int signo, Sigfunc *func)
   @signo: The signal number.
   @func: The handler function to be called.
 */
-typedef void Sigfunc(int); /* for signal handlers */
+//typedef void Sigfunc(int); /* for signal handlers */
 Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc=NULL;
