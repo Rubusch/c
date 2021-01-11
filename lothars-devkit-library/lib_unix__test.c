@@ -15,7 +15,7 @@ void test__lothars__calloc()
 
 	fprintf(stdout, "executing %s()...", __func__);
 	assert(NULL == ptr); /* pre-condition */
-	ptr = lothars__calloc(nmemb, size); // FIXME: ld error      
+	ptr = lothars__calloc(nmemb, size);
 	assert(NULL != ptr); /* post-condition */
 	fprintf(stdout, "ok\n");
 }

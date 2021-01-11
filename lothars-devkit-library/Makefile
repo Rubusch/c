@@ -13,7 +13,7 @@ RM = rm -f
 
 
 lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $^
 
 # TODO further lib_ targets
 
