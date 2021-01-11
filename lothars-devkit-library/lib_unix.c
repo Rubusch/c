@@ -36,6 +36,33 @@ void* lothars__calloc(size_t nmemb, size_t size)
 }
 
 
+// TODO rm, prefer the version to set null after close
+///*
+//  The close() function shall deallocate the file descriptor indicated
+//  by fd. To deallocate means to make the file descriptor available for
+//  return by subsequent calls to open() or other functions that
+//  allocate file descriptors. All outstanding record locks owned by the
+//  process on the file associated with the file descriptor shall be
+//  removed (that is, unlocked).
+//
+//  If close() is interrupted by a signal that is to be caught, it shall
+//  return -1 with errno set to [EINTR] and the state of fildes is
+//  unspecified. If an I/O error occurred while reading from or writing
+//  to the file system during close(), it may return -1 with errno set
+//  to [EIO]; if this error is returned, the state of fildes is
+//  unspecified.
+//
+//  #include <unistd.h>
+//
+//  @fd: The file descriptor to the specific connection.
+//*/
+//void lothars__close(int fd)
+//{
+//	if (-1 == close(fd)) {
+//		err_sys("%s() error", __func__);
+//	}
+//}
+
 /*
   The close() function shall deallocate the file descriptor indicated
   by fd. To deallocate means to make the file descriptor available for
@@ -51,16 +78,25 @@ void* lothars__calloc(size_t nmemb, size_t size)
   to [EIO]; if this error is returned, the state of fildes is
   unspecified.
 
+  This wrapper sets the fp to NULL;
+
   #include <unistd.h>
 
-  @fd: The file descriptor to the specific connection.
+  @fd: Points to the file descriptor to the specific connection.
 */
-void lothars__close(int fd)
+void lothars__close_null(int *fd)
 {
-	if (-1 == close(fd)) {
+	if (NULL == fd) {
+		fprintf(stderr, "%s() fd was NULL\n", __func__);
+		return;
+	}
+	if (-1 == close(*fd)) {
 		err_sys("%s() error", __func__);
 	}
+	*fd = 0;
+	sync();
 }
+
 
 
 /*
@@ -288,6 +324,8 @@ void* lothars__mmap(void *addr, size_t len, int prot, int flags, int fd, off_t o
   @pathname: The path to the file.
   @oflag: The flags for opening the specified file.
   @mode: The mode how to open the specified file.
+
+  Returns the file descriptor.
 */
 int lothars__open(const char *pathname, int oflag, mode_t mode)
 {
