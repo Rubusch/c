@@ -8,7 +8,7 @@ SOURCE = \
  snippet_mcast__test.c snippet_mcast.c \
  lib_pthread__test.c lib_pthread.c \
  lib_read_write__test.c lib_read_write.c \
- lib_route__test.c lib_route.c \
+ snippet_route__test.c snippet_route.c \
  lib_rtt__test.c lib_rtt.c \
  lib_socket_demo__test.c lib_socket_demo.c \
  lib_sock__test.c lib_sock.c \
@@ -37,7 +37,7 @@ all: \
 	snippet_mcast__test.exe \
 	lib_pthread__test.exe \
 	lib_read_write__test.exe \
-	lib_route__test.exe \
+	snippet_route__test.exe \
 	lib_rtt__test.exe \
 	lib_socket_demo__test.exe \
 	lib_sock__test.exe \
@@ -61,10 +61,6 @@ lib_pthread__test.exe: lib_pthread__test.o lib_pthread.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm -pthread
 
 lib_read_write__test.exe: lib_read_write__test.o lib_read_write.o lib_error.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-## TODO rename, these are code snippets based on the above library snippets...     
-lib_route__test.exe: lib_route__test.o lib_route.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 ## TODO rename, these are code snippets based on the above library snippets...     
@@ -92,6 +88,9 @@ snippet_ifi__test.exe: snippet_ifi__test.o snippet_ifi.o lib_unix.o lib_sock.o l
 	$(CC) $(CFLAGS) -o $@ $^
 
 snippet_mcast__test.exe: snippet_mcast__test.o snippet_mcast.o lib_socket_demo.o lib_sock.o lib_streams.o lib_unix.o lib_read_write.o lib_error.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+snippet_route__test.exe: snippet_route__test.o snippet_route.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 

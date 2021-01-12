@@ -1,5 +1,5 @@
-#ifndef DEVKIT_LIB_ROUTE
-#define DEVKIT_LIB_ROUTE
+#ifndef DEVKIT_SNIPPET_ROUTE
+#define DEVKIT_SNIPPET_ROUTE
 
 
 /*
@@ -58,4 +58,4 @@
 //const char* lothars__sock_masktop(struct sockaddr *, socklen_t);
 
 
-#endif /* DEVKIT_LIB_ROUTE */
+#endif /* DEVKIT_SNIPPET_ROUTE */
