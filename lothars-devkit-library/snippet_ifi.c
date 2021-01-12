@@ -4,7 +4,7 @@
   based on a setup published by Stevens (1996)
 */
 
-#include "lib_ifi.h"
+#include "snippet_ifi.h"
 
 
 struct ifi_info* get_ifi_info(int family, int doaliases)

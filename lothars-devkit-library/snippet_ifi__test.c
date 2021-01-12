@@ -1,4 +1,4 @@
-#include "lib_ifi.h"
+#include "snippet_ifi.h"
 
 #include <stdlib.h>
 #include <stdio.h>

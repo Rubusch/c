@@ -1,5 +1,5 @@
-#ifndef DEVKIT_LIB_IFI
-#define DEVKIT_LIB_IFI
+#ifndef DEVKIT_SNIPPET_IFI
+#define DEVKIT_SNIPPET_IFI
 
 /*
 // NB: ifi needs a declaration of _XOPEN_SOURCE or similar, e.g.
@@ -59,4 +59,4 @@ struct ifi_info* lothars__get_ifi_info(int, int);
 void free_ifi_info(struct ifi_info *);
 
 
-#endif /* DEVKIT_LIB_IFI */
+#endif /* DEVKIT_SNIPPET_IFI */

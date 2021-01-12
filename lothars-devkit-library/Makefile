@@ -2,8 +2,8 @@
 SOURCE = \
  lib_cmdline_input__test.c lib_cmdline_input.c \
  lib_file__test.c lib_file.c \
- lib_ifi__test.c lib_ifi.c \
- lib_if-name-index__test.c lib_ifi-name-index.c \
+ snippet_ifi__test.c snippet_ifi.c \
+ lib_if-name-index__test.c snippet_ifi-name-index.c \
  lib_inet__test.c lib_inet.c \
  lib_mcast__test.c lib_mcast.c \
  lib_pthread__test.c lib_pthread.c \
@@ -31,7 +31,7 @@ RM = rm -f
 all: \
 	lib_cmdline_input__test.exe \
 	lib_file__test.exe \
-	lib_ifi__test.exe \
+	snippet_ifi__test.exe \
 	lib_if-name-index__test.exe \
 	lib_inet__test.exe \
 	lib_mcast__test.exe \
@@ -49,10 +49,6 @@ lib_cmdline_input__test.exe: lib_cmdline_input__test.o lib_cmdline_input.o lib_e
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_file__test.exe: lib_file__test.o lib_file.o lib_error.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-## TODO rename, these are code snippets based on the above library snippets...     
-lib_ifi__test.exe: lib_ifi__test.o lib_ifi.o lib_unix.o lib_sock.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_if-name-index__test.exe: lib_if-name-index__test.o lib_if-name-index.o lib_error.o
@@ -90,6 +86,13 @@ lib_streams__test.exe: lib_streams__test.o lib_streams.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+
+## snippets, code building pieces based on the library calls, e.g. a
+## worker implementation for echo client or the like
+
+snippet_ifi__test.exe: snippet_ifi__test.o snippet_ifi.o lib_unix.o lib_sock.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 
