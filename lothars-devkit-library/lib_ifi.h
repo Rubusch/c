@@ -10,10 +10,14 @@
 
 #include <linux/if.h>
 #include <linux/sockios.h>
-#include <linux/in.h> /* struct sockaddr_in */
-#include <linux/in6.h> /* struct sockaddr_in6 */
-#include <linux/un.h> /* struct sockaddr_un */
-//#include <sys/un.h> /* alternatively */
+//* // linux headers
+#include <linux/in.h> // struct sockaddr_in
+#include <linux/in6.h> // struct sockaddr_in6
+#include <linux/un.h> // struct sockaddr_un
+/*/ // alternative unix implementation
+#include <netinet/in.h>  // struct sockaddr_in, struct sockaddr_in6
+#include <sys/un.h> // struct sockaddr_un
+// */
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <sys/time.h>
