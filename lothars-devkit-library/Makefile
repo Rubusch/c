@@ -11,6 +11,8 @@ RM = rm -f
 .c.o:
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+all: lib_unix__test.exe lib_streams__test.exe
+
 
 lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
@@ -20,7 +22,8 @@ lib_streams__test.exe: lib_streams__test.o lib_streams.o lib_error.o
 
 # TODO further lib_ targets
 
-all: lib_unix__test.exe lib_streams__test.exe
 
 clean:
 	$(RM) $(OBJECTS) *.exe *~ core
+
+.PHONY: all clean
