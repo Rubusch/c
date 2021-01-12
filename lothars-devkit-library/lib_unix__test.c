@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
 //#define NDEBUG /* uncomment this, turn off assert testing */
 #include <assert.h>
 
