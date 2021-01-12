@@ -21,7 +21,7 @@ OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall #-Werror -pedantic
+CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
 .c.o:
@@ -71,6 +71,7 @@ lib_pthread__test.exe: lib_pthread__test.o lib_pthread.o lib_error.o
 lib_read_write__test.exe: lib_read_write__test.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+## TODO rename, these are code snippets based on the above library snippets...     
 lib_route__test.exe: lib_route__test.o lib_route.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
