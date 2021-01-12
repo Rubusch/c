@@ -1,4 +1,4 @@
-#include "lib_rtt.h"
+#include "snippet_rtt.h"
 
 #include <stdlib.h>
 #include <stdio.h>

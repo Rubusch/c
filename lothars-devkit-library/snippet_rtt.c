@@ -1,6 +1,8 @@
-#include "lib_rtt.h"
+#include "snippet_rtt.h"
 
 
+/*
+*/
 static float rtt_minmax(float rto)
 {
 	if (rto < RTT_RXTMIN) {
@@ -13,6 +15,8 @@ static float rtt_minmax(float rto)
 }
 
 
+/*
+*/
 void rtt_init(struct rtt_info *ptr)
 {
 	struct timeval tv;
@@ -45,6 +49,8 @@ uint32_t rtt_ts(struct rtt_info *ptr)
 }
 
 
+/*
+*/
 void rtt_newpack(struct rtt_info *ptr)
 {
 	ptr->rtt_nrexmt = 0;

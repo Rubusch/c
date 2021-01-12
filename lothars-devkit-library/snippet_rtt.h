@@ -1,5 +1,5 @@
-#ifndef DEVKIG_LIB_RTT
-#define DEVKIG_LIB_RTT
+#ifndef DEVKIG_SNIPPET_RTT
+#define DEVKIG_SNIPPET_RTT
 
 
 /*
@@ -62,4 +62,4 @@ int rtt_timeout(struct rtt_info *);
 uint32_t rtt_ts(struct rtt_info *);
 
 
-#endif /* DEVKIG_LIB_RTT */
+#endif /* DEVKIG_SNIPPET_RTT */
