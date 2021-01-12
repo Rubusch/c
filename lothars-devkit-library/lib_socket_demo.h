@@ -2,6 +2,33 @@
 #define DEVKIT_LIB_SOCKET_DEMO
 
 
+// includes
+
+//#define _XOPEN_SOURCE 600
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <time.h> /* ctime() */
+#include <fcntl.h> /* fcntl(), F_GETFL */
+
+#include <stropts.h> /* ioctl() */
+#include <sys/poll.h> /* struct pollfd */
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/utsname.h> /* uname() */
+#include <linux/un.h> /* struct sockaddr_un */
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#include "lib_sock.h"
+#include "lib_streams.h"
+#include "lib_read_write.h"
+#include "lib_unix.h"
+#include "lib_error.h"
+
+
 /*
   Following could be derived from SOMAXCONN in <sys/socket.h>, but many
   kernels still #define it as 5, while actually supporting many more
@@ -12,7 +39,7 @@
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
 // default file access permissions for new files
 
-#define DIR_MODE (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
+//#define DIR_MODE (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
 // default permissions for new directories
 
 
@@ -46,7 +73,6 @@ int lothars__writable_timeo(int, int);
 int lothars__sock_bind_wild(int, int);
 char* lothars__sock_ntop(const struct sockaddr*, socklen_t);
 char* lothars__sock_ntop_host(const struct sockaddr*, socklen_t);
-int lothars__sockatmark(int);
 int lothars__readable_timeo(int, int);
 int sock_cmp_addr(const struct sockaddr*, const struct sockaddr*, socklen_t);
 int sock_cmp_port(const struct sockaddr*, const struct sockaddr*, socklen_t);

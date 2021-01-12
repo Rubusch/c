@@ -84,7 +84,7 @@ void* lothars__calloc(size_t nmemb, size_t size)
 
   @fd: Points to the file descriptor to the specific connection.
 */
-void lothars__close_null(int *fd)
+void lothars__close(int *fd)
 {
 	if (NULL == fd) {
 		fprintf(stderr, "%s() fd was NULL\n", __func__);

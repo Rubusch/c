@@ -21,7 +21,7 @@ TEST__BEGIN(lothars__calloc) {
 	TEST__OK;
 } TEST__END
 
-TEST__BEGIN(lothars__close_null) {
+TEST__BEGIN(lothars__close) {
 	int a;
 	int backup;
 	a = open("/dev/null", O_WRONLY, 0600);
@@ -32,7 +32,7 @@ TEST__BEGIN(lothars__close_null) {
 	assert(!is_fd_open(a+2));
 	assert(0 != a);
 
-	lothars__close_null(&a);
+	lothars__close(&a);
 
 	assert(0 == a);
 	assert(!is_fd_open(backup));
@@ -200,7 +200,7 @@ TEST__BEGIN(lothars__waitpid) {
 int main(int argc, char* argv[])
 {
 	test__lothars__calloc();
-	test__lothars__close_null();
+	test__lothars__close();
 	test__lothars__dup2();
 	test__lothars__fcntl();
 	test__lothars__gettimeofday();

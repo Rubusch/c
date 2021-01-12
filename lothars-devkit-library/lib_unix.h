@@ -35,7 +35,7 @@ typedef void Sigfunc(int); /* give signal handlers a type instead of void* */
 
 void* lothars__calloc(size_t, size_t);
 //void lothars__close(int); // TODO rm
-void lothars__close_null(int *);
+void lothars__close(int *);
 void lothars__dup2(int, int);
 int lothars__fcntl(int, int, int);
 void lothars__gettimeofday(struct timeval *);

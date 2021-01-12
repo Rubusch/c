@@ -77,14 +77,11 @@ done:
 
   TODO demo code snippet?                                 
 */
-
-//   TODO demo code snippet?                               
-//static void connect_alarm(int signo)
-//{
-//	return; // just interrupt the connect()
-//}
-
-
+// some dummy signal routine
+static void connect_alarm(int signo)
+{
+	return; // just interrupt the connect()
+}
 int connect_timeo(int fd_sock, const struct sockaddr *saptr, socklen_t salen, int nsec)
 {
 	Sigfunc *sigfunc;
@@ -122,7 +119,7 @@ void lothars__connect_timeo(int fd, const struct sockaddr *sa, socklen_t salen, 
   daemon_init.c
 */
 
-extern int daemon_proc; // defined in error.c
+//int daemon_proc; // defined in error.c
 int daemon_init(const char *pname, int facility)
 {
 	int  idx;
@@ -149,7 +146,7 @@ int daemon_init(const char *pname, int facility)
 
 	// child 2 continues...
 
-	daemon_proc = 1; // for err_XXX() functions
+//	daemon_proc = 1; // for err_XXX() functions
 
 	chdir("/"); // change working directory
 
@@ -163,7 +160,7 @@ int daemon_init(const char *pname, int facility)
 	open("/dev/null", O_RDWR);
 	open("/dev/null", O_RDWR);
 
-	openlog(pname, LOG_PID, facility);
+//	openlog(pname, LOG_PID, facility); // TODO rm
 
 	return 0; // success
 }
@@ -171,12 +168,13 @@ int daemon_init(const char *pname, int facility)
 /*
   daemon_inetd.c
 */
-// TODO openlog() ??            
-extern int daemon_proc; // defined in error.c for syslog
+int daemon_proc; // defined in error.c for syslog
 void daemon_inetd(const char *pname, int facility)
 {
-	daemon_proc = 1;  // for our err_XXX() functions
-	openlog(pname, LOG_PID, facility);
+//	daemon_proc = 1;  // for our err_XXX() functions
+	fprintf(stdout, "setting the eudaimonia to 1 and put this process to the background\n");
+//	openlog(pname, LOG_PID, facility); // use this when logging
+	fprintf(stdout, "loggging %s: %d\n", pname, facility);
 }
 
 
@@ -422,7 +420,7 @@ void worker__echo_cli(FILE *fp, int fd_sock)
 	memset(recvline, '\0', sizeof(recvline));
 	while (NULL != lothars__fgets(sendline, sizeof(sendline), fp)) {
 		lothars__writen(fd_sock, sendline, strlen(sendline));
-		if (0 == lothars__readline(fd_sock, recvline, sizeof(recvline)))
+		if (0 == lothars__readline_fd(fd_sock, recvline, sizeof(recvline)))
 			err_quit("%s(): server terminated prematurely\n", __func__);
 
 		lothars__fputs(recvline, stdout);
@@ -472,24 +470,24 @@ void worker__echo_serv_str(int fd_sock)
   a.k.a. str_echo()
 */
 
-// header
+#ifndef DEVKIT_ECHO_CLIENT_SERVER_DEFINITIONS
+#define DEVKIT_ECHO_CLIENT_SERVER_DEFINITIONS
+/* this should go into the header, kept here just for completion */
 struct args {
 	long arg1, arg2;
 };
 struct result {
 	long sum;
-}
-
-// implementation
-// TODO test                        
+};
+#endif /* DEVKIT_ECHO_CLIENT_SERVER_DEFINITIONS */
 void worker__echo_serv_bin(int fd_sock)
 {
-	ssize_t n_bytes;
+	ssize_t nbytes;
 	struct args args;
 	struct result result;
 
 	while (1) {
-		if (0 == (n = lothars__readn(fd_sock, &args, sizeof(args)))) {
+		if (0 == (nbytes = lothars__readn(fd_sock, &args, sizeof(args)))) {
 			fprintf(stdout, "connection closed by other end\n");
 			return;
 		}
@@ -505,15 +503,16 @@ void worker__echo_serv_bin(int fd_sock)
   a.k.a str_cli()
 */
 
-// header
+#ifndef DEVKIT_ECHO_CLIENT_SERVER_DEFINITIONS
+#define DEVKIT_ECHO_CLIENT_SERVER_DEFINITIONS
+/* this should go into the header, kept here just for completion */
 struct args {
 	long arg1, arg2;
 };
 struct result {
 	long sum;
-}
-
-// TODO test                            
+};
+#endif /* DEVKIT_ECHO_CLIENT_SERVER_DEFINITIONS */
 void worker__echo_cli_bin(FILE *fp, int fd_sock)
 {
 	char line[MAXLINE];
@@ -563,7 +562,7 @@ int lothars_tcp_connect(const char *host, const char *serv)
 			break;  // success
 		}
 
-		lothars__close(fd_sock); // ignore this one
+		lothars__close(&fd_sock); // ignore this one
 	} while (NULL != (res = res->ai_next));
 
 	if (NULL == res) { // errno set from final connect()
@@ -607,7 +606,7 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 			break; // success
 		}
 
-		lothars__close(listenfd); // bind error, close and try next one
+		lothars__close(&listenfd); // bind error, close and try next one
 	} while (NULL != (res = res->ai_next));
 
 	if (NULL == res) { // errno from final socket() or bind()
@@ -710,7 +709,7 @@ int udp_connect(const char *host, const char *serv)
 			break;  // success
 		}
 
-		lothars__close(fd_sock); // ignore this one
+		lothars__close(&fd_sock); // ignore this one
 	} while (NULL != (res = res->ai_next));
 
 	if (res == NULL) { // errno set from final connect()
@@ -765,7 +764,7 @@ int lothars__udp_server(const char *host, const char *serv, socklen_t *addrlenp)
 			break; // success
 		}
 
-		lothars__close(fd_sock);  // bind error - close and try next one
+		lothars__close(&fd_sock);  // bind error - close and try next one
 	} while (NULL != (res = res->ai_next));
 
 	if (res == NULL) { // errno from final socket() or bind()
@@ -1202,19 +1201,6 @@ char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 		err_sys("sock_ntop_host error"); // inet_ntop() sets errno
 	}
 	return ptr;
-}
-
-
-/*
-*/
-int lothars__sockatmark(int fd)
-{
-	int  flag;
-
-	if (0 > ioctl(fd, SIOCATMARK, &flag)) {
-		return -1;
-	}
-	return (flag != 0);
 }
 
 

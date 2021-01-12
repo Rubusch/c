@@ -516,6 +516,8 @@ void lothars__shutdown(int fd, int how)
 
 
 /*
+  sockatmark - determine whether socket is at out-of-band mark.
+
   sockatmark() returns a value indicating whether or not the socket
   referred to by the file descriptor sockfd is at the out-of-band
   mark. If the socket is at the mark, then 1 is returned; if the
