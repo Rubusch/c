@@ -122,7 +122,6 @@ int main(int argc, char* argv[])
 	test__lothars__socket();
 	test__lothars__socketpair();
 
-
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_FAILURE);
 }
