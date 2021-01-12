@@ -91,6 +91,6 @@ lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
 
 
 clean:
-	$(RM) $(OBJECTS) *.exe *~ core
+	$(RM) *.o *.exe *~ core
 
 .PHONY: all clean
