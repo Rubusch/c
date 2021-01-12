@@ -24,7 +24,7 @@
 #include <sys/types.h>
 
 
-#include "lib_sock.h"
+#include "lib_socket.h"
 #include "lib_unix.h"
 #include "lib_error.h"
 

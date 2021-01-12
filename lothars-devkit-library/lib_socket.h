@@ -1,5 +1,5 @@
-#ifndef DEVKIT_LIB_SOCK
-#define DEVKIT_LIB_SOCK
+#ifndef DEVKIT_LIB_SOCKET
+#define DEVKIT_LIB_SOCKET
 
 
 // includes
@@ -47,4 +47,4 @@ int lothars__socket(int, int, int);
 void lothars__socketpair(int, int, int, int *);
 
 
-#endif /* DEVKIT_LIB_SOCK */
+#endif /* DEVKIT_LIB_SOCKET */

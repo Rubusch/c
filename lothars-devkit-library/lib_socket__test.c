@@ -1,4 +1,4 @@
-#include "lib_sock.h"
+#include "lib_socket.h"
 
 #include <stdlib.h>
 #include <stdio.h>

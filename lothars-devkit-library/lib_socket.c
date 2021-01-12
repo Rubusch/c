@@ -10,7 +10,7 @@
   Unix Network Programming, Stevens
 */
 
-#include "lib_sock.h"
+#include "lib_socket.h"
 
 
 /*
