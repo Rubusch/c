@@ -3,12 +3,29 @@
 
 /*
 // NB: ifi needs a declaration of _XOPEN_SOURCE or similar, e.g.
-
-#define _XOPEN_SOURCE
-#include <linux/if.h>
-#include <sys/socket.h>
-#include <sys/un.h>
 */
+#define _XOPEN_SOURCE
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <linux/if.h>
+#include <linux/sockios.h>
+#include <linux/in.h> /* struct sockaddr_in */
+#include <linux/in6.h> /* struct sockaddr_in6 */
+#include <linux/un.h> /* struct sockaddr_un */
+//#include <sys/un.h> /* alternatively */
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+
+
+#include "lib_sock.h"
+#include "lib_unix.h"
+#include "lib_error.h"
+
+
+/* constants */
 
 #define IFI_NAME 16 /* same as IFNAMSIZ in <net/if.h> */
 #define IFI_HADDR  8 /* allow for 64-bit EUI-64 in future */
@@ -31,7 +48,7 @@ struct ifi_info {
 #define IFI_ALIAS 1   /* ifi_addr is an alias */
 
 
-// forwards
+/* forwards */
 
 struct ifi_info* get_ifi_info(int, int);
 struct ifi_info* lothars__get_ifi_info(int, int);

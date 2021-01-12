@@ -51,7 +51,8 @@ lib_cmdline_input__test.exe: lib_cmdline_input__test.o lib_cmdline_input.o lib_e
 lib_file__test.exe: lib_file__test.o lib_file.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-lib_ifi__test.exe: lib_ifi__test.o lib_ifi.o lib_error.o
+## TODO rename, these are code snippets based on the above library snippets...     
+lib_ifi__test.exe: lib_ifi__test.o lib_ifi.o lib_unix.o lib_sock.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_if-name-index__test.exe: lib_if-name-index__test.o lib_if-name-index.o lib_error.o
