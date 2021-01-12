@@ -74,7 +74,8 @@ lib_read_write__test.exe: lib_read_write__test.o lib_read_write.o lib_error.o
 lib_route__test.exe: lib_route__test.o lib_route.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-lib_rtt__test.exe: lib_rtt__test.o lib_rtt.o lib_error.o
+## TODO rename, these are code snippets based on the above library snippets...     
+lib_rtt__test.exe: lib_rtt__test.o lib_rtt.o lib_unix.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 ## TODO rename, these are code snippets based on the above library snippets...     

@@ -1,12 +1,6 @@
 #include "lib_rtt.h"
 
 
-/*
-  calculate the RTO value based on current estimators:
-  smoothed RTT plus four times the deviation
-*/
-#define RTT_RTOCALC(ptr) ((ptr)->rtt_srtt + (4.0 * (ptr)->rtt_rttvar))
-
 static float rtt_minmax(float rto)
 {
 	if (rto < RTT_RXTMIN) {
@@ -23,7 +17,7 @@ void rtt_init(struct rtt_info *ptr)
 {
 	struct timeval tv;
 
-	lothars__gettimeofday(&tv, NULL);
+	lothars__gettimeofday(&tv);
 	ptr->rtt_base = tv.tv_sec;  // number of sec since 1/1/1970 at start
 
 	ptr->rtt_rtt    = 0;
@@ -45,7 +39,7 @@ uint32_t rtt_ts(struct rtt_info *ptr)
 	uint32_t  ts;
 	struct timeval tv;
 
-	lothars__gettimeofday(&tv, NULL);
+	lothars__gettimeofday(&tv);
 	ts = ((tv.tv_sec - ptr->rtt_base) * 1000) + (tv.tv_usec / 1000);
 	return ts;
 }
@@ -122,10 +116,7 @@ int rtt_timeout(struct rtt_info *ptr)
 */
 void rtt_debug(struct rtt_info *ptr)
 {
-	if (0 == rtt_d_flag) {
-		return;
-	}
-
+#ifdef DEVKIT_RTT_DEBUG
 	fprintf(stderr
 		, "rtt = %.3f, srtt = %.3f, rttvar = %.3f, rto = %.3f\n"
 		, ptr->rtt_rtt
@@ -133,4 +124,5 @@ void rtt_debug(struct rtt_info *ptr)
 		, ptr->rtt_rttvar
 		, ptr->rtt_rto);
 	fflush(stderr);
+#endif /* DEVKIT_RTT_DEBUG */
 }
