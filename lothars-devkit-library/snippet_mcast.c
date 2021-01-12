@@ -1,4 +1,4 @@
-#include "lib_mcast.h"
+#include "snippet_mcast.h"
 
 // FIXME some of the old Unix sources are buggy for Linux today (2021)
 // TODO check struct ip_mreq and struct ip_mreqn - which one to use in modern Linux?

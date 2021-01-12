@@ -5,7 +5,7 @@ SOURCE = \
  snippet_ifi__test.c snippet_ifi.c \
  lib_if-name-index__test.c snippet_ifi-name-index.c \
  lib_inet__test.c lib_inet.c \
- lib_mcast__test.c lib_mcast.c \
+ snippet_mcast__test.c snippet_mcast.c \
  lib_pthread__test.c lib_pthread.c \
  lib_read_write__test.c lib_read_write.c \
  lib_route__test.c lib_route.c \
@@ -34,7 +34,7 @@ all: \
 	snippet_ifi__test.exe \
 	lib_if-name-index__test.exe \
 	lib_inet__test.exe \
-	lib_mcast__test.exe \
+	snippet_mcast__test.exe \
 	lib_pthread__test.exe \
 	lib_read_write__test.exe \
 	lib_route__test.exe \
@@ -55,10 +55,6 @@ lib_if-name-index__test.exe: lib_if-name-index__test.o lib_if-name-index.o lib_e
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_inet__test.exe: lib_inet__test.o lib_inet.o lib_error.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-## TODO rename, these are code snippets based on the above library snippets...     
-lib_mcast__test.exe: lib_mcast__test.o lib_mcast.o lib_socket_demo.o lib_sock.o lib_streams.o lib_unix.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_pthread__test.exe: lib_pthread__test.o lib_pthread.o lib_error.o
@@ -93,6 +89,9 @@ lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
 ## worker implementation for echo client or the like
 
 snippet_ifi__test.exe: snippet_ifi__test.o snippet_ifi.o lib_unix.o lib_sock.o lib_error.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+snippet_mcast__test.exe: snippet_mcast__test.o snippet_mcast.o lib_socket_demo.o lib_sock.o lib_streams.o lib_unix.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 

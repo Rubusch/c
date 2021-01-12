@@ -1,4 +1,4 @@
-#include "lib_mcast.h"
+#include "snippet_mcast.h"
 
 #include <stdlib.h>
 #include <stdio.h>

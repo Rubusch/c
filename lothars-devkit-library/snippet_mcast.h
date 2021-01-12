@@ -1,5 +1,5 @@
-#ifndef DEVKIT_LIB_MCAST
-#define DEVKIT_LIB_MCAST
+#ifndef DEVKIT_SNIPPET_MCAST
+#define DEVKIT_SNIPPET_MCAST
 
 
 /*
@@ -105,4 +105,4 @@ void lothars__mcast_set_loop(int, int);
 void lothars__mcast_set_ttl(int, int);
 
 
-#endif /* DEVKIT_LIB_MCAST */
+#endif /* DEVKIT_SNIPPET_MCAST */
