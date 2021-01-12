@@ -85,7 +85,7 @@
 #include <net/if.h> /* IFNAMSIZ */
 #include <linux/sockios.h> /* SIOCGIFADDR */
 
-#include "lib_socket_demo.h"
+#include "snippet_socket.h"
 #include "lib_error.h"
 
 
