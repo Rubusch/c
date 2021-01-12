@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 
 void readdigit(unsigned int *, const char *);
 int isnumber(const char *, const unsigned int);

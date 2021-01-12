@@ -157,7 +157,7 @@ void readnumber(unsigned int *iVal, const unsigned int digits, const char *comme
 		// reset
 		memset(cTxt, '\0', size);
 		fprintf(stdout, comment);
-		frpintf(stdout, "\n");
+		fprintf(stdout, "\n");
 
 		// read in
 		register unsigned int c;

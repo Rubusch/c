@@ -143,8 +143,6 @@ TEST__BEGIN(sock_set_wild) {
 } TEST__END
 
 
-
-
 /*
 */
 int main(int argc, char* argv[])
