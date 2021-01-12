@@ -2,6 +2,22 @@
 #define DEVKIT_LIB_SOCK
 
 
+// includes
+
+//#define _XOPEN_SOURCE 600
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h> /* fcntl(), F_GETFL */
+
+#include <sys/poll.h> /* struct pollfd */
+#include <sys/socket.h>
+#include <sys/types.h>
+
+#include "lib_error.h"
+
+
 // constants
 
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen, can also be provided as env var */
