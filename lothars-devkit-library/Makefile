@@ -66,7 +66,7 @@ lib_mcast__test.exe: lib_mcast__test.o lib_mcast.o lib_socket_demo.o lib_sock.o 
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_pthread__test.exe: lib_pthread__test.o lib_pthread.o lib_error.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lm -pthread
 
 lib_read_write__test.exe: lib_read_write__test.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
