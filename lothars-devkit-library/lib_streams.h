@@ -2,7 +2,7 @@
 #define DEVKIT_LIB_STREAMS
 
 
-// includes
+/* includes */
 
 //#define _XOPEN_SOURCE 600
 
