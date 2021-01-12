@@ -236,7 +236,17 @@ int lothars__family_to_level(int family)
 
 
 /*
-  demo snippets - lothars__socket_to_family
+  The getsockname() function shall retrieve the locally-bound name of
+  the specified socket, store this address in the sockaddr structure
+  pointed to by the address argument, and store the length of this
+  address in the object pointed to by the address_len argument.
+
+  #include <sys/socket.h>
+
+  @fd_sock: The socket descriptor.
+
+  This wrapper returns the address family to the socket name, or
+  socket descriptor, respectively.
 */
 int lothars__socket_to_family(int fd_sock)
 {
