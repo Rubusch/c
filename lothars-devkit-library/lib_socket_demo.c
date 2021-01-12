@@ -1206,11 +1206,8 @@ char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 
 
 /*
-  sockatmark.c
-
-  if have sockatmark protocol
 */
-int sockatmark(int fd)
+int lothars__sockatmark(int fd)
 {
 	int  flag;
 
