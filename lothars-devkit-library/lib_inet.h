@@ -42,6 +42,23 @@
   Developer Manpages
 */
 
+/* includes */
+
+//#define _XOPEN_SOURCE 600
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <fcntl.h> /* fcntl(), F_GETFL */
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include "lib_error.h"
+
+
+/* forwards */
 
 const char* lothars__inet_ntop(int, const void*, char*, size_t);
 void lothars__inet_pton(int, const char*, void*);
