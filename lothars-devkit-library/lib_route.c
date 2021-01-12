@@ -1,8 +1,9 @@
 #include "lib_route.h"
 
 /*
-*/
-void get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info)
+*
+// TODO sockaddr->sa_len is not available under Linux, just on BSD/Unix! (NEXT_SA uses sa_len field)
+void lothars__get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info)
 {
 	int  idx;
 
@@ -15,10 +16,11 @@ void get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info)
 		}
 	}
 }
-
+// */
 
 /*
-*/
+
+// TODO needs massive rework, sysctl() is totally deprecated, NET_RT_ flags don't exist anymore    
 char* net_rt_iflist(int family, int flags, size_t *lenp)
 {
 	int  mib[6];
@@ -56,10 +58,11 @@ char* lothars__net_rt_iflist(int family, int flags, size_t *lenp)
 
 	return ptr;
 }
-
+// */
 
 /*
-*/
+*
+// TODO needs massive rework, sysctl() is totally deprecated, NET_RT_ flags don't exist anymore    
 char* net_rt_dump(int family, int flags, size_t *lenp)
 {
 	int  mib[6];
@@ -96,9 +99,12 @@ char* lothars__net_rt_dump(int family, int flags, size_t *lenp)
 
 	return ptr;
 }
+// */
 
-
-const char* sock_masktop(struct sockaddr *sa, socklen_t salen)
+/*
+*
+// TODO sockaddr->sa_len is not available under Linux, just on BSD/Unix!
+const char* lothars__sock_masktop(struct sockaddr *sa, socklen_t salen)
 {
 	static char str[INET6_ADDRSTRLEN];
 	unsigned char *ptr = &sa->sa_data[2];
@@ -124,3 +130,4 @@ const char* sock_masktop(struct sockaddr *sa, socklen_t salen)
 
 	return str;
 }
+// */

@@ -11,6 +11,7 @@
   References:
   Unix Network Programming, Stevens (1996)
 */
+// TODO rework                
 
 
 /* includes */
