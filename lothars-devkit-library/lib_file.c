@@ -18,7 +18,7 @@
   Returns 0 for ok, or -1 when failed.
 */
 // TODO in case check that fp is not NULL
-FILE* lothars__fopen(FILE **fp, char *path, const char *mode)
+int lothars__fopen(FILE **fp, char *path, const char *mode)
 {
 	if (0 == strlen(path)) {
 		err_msg("%s() path empty", __func__);
@@ -122,7 +122,7 @@ int lothars__fclose_null(FILE **fp)
 		return -1;
 	}
 	*fp = NULL;
-#ifdef _BSD_SOURCE || _XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+#if defined(_BSD_SOURCE) || _XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
 	sync();
 #endif
 	return res;
