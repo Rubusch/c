@@ -61,7 +61,8 @@ lib_if-name-index__test.exe: lib_if-name-index__test.o lib_if-name-index.o lib_e
 lib_inet__test.exe: lib_inet__test.o lib_inet.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-lib_mcast__test.exe: lib_mcast__test.o lib_mcast.o lib_error.o
+## TODO rename, these are code snippets based on the above library snippets...     
+lib_mcast__test.exe: lib_mcast__test.o lib_mcast.o lib_socket_demo.o lib_sock.o lib_streams.o lib_unix.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 lib_pthread__test.exe: lib_pthread__test.o lib_pthread.o lib_error.o

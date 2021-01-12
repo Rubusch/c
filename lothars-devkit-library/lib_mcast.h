@@ -1,6 +1,7 @@
 #ifndef DEVKIT_LIB_MCAST
 #define DEVKIT_LIB_MCAST
 
+
 /*
   multi cast (mcast) snippets
 
@@ -68,6 +69,27 @@
   Unix Network Programming, Stevens (1996) book and sources
 */
 
+
+/* includes */
+
+//#define _XOPEN_SOURCE 600
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <fcntl.h> /* fcntl(), F_GETFL */
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h> /* IFNAMSIZ */
+#include <linux/sockios.h> /* SIOCGIFADDR */
+
+#include "lib_socket_demo.h"
+#include "lib_error.h"
+
+
+/* forwards */
 
 void lothars__mcast_leave(int, const struct sockaddr *, socklen_t);
 void lothars__mcast_join(int, const struct sockaddr *, socklen_t, const char *, uint32_t);
