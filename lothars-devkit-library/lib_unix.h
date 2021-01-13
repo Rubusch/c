@@ -2,7 +2,20 @@
 #define DEVKIT_LIB_UNIX
 
 
-// includes
+/*
+  Linux/Unix functions
+
+  Some wrapper for convenience.
+
+  ---
+  References:
+  Unix Network Programming, Stevens (1996)
+  Manpages (3)
+*/
+
+
+
+/* includes */
 
 //#define _XOPEN_SOURCE 600
 
@@ -26,12 +39,12 @@
 #include "lib_error.h"
 
 
-// constants
+/* constants / macros */
 
 typedef void Sigfunc(int); /* give signal handlers a type instead of void* */
 
 
-// forwards
+/* forwards */
 
 void* lothars__calloc(size_t, size_t);
 //void lothars__close(int); // TODO rm

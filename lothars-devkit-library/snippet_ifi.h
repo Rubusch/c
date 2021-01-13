@@ -1,6 +1,17 @@
 #ifndef DEVKIT_SNIPPET_IFI
 #define DEVKIT_SNIPPET_IFI
 
+
+/*
+
+  ---
+  References:
+  Unix Network Programming, Stevens (1996)
+*/
+
+
+/* includes */
+
 /*
 // NB: ifi needs a declaration of _XOPEN_SOURCE or similar, e.g.
 */
@@ -22,7 +33,6 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
-
 
 #include "lib_socket.h"
 #include "lib_unix.h"

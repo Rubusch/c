@@ -2,7 +2,15 @@
 #define DEVKIT_SNIPPET_SOCKET
 
 
-// includes
+/*
+
+  ---
+  References:
+  Unix Network Programming, Stevens (1996)
+*/
+
+
+/* includes */
 
 //#define _XOPEN_SOURCE 600
 
@@ -29,6 +37,8 @@
 #include "lib_error.h"
 
 
+/* constants / macros */
+
 /*
   Following could be derived from SOMAXCONN in <sys/socket.h>, but many
   kernels still #define it as 5, while actually supporting many more
@@ -41,7 +51,6 @@
 
 //#define DIR_MODE (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
 // default permissions for new directories
-
 
 
 /* forwards */

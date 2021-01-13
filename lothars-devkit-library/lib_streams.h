@@ -2,6 +2,17 @@
 #define DEVKIT_LIB_STREAMS
 
 
+/*
+  Stream functions
+
+  Some wrapper for convenience.
+
+  ---
+  References:
+  Unix Network Programming, Stevens (1996)
+*/
+
+
 /* includes */
 
 //#define _XOPEN_SOURCE 600
@@ -14,7 +25,7 @@
 #include "lib_error.h"
 
 
-// forwards
+/* forwards */
 
 void lothars__fclose(FILE *);
 FILE* lothars__fdopen(int, const char *);

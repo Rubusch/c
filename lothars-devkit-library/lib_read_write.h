@@ -3,7 +3,7 @@
 
 
 /*
-  read / write functions
+  read/write functions
 
   ---
   References:
@@ -11,7 +11,7 @@
 */
 
 
-// includes
+/* includes */
 
 //#define _XOPEN_SOURCE 600
 
@@ -24,7 +24,7 @@
 #include "lib_error.h"
 
 
-// forwards
+/* forwards */
 
 ssize_t lothars__read(int, void *, size_t);
 ssize_t lothars__readline_fd(int, void *, size_t);

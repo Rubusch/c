@@ -2,7 +2,18 @@
 #define DEVKIT_LIB_SOCKET
 
 
-// includes
+/*
+  Socket functions
+
+  Some wrapper for convenience.
+
+  ---
+  References:
+  Unix Network Programming, Stevens (1996)
+*/
+
+
+/* includes */
 
 //#define _XOPEN_SOURCE 600
 
@@ -18,12 +29,12 @@
 #include "lib_error.h"
 
 
-// constants
+/* constants */
 
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen, can also be provided as env var */
 
 
-// forwards
+/* forwards */
 
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__bind(int, const struct sockaddr *, socklen_t);

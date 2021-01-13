@@ -2,7 +2,19 @@
 #define DEVKIT_LIB_ERROR
 
 
-// includes
+/*
+  Error functions
+
+  Some wrapper to read out and display errno information.
+
+  ---
+  References:
+  Unix Network Programming, Stevens (1996)
+*/
+
+
+/* includes */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -13,14 +25,12 @@
 #include <errno.h>
 
 
-// constants
+/* constants */
 
 #define MAXLINE 4096 /* max text line length */
 
 
-// forwards
-
-//static void err_doit(int, const char *, va_list);
+/* forwards */
 
 void err_dump(const char *, ...);
 void err_msg(const char *, ...);
