@@ -67,8 +67,7 @@ void readstring(char *str, const unsigned int strsize, const char *prompt)
 	do {
 		// reset
 		memset(str, '\0', strsize);
-		fprintf(stdout, prompt);
-		fprintf(stdout, "\n");
+		fprintf(stdout, "%s\n", prompt);
 
 		// read in
 		register unsigned int c;
@@ -104,8 +103,7 @@ void readdigit(unsigned int *iVal, const char *comment)
 	do {
 		// reset
 		memset(cChr, '\0', 3);
-		fprintf(stdout, comment);
-		fprintf(stdout, "\n");
+		fprintf(stdout, "%s\n", comment);
 
 		// read
 		fgets(cChr, 3, stdin);
@@ -156,8 +154,7 @@ void readnumber(unsigned int *iVal, const unsigned int digits, const char *comme
 	do {
 		// reset
 		memset(cTxt, '\0', size);
-		fprintf(stdout, comment);
-		fprintf(stdout, "\n");
+		fprintf(stdout, "%s\n", comment);
 
 		// read in
 		register unsigned int c;
@@ -200,8 +197,7 @@ void readlongnumber(unsigned long int *iVal, const unsigned int digits, const ch
 	do {
 		// reset
 		memset(cTxt, '\0', size);
-		fprintf(stdout, comment);
-		fprintf(stdout, "\n");
+		fprintf(stdout, "%s\n", comment);
 
 		// read in
 		register unsigned int c;
