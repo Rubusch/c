@@ -15,7 +15,7 @@
 /*
 // NB: ifi needs a declaration of _XOPEN_SOURCE or similar, e.g.
 */
-#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE 600
 
 #include <unistd.h>
 #include <fcntl.h>

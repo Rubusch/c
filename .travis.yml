@@ -6,7 +6,7 @@
 language: c
 
 before_install:
-  - sudo apt-get install -y nasm
+  - sudo apt-get install -y nasm build-essential
 
 install:
 #  # some location to install and use lcov
