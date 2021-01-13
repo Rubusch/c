@@ -56,9 +56,9 @@ struct ifi_info {
 	uint16_t ifi_hlen; /* # bytes in hardware address: 0, 6, 8 */
 	short ifi_flags; /* IFF_xxx constants from <net/if.h> */
 	short ifi_myflags; /* our own IFI_xxx flags */
-	struct sockaddr *ifi_addr; /* primary address */
-	struct sockaddr *ifi_brdaddr; /* broadcast address */
-	struct sockaddr *ifi_dstaddr; /* destination address */
+	struct sockaddr_in *ifi_addr; /* primary address */
+	struct sockaddr_in *ifi_brdaddr; /* broadcast address */
+	struct sockaddr_in *ifi_dstaddr; /* destination address */
 	struct ifi_info *ifi_next; /* next of these structures */
 };
 
