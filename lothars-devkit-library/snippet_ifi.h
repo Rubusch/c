@@ -16,12 +16,14 @@
 // NB: ifi needs a declaration of _XOPEN_SOURCE or similar, e.g.
 */
 #define _XOPEN_SOURCE
+
 #include <unistd.h>
 #include <fcntl.h>
 
 #include <linux/if.h>
 #include <linux/sockios.h>
-//* // linux headers
+/* // linux headers
+// NB: this may not be sufficient..
 #include <linux/in.h> // struct sockaddr_in
 #include <linux/in6.h> // struct sockaddr_in6
 #include <linux/un.h> // struct sockaddr_un
