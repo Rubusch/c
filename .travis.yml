@@ -126,7 +126,7 @@ script:
 ## 40: sockets and networking
   - cd 40__c__sockets/ioctl__get-ip && make && cd -
   - cd 40__c__sockets/ioctl__interface-information && make && cd -
-  - cd 40__c__sockets/ioctl__interface-macioctl__interface-mac && make && cd -
+  - cd 40__c__sockets/ioctl__interface-mac && make && cd -
   - cd 40__c__sockets/ioctl__interface-names && make && cd -
   # TODO        
 
