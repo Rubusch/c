@@ -11,6 +11,8 @@
 
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
+
+#include <netinet/in.h>  // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
 #include <stropts.h> /* ioctl() */
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <stdarg.h> /* va_start(), va_end(),... */
