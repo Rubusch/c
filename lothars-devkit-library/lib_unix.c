@@ -71,7 +71,6 @@ void lothars__close(int *fd)
 }
 
 
-
 /*
   dup, dup2 - duplicate an open file descriptor. The dup() and dup2()
   functions provide an alternative interface to the service provided
