@@ -491,7 +491,8 @@ void lothars__setsockopt(int fd
 			 , socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
-//		lothars__close(fd_sock); /* strict */
+//		close(fd); /* strict */
+//		sync();
 		err_sys("%s() error", __func__);
 	}
 }
