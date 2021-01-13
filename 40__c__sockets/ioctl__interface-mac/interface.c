@@ -6,7 +6,7 @@
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
-#define _XOPEN_SOURCE /* SIOCGIFFLAGS, SIOCGIFCONF,... */
+#define _XOPEN_SOURCE 600 /* SIOCGIFFLAGS, SIOCGIFCONF,... */
 #define _GNU_SOURCE /* getnameinfo(), NI_NUMERICHOST,... */
 
 #include <stdio.h> /* readline() */
@@ -19,7 +19,6 @@
 #include <netdb.h> /* NI_NUMERICHOST,... */
 #include <stropts.h> /* ioctl() */
 #include <stdarg.h> /* va_start(), va_end(),... */
-
 
 // here both header families (linux and posix) seem to be ok
 //*
