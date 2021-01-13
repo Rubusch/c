@@ -13,19 +13,21 @@
 #include <stdlib.h>
 #include <string.h> /* memcpy() */
 #include <stropts.h> /* ioctl() */
-#include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/un.h>  /* unix sockets, close() */
 #include <unistd.h> /* close() */
 #include <netdb.h> /* NI_NUMERICHOST,... */
+
+#include <netinet/in.h>
 // here both header families (linux and posix) seem to be ok
 //*
-#include <linux/if.h> // struct ifreq, struct ifconf, getnameinfo(), NI_NUMERICHOST,... NB: turn off <net/if.h> when using <linux/if.h>
+//#include <linux/if.h> // struct ifreq, struct ifconf, getnameinfo(), NI_NUMERICHOST,... NB: turn off <net/if.h> when using <linux/if.h>
 #include <linux/if_arp.h> // struct arpreq
 /*/
 #include <net/if_arp.h>
 #include <net/if.h>
 // */
+#include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <errno.h>
 
 
