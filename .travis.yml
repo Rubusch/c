@@ -123,9 +123,9 @@ script:
   - cd 30__c__pthreads/pthread__join01 && make && ./*.exe && cd -
 
 
-## 40: berkley sockets
-  - cd 40__c__sockets/socket__echoclient && make && cd -
-  - cd 40__c__sockets/socket__echoserver && make && cd -
+## 40: sockets and networking
+#  - cd 40__c__sockets/socket__echoclient && make && cd -
+#  - cd 40__c__sockets/socket__echoserver && make && cd -
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
   - cd 99__c__linux/ptrace__010-fork-show-all-instructions && make && cd -
@@ -184,6 +184,9 @@ script:
   - cd 99__c__linux/timer__measuring && make && cd -
   - cd 99__c__linux/rc5_inputstring && make && cd -
 
+## devkit lib
+  - cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ${item}; done
+                                       
 
 # after_success:
 #   - cd ${TRAVIS_BUILD_DIR}
