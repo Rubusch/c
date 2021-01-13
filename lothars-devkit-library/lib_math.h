@@ -14,13 +14,14 @@
 #define DEVKIT_LIB_MATH
 
 /*
-  min / max - improve using __typeof__
+  min
 */
 #define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
 
-// return the sum
-#define SUM(x, y) x + y
+/*
+  max
+*/
+#define max(a,b) ((a) > (b) ? (a) : (b))
 
 
 #endif /* DEVKIT_LIB_MATH */

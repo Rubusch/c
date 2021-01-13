@@ -44,6 +44,17 @@
 typedef void Sigfunc(int); /* give signal handlers a type instead of void* */
 
 
+/*
+  min
+*/
+#define min(a,b) ((a) < (b) ? (a) : (b))
+
+/*
+  max
+*/
+#define max(a,b) ((a) > (b) ? (a) : (b))
+
+
 /* forwards */
 
 void* lothars__calloc(size_t, size_t);

@@ -11,6 +11,22 @@
 
 // test definitions
 
+TEST__BEGIN(min) {
+	int a=1, b=-2;
+	int res=0;
+	res = min(a, b);
+	assert(-2 == res);
+	TEST__OK;
+} TEST__END
+
+TEST__BEGIN(max) {
+	int a=1, b=-2;
+	int res=0;
+	res = max(a, b);
+	assert(1 == res);
+	TEST__OK;
+} TEST__END
+
 TEST__BEGIN(lothars__calloc) {
 	int* ptr = NULL;
 	size_t nmemb = MAXLINE;
@@ -199,6 +215,8 @@ TEST__BEGIN(lothars__waitpid) {
 */
 int main(int argc, char* argv[])
 {
+	test__min();
+	test__max();
 	test__lothars__calloc();
 	test__lothars__close();
 	test__lothars__dup2();
