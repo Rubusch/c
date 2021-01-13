@@ -124,8 +124,10 @@ script:
 
 
 ## 40: sockets and networking
-#  - cd 40__c__sockets/socket__echoclient && make && cd -
-#  - cd 40__c__sockets/socket__echoserver && make && cd -
+  - cd 40__c__sockets/ioctl__get-ip && make && cd -
+  - cd 40__c__sockets/ioctl__interface-information && make && cd -
+  - cd 40__c__sockets/ioctl__interface-macioctl__interface-mac && make && cd -
+  - cd 40__c__sockets/ioctl__interface-names && make && cd -
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
   - cd 99__c__linux/ptrace__010-fork-show-all-instructions && make && cd -
