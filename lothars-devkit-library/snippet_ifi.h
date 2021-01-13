@@ -35,6 +35,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <ifaddrs.h>
 
 #include "lib_socket.h"
 #include "lib_unix.h"
