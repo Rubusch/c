@@ -48,7 +48,7 @@ const char* lothars__inet_ntop(int family, const void *addrptr, char *strptr, si
 
   @family: The address family AF_INET or AF_INET6 (af).
   @strptr: A pointer to a source string to be converted (src).
-  @addrptr: The pointer to a destination
+  @addrptr: The pointer to a destination address.
 
   Returns 1 on success, 0 if strptr did not contain a valid internet
   address and -1 if family was not a valid address family.
@@ -81,7 +81,7 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
     $ ./a.out 0x7f.1               # First byte is in hex
     127.0.0.1
 
-  #ifdef _BSD_SOURCE || _SVID_SOURCE
+  #if defined(_BSD_SOURCE) || _SVID_SOURCE
   #include <sys/socket.h>
   #include <netinet/in.h>
   #include <arpa/inet.h>
@@ -92,6 +92,7 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 
   Return is phony for compatibility.
 */
+// TODO deprecated         
 int lothars__inet_aton(const char *cp, struct in_addr *inp)
 {
 	int res;
@@ -107,5 +108,3 @@ int lothars__inet_aton(const char *cp, struct in_addr *inp)
 	*/
 	return res;
 }
-
-
