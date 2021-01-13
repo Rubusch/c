@@ -20,8 +20,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <linux/if.h>
-#include <linux/sockios.h>
 /* // linux headers
 // NB: this may not be sufficient..
 #include <linux/in.h> // struct sockaddr_in
@@ -32,6 +30,8 @@
 #include <sys/un.h> // struct sockaddr_un
 // */
 #include <sys/socket.h>
+#include <linux/if.h>
+#include <linux/sockios.h>
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
