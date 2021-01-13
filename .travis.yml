@@ -185,7 +185,7 @@ script:
   - cd 99__c__linux/rc5_inputstring && make && cd -
 
 ## devkit lib
-  - cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ${item}; done
+  - cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ./${item}; done
                                        
 
 # after_success:
