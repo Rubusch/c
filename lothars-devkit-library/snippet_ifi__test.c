@@ -33,5 +33,5 @@ int main(int argc, char* argv[])
 	test__free_ifi_info();
 
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }

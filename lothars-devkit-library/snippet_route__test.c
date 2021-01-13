@@ -43,5 +43,5 @@ int main(int argc, char* argv[])
 // */
 	fprintf(stdout, "TODO: needs to be ported to Linux if the functions are needed anyway\n");
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }

@@ -168,5 +168,5 @@ int main(int argc, char* argv[])
 	test__get_more_space();
 
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }

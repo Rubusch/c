@@ -182,5 +182,5 @@ int main(int argc, char* argv[])
 	test__sock_set_wild();
 
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }

@@ -53,5 +53,5 @@ int main(int argc, char* argv[])
 	test__lothars__write_fd();
 
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }

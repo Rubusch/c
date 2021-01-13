@@ -42,5 +42,5 @@ int main(int argc, char* argv[])
 	test__lothars__fputs();
 
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }
