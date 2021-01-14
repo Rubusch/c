@@ -3,7 +3,7 @@
   implements a small proggy to demonstrate communication over signals
 
   the method using sleep() is NOT a reliable method of synchronization! ;-)
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,58 +22,58 @@ void sigquit();
 
 int main(int argc, char **argv)
 {
-  pid_t pid = 0;
+	pid_t pid = 0;
 
-  if (0 > (pid = fork())) {
-    perror("fork failed");
-    exit(EXIT_FAILURE);
+	if (0 > (pid = fork())) {
+		perror("fork failed");
+		exit(EXIT_FAILURE);
 
-  } else if (pid == 0) {
-    // child code
-    puts("child");
-    signal(SIGHUP, sighup);
-    signal(SIGINT, sigint);
-    signal(SIGQUIT, sigquit);
-    while (1)
-      ;
+	} else if (pid == 0) {
+		// child code
+		puts("child");
+		signal(SIGHUP, sighup);
+		signal(SIGINT, sigint);
+		signal(SIGQUIT, sigquit);
+		while (1)
+			;
 
-  } else {
-    // parent code
-    puts("parent - SIGHUP");
-    kill(pid, SIGHUP);
+	} else {
+		// parent code
+		puts("parent - SIGHUP");
+		kill(pid, SIGHUP);
 
-    sleep(3); // pause for 3 secs
+		sleep(3); // pause for 3 secs
 
-    puts("parent - SIGINT");
-    kill(pid, SIGINT);
+		puts("parent - SIGINT");
+		kill(pid, SIGINT);
 
-    sleep(3);
+		sleep(3);
 
-    puts("parent - SIGQUIT");
-    kill(pid, SIGQUIT);
+		puts("parent - SIGQUIT");
+		kill(pid, SIGQUIT);
 
-    sleep(3);
-  }
-  exit(EXIT_SUCCESS);
+		sleep(3);
+	}
+	exit(EXIT_SUCCESS);
 }
 
 
 void sighup()
 {
-  signal(SIGHUP, sighup);
-  puts("child - I have received a SIGHUP");
+	signal(SIGHUP, sighup);
+	puts("child - I have received a SIGHUP");
 }
 
 
 void sigint()
 {
-  signal(SIGINT, sigint);
-  puts("child - I have received a SIGINT");
+	signal(SIGINT, sigint);
+	puts("child - I have received a SIGINT");
 }
 
 
 void sigquit()
 {
-  puts("child - I have received a SIGQUIT");
-  exit(EXIT_SUCCESS);
+	puts("child - I have received a SIGQUIT");
+	exit(EXIT_SUCCESS);
 }

@@ -1,25 +1,25 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
-
-
 SOURCE = server.c
-OBJECTS = ${SOURCE:.c=.o}
-HEADERS = ../unixsocket.h
+OBJECTS = $(SOURCE:.c=.o)
+HEADERS = ..
+TARGET = $(SOURCE:.c=.exe)
+
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -o $@ -c ${CFLAGS} $<
+	$(CC) -c $(CFLAGS) -I$(HEADERS) $<
 
-server: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
 
-all: server
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) server *~ core
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
 
+
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
+
+.PHONY: $(TARGET) clean
 
