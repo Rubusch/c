@@ -153,7 +153,7 @@ static void do_shmctl(int shm_id, int shm_cmd, struct shmid_ds *buf)
   fprintf(stderr, "\tshm_perm.cgid = %d\n", buf->shm_perm.cgid);
   fprintf(stderr, "\tshm_perm.mode = %#o\n", buf->shm_perm.mode);
   fprintf(stderr, "\tshm_perm.__key = %x\n", buf->shm_perm.__key);
-  fprintf(stderr, "\tshm_segsz = %d\n", buf->shm_segsz);
+  fprintf(stderr, "\tshm_segsz = %ld\n", buf->shm_segsz);
   fprintf(stderr, "\tshm_lpid = %d\n", buf->shm_lpid);
   fprintf(stderr, "\tshm_cpid = %d\n", buf->shm_cpid);
   //  fprintf(stderr, "\tshm_nattach = %s\n", buf->shm_nattach);
