@@ -8,7 +8,7 @@ CC = gcc
 CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
-.c.o:
+%.c%.o:
 	$(CC) -c $(CFLAGS) -I$(HEADERS) $<
 
 

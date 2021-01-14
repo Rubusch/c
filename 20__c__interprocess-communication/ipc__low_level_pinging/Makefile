@@ -1,4 +1,4 @@
-SOURCE = signalhandler.c
+SOURCE = lowlevelpipe.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)
 
