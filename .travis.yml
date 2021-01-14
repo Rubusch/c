@@ -83,6 +83,9 @@ script:
   - cd ./10__c__language-techniques/input__getch && make && cd -
 
 ## 20: ipc
+  - cd ./20__c__interprocess-communication/ipc__formatted_pinging/itchy && make && cd -
+  - cd ./20__c__interprocess-communication/ipc__formatted_pinging/scratchy && make && cd -
+# TODO          
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue/receive && make && cd -
