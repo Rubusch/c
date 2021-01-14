@@ -1,21 +1,25 @@
-# Makefile
+SOURCE = server.c
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
+INCLUDES += -I../
 
-SRC = server.c
-OBJ = $(SRC:.c=.o)
+.PREFIXES = .c .o
 CC = gcc
-CFLAGS += -g -Wall -D _XOPEN_SOURCE=600 -D _GNU_SOURCE
-INCLUDES += -I./ -I../
+CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
-%.o: %.c
+.c.o:
 	$(CC) $(INCLUDES) -c $(CFLAGS) $<
 
-server.exe: $(OBJ)
-	$(CC) -o $@ $(OBJ) -lm
 
-all: server.exe
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _XOPEN_SOURCE=600 -D _GNU_SOURCE
+
 
 clean:
-	$(RM) $(OBJ) server.exe *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
-.PHONY: all clean
+.PHONY: $(TARGET) clean
+

@@ -1,25 +1,23 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = sigmask.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) -c $(CFLAGS) $<
 
-sigmask.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
 
-all: sigmask.exe
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} $(OBJECTS) sigmask.exe *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
+.PHONY: $(TARGET) clean
 

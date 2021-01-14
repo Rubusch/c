@@ -1,25 +1,24 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
-
-
 SOURCE = shm_attachdetach.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) -c $(CFLAGS) $<
 
-shm_attachdetach: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
 
-all: shm_attachdetach
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) shm_attachdetach *~ core
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
 
+
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
+
+.PHONY: $(TARGET) clean
 

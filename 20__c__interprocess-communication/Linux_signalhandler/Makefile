@@ -1,25 +1,24 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
-
-
 SOURCE = signalhandler.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) -c $(CFLAGS) $<
 
-signalhandler.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
 
-all: signalhandler.exe
+all: $(TARGET)
 
-clean: 
-	${RM} $(OBJECTS) signalhandler.exe *~ core
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
+
+clean:
+	$(RM) $(OBJECTS) $(TARGET) *~
+
+.PHONY: $(TARGET) clean
 

@@ -12,7 +12,7 @@
   ---
   References:
   developer manpages
-//*/
+*/
 
 #include <assert.h>
 #include <stdio.h>
