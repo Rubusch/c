@@ -3,7 +3,7 @@
   message queue testing grounds - msgctl()
 
   use with a corresponding "client"
-//*/
+*/
 
 #include <ctype.h>
 #include <stdio.h>

@@ -11,7 +11,7 @@
 
   Must be compiled with:
   -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>

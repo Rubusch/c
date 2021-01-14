@@ -9,9 +9,9 @@
   input of the command, a pipe has only one "r" and only one "w" end
 
   returns a stream pointer or NULL
-   - communication: fprintf(), fscanf()
-   - to be closed with pclose(FILE* stream)
-//*/
+  - communication: fprintf(), fscanf()
+  - to be closed with pclose(FILE* stream)
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,18 +25,18 @@ extern int pclose(FILE *);
 
 int main(void)
 {
-  char line[LINE_SIZ];
-  memset(line, '\0', LINE_SIZ);
+	char line[LINE_SIZ];
+	memset(line, '\0', LINE_SIZ);
 
-  // pipe to the 'ls' program
-  FILE *fp = popen("ls -l", "r");
+	// pipe to the 'ls' program
+	FILE *fp = popen("ls -l", "r");
 
-  while (fgets(line, sizeof(line), fp)) { // better LINE_SIZ
-    printf("%s", line);
-  }
+	while (fgets(line, sizeof(line), fp)) { // better LINE_SIZ
+		printf("%s", line);
+	}
 
-  // close again
-  pclose(fp);
+	// close again
+	pclose(fp);
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

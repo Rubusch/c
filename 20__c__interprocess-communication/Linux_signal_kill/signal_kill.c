@@ -4,7 +4,7 @@
   to the own process ID
 
   the prg only suspends, it needs a SIGTERM form e.g. htop
-//*/
+*/
 
 #include <stdlib.h>
 
@@ -17,12 +17,12 @@ int kill(pid_t, int);
 
 int main(int argc, char **argv)
 {
-  // get own IP
-  pid_t pid = getpid();
+	// get own IP
+	pid_t pid = getpid();
 
-  // suicide
-  kill(pid, SIGKILL);
+	// suicide
+	kill(pid, SIGKILL);
 
-  // never executed
-  return EXIT_SUCCESS;
+	// never executed
+	return EXIT_SUCCESS;
 }

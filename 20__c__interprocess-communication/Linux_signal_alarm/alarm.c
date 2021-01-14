@@ -15,7 +15,7 @@
   - signals are NOT an event driven framework, this is abuse of signals
       better use a select-based loop inside a network server or an
       event loop of a windowing program directly
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,28 +33,28 @@ void handle_alarm(int);
 
 void handle_alarm(int sig)
 {
-  puts("Operation timed out. Exiting..\n");
-  exit(0);
+	puts("Operation timed out. Exiting..\n");
+	exit(0);
 }
 
 
 int main(int argc, char **argv)
 {
-  puts("alarm signal");
-  // ...
+	puts("alarm signal");
+	// ...
 
-  // set a signal handler for ALARM signals
-  signal(SIGALRM, handle_alarm);
+	// set a signal handler for ALARM signals
+	signal(SIGALRM, handle_alarm);
 
-  // some text
-  puts("wait 30 secs - then alarm, prg ends");
+	// some text
+	puts("wait 30 secs - then alarm, prg ends");
 
-  // start a 30 sec alarm
-  alarm(30);
-  while (1)
-    ;
+	// start a 30 sec alarm
+	alarm(30);
+	while (1)
+		;
 
-  // never will be executed
-  puts("ends");
-  exit(EXIT_SUCCESS);
+	// never will be executed
+	puts("ends");
+	exit(EXIT_SUCCESS);
 }

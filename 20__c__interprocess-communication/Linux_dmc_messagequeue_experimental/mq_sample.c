@@ -14,7 +14,7 @@
   the size you want. Note also that sizeof(msg_ptr->mtext is valid even though
   msg_ptr isn't pointing to anything yet. Sizeof doesn't de-reference msg_ptr, but
   uses its type to figure out what you are asking about.
-//*/
+*/
 
 
 #include <ctype.h>
@@ -33,7 +33,6 @@
 #ifndef msgbuf
 typedef struct msgbuf {
 	long mtype;
-//	char mtext[1];
 	char mtext[16];
 } msgbuf;
 #endif
