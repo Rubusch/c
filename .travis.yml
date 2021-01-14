@@ -82,6 +82,9 @@ script:
   - cd ./10__c__language-techniques/file__move && make && cd -
   - cd ./10__c__language-techniques/input__getch && make && cd -
 
+## 20: ipc
+  - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
 
 ## 30: pthreads
   - cd 30__c__pthreads/pthread__join02 && make && ./*.exe && cd -
