@@ -12,7 +12,9 @@
    - communication: fprintf(), fscanf()
    streams: stdin - STDIN_FILENO / stdout - STDOUT_FILENO
    - to be closed with pclose(FILE* stream)
-//*/
+*/
+
+#define _XOPEN_SOURCE 600
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,23 +26,23 @@
 
 int main(int argc, char **argv)
 {
-  fprintf(stderr, "%s started\n", ME);
+	fprintf(stderr, "%s started\n", ME);
 
-  // init
-  char buf[BUF_SIZE];
-  memset(buf, '\0', BUF_SIZE);
+	// init
+	char buf[BUF_SIZE];
+	memset(buf, '\0', BUF_SIZE);
 
-  // popen / send
-  FILE *fp = popen("../itchy/itchy Scratchyargument", "r");
+	// popen / send
+	FILE *fp = popen("../itchy/itchy Scratchyargument", "r");
 
-  // receive
-  while (fgets(buf, BUF_SIZE, fp)) {
-    printf("%s receives \"%s\"\n", ME, buf);
-  }
+	// receive
+	while (fgets(buf, BUF_SIZE, fp)) {
+		printf("%s receives \"%s\"\n", ME, buf);
+	}
 
-  // close
-  pclose(fp);
+	// close
+	pclose(fp);
 
-  fprintf(stderr, "%s done!\n", ME);
-  exit(EXIT_SUCCESS);
+	fprintf(stderr, "%s done!\n", ME);
+	exit(EXIT_SUCCESS);
 }
