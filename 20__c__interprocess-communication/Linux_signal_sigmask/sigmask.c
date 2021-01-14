@@ -45,7 +45,7 @@
   Problem: race conditions are still possible, better to use diretly
   sigaction() or on older systems sigvec()
 */
-
+#define _XOPEN_SOURCE 600 /* sigmask & CO */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -130,6 +130,8 @@ void catch_suspend(int sig)
 
 int main(int argc, char **argv)
 {
+	fprintf(stderr, "End the program by %d times pressing CTRL+^C\n", CTRL_C_THRESHOLD); /* stderr, unbuffered! */
+
 	signal(SIGINT, catch_int);
 	signal(SIGTSTP, catch_suspend);
 
