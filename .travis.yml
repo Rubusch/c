@@ -85,6 +85,30 @@ script:
 ## 20: ipc
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue/receive && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue/send && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue_experimental && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue_msgctl && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue_msgget && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_shmctl && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_shmget && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_shm_serverclient/shmclient && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_shm_serverclient/shmserver && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_signal_talking && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_signal_trap && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_unixsocket/client && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_dmc_unixsocket/server && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_messagequeue/kirk && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_messagequeue/spock && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_popen && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_signal_alarm && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_signalhandler && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_signal_kill && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_signal_sigmask && make && cd -
+  - cd ./20__c__interprocess-communication/Linux_signal_syscall && make && cd -
+  - cd ./20__c__interprocess-communication/msgq/client && make && cd -
+  - cd ./20__c__interprocess-communication/msgq/server && make && cd -
+  - cd ./20__c__interprocess-communication/TODO_Linux_dmc_shmattachdetach && make && cd -
 
 ## 30: pthreads
   - cd 30__c__pthreads/pthread__join02 && make && ./*.exe && cd -
@@ -189,6 +213,7 @@ script:
   - cd 99__c__linux/timer && make && cd -
   - cd 99__c__linux/timer__measuring && make && cd -
   - cd 99__c__linux/rc5_inputstring && make && cd -
+  - cd 99__c__linux/select01 && make && cd -
 
 ## devkit lib
   - cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ./${item}; done
