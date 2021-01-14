@@ -3,7 +3,7 @@
 
   Must be compiled with:
   -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
-//*/
+*/
 
 
 #include <stdio.h>
@@ -18,49 +18,49 @@
 #define MSG_SIZ 200
 
 typedef struct {
-  long msg_type;
-  char msg_text[MSG_SIZ];
+	long msg_type;
+	char msg_text[MSG_SIZ];
 } msgbuf;
 
 
 int main(int argc, char **argv)
 {
-  msgbuf msg_buf;
-  int mq_id = 0;
-  key_t mq_key = 0;
+	msgbuf msg_buf;
+	int mq_id = 0;
+	key_t mq_key = 0;
 
-  // mq_key - a "valid file and a 8bit char" - just any, but has to be the same
-  if (0 > (mq_key = ftok("kirk.c", 'B'))) {
-    perror("ftok failed");
-    exit(EXIT_FAILURE);
-  }
+	// mq_key - a "valid file and a 8bit char" - just any, but has to be the same
+	if (0 > (mq_key = ftok("kirk.c", 'B'))) {
+		perror("ftok failed");
+		exit(EXIT_FAILURE);
+	}
 
-  // mq_id
-  if (0 > (mq_id = msgget(mq_key, 0644 | IPC_CREAT))) {
-    perror("msgget failed");
-    exit(EXIT_FAILURE);
-  }
+	// mq_id
+	if (0 > (mq_id = msgget(mq_key, 0644 | IPC_CREAT))) {
+		perror("msgget failed");
+		exit(EXIT_FAILURE);
+	}
 
-  // type - we don't really care in this case and set '1'
-  msg_buf.msg_type = 1;
+	// type - we don't really care in this case and set '1'
+	msg_buf.msg_type = 1;
 
-  // send message
-  puts("enter lines of text, CTRL+\\ to quit:");
-  while (1) {
-    // reset
-    memset(msg_buf.msg_text, '\0', MSG_SIZ);
-    printf("kirk: ");
+	// send message
+	puts("enter lines of text, CTRL+\\ to quit:");
+	while (1) {
+		// reset
+		memset(msg_buf.msg_text, '\0', MSG_SIZ);
+		printf("kirk: ");
 
-    fgets(msg_buf.msg_text, MSG_SIZ, stdin);
-    if (0 > msgsnd(mq_id, ( msgbuf * )&msg_buf, sizeof(msg_buf), 0)) {
-      perror("msgsnd failed");
-    }
-  }
-  /* - TESTING GROUNDS -
-  if(0 > msgctl(mq_id, IPC_RMID, NULL)){
-    perror("msgctl failed");
-    exit(EXIT_FAILURE);
-  }
-  //*/
-  exit(EXIT_SUCCESS);
+		fgets(msg_buf.msg_text, MSG_SIZ, stdin);
+		if (0 > msgsnd(mq_id, ( msgbuf * )&msg_buf, sizeof(msg_buf), 0)) {
+			perror("msgsnd failed");
+		}
+	}
+	/* - TESTING GROUNDS -
+	   if(0 > msgctl(mq_id, IPC_RMID, NULL)){
+	   perror("msgctl failed");
+	   exit(EXIT_FAILURE);
+	   }
+	//*/
+	exit(EXIT_SUCCESS);
 }

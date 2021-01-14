@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 
 	// bind server to the address
 	if (0 >
-	    bind(sd_listen, ( struct sockaddr * )&adr_server, SUN_LEN(&adr_server))) {
+	    bind(sd_listen, ( struct sockaddr * )&adr_server, sizeof(adr_server))) {
 		perror("bind failed");
 		unlink(SERVER_PATH);
 		exit(EXIT_FAILURE);

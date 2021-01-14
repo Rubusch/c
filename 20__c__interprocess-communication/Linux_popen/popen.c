@@ -6,16 +6,16 @@
   FILE* popen(const char* command, const char* type);
 
   command
-      the actual console command
+  the actual console command
   type
-      type can be "r" or "w", e.g. for "ls -l 2>&1" it's "w"
+  type can be "r" or "w", e.g. for "ls -l 2>&1" it's "w"
 
 
   int pClose(FILE* stream);
 
   stream
-      the stream to close
-//*/
+  the stream to close
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,21 +27,22 @@ extern int pclose(FILE *);
 
 int main()
 {
-  FILE *fPipe;
-  char command[] = "ls -al";
-  char line[256];
+	FILE *fPipe;
+	char command[] = "ls -al";
+	char line[256];
 
-  // open pipe - "r", "w" possible
-  if (NULL == (fPipe = ( FILE * )popen(command, "r"))) {
-    perror("popen() failed");
-    exit(1);
-  }
+	// open pipe - "r", "w" possible
+	if (NULL == (fPipe = ( FILE * )popen(command, "r"))) {
+		perror("popen() failed");
+		exit(1);
+	}
 
-  // read
-  while (fgets(line, sizeof(line), fPipe)) {
-    puts(line); // appends a \r\n
-  }
+	// read
+	while (fgets(line, sizeof(line), fPipe)) {
+		puts(line); // appends a \r\n
+	}
 
-  // close pipe stream
-  pclose(fPipe);
+	// close pipe stream
+	pclose(fPipe);
+	fprintf(stdout, "READY.\n");
 }

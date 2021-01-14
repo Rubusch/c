@@ -1,6 +1,6 @@
 // client.c
 /*
-  demonstrates the creation and use of a unix socket - AF_UNIX!!!
+  demonstrates the creation and use of a unix socket - AF_UNIX
 */
 
 #include <ctype.h>
@@ -38,8 +38,7 @@ int main(int argc, char **argv)
 	// connect
 	//  register int len_adr_server = sizeof(adr_server.sun_family) +
 	//  strlen(adr_server.sun_path);
-	if (0 > (connect(sd_client, ( struct sockaddr * )&adr_server,
-			 SUN_LEN(&adr_server)))) {
+	if (0 > (connect(sd_client, ( struct sockaddr * )&adr_server, sizeof(adr_server)))) {
 		perror("connect failed");
 		exit(EXIT_FAILURE);
 	}
