@@ -92,6 +92,9 @@ script:
   - cd ./20__c__interprocess-communication/ipc__messagequeue/sender && make && cd -
   - cd ./20__c__interprocess-communication/ipc__sharedmemory/itchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__sharedmemory/scratchy && make && cd -
+  - cd ./20__c__interprocess-communication/ipc__signals/itchy && make && cd -
+  - cd ./20__c__interprocess-communication/ipc__signals/scratchy && make && cd -
+
 # TODO          
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
