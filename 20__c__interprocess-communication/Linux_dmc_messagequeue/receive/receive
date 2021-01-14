@@ -1,9 +1,0 @@
-  /data/programmieren/c/TODO_Linux_dms_message_queue/receive:
-  used 36 available 15573308
-  drwxr-xr-x 2 user user 4096 2008-03-26 21:46 .
-  drwxr-xr-x 4 user user 4096 2008-03-26 20:35 ..
-  -rw-r--r-- 1 user user  366 2008-03-26 20:58 Makefile
-D -rw-r--r-- 1 user user  811 2008-03-26 21:46 #message_rec.c#
-  -rw-r--r-- 1 user user  876 2008-03-26 21:12 message_rec.c
-  -rw-r--r-- 1 user user 3000 2008-03-26 21:13 message_rec.o
-  -rwxr-xr-x 1 user user 8214 2008-03-26 21:13 mq_receive
