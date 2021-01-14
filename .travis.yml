@@ -88,7 +88,9 @@ script:
   - cd ./20__c__interprocess-communication/ipc__half_duplex_named_pipe/receiver && make && cd -
   - cd ./20__c__interprocess-communication/ipc__half_duplex_named_pipe/sender && make && cd -
   - cd ./20__c__interprocess-communication/ipc__low_level_pinging && make && cd -
-
+  - cd ./20__c__interprocess-communication/ipc__messagequeue/receiver && make && cd -
+  - cd ./20__c__interprocess-communication/ipc__messagequeue/sender && make && cd -
+  
 # TODO          
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
