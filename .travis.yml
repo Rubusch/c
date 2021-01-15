@@ -98,11 +98,11 @@ script:
   - cd ./20__c__interprocess-communication/ipc__unixsockets/unixserver && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue/receive && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue/send && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue_experimental && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue_msgctl && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_messagequeue_msgget && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__demo/receive && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__demo/send && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__experimental && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__msgctl && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__msgget && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_shmctl && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_shmget && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_shm_serverclient/shmclient && make && cd -
@@ -119,8 +119,8 @@ script:
   - cd ./20__c__interprocess-communication/Linux_signal_kill && make && cd -
   - cd ./20__c__interprocess-communication/Linux_signal_sigmask && make && cd -
   - cd ./20__c__interprocess-communication/Linux_signal_syscall && make && cd -
-  - cd ./20__c__interprocess-communication/msgq/client && make && cd -
-  - cd ./20__c__interprocess-communication/msgq/server && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__common_message_struct/client && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__common_message_struct/server && make && cd -
   - cd ./20__c__interprocess-communication/TODO_Linux_dmc_shmattachdetach && make && cd -
 
 ## 30: pthreads
