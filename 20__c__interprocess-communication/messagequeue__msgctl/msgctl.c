@@ -5,6 +5,8 @@
   use with a corresponding "client"
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,6 +3,8 @@
   shared memory testing grounds - shmget
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

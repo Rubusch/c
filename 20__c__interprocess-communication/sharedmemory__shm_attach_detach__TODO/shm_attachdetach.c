@@ -3,7 +3,9 @@
   TODO: runs buggy!
 
   shared memory testing grounds - attach and detach a process to shm
-//*/
+*/
+
+#define _XOPEN_SOURCE 600
 
 #include <ctype.h>
 #include <stdio.h>

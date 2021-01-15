@@ -16,6 +16,7 @@
   uses its type to figure out what you are asking about.
 */
 
+#define _XOPEN_SOURCE 600
 
 #include <ctype.h>
 #include <stdio.h>

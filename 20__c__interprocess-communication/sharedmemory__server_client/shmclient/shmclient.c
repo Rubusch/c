@@ -4,6 +4,8 @@
   unsynchronized!
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
