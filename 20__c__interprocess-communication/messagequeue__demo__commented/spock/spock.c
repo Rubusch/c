@@ -32,12 +32,25 @@ int main(int argc, char **argv)
 	key_t mq_key;
 
 	// mq_key
+	/*
+	  The ftok() function uses the identity of the file named by
+	  the given pathname (which must refer to an existing,
+	  accessible file) and the least significant 8 bits of proj_id
+	  (which must be nonzero) to generate a key_t type System V
+	  IPC key, suitable for use with msgget(2), semget(2), or
+	  shmget(2).
+	 */
 	if (0 > (mq_key = ftok("../kirk/kirk.c", 'B'))) {
 		perror("ftok failed");
 		exit(EXIT_FAILURE);
 	}
 
 	// mq_id
+	/*
+	  The msgget() function shall return the message queue
+	  identifier associated with the argument key. (XSI message
+	  queues, no realtime)
+	 */
 	if (0 > (mq_id = msgget(mq_key, 0644))) {
 		perror("msgget failed");
 		exit(EXIT_FAILURE);
