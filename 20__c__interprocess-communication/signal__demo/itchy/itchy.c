@@ -3,6 +3,8 @@
   signals
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>

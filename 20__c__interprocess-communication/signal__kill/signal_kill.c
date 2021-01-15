@@ -6,8 +6,9 @@
   the prg only suspends, it needs a SIGTERM form e.g. htop
 */
 
-#include <stdlib.h>
+#define _XOPEN_SOURCE 600
 
+#include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <unistd.h>

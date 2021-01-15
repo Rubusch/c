@@ -3,10 +3,11 @@
   implements a proggy that sends a signal and catches it
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <signal.h>
 
 void handler_int(int);

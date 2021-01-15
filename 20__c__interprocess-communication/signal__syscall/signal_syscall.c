@@ -4,6 +4,8 @@
   Send a SIGKILL (e.g. with htop) to end the prg!
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <stdio.h>
 #include <stdlib.h>
 

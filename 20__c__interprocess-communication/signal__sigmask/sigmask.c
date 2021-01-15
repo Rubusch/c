@@ -2,7 +2,7 @@
 /*
   @author: Lothar Rubusch
   @email: L.Rubusch@gmx.ch
-  @license: EPL
+  @license: GPLv3
   @2013-october-22
 
 
@@ -45,6 +45,7 @@
   Problem: race conditions are still possible, better to use diretly
   sigaction() or on older systems sigvec()
 */
+
 #define _XOPEN_SOURCE 600 /* sigmask & CO */
 
 #include <stdio.h>
