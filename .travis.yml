@@ -97,7 +97,7 @@ script:
   - cd ./20__c__interprocess-communication/ipc__unixsockets/unixclient && make && cd -
   - cd ./20__c__interprocess-communication/ipc__unixsockets/unixserver && make && cd -
   - cd ./20__c__interprocess-communication/pipe__fork_demo && make && cd -
-  - cd ./20__c__interprocess-communication/pipe__popen01 && ./*.exe && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__popen01 && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo/receive && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo/send && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__experimental && make && cd -

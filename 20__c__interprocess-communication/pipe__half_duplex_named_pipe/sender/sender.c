@@ -5,6 +5,8 @@
     uses fifo, usage requires root privileges
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>

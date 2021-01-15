@@ -1,11 +1,11 @@
-SOURCE = receiver.c
+\SOURCE = receiver.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)
 INC += -I../
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.c%.o:

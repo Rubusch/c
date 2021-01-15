@@ -14,6 +14,8 @@
   developer manpages
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
