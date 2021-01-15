@@ -107,18 +107,18 @@ script:
   - cd ./20__c__interprocess-communication/sharedmemory__shmget && make && cd -
   - cd ./20__c__interprocess-communication/sharedmemory__server_client/shmclient && make && cd -
   - cd ./20__c__interprocess-communication/sharedmemory__server_client/shmserver && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_signal_talking && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_signal_trap && make && cd -
+  - cd ./20__c__interprocess-communication/signal__signal_talking && make && cd -
+  - cd ./20__c__interprocess-communication/signal__trap && make && cd -
   - cd ./20__c__interprocess-communication/unixsocket__demo02/client && make && cd -
   - cd ./20__c__interprocess-communication/unixsocket__demo02/server && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make && cd -
   - cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe && cd -
-  - cd ./20__c__interprocess-communication/Linux_signal_alarm && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_signalhandler && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_signal_kill && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_signal_sigmask && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_signal_syscall && make && cd -
+  - cd ./20__c__interprocess-communication/signal__alarm && make && cd -
+  - cd ./20__c__interprocess-communication/signal__signalhandler && make && cd -
+  - cd ./20__c__interprocess-communication/signal__kill && make && cd -
+  - cd ./20__c__interprocess-communication/signal__sigmask && make && cd -
+  - cd ./20__c__interprocess-communication/signal__syscall && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__common_message_struct/client && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__common_message_struct/server && make && cd -
   - cd ./20__c__interprocess-communication/sharedmemory__shm_attach_detach__TODO && make && cd -
