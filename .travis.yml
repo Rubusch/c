@@ -83,10 +83,10 @@ script:
   - cd ./10__c__language-techniques/input__getch && make && cd -
 
 ## 20: ipc
-  - cd ./20__c__interprocess-communication/ipc__formatted_pinging/itchy && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__formatted_pinging/scratchy && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__half_duplex_named_pipe/receiver && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__half_duplex_named_pipe/sender && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__formatted_pinging/itchy && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__formatted_pinging/scratchy && make && ./*.exe && cd -
+  - cd ./20__c__interprocess-communication/pipe__half_duplex_named_pipe/receiver && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__half_duplex_named_pipe/sender && make && cd -
   - cd ./20__c__interprocess-communication/ipc__low_level_pinging && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/receiver && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make && cd -
@@ -96,8 +96,8 @@ script:
   - cd ./20__c__interprocess-communication/ipc__signals/scratchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__unixsockets/unixclient && make && cd -
   - cd ./20__c__interprocess-communication/ipc__unixsockets/unixserver && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_ipc_pipe && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_ipc_popen && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__fork_demo && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__popen01 && ./*.exe && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo/receive && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo/send && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__experimental && make && cd -
@@ -113,7 +113,7 @@ script:
   - cd ./20__c__interprocess-communication/Linux_dmc_unixsocket/server && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_popen && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe && cd -
   - cd ./20__c__interprocess-communication/Linux_signal_alarm && make && cd -
   - cd ./20__c__interprocess-communication/Linux_signalhandler && make && cd -
   - cd ./20__c__interprocess-communication/Linux_signal_kill && make && cd -
