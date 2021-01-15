@@ -88,8 +88,8 @@ script:
   - cd ./20__c__interprocess-communication/ipc__half_duplex_named_pipe/receiver && make && cd -
   - cd ./20__c__interprocess-communication/ipc__half_duplex_named_pipe/sender && make && cd -
   - cd ./20__c__interprocess-communication/ipc__low_level_pinging && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__messagequeue/receiver && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__messagequeue/sender && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/receiver && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make && cd -
   - cd ./20__c__interprocess-communication/ipc__sharedmemory/itchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__sharedmemory/scratchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__signals/itchy && make && cd -
@@ -111,8 +111,8 @@ script:
   - cd ./20__c__interprocess-communication/Linux_dmc_signal_trap && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_unixsocket/client && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_unixsocket/server && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_messagequeue/kirk && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_messagequeue/spock && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make && cd -
+  - cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make && cd -
   - cd ./20__c__interprocess-communication/Linux_popen && make && cd -
   - cd ./20__c__interprocess-communication/Linux_signal_alarm && make && cd -
   - cd ./20__c__interprocess-communication/Linux_signalhandler && make && cd -
