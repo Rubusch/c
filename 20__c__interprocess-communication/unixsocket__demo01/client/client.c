@@ -3,6 +3,8 @@
   demonstrates the creation and use of a unix socket - AF_UNIX
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

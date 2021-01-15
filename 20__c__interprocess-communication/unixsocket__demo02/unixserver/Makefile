@@ -1,21 +1,21 @@
-SOURCE = client.c
+SOURCE = itchy.c
 OBJECTS = $(SOURCE:.c=.o)
-HEADERS = ../unixsocket.h
 TARGET = $(SOURCE:.c=.exe)
+INC += -I../
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.c%.o:
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(INC) -c $(CFLAGS) $<
 
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 
 clean:
