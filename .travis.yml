@@ -92,10 +92,10 @@ script:
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make && cd -
   - cd ./20__c__interprocess-communication/sharedmemory__demo/itchy && make && cd -
   - cd ./20__c__interprocess-communication/sharedmemory__demo/scratchy && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__signals/itchy && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__signals/scratchy && make && cd -
-  - cd ./20__c__interprocess-communication/unixsocket__demo01/unixclient && make && cd -
-  - cd ./20__c__interprocess-communication/unixsocket__demo01/unixserver && make && cd -
+  - cd ./20__c__interprocess-communication/signal__demo/itchy && make && cd -
+  - cd ./20__c__interprocess-communication/signal__demo/scratchy && make && cd -
+  - cd ./20__c__interprocess-communication/unixsocket__demo02/unixclient && make && cd -
+  - cd ./20__c__interprocess-communication/unixsocket__demo02/unixserver && make && cd -
   - cd ./20__c__interprocess-communication/pipe__fork_demo && make && cd -
   - cd ./20__c__interprocess-communication/pipe__popen01 && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo/receive && make && cd -
@@ -109,8 +109,8 @@ script:
   - cd ./20__c__interprocess-communication/sharedmemory__server_client/shmserver && make && cd -
   - cd ./20__c__interprocess-communication/signal__signal_talking && make && cd -
   - cd ./20__c__interprocess-communication/signal__trap && make && cd -
-  - cd ./20__c__interprocess-communication/unixsocket__demo02/client && make && cd -
-  - cd ./20__c__interprocess-communication/unixsocket__demo02/server && make && cd -
+  - cd ./20__c__interprocess-communication/unixsocket__demo01/client && make && cd -
+  - cd ./20__c__interprocess-communication/unixsocket__demo01/server && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make && cd -
   - cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe && cd -
