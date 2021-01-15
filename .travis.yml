@@ -87,7 +87,7 @@ script:
   - cd ./20__c__interprocess-communication/pipe__formatted_pinging/scratchy && make && ./*.exe && cd -
   - cd ./20__c__interprocess-communication/pipe__half_duplex_named_pipe/receiver && make && cd -
   - cd ./20__c__interprocess-communication/pipe__half_duplex_named_pipe/sender && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__low_level_pinging && make && cd -
+  - cd ./20__c__interprocess-communication/pipe__low_level_pinging && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/receiver && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make && cd -
   - cd ./20__c__interprocess-communication/ipc__sharedmemory/itchy && make && cd -
