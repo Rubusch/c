@@ -34,6 +34,7 @@ TEST__BEGIN(lothars__calloc) {
 	assert(NULL == ptr); /* pre-condition */
 	ptr = lothars__calloc(nmemb, size);
 	assert(NULL != ptr); /* post-condition */
+	free(ptr);
 	TEST__OK;
 } TEST__END
 
@@ -118,7 +119,7 @@ TEST__BEGIN(lothars__gettimeofday) {
 	}
 	res = 0;
 	assert(0 == res);
-	TEST__OK
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__ioctl) {
@@ -130,7 +131,12 @@ TEST__BEGIN(lothars__fork) {
 } TEST__END
 
 TEST__BEGIN(lothars__malloc) {
-// TODO
+	char *ptr=NULL;
+	assert(NULL == ptr);
+	ptr = lothars__malloc(123);
+	assert(NULL != ptr);
+	free(ptr);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__mkstemp) {
