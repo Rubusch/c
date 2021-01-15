@@ -15,7 +15,7 @@ typedef enum error_code_e { ERRCODE_SUCCESS, ERRCODE_FAILURE } error_code_t;
 static int *q_id;
 
 
-static error_code_t _mq_init(int *mq_id, char seed)
+static error_code_t mq_init(int *mq_id, char seed)
 {
 	key_t mq_key = 0;
 	int mq_flags = -1;
@@ -87,7 +87,7 @@ static error_code_t _mq_init(int *mq_id, char seed)
 }
 
 
-static error_code_t _mq_send(const int mq_id, struct mq_message_s *mq_message,
+static error_code_t mq_send(const int mq_id, struct mq_message_s *mq_message,
                              const int mtype, const int blocking)
 {
 	if ((mtype != 2) && (mtype != 4)) {
@@ -105,7 +105,7 @@ static error_code_t _mq_send(const int mq_id, struct mq_message_s *mq_message,
 }
 
 
-static error_code_t _mq_retrieve(const int mq_id,
+static error_code_t mq_retrieve(const int mq_id,
                                  struct mq_message_s *mq_message,
                                  const int mtype, const int blocking)
 {
@@ -156,8 +156,8 @@ int main(int argc, char **argv)
 	static struct mq_message_s mq_message;
 
 	// init
-	if (ERRCODE_SUCCESS != _mq_init(&mq_id, seed)) {
-		perror("_mq_init()");
+	if (ERRCODE_SUCCESS != mq_init(&mq_id, seed)) {
+		perror("mq_init()");
 		exit(ERRCODE_FAILURE);
 	}
 	q_id = malloc(sizeof(int));
@@ -173,21 +173,22 @@ int main(int argc, char **argv)
 		// receive
 		mq_message.mtype = 1;
 		if (ERRCODE_SUCCESS !=
-		    _mq_retrieve(mq_id, &mq_message, mq_message.mtype, 1)) {
-			perror("_mq_retrieve() failed");
+		    mq_retrieve(mq_id, &mq_message, mq_message.mtype, 1)) {
+			perror("mq_retrieve() failed");
 			break; // error receiving (because blocking!)
 		}
 		puts(mq_message.content);
 
 		// send
 		mq_message.mtype = 2;
-		if (ERRCODE_SUCCESS != _mq_send(mq_id, &mq_message, mq_message.mtype, 0)) {
-			perror("_mq_send() failed");
+		if (ERRCODE_SUCCESS != mq_send(mq_id, &mq_message, mq_message.mtype, 0)) {
+			perror("mq_send() failed");
 			break; // queue full
 		}
 
 	} while (1);
 
 	// never executed!
+	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }

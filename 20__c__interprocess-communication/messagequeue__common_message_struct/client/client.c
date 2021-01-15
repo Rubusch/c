@@ -13,7 +13,7 @@
 typedef enum error_code_e { ERRCODE_SUCCESS, ERRCODE_FAILURE } error_code_t;
 
 
-static error_code_t _mq_init(int *mq_id, char seed)
+static error_code_t mq_init(int *mq_id, char seed)
 {
 	key_t mq_key = 0;
 	int mq_flags = -1;
@@ -85,7 +85,7 @@ static error_code_t _mq_init(int *mq_id, char seed)
 }
 
 
-static error_code_t _mq_send(const int mq_id, struct mq_message_s *mq_message,
+static error_code_t mq_send(const int mq_id, struct mq_message_s *mq_message,
                              const int mtype, const int blocking)
 {
 	if ((mtype != 1) && (mtype != 3)) {
@@ -103,7 +103,7 @@ static error_code_t _mq_send(const int mq_id, struct mq_message_s *mq_message,
 }
 
 
-static error_code_t _mq_retrieve(const int mq_id,
+static error_code_t mq_retrieve(const int mq_id,
                                  struct mq_message_s *mq_message,
                                  const int mtype, const int blocking)
 {
@@ -148,8 +148,8 @@ int main(int argc, char **argv)
 	strcpy(mq_message.content, TEXT);
 
 	// init
-	if (ERRCODE_SUCCESS != _mq_init(&mq_id, seed)) {
-		perror("_mq_init()");
+	if (ERRCODE_SUCCESS != mq_init(&mq_id, seed)) {
+		perror("mq_init()");
 		exit(ERRCODE_FAILURE);
 	}
 
@@ -159,8 +159,8 @@ int main(int argc, char **argv)
 		// send hello
 		fprintf(stderr, "send \"%s\"\n", mq_message.content);
 		mq_message.mtype = 1;
-		if (ERRCODE_SUCCESS != _mq_send(mq_id, &mq_message, mq_message.mtype, 0)) {
-			perror("_mq_send() failed");
+		if (ERRCODE_SUCCESS != mq_send(mq_id, &mq_message, mq_message.mtype, 0)) {
+			perror("mq_send() failed");
 		}
 		sleep(1);
 
@@ -168,13 +168,12 @@ int main(int argc, char **argv)
 		mq_message.mtype = 2;
 		memset(mq_message.content, '\0', MQ_MESSAGESIZ);
 		fprintf(stderr, "cleared \"%s\"\n", mq_message.content);
-		_mq_retrieve(mq_id, &mq_message, mq_message.mtype, 0);
-		fprintf(
-			stderr, "received \"%s\"\n",
+		mq_retrieve(mq_id, &mq_message, mq_message.mtype, 0);
+		fprintf(stderr, "received \"%s\"\n",
 			((strlen(mq_message.content) > 0) ? mq_message.content : "nothing"));
 
 	} while (3 > idx);
 
-
+	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
