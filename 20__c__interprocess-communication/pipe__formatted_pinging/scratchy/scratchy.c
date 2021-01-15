@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	memset(buf, '\0', BUF_SIZE);
 
 	// popen / send
-	FILE *fp = popen("../itchy/itchy Scratchyargument", "r");
+	FILE *fp = popen("../itchy/itchy.exe Scratchyargument", "r");
 
 	// receive
 	while (fgets(buf, BUF_SIZE, fp)) {
