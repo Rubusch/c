@@ -34,7 +34,6 @@
   constants
 */
 
-// The packet length
 #define PACKET_BUFFER_SIZE 8192 /* size of the "poor man's socket buffer" */
 #define MAXLINE  4096 /* max text line length */
 
@@ -281,7 +280,7 @@ void lothars__close(int *fd)
 /********************************************************************************************/
 // worker implementation
 
-// crafted IP header
+// fabricated IP header
 struct ipheader {
 	uint8_t    iph_ihl:5, iph_ver:4;
 	uint8_t    iph_tos;
@@ -296,7 +295,7 @@ struct ipheader {
 	uint8_t    iph_destip;
 };
 
-// crafted UDP header
+// fabricated UDP header
 struct udpheader {
 	uint16_t udph_srcport;
 	uint16_t udph_destport;
@@ -402,7 +401,8 @@ int main(int argc, char *argv[])
 	ip->iph_chksum = checksum((unsigned short *)packet_buffer, sizeof(*ip) + sizeof(*udp)); // integrity check
 
 
-	/* kernel configuration */
+	/* kernel */
+
 	// inform the kernel not to fill up the packet structure - we
 	// will build our own...
 	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on));
