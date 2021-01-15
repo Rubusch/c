@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 			pState = &attached_segments[nap + 1];
 			while (--pState != attached_segments) {
 				fprintf(stderr, "%6d", pState->shm_id);
-				fprintf(stderr, "%#11x", ( unsigned int )pState->shm_addr);
+				fprintf(stderr, "%#11x", *(unsigned int*) pState->shm_addr);
 				fprintf(stderr, " Read%s\n",
 					(pState->shm_flag & SHM_RDONLY) ? "-Only" : "/Write");
 			}
@@ -130,17 +130,17 @@ int main(int argc, char **argv)
 					}
 				} while (askagain);
 				fprintf(stderr, "now attach the segment - shmat(%d, %#x, %#o)\n",
-					pState->shm_id, ( unsigned int )pState->shm_addr,
+					pState->shm_id, *(unsigned int*) pState->shm_addr,
 					pState->shm_flag);
 
-				if (0 > (pState->shm_addr = shmat(pState->shm_id, pState->shm_addr,
+				if (0 > *(int8_t*)(pState->shm_addr = shmat(pState->shm_id, pState->shm_addr,
 								  pState->shm_flag))) {
 					perror("shmat() failed");
 					--nap; // decrement, because already incremented above, for new
 					// pointer element!
 				} else {
 					fprintf(stderr, "shmat returned %#8.8x\n",
-						( unsigned int )pState->shm_addr);
+						*(int8_t*)pState->shm_addr);
 				}
 				break;
 
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 				readstring(area_addr, ADDR_DIGITS,
 					   "enter address of an attached segment");
 				if (good_addr(area_addr))
-					fprintf(stderr, "string @ %#x is '%s'\n", ( unsigned int )area_addr,
+					fprintf(stderr, "string @ %#x is '%s'\n", *(int8_t*)area_addr,
 						area_addr);
 				break;
 
