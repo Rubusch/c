@@ -90,8 +90,8 @@ script:
   - cd ./20__c__interprocess-communication/pipe__low_level_pinging && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/receiver && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__sharedmemory/itchy && make && cd -
-  - cd ./20__c__interprocess-communication/ipc__sharedmemory/scratchy && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__demo/itchy && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__demo/scratchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__signals/itchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__signals/scratchy && make && cd -
   - cd ./20__c__interprocess-communication/ipc__unixsockets/unixclient && make && cd -
@@ -103,10 +103,10 @@ script:
   - cd ./20__c__interprocess-communication/messagequeue__experimental && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__msgctl && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__msgget && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_shmctl && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_shmget && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_shm_serverclient/shmclient && make && cd -
-  - cd ./20__c__interprocess-communication/Linux_dmc_shm_serverclient/shmserver && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__shmctl && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__shmget && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__server_client/shmclient && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__server_client/shmserver && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_signal_talking && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_signal_trap && make && cd -
   - cd ./20__c__interprocess-communication/Linux_dmc_unixsocket/client && make && cd -
@@ -121,7 +121,7 @@ script:
   - cd ./20__c__interprocess-communication/Linux_signal_syscall && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__common_message_struct/client && make && cd -
   - cd ./20__c__interprocess-communication/messagequeue__common_message_struct/server && make && cd -
-  - cd ./20__c__interprocess-communication/TODO_Linux_dmc_shmattachdetach && make && cd -
+  - cd ./20__c__interprocess-communication/sharedmemory__shm_attach_detach__TODO && make && cd -
 
 ## 30: pthreads
   - cd 30__c__pthreads/pthread__join02 && make && ./*.exe && cd -
