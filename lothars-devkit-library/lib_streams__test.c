@@ -80,7 +80,7 @@ TEST__BEGIN(lothars__fdopen) {
 } TEST__END
 
 TEST__BEGIN(lothars__fgets) {
-	int a=-1;
+ 	int a=-1;
 	FILE *f;
 	char file[] = "/tmp/test__fgets";
 	char buf[] = "bico meh\nmini big";
@@ -146,7 +146,27 @@ TEST__BEGIN(lothars__fopen) {
 } TEST__END
 
 TEST__BEGIN(lothars__fputs) {
-// TODO
+	FILE *f;
+	char file[] = "/tmp/test__fputs";
+	char buf[] = "bico meh mini big\n";
+	char res[2*sizeof(buf)];
+
+	memset(res, '\0', sizeof(res));
+
+	f = fopen(file, "w");
+	assert(f);
+	lothars__fputs(buf, f);
+	fclose(f);
+	f = NULL;
+	assert(NULL == f);
+
+	f = fopen(file, "r");
+	assert(f);
+	fgets(res, sizeof(buf), f);
+	assert(sizeof(buf) == strlen(res) + 1); // plus string termination
+
+	remove(file);
+	TEST__OK
 } TEST__END
 
 
