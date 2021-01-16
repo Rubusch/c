@@ -80,7 +80,45 @@ TEST__BEGIN(lothars__fdopen) {
 } TEST__END
 
 TEST__BEGIN(lothars__fgets) {
-// TODO
+	int a=-1;
+	FILE *f;
+	char file[] = "/tmp/test__fgets";
+	char buf[] = "bico meh\nmini big";
+	char baf[] = "bico meh mini big";
+	char res[sizeof(buf)];
+
+	memset(res, '\0', sizeof(res));
+
+	/* prepare a file */
+	a = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+	assert(0 <= a);
+	assert(write(a, buf, sizeof(buf)) == sizeof(buf));
+	assert(0 == close(a));
+
+	f = fopen(file, "r");
+	assert(f);
+	lothars__fgets(res, sizeof(buf), f);
+	assert(9 == strlen(res)); // shall read up to n characters or
+				  // until the linefeed if earlier
+	fclose(f);
+	remove(file);
+
+	memset(res, '\0', sizeof(res));
+
+	/* prepare a file */
+	a = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+	assert(0 <= a);
+	assert(write(a, baf, sizeof(baf)) == sizeof(baf));
+	assert(0 == close(a));
+
+	f = fopen(file, "r");
+	assert(f);
+	lothars__fgets(res, 9+1, f); // shall read 9 characters, plus termination
+	assert(9 == strlen(res)); // the string then has 9 characters of strlen()
+	fclose(f);
+	remove(file);
+
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__fopen) {
