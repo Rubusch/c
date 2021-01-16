@@ -13,7 +13,7 @@ CC = gcc
 CFLAGS = -g -Wall -Werror -pedantic
 RM = rm -f
 
-.c.o:
+%.c%.o:
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(TARGET): $(OBJECTS)
@@ -22,5 +22,5 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
