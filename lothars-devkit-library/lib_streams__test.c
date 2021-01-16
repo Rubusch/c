@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 //#define NDEBUG /* uncomment this, turn off assert testing */
 #include <assert.h>
 
@@ -23,7 +24,27 @@ TEST__BEGIN(lothars__fgets) {
 } TEST__END
 
 TEST__BEGIN(lothars__fopen) {
-// TODO
+	FILE *a = NULL, *b = NULL, *c = NULL;
+	char file[] = "/tmp/dummy";
+	char null[] = "/dev/null";
+
+	unlink(file); // cleanup artifacts
+
+	assert(NULL == a);
+	a = lothars__fopen(file, "w");
+	assert(a);
+	assert(0 == fclose(a));
+
+	b = lothars__fopen(null, "r");
+	assert(b);
+	assert(0 == fclose(b));
+
+	c = lothars__fopen(null, "w");
+	assert(c);
+	assert(0 == fclose(c));
+
+	unlink(file);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__fputs) {
