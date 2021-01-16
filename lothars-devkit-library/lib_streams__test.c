@@ -24,9 +24,11 @@ TEST__BEGIN(lothars__fclose) {
 	assert(write(a, buf, sizeof(buf)) == sizeof(buf));
 	assert(1 == lseek(a, 1, SEEK_SET));
 
-	/* create an output stream visiting that file; when it is
-	 * closed all other FILE descriptors visiting that file must
-	 * see the new file position */
+	/*
+	  create an output stream visiting that file; when it is
+	  closed all other FILE descriptors visiting that file must
+	  see the new file position
+	*/
 	b = dup(a);
 	assert(0 <= b);
 	f = fdopen(b, "w");
@@ -62,7 +64,19 @@ TEST__BEGIN(lothars__fclose) {
 } TEST__END
 
 TEST__BEGIN(lothars__fdopen) {
-// TODO
+	/* Test behavior on failure.  POSIX makes it hard to check for
+	   failure, since the behavior is not well-defined on invalid file
+	   descriptors, so try fdopen 1000 times and if that's not enough to
+	   fail due to EMFILE, so be it.
+	   (GNU m4 / autotools project)
+	*/
+	int idx;
+	for (idx = 0; idx < 1000; idx++)
+	{
+		errno = 0;
+		lothars__fdopen(STDOUT_FILENO, "w");
+	}
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__fgets) {
