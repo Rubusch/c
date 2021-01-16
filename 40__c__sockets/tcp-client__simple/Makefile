@@ -10,16 +10,16 @@ TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.c%.o:
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+all: $(TARGET)
+
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
-
-all: $(TARGET)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
