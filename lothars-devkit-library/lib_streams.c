@@ -22,11 +22,17 @@
 
   @fp: The specified stream.
 */
-void lothars__fclose(FILE *fp)
+void lothars__fclose(FILE **fp)
 {
-	if (0 != fclose(fp)) {
+	if (NULL == *fp)
+		return;
+
+	if (0 != fclose(*fp)) {
                 err_sys("%s() error", __func__);
 	}
+
+	*fp = NULL;
+	sync();
 }
 
 

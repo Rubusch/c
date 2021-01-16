@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h> /* sync() */
 
 #include <fcntl.h> /* fcntl(), F_GETFL */
 
@@ -27,7 +28,7 @@
 
 /* forwards */
 
-void lothars__fclose(FILE *);
+void lothars__fclose(FILE **);
 FILE* lothars__fdopen(int, const char *);
 char* lothars__fgets(char *, int, FILE *);
 FILE* lothars__fopen(const char *, const char *);
