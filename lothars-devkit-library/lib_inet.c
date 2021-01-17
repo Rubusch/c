@@ -47,8 +47,9 @@ const char* lothars__inet_ntop(int family, const void *addrptr, char *strptr, si
   #include <arpa/inet.h>
 
   @family: The address family AF_INET or AF_INET6 (af).
-  @strptr: A pointer to a source string to be converted (src).
-  @addrptr: The pointer to a destination address.
+  @strptr: Points to a source string containing an IP address (src).
+  @addrptr: Points to a destination string, in case of a struct
+  in_addr, defer to its s_addr member to be initialized.
 
   Returns 1 on success, 0 if strptr did not contain a valid internet
   address and -1 if family was not a valid address family.
