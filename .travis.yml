@@ -176,7 +176,7 @@ script:
   - cd 40__c__sockets/raw-sockets__udp && make && cd -
   - cd 40__c__sockets/tcp-client__sending-xml && make && cd -
   - cd 40__c__sockets/tcp-client__simple && make && cd -
-  - cd 40__c__sockets/tcp-client__simpletcp-client__SO_LINGER && make && cd -
+  - cd 40__c__sockets/tcp-client__SO_LINGER && make && cd -
   - cd 40__c__sockets/tcp-client__tcp-server-types__multi-clients && make && cd -
   - cd 40__c__sockets/tcp-server__echoserver && make && cd -
   # TODO        
