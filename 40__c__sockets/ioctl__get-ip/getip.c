@@ -5,15 +5,17 @@
   shows the ip of a connected interface
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <sys/ioctl.h>
+#include <linux/if.h> /* struct ifreq */
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <sys/ioctl.h>
-#include <netinet/in.h>
-#include <net/if.h>
-#include <arpa/inet.h>
+#include <arpa/inet.h> /* inet_ntoa() -> TODO replace by inet_ntop() */
 
 int main(int argc, char **argv) {
 
