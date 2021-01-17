@@ -5,6 +5,8 @@
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
+#define _GNU_SOURCE /* sync() */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -296,7 +298,7 @@ int main(int argc, char** argv)
 				}
 
 				// close socket
-				lothars__close(fd_connect);
+				lothars__close(&fd_connect);
 			}
 			fprintf(stdout, "child %d: received '%s'\n", idx, reply);
 			fprintf(stdout, "child %d: READY.\n", idx);

@@ -6,7 +6,9 @@
   don't wait on timeout
 
   (based on Stevens / UNIX Network Programming)
- */
+*/
+
+#define _GNU_SOURCE /* sync() */
 
 #include <stdlib.h> // exit()
 #include <stdio.h> // perror()

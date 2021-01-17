@@ -5,6 +5,8 @@
   child per client)
 */
 
+#define _GNU_SOURCE /* sync() */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <netinet/ip.h> /* PF_INET, IPPROTO_TCP,... */

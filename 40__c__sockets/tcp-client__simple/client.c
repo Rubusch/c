@@ -305,7 +305,7 @@ int main(int argc, char** argv)
 
 	fd_sock = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(atoi(port));
 	lothars__inet_pton(AF_INET, serverip, &servaddr.sin_addr);

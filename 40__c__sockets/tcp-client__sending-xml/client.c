@@ -10,6 +10,8 @@
  * @date: 2013-april-28
  */
 
+#define _GNU_SOURCE /* sync() */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
