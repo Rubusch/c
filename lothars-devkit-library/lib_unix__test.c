@@ -236,7 +236,19 @@ TEST__BEGIN(lothars__unlink) {
 } TEST__END
 
 TEST__BEGIN(lothars__wait) {
-// TODO
+	pid_t a=-1, res=-1;
+	a = getpid();
+	if (fork()== 0) {
+		abort(); // terminate child
+	} else {
+/*
+		res = wait(NULL); // reaping parent
+/*/
+		res = lothars__wait(NULL);
+// */
+		assert(res != a);
+	}
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__waitpid) {
