@@ -12,15 +12,16 @@
 
 // test helpers
 
+// NB: use unbuffered stderr
 #define TEST__BEGIN(FUNC)					\
 	void test__##FUNC()					\
 	{							\
 	char test_res[8] = "TODO";				\
-	fprintf(stdout, "executing test__%s()...", #FUNC);
+	fprintf(stderr, "executing test__%s()...", #FUNC);
 
 
 #define TEST__END					\
-	fprintf(stdout, "%s\n", test_res);		\
+	fprintf(stderr, "%s\n", test_res);		\
 	}
 
 #define TEST__OK strcpy(test_res, "OK");
