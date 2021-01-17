@@ -16,7 +16,6 @@
   https://beej.us/guide/bgnet/html/
   idea from https://www.tenouk.com/Module43a.html
 */
-//---cat rawtcp.c---
 
 #define _GNU_SOURCE /* sync() */
 

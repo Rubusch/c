@@ -16,6 +16,9 @@
   https://beej.us/guide/bgnet/html/
   idea from https://www.tenouk.com/Module43a.html
 */
+
+#define _GNU_SOURCE /* sync() */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
