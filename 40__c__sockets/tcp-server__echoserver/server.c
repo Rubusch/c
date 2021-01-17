@@ -38,7 +38,7 @@ void lothars__send(int, const void *, size_t, int);
 int lothars__socket(int, int, int);
 
 // unix
-void lothars__close(int);
+void lothars__close(int *);
 pid_t lothars__fork();
 
 
@@ -322,13 +322,23 @@ int lothars__socket(int family, int type, int protocol)
   to [EIO]; if this error is returned, the state of fildes is
   unspecified.
 
-  @fd: The file descriptor to the specific connection.
+  This wrapper sets the fp to NULL;
+
+  #include <unistd.h>
+
+  @fd: Points to the file descriptor to the specific connection.
 */
-void lothars__close(int fd)
+void lothars__close(int *fd)
 {
-	if (-1 == close(fd)) {
-		err_sys("close error");
+	if (NULL == fd) {
+		fprintf(stderr, "%s() fd was NULL\n", __func__);
+		return;
 	}
+	if (-1 == close(*fd)) {
+		err_sys("%s() error", __func__);
+	}
+	*fd = 0;
+	sync();
 }
 
 
@@ -387,17 +397,17 @@ int main(int argc, char *argv[])
 
 		if (0 == (childpid = lothars__fork())) {
 			// child
-			lothars__close(fd_listen);
+			lothars__close(&fd_listen);
 			worker(fd_conn);
 			fprintf(stdout, "READY.\n");
 			exit(EXIT_SUCCESS);
 		}
 
-		lothars__close(fd_conn);
+		lothars__close(&fd_conn);
 	} while (1);
 
-	lothars__close(fd_conn);
-	lothars__close(fd_listen);
+	lothars__close(&fd_conn);
+	lothars__close(&fd_listen);
 
 	fprintf(stdout, "READY.\n");
 	return EXIT_SUCCESS;

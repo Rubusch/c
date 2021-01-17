@@ -3,7 +3,7 @@
   $ getip.exe <if>
 
   shows the ip of a connected interface
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>

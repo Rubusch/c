@@ -38,7 +38,7 @@ pid_t lothars__fork();
 int lothars__tcp_connect(const char*, const char*);
 ssize_t lothars__readn(int, void *, size_t);
 void lothars__write(int, void *, size_t);
-void lothars__close(int);
+void lothars__close(int *);
 
 
 /*
@@ -164,7 +164,7 @@ int lothars__tcp_connect(const char *host, const char *serv)
 			break;  // success
 		}
 
-		lothars__close(sockfd); // ignore this one
+		lothars__close(&sockfd); // ignore this one
 	} while (NULL != (res = res->ai_next));
 
 	if (NULL == res) { // errno set from final connect()
@@ -195,11 +195,38 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 }
 
 
-void lothars__close(int fd)
+/*
+  The close() function shall deallocate the file descriptor indicated
+  by fd. To deallocate means to make the file descriptor available for
+  return by subsequent calls to open() or other functions that
+  allocate file descriptors. All outstanding record locks owned by the
+  process on the file associated with the file descriptor shall be
+  removed (that is, unlocked).
+
+  If close() is interrupted by a signal that is to be caught, it shall
+  return -1 with errno set to [EINTR] and the state of fildes is
+  unspecified. If an I/O error occurred while reading from or writing
+  to the file system during close(), it may return -1 with errno set
+  to [EIO]; if this error is returned, the state of fildes is
+  unspecified.
+
+  This wrapper sets the fp to NULL;
+
+  #include <unistd.h>
+
+  @fd: Points to the file descriptor to the specific connection.
+*/
+void lothars__close(int *fd)
 {
-	if (-1 == close(fd)) {
-		err_sys("close error");
+	if (NULL == fd) {
+		fprintf(stderr, "%s() fd was NULL\n", __func__);
+		return;
 	}
+	if (-1 == close(*fd)) {
+		err_sys("%s() error", __func__);
+	}
+	*fd = 0;
+	sync();
 }
 
 
