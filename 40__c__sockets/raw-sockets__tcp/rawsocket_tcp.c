@@ -18,6 +18,8 @@
 */
 //---cat rawtcp.c---
 
+#define _GNU_SOURCE /* sync() */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
