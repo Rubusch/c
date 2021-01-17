@@ -132,11 +132,15 @@ TEST__BEGIN(lothars__ioctl) {
 TEST__BEGIN(lothars__fork) {
 	pid_t a=-1, res=-1;
 	a = getpid();
-	if (0 == (res = fork())) {
-		assert(a != getpid());
+//	if (0 == (res = fork())) {
+	if (0 == (res = lothars__fork())) {
+//		fprintf(stderr, "%s(): child - res %d, a %d, getpid() %d\n", __func__, res, a, getpid());
+		assert(a != getpid()); // child
 		abort();
 	} else {
-		assert(a == getpid());
+//		fprintf(stderr, "%s(): parent - res %d, a %d, getpid() %d\n", __func__, res, a, getpid());
+		assert(a == getpid()); // parent
+		assert(res != getpid());
 	}
 	TEST__OK;
 } TEST__END
