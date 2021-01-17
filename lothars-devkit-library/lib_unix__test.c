@@ -252,7 +252,23 @@ TEST__BEGIN(lothars__wait) {
 } TEST__END
 
 TEST__BEGIN(lothars__waitpid) {
-// TODO
+	pid_t a=-1, b=-1, res=-1;
+	int status;
+	a = getpid();
+	assert(0 != a);
+	if (0 == (res = fork())) {
+		b = getpid();
+		assert(a != b);
+		assert(0 != b);
+		sleep(1);
+		exit(EXIT_SUCCESS);
+	}
+/*
+	waitpid(res, &status, 0);
+/*/
+	lothars__waitpid(res, &status, 0);
+// */
+	TEST__OK;
 } TEST__END
 
 
