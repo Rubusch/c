@@ -301,7 +301,7 @@ void* lothars__mmap(void *addr, size_t len, int prot, int flags, int fd, off_t o
 */
 int lothars__open(const char *pathname, int oflag, mode_t mode)
 {
-	int fd;
+	int fd = -1;
 	if (-1 == (fd = open(pathname, oflag, mode))) {
 		err_sys("%s() error for %s", __func__, pathname);
 	}

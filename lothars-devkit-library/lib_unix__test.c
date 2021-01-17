@@ -163,7 +163,20 @@ TEST__BEGIN(lothars__mmap) {
 } TEST__END
 
 TEST__BEGIN(lothars__open) {
-// TODO
+	int a=-1;
+	char file[] = "/tmp/test__fclose";
+	char buf[] = "bico meh mini big\n";
+	assert(0 > a);
+/*
+	a = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+/*/
+	a = lothars__open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+//*/
+	assert(0 <= a);
+	assert(write(a, buf, sizeof(buf)) == sizeof(buf));
+	assert(0 == close(a));
+	assert(0 == remove(file));
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__pipe) {
