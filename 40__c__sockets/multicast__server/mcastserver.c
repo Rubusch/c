@@ -62,15 +62,29 @@
   be found here: https://www.tenouk.com/Module41c.html
  */
 // TODO builds and seems to work, currently (after refac) no mcast capable environment to verify         
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+//#include <sys/types.h>
+//#include <sys/socket.h>
+//#include <arpa/inet.h>
+//#include <netinet/in.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <unistd.h> /* close() */
+//#include <stdarg.h> /* va_start(), va_end(),... */
+//#include <errno.h>
+
+#define _XOPEN_SOURCE 600 /* sync() */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h> /* close() */
 #include <stdarg.h> /* va_start(), va_end(),... */
+
+#include <netinet/in.h> // !!! place this header always before <linux/.. headers, or struct sockaddr might be unknown !!!
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h> /* close(), sync() with _XOPEN_SOURCE */
 #include <errno.h>
 
 
@@ -90,6 +104,7 @@ char databuf[MAXLINE] = "Multicast test message lol!";
 
 // error
 void err_sys(const char *, ...);
+void err_quit(const char *, ...);
 
 // sock
 int lothars__socket(int, int, int);
@@ -97,7 +112,7 @@ void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
 
 // inet
-int lothars__inet_aton(const char *, struct in_addr *);
+void lothars__inet_pton(int, const char*, void*);
 
 // read/write
 ssize_t lothars__read(int, void *, size_t);
@@ -137,13 +152,26 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 // error
 
 /*
-  fatal error related to system call Print message and terminate
+   Fatal error related to system call. Print message and terminate.
 */
 void err_sys(const char *fmt, ...)
 {
 	va_list  ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
+}
+
+
+/*
+   Fatal error unrelated to system call. Print message and terminate.
+*/
+void err_quit(const char *fmt, ...)
+{
+	va_list  ap;
+	va_start(ap, fmt);
+	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
@@ -239,47 +267,31 @@ void lothars__sendto( int fd
 
 
 /*
-  inet_aton() converts the Internet host address cp from the IPv4
-  numbers-and-dots notation into binary form (in network byte order)
-  and stores it in the structure that inp points to. inet_aton()
-  returns nonzero if the address is valid, zero if not. The address
-  supplied in cp can have one of the following forms:
+  inet_pton - convert IPv4 and IPv6 addresses from text to binary form
 
-  a.b.c.d, a.b.c, a.b., a
+  This function converts the character string src into a network
+  address structure in the af address family, then copies the network
+  address structure to dst. The af argument must be either AF_INET or
+  AF_INET6.
 
-  An example of the use of inet_aton() and inet_ntoa() is shown
-  below. Here are some example runs:
-
-    $ ./a.out 226.000.000.037      # Last byte is in octal
-    226.0.0.31
-    $ ./a.out 0x7f.1               # First byte is in hex
-    127.0.0.1
-
-  #ifdef _BSD_SOURCE || _SVID_SOURCE
-  #include <sys/socket.h>
-  #include <netinet/in.h>
   #include <arpa/inet.h>
 
-  @cp: The Internet host address in numbers-and-dots notation.
-  @inp: A pointer to a structure which contains the binary Internet
-  address.
+  @family: The address family AF_INET or AF_INET6 (af).
+  @strptr: Points to a source string containing an IP address (src).
+  @addrptr: Points to a destination string, in case of a struct
+  in_addr, defer to its s_addr member to be initialized.
 
-  Return is phony for compatibility.
+  Returns 1 on success, 0 if strptr did not contain a valid internet
+  address and -1 if family was not a valid address family.
 */
-int lothars__inet_aton(const char *cp, struct in_addr *inp)
+void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
 	int res;
-	if (0 == (res = inet_aton(cp, inp))) {
-		err_sys("%s() invalid address", __func__);
+	if (0 > (res = inet_pton(family, strptr, addrptr))) {
+		err_sys("%s() error for %s (check the passed address family?)", __func__, strptr); // errno set
+	} else if (0 == res) {
+		err_quit("%s() error for %s (check the passed strptr)", __func__, strptr); // errno not set
 	}
-	/*
-	  NB: in case of failure there's no close(fd_sock)
-	  when the program exits, resources are going to be freed by OS, anyway
-
-	  take care if this might be not the (regular) case e.g. due
-	  to some socket options
-	*/
-	return res;
 }
 
 
@@ -352,7 +364,6 @@ int main(int argc, char *argv[])
 	saddr_group.sin_addr.s_addr = inet_addr(groupip); // e.g. "226.1.1.1"
 	saddr_group.sin_port = htons(atoi(port)); // e.g. 4321
 
-
 /* disable loopback so you do not receive your own datagrams
 	{
 		char loopch = 0;
@@ -364,7 +375,8 @@ int main(int argc, char *argv[])
 	// set local interface for outbound multicast datagrams; the
 	// IP address specified must be associated with a local,
 	// multicast capable interface
-	lothars__inet_aton(senderip, &addr_local);
+
+	lothars__inet_pton(AF_INET, senderip, &addr_local.s_addr);
 	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_IF, (char *)&addr_local, sizeof(addr_local));
 	fprintf(stdout, "Setting the local interface...OK\n");
 
