@@ -76,9 +76,13 @@
 */
 
 
+#define _GNU_SOURCE /* struct ip_mreq */
+
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h>
+
+#include <netinet/in.h> // !!! place this header always before <linux/.. headers, or struct sockaddr might be unknown !!!
 #include <sys/utsname.h> /* uname() */
 #include <unistd.h> /* getpid(), fork(), sleep() */
 #include <netdb.h> /* freeadddrinfo(), getaddrinfo(), gai_strerror() */
