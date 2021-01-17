@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include <sys/ioctl.h>
+#include <netinet/in.h>  // !!! place this header always before <linux/.. headers, or struct sockaddr might be unknown !!!
 #include <linux/if.h> /* struct ifreq */
 #include <sys/socket.h>
 #include <sys/types.h>
