@@ -336,7 +336,7 @@ int lothars__udp_client(const char *host, const char *serv, struct sockaddr **sa
 	int fd_sock, eai;
 	struct addrinfo hints, *res=NULL, *ressave=NULL;
 
-	bzero(&hints, sizeof(struct addrinfo));
+	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
 
