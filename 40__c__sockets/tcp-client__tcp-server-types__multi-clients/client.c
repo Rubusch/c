@@ -36,28 +36,40 @@
   forwards
 */
 
+// error
+void err_sys(const char *, ...);
+void err_quit(const char *, ...);
+
+// socket
 pid_t lothars__fork();
 int lothars__tcp_connect(const char*, const char*);
 ssize_t lothars__readn(int, void *, size_t);
 void lothars__write(int, void *, size_t);
+
+// unix
 void lothars__close(int *);
 
 
 /*
-  internal helpers
+  helpers
 */
 
 /*
-  print message and return to caller Caller specifies "errnoflag"
+   Print message and return to caller. Caller specifies "errnoflag".
 
-  error handling taken from "Unix Sockets" (Stevens)
+   #include <stdarg.h>
+
+   @errnoflag: The flag for the errno number.
+   @fmt: The format.
+   @ap: The argument pointer for further arguments in va_list.
 */
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
 	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+
 	errno_save = errno; // value caller might want printed
-	vsnprintf(buf, MAXLINE, fmt, ap);
+	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
 		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
@@ -232,6 +244,11 @@ void lothars__close(int *fd)
 }
 
 
+/********************************************************************************************/
+// worker implementation
+
+
+
 /*
   main()
 
@@ -239,6 +256,13 @@ void lothars__close(int *fd)
   sends some bytes and waits on answer from the server
 
   a tcp server is expected, serverip and port needs to be provided
+*/
+
+/********************************************************************************************/
+
+
+/*
+  main
 */
 int main(int argc, char** argv)
 {
@@ -314,5 +338,6 @@ int main(int argc, char** argv)
 		err_sys("wait error");
 	}
 
+	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
