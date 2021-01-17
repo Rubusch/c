@@ -3,12 +3,17 @@
 
 ## CONTENT
 
-Code snippets and small example programs.
+My collection of code snippets and demo programs in C.  
+
+The code contained within this repository was compiled on a Linux PC
+using Gnu’s gcc compiler. It should, however, build on just about any
+platform that uses gcc. Naturally, this doesn’t apply if you’re
+programming for Windows.  
 
 
 ## BUILD
 
-The sources should build under Linux as follows:
+The sources should build under Linux as follows:  
 
 ```bash
 $ make
@@ -18,6 +23,7 @@ $ ./*.exe
 
 ## DISCLAIMER
 
-No liability for the contents of this repository can be accepted. Use the codes,
-concepts, examples and other content at your own risk. There may be errors and
-inaccuracies, that may of course be damaging to your system.
+No liability for the contents of this repository can be accepted. Use
+the codes, concepts, examples and other content at your own
+risk. There may be errors and inaccuracies, that may of course be
+damaging to your system.  
