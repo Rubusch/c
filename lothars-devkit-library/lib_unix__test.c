@@ -220,7 +220,16 @@ TEST__BEGIN(lothars__sigprocmask) {
 } TEST__END
 
 TEST__BEGIN(lothars__strdup) {
-// TODO
+	char a[] = "bico meh mini big";
+	char *b = NULL;
+	assert(NULL == b);
+//*
+	b = strdup(a);
+/*/
+	b = lothars__strdup(a);
+// */
+	assert(strlen(a) == strlen(b));
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__sysconf) {
