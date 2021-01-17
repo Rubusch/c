@@ -1,7 +1,10 @@
 #include "lib_unix.h"
 
+//#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 //#define NDEBUG /* uncomment this, turn off assert testing */
 #include <assert.h>
 
@@ -127,7 +130,15 @@ TEST__BEGIN(lothars__ioctl) {
 } TEST__END
 
 TEST__BEGIN(lothars__fork) {
-// TODO
+	pid_t a=-1, res=-1;
+	a = getpid();
+	if (0 == (res = fork())) {
+		assert(a != getpid());
+		abort();
+	} else {
+		assert(a == getpid());
+	}
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__malloc) {
