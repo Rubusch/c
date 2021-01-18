@@ -70,9 +70,6 @@ void lothars__listen(int, int);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 int lothars__poll(struct pollfd *, unsigned long, int);
 
-// inet
-const char* lothars__inet_ntop(int, const void*, char*, size_t);
-
 // read / write
 ssize_t lothars__read(int, void *, size_t);
 void lothars__writen(int, void *, size_t);
@@ -285,45 +282,6 @@ int lothars__poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
 		err_sys("%s() timed out error", __func__);
 	}
 	return res;
-}
-
-
-/*
-  inet
-*/
-
-/*
-  inet_ntop - convert IPv4 and IPv6 addresses from binary to text form
-
-  This function converts the network address structure src in the af
-  address family into a character string. The resulting string is
-  copied to the buffer pointed to by dst, which must be a non-NULL
-  pointer. The caller specifies the number of bytes available in this
-  buffer in the argument size.
-
-  #include <arpa/inet.h>
-
-  @family: The address family AF_INET or AF_INET6 (af).
-  @addrptr: The source network address structure to convert into
-      string (src).
-  @strptr: A pointer to the destination string (dst).
-  @len: The number of bytes available in this buffer (size).
-
-  Returns NULL in case of error.
-*/
-const char* lothars__inet_ntop(int family, const void *addrptr, char *strptr, size_t len)
-{
-	const char *ptr = NULL;
-
-	if (NULL == strptr) {  // check for old code
-		err_quit("NULL 3rd argument to inet_ntop");
-	}
-
-	if (NULL == (ptr = inet_ntop(family, addrptr, strptr, len))) {
-		err_sys("inet_ntop error");  // sets errno
-	}
-
-	return ptr;
 }
 
 
