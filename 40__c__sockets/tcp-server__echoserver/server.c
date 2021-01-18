@@ -95,35 +95,6 @@ void err_sys(const char *fmt, ...)
 }
 
 
-/********************************************************************************************/
-// worker implementation
-
-void worker(int fd_sock)
-{
-	ssize_t nbytes;
-	char buf[MAXSIZE];
-	memset(buf, '\0', MAXSIZE);
-	char *ptr = buf;
-
-	fprintf(stdout, "connected\n");
-	do {
-		// receive
-		nbytes = lothars__recv(fd_sock, ptr, MAXSIZE - 1, 0);
-
-		if (0 < (nbytes = strlen(buf))) {
-			fprintf(stdout, "%s", buf);
-
-			// echo back
-			lothars__send(fd_sock, buf, nbytes, 0);
-		}
-		memset(buf, '\0', MAXSIZE);
-		ptr = buf;
-
-	} while (1);
-	fprintf(stdout, "READY.\n");
-}
-
-
 /*
   The accept() function shall extract the first connection on the
   queue of pending connections, create a new socket with the same
@@ -356,6 +327,34 @@ pid_t lothars__fork(void)
 	return pid;
 }
 
+
+/********************************************************************************************/
+// worker implementation
+
+void worker(int fd_sock)
+{
+	ssize_t nbytes;
+	char buf[MAXSIZE];
+	memset(buf, '\0', MAXSIZE);
+	char *ptr = buf;
+
+	fprintf(stdout, "connected\n");
+	do {
+		// receive
+		nbytes = lothars__recv(fd_sock, ptr, MAXSIZE - 1, 0);
+
+		if (0 < (nbytes = strlen(buf))) {
+			fprintf(stdout, "%s", buf);
+
+			// echo back
+			lothars__send(fd_sock, buf, nbytes, 0);
+		}
+		memset(buf, '\0', MAXSIZE);
+		ptr = buf;
+
+	} while (1);
+	fprintf(stdout, "READY.\n");
+}
 
 
 /********************************************************************************************/
