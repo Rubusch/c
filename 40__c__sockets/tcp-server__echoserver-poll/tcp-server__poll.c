@@ -1,10 +1,11 @@
 /*
-  tcp server, poll() implementation
+  tcp echo server, poll() implementation
+
 
   The tcp poll server accepts several clients. Instead of forking out
   (concurrent server) or serving each client in a different thread or
-  lightweight process, respectively, this server uses I/O multiplexing
-  through poll().
+  lightweight process, respectively, this server uses active I/O
+  multiplexing through poll().
 
   poll() is active I/O multiplexing, and thus probably less suited
   than a comparable approach by select().
