@@ -1,26 +1,21 @@
-# Makefile
-#
-# @author: Lothar Rubusch
-# @email: L.Rubusch@gmx.ch
-# @license: GPLv3
-
 SOURCE = allocation.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	${CC} ${CFLAGS} -c $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
-allocation.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+all: $(TARGET)
 
-all: allocation.exe
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} allocation.exe *~ *.o core
+	$(RM) $(TARGET) $(OBJECTS) *~
 
-
+.PHONY: all clean

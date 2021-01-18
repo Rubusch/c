@@ -1,23 +1,21 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization 
-
-
 SOURCE = struct.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	${CC} ${CFLAGS} -c $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
-struct.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+all: $(TARGET)
 
-all: struct.exe
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} $(OBJECTS) struct.exe *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
+
+.PHONY: all clean

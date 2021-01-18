@@ -1,22 +1,21 @@
-# Makefile
-#
-#
-
 SOURCE = pointer_test.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -pedantic -std=c99
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	${CC} ${CFLAGS} -c ${SOURCE} $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
-pointer.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+all: $(TARGET)
 
-all: pointer.exe
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} pointer.exe *.o *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
+
+.PHONY: all clean

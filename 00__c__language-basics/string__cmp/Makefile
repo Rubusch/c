@@ -1,24 +1,21 @@
-# Makefile (simple)
-#
-
 SOURCE = String_cmp.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -pedantic -std=c99
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	$(CC) $(CFLAGS) -c $(SOURCE) $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
+
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: $(TARGET)
-
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
 
-
+.PHONY: all clean

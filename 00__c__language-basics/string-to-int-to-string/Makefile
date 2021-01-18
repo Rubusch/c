@@ -1,22 +1,21 @@
-## Makefile
-##
-## .h and .c files
-
 SOURCE = string2int.c
-OBJECTS = $(SOURCE:%.c=%.o)
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
+
+.PREFIXES = .c .o
 CC = gcc
-CFLAGS += -g -Wall -Werror -std=gnu99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-%.o: %.c
+%.c%.o:
 	$(CC) $(CFLAGS) -c $<
 
-string2int.exe: $(OBJECTS)
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all:	string2int.exe
-
 clean:
-	$(RM) $(OBJECTS) string2int.exe *~
+	$(RM) $(TARGET) $(OBJECTS) *~
 
 .PHONY: all clean

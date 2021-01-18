@@ -1,25 +1,21 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = func_ptr.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	${CC} ${CFLAGS} -c $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
-funcptr.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+all: $(TARGET)
 
-all: funcptr.exe
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} $(OBJECTS) funcptr.exe *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
 
-
+.PHONY: all clean

@@ -1,22 +1,21 @@
-#	Makefile Dummy
-#
-#
-
 SOURCE = Hello.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -pedantic -std=c99
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	${CC} ${CFLAGS} -c $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
-Hello.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} ${OBJECTS} Hello.exe *~
+	$(RM) $(TARGET) $(OBJECTS) *~
 
-
+.PHONY: all clean

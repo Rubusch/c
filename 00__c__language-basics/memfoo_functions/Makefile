@@ -1,25 +1,21 @@
-# Makefile
-#
-#
-
-TARGET = memfoo.exe
 SOURCE = memfoo.c
 OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	$(CC) -c $(CFLAGS) $<
-
-$(TARGET): $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) -lm
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
 all: $(TARGET)
 
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+
 clean:
-	$(RM) $(TARGET) *.o *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
 
-
+.PHONY: all clean

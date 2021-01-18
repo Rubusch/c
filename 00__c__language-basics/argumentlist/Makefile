@@ -1,25 +1,21 @@
-## Makefile (simple)
-##
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3
-##
-## use -O, -O1, -O2 for optimization
 SOURCE = argumentlist.c
-OBJECTS = ${SOURCE:%.c=%.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
+
+.PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-%.o: %.c
-	${CC} ${CFLAGS} -c $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
 
-argumentlist.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+all: $(TARGET)
 
-all: argumentlist.exe
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 clean:
-	${RM} $(OBJECTS) argumentlist.exe *~
+	$(RM) $(TARGET) $(OBJECTS) *~
 
 .PHONY: all clean

@@ -1,25 +1,22 @@
-# Makefile
-#
-#
-TARGET = scope.exe
-
 SOURCE = main.c foo.c
 HEADERS = foo.h
 OBJECTS = $(SOURCE:.c=.o)
+TARGET = scope.exe
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c89 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
+%.c%.o:
 	$(CC) $(CFLAGS) -c $<
+
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: $(TARGET)
-
 clean:
-	$(RM) $(TARGET) $(OBJECTS) *~ *.txt core
+	$(RM) $(TARGET) $(OBJECTS) *~
 
+.PHONY: all clean

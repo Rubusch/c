@@ -1,24 +1,21 @@
-# Makefile
-#
-#
-
 SOURCE = preprocessor.c
-TARGET = $(SOURCE:.c=.exe)
 OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	$(CC) $(CFLAGS) -c $(SOURCE) $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
+
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: $(TARGET)
-
 clean:
-	$(RM) $(TARGET) $(OBJECTS) *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
 
+.PHONY: all clean

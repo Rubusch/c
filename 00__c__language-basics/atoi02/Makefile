@@ -4,16 +4,18 @@ TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=c11 -pedantic
 RM = rm -f
 
-.c.o:
-	$(CC) $(CFLAGS) -c $(SOURCE) $<
+%.c%.o:
+	$(CC) $(CFLAGS) -c $<
+
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
-all: $(TARGET)
-
 clean:
-	-$(RM) $(TARGET) *.o *~ core
+	$(RM) $(TARGET) $(OBJECTS) *~
+
+.PHONY: all clean
