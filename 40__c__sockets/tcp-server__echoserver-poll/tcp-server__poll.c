@@ -43,7 +43,6 @@
 #include <unistd.h> /* close(), sync() with _XOPEN_SOURCE */
 #include <errno.h>
 #include <sys/poll.h> /* struct pollfd, poll() */
-#include <sys/un.h> /* struct sockaddr_un */
 
 /*
   constants
@@ -409,15 +408,15 @@ void lothars__close(int *fd)
 int main(int argc, char* argv[])
 {
 	int idx=-1, maxidx=-1;
-	int nready; // poll: number of sd ready to read / process
+	int nready; // multiplex: number of sd ready to read / process
 	int sd_listen=-1; // sd for waiting on connections
 	int sd_conn=-1; // accepted connection sd
 	int sd=-1; // sd for looping through sd list
 	char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
 	socklen_t clilen;
-	struct pollfd client[OPEN_MAX]; // array of client sd's
 	struct sockaddr_in cliaddr;     // address object for accepting socket connections
 	struct sockaddr_in servaddr;    // address object for binding to this server
+	struct pollfd client[OPEN_MAX]; // array of client sd's
 	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
@@ -431,9 +430,9 @@ int main(int argc, char* argv[])
 	sd_listen = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
 	// bind
-	memset( &servaddr, 0, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl( INADDR_ANY ); // in case, bind to all interfaces
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); // in case, bind to all interfaces
 	servaddr.sin_port = htons(atoi(port));
 	lothars__bind(sd_listen, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
@@ -498,8 +497,10 @@ int main(int argc, char* argv[])
 					break;
 				}
 			}
+			// client register - check if full
 			if (idx == OPEN_MAX) {
-				perror( "too many clients" );
+				perror("too many clients");
+				exit(EXIT_FAILURE);
 			}
 
 			// there is data to read
@@ -513,7 +514,7 @@ int main(int argc, char* argv[])
 
 			// no more readable descriptors
 			if (0 >= --nready) continue;
-		} /* for revents & POLLIN */
+		} /* for */
 
 
 		/*
