@@ -44,8 +44,9 @@ script:
   - cd ./00__c__language-basics/preprocessor && make && ./*.exe && cd -
   - cd ./00__c__language-basics/memfoo_functions && make && ./*.exe && cd -
   - cd ./00__c__language-basics/function-pointer__typedefed && make && ./*.exe && cd -
+  - cd ./00__c__language-basics/types && make && ./*.exe && cd -
 
-  ## interactive example
+  ## interactive example (just building)
   - cd ./00__c__language-basics/function-pointer && make && cd -
 
 
