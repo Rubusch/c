@@ -45,7 +45,8 @@ script:
   - cd ./00__c__language-basics/memfoo_functions && make && ./*.exe && cd -
   - cd ./00__c__language-basics/function-pointer__typedefed && make && ./*.exe && cd -
   - cd ./00__c__language-basics/compiler_configuration && make && ./*.exe && cd -
-  - cd ./00__c__language-basics/types && make && ./*.exe && cd -
+## needs extended GNU resources
+##  - cd ./00__c__language-basics/types && make && ./*.exe && cd -
   - cd ./00__c__language-basics/c11__alignof && make && ./*.exe && cd -
   - cd ./00__c__language-basics/c11__compound_literal && make && ./*.exe && cd -
 
