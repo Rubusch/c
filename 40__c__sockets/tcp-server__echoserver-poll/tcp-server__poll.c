@@ -450,16 +450,16 @@ void lothars__close(int *fd)
 */
 int main(int argc, char* argv[])
 {
-        int idx=-1, maxidx=-1;
-        int nready; // poll: number of sd ready to read / process
-        int sd_listen=-1; // sd for waiting on connections
-        int sd_conn=-1; // accepted connection sd
-        int sd=-1; // sd for looping through sd list
-        char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
-        socklen_t clilen;
-        struct pollfd client[OPEN_MAX]; // array of client sd's
-        struct sockaddr_in cliaddr;     // address object for accepting socket connections
-        struct sockaddr_in servaddr;    // address object for binding to this server
+	int idx=-1, maxidx=-1;
+	int nready; // poll: number of sd ready to read / process
+	int sd_listen=-1; // sd for waiting on connections
+	int sd_conn=-1; // accepted connection sd
+	int sd=-1; // sd for looping through sd list
+	char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
+	socklen_t clilen;
+	struct pollfd client[OPEN_MAX]; // array of client sd's
+	struct sockaddr_in cliaddr;     // address object for accepting socket connections
+	struct sockaddr_in servaddr;    // address object for binding to this server
 	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
@@ -469,42 +469,42 @@ int main(int argc, char* argv[])
 	strncpy(port, argv[1], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-        // socket
+	// socket
 	sd_listen = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
-        // bind
-        memset( &servaddr, 0, sizeof(servaddr));
-        servaddr.sin_family = AF_INET;
-        servaddr.sin_addr.s_addr = htonl( INADDR_ANY ); // in case, bind to all interfaces
-        servaddr.sin_port = htons(atoi(port));
+	// bind
+	memset( &servaddr, 0, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = htonl( INADDR_ANY ); // in case, bind to all interfaces
+	servaddr.sin_port = htons(atoi(port));
 	lothars__bind(sd_listen, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
-        // listen
+	// listen
 	lothars__listen(sd_listen, LISTENQ);
 
-        /*
+	/*
 	  poll - init struct pollfd array: client[]
 	*/
-        client[0].fd = sd_listen;
+	client[0].fd = sd_listen;
 
-        fprintf(stderr, "_XOPEN_SOURCE was");
+	fprintf(stderr, "_XOPEN_SOURCE was");
 #if _XOPEN_SOURCE >= 500
-        client[0].events = POLLRDNORM;
+	client[0].events = POLLRDNORM;
 #else
-        fprintf(stderr, " NOT");
-        client[0].events = POLLIN;
+	fprintf(stderr, " NOT");
+	client[0].events = POLLIN;
 #endif
-        fprintf(stderr, " defined\n");
+	fprintf(stderr, " defined\n");
 
 
-        for (idx = 1; idx < OPEN_MAX; ++idx) {
-                // -1 indicates available entry
-                client[idx].fd = -1;
-        }
-        maxidx = 0; // max index into client[] array
+	for (idx = 1; idx < OPEN_MAX; ++idx) {
+		// -1 indicates available entry
+		client[idx].fd = -1;
+	}
+	maxidx = 0; // max index into client[] array
 
 
-        while (1) {
+	while (1) {
 		/*
 		  poll - waits for one of a set of file descriptors
 		  (client[]) to become ready to perform I/O.
@@ -550,7 +550,7 @@ int main(int argc, char* argv[])
 #else
 			client[idx].events = POLLIN;
 #endif
-                        // max index in client[] array
+			// max index in client[] array
 			if (maxidx < idx) maxidx = idx;
 
 			// no more readable descriptors
