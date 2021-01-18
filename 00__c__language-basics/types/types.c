@@ -1,4 +1,5 @@
 #define _GNU_SOURCE /* *_WIDTH */
+#define _XOPEN_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
