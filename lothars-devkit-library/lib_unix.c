@@ -67,7 +67,9 @@ void lothars__close(int *fd)
 		err_sys("%s() error", __func__);
 	}
 	*fd = 0;
+#if _XOPEN_SOURCE >= 500
 	sync();
+#endif /* _XOPEN_SOURCE */
 }
 
 
