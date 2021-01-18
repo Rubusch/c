@@ -198,12 +198,18 @@ void lothars__listen(int fd, int backlog)
       examined and the events of interest for each file descriptor.
   @nfds: The numer of fdarray [fds].
   @timeout: Alternatively, provide a timeout.
+
+  Returns a positive value indicates the total number of file
+  descriptors that have been selected, a value of 0 indicates that the
+  call timed out.
 */
 int lothars__poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
 {
 	int res;
 	if (0 > (res = poll(fdarray, nfds, timeout))) {
 		err_sys("%s() error", __func__);
+	} else if (0 == res) {
+		err_sys("%s() timed out error", __func__);
 	}
 	return res;
 }
