@@ -204,7 +204,7 @@ int main(int argc, char** argv)
 	// socket
 	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));

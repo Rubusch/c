@@ -7,6 +7,7 @@
 */
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
+#define _XOPEN_SOURCE 600
 
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
@@ -16,6 +17,7 @@
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
+#include <sys/select.h> /* FD_SET, ... */
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
@@ -370,7 +372,7 @@ int main(int argc, char** argv)
 	// socket - create listening TCP socket!
 	fd_listen = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));
@@ -388,7 +390,7 @@ int main(int argc, char** argv)
 	// create UDP socket
 	fd_udp = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));

@@ -169,7 +169,7 @@ int main(int argc, char** argv)
 	fprintf(stdout, "port: '%s'\n", port);
 
 	// init server address structure
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(atoi(port));
 

@@ -1,4 +1,3 @@
-# Makefile
 SOURCE = mcastclient.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)

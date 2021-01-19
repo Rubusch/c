@@ -7,6 +7,8 @@
 
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
+#define _XOPEN_SOURCE 600 /* SIGCHLD, SIGINT, gai_strerror(),... */
+
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h>
@@ -242,7 +244,7 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	const int  on = 1;
 	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
-	bzero(&hints, sizeof(struct addrinfo));
+	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;

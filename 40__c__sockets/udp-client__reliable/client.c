@@ -54,6 +54,7 @@
 
     void sig_alarm(int signo){ siglongjmp(jmpbuf, 1); }
 */
+#define _XOPEN_SOURCE 600
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -572,7 +573,7 @@ int main(int argc, char** argv)
 	fprintf(stdout, "port: '%s'\n", port);
 
 	// init server address structure
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(atoi(port));
 
