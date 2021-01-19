@@ -79,8 +79,6 @@ int lothars__udp_connect(const char*, const char*);
 int lothars__udp_server(const char*, const char*, socklen_t*);
 int lothars__writable_timeo(int, int);
 int lothars__sock_bind_wild(int, int);
-char* lothars__sock_ntop(const struct sockaddr*, socklen_t);
-char* lothars__sock_ntop_host(const struct sockaddr*, socklen_t);
 int lothars__readable_timeo(int, int);
 int sock_cmp_addr(const struct sockaddr*, const struct sockaddr*, socklen_t);
 int sock_cmp_port(const struct sockaddr*, const struct sockaddr*, socklen_t);
