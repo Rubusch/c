@@ -607,8 +607,8 @@ void lothars__socketpair(int family, int type, int protocol, int fd[2])
   latter functions, getaddrinfo() is reentrant and allows programs to
   eliminate IPv4-versus-IPv6 dependencies.
 
-  @host:
-  @serv:
+  @host: The hostname or IP.
+  @serv: The servername or IP.
   @family: Can be 0, AF_INET, AF_INET6, etc.
   @socktype: Can be 0, SOCK_STREAM, SOCK_DGRAM, etc.
 
