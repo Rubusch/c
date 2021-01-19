@@ -187,7 +187,20 @@ script:
   - cd 40__c__sockets/tcp-server__echoserver && make && cd -
   - cd 40__c__sockets/tcp-server__echoserver-poll && make && cd -
   - cd 40__c__sockets/tcp-server__echoserver-select && make && cd -
-  # TODO        
+  - cd 40__c__sockets/tcp-server-types__0-tcp-iterative-server && make && cd -
+  - cd 40__c__sockets/tcp-server-types__1-tcp-concurrent-server-one-child-per-client && make && cd -
+  - cd 40__c__sockets/tcp-server-types__2a-tcp-preforked-no-locking-around-accept && make && cd -
+  - cd 40__c__sockets/tcp-server-types__2b-tcp-preforked-no-locking-around-accept-using-select && make && cd -
+  - cd 40__c__sockets/tcp-server-types__3-tcp-preforked-server-file-locking-around-accept && make && cd -
+  - cd 40__c__sockets/tcp-server-types__4-tcp-preforked-server-thread-locking-around-accept && make && cd -
+  - cd 40__c__sockets/tcp-server-types__5-tcp-preforked-server-descriptor-passing && make && cd -
+  - cd 40__c__sockets/tcp-server-types__6-tcp-concurrent-server-on-thread-per-client && make && cd -
+  - cd 40__c__sockets/tcp-server-types__7-tcp-prethreaded-server-per-thread-calls-accept && make && cd -
+  - cd 40__c__sockets/tcp-server-types__8-tcp-prethreaded-server-main-thread-calls-accept && make && cd -
+  - cd 40__c__sockets/tcp-udp-server__echoserver && make && cd -
+  - cd 40__c__sockets/udp-client__reliable && make && cd -
+  - cd 40__c__sockets/udp-client__simple && make && cd -
+  - cd 40__c__sockets/udp-server__echoserver && make && cd -
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
   - cd 99__c__linux/ptrace__010-fork-show-all-instructions && make && cd -
