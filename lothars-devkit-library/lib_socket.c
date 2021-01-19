@@ -299,6 +299,13 @@ ssize_t lothars__recvfrom(int fd
 
   #include <sys/socket.h>
 
+  NB: in case of ignoring EINTR (interrupt), don't use this function,
+  implement something as:
+    if (0 > (cnt = recvmsg(fd_sock, &msg, 0))) {
+        if (errno == EINTR) continue;
+        else err_sys("recvmsg error");
+    }
+
   @fd: The socket file descriptor.
   @msg: Points to a msghdr structure, containing both the buffer to
       store the source address and the buffers for the incoming
@@ -306,6 +313,8 @@ ssize_t lothars__recvfrom(int fd
       address family of the socket. The msg_flags member is ignored on
       input, but may contain meaningful values on output.
   @flags: Specifies the type of message reception.
+
+  Returns the number of received bytes.
 */
 ssize_t lothars__recvmsg(int fd, struct msghdr *msg, int flags)
 {
