@@ -497,8 +497,10 @@ void lothars__setsockopt(int fd
 			 , socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
-//		close(fd); /* strict */
-//		sync();
+		close(fd);
+#if _XOPEN_SOURCE >= 500
+		sync();
+#endif
 		err_sys("%s() error", __func__);
 	}
 }
