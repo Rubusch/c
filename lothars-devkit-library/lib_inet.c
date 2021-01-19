@@ -66,6 +66,8 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 
 
 /*
+  DEPRECATED: use inet_pton()
+
   inet_aton() converts the Internet host address cp from the IPv4
   numbers-and-dots notation into binary form (in network byte order)
   and stores it in the structure that inp points to. inet_aton()
