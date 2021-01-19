@@ -25,7 +25,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/utsname.h> /* uname() */
-#include <linux/un.h> /* struct sockaddr_un */
+#include <sys/un.h> /* struct sockaddr_un */
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>

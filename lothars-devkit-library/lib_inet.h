@@ -55,6 +55,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/un.h> /* struct sockaddr_un */
 
 #include "lib_error.h"
 

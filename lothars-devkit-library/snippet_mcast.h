@@ -84,6 +84,7 @@
 #include <arpa/inet.h>
 #include <net/if.h> /* IFNAMSIZ */
 #include <linux/sockios.h> /* SIOCGIFADDR */
+//#include <sys/un.h> /* struct sockaddr_un */
 
 #include "snippet_socket.h"
 #include "lib_error.h"

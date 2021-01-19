@@ -25,6 +25,9 @@
 #include <sys/poll.h> /* struct pollfd */
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/select.h> /* select(), FD_SET,... */
+#include <netdb.h> /* struct sockaddr */
+#include <sys/un.h> /* struct sockaddr_un */
 
 #include "lib_error.h"
 

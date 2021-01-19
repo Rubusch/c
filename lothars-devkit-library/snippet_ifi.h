@@ -27,7 +27,7 @@
 #include <linux/un.h> // struct sockaddr_un
 /*/ // alternative unix implementation
 #include <netinet/in.h>  // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
-#include <sys/un.h> // struct sockaddr_un
+#include <sys/un.h> // struct sockaddr_un (official)
 // */
 #include <sys/socket.h>
 #include <linux/if.h>
