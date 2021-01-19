@@ -65,7 +65,6 @@ void dg_echo(int, struct sockaddr*, socklen_t);
 int lothars__family_to_level(int);
 int lothars__socket_to_family(int);
 char* gf_time();
-struct addrinfo* lothars__host_serv(const char*, const char*, int, int);
 char** lothars__my_addrs(int*);
 void worker__echo_serv(int);
 void worker__echo_cli(FILE *, int);

@@ -56,6 +56,6 @@ void lothars__shutdown(int, int);
 int lothars__sockatmark(int);
 int lothars__socket(int, int, int);
 void lothars__socketpair(int, int, int, int *);
-
+struct addrinfo* lothars__host_serv(const char*, const char*, int, int);
 
 #endif /* DEVKIT_LIB_SOCKET */

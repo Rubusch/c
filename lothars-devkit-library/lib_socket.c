@@ -593,6 +593,43 @@ void lothars__socketpair(int family, int type, int protocol, int fd[2])
 }
 
 
+/*
+  host server - by getaddrinfo()
+
+  Given node and service, which identify an Internet host and a
+  service, getaddrinfo() returns one or more addrinfo structures, each
+  of which contains an Internet address that can be specified in a
+  call to bind(2) or connect(2). The getaddrinfo() function combines
+  the functionality provided by the gethostbyname(3) and
+  getservbyname(3) functions into a single interface, but unlike the
+  latter functions, getaddrinfo() is reentrant and allows programs to
+  eliminate IPv4-versus-IPv6 dependencies.
+
+  @host:
+  @serv:
+  @family: Can be 0, AF_INET, AF_INET6, etc.
+  @socktype: Can be 0, SOCK_STREAM, SOCK_DGRAM, etc.
+
+  Return pointer to first on linked list.
+*/
+struct addrinfo* lothars__host_serv(const char *host, const char *serv, int family, int socktype)
+{
+	struct addrinfo hints, *res = NULL;
+	int eai = -1;
+
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_flags = AI_CANONNAME; // always return canonical name
+	hints.ai_family = family;  // 0, AF_INET, AF_INET6, etc.
+	hints.ai_socktype = socktype; // 0, SOCK_STREAM, SOCK_DGRAM, etc
+	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
+		err_quit("%s() error for %s, %s: %s", __func__
+			 , (host == NULL) ? "(no hostname)" : host
+			 , (serv == NULL) ? "(no service name)" : serv
+			 , gai_strerror(eai));
+	}
+
+	return res;
+}
 
 
 

@@ -94,7 +94,9 @@ TEST__BEGIN(lothars__socketpair) {
 // TODO
 } TEST__END
 
-
+TEST__BEGIN(lothars__host_serv) {
+// TODO
+} TEST__END
 
 
 /*
@@ -121,6 +123,7 @@ int main(int argc, char* argv[])
 	test__lothars__sockatmark();
 	test__lothars__socket();
 	test__lothars__socketpair();
+	test__lothars__host_serv();
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
