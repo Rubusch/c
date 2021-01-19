@@ -581,9 +581,13 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 
 
 /*
-  demo snippet - tv_sub
-*/
+  tv_sub
 
+  Subract a timevalue (in) from a passed timevalue (out).
+
+  @out: The timevalue to subtract from and holding the result.
+  @in: The timevalue to subtract.
+*/
 void tv_sub(struct timeval *out, struct timeval *in)
 {
 	if (0 > (out->tv_usec -= in->tv_usec)) { // out -= in
