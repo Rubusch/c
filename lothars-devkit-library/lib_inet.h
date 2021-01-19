@@ -64,6 +64,8 @@
 const char* lothars__inet_ntop(int, const void*, char*, size_t);
 void lothars__inet_pton(int, const char*, void*);
 int lothars__inet_aton(const char *, struct in_addr *);
+char* lothars__sock_ntop(const struct sockaddr*, socklen_t);
+char* lothars__sock_ntop_host(const struct sockaddr*, socklen_t);
 
 
 #endif /* DEVKIT_LIB_INET */

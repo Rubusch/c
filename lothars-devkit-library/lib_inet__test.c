@@ -22,6 +22,14 @@ TEST__BEGIN(lothars__inet_aton) {
 // TODO
 } TEST__END
 
+TEST__BEGIN(lothars__sock_ntop) {
+// TODO
+} TEST__END
+
+TEST__BEGIN(lothars__sock_ntop_host) {
+// TODO
+} TEST__END
+
 
 
 /*
@@ -31,6 +39,8 @@ int main(int argc, char* argv[])
 	test__lothars__inet_ntop();
 	test__lothars__inet_pton();
 	test__lothars__inet_aton();
+	test__lothars__sock_ntop();
+	test__lothars__sock_ntop_host();
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
