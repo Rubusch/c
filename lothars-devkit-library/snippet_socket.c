@@ -846,7 +846,21 @@ int lothars__sock_bind_wild(int fd_sock, int family)
 
 
 /*
-  sock_cmp_addr.c
+  sock_cmp_addr()
+
+  Comparator of the addresses of two sockaddr instances. They must
+  have the same address family. The function implements a generic
+  frontend to compare address instances for various families, AF_INET,
+  AF_INET6, AF_UNIX...
+
+  @sa1: The first struct sockaddr instance.
+  @sa2: The second struct sockaddr instance.
+  @salen: The size of the struct sockaddr instance(s).
+
+  Returns a memcmp() comparison: The memcmp() function returns an
+  integer less than, equal to, or greater than zero if the first n
+  bytes of s1 is found, respectively, to be less than, to match, or be
+  greater than the first n bytes of s2. I.e. 0 means both are equal.
 */
 int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2, socklen_t salen)
 {
