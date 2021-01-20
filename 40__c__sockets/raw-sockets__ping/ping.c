@@ -702,9 +702,9 @@ void readloop()
 			if (errno == EINTR) continue;
 				// only an interrupt was caught..
 				//
-                                // it cannot be the common recvmsg()
-                                // wrapper, when EINTR shall be
-                                // ignored
+				// it cannot be the common recvmsg()
+				// wrapper, when EINTR shall be
+				// ignored
 			else err_sys("recvmsg error");
 		}
 
