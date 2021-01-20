@@ -179,7 +179,7 @@ script:
 #  - cd 40__c__sockets/multicast__sntp-client__TODO && make && cd -
   - cd 40__c__sockets/raw-sockets__tcp && make && cd -
   - cd 40__c__sockets/raw-sockets__udp && make && cd -
-  - cd 40__c__sockets/raw-sockets__stevens-ping && make && cd -
+  - cd 40__c__sockets/raw-sockets__ping && make && cd -
   - cd 40__c__sockets/tcp-client__portscanner && make && cd -
   - cd 40__c__sockets/tcp-client__sending-xml && make && cd -
   - cd 40__c__sockets/tcp-client__simple && make && cd -
