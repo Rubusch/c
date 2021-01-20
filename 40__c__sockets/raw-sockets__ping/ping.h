@@ -116,4 +116,4 @@ struct protocol{
 } *proto;
 
 
-#endif // PING_INCLUDE_GUARD
+#endif
