@@ -6,6 +6,7 @@
   timestamp, sequence numbers and ttl, the ICMP answer is caught via
   raw socket, timestamped and registered. Typical traceroute output.
 
+  NB: Needs ROOT permissions for execution.
 
   ---
   References:
