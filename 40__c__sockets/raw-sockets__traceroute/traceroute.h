@@ -2,28 +2,22 @@
 #define __TRACEROUTE_H_
 
 
-#define _XOPEN_SOURCE 600
-#define _GNU_SOURCE /* sync() */
+#define _GNU_SOURCE /* sync(), ICMP.. */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h> /* va_start(), va_end(),... */
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <sys/time.h> /* gettimeofday() */
 #include <sys/wait.h> /* wait() */
-#include <sys/un.h>
+#include <sys/un.h> /* struct sockaddr_un */
 #include <unistd.h> /* read(), write(), fork(), close() */
 #include <netdb.h> /* socket(), SOCK_STREAM, AF_UNSPEC, getaddrinfo() */
-#include <arpa/inet.h>
+#include <arpa/inet.h> /* inet_ntop() */
 
-#include <netinet/in.h>
-#include <netinet/in_systm.h>
-#include <netinet/ip.h>
-#include <netinet/ip_icmp.h>
-#include <netinet/udp.h>
+#include <netinet/ip_icmp.h> /* struct ip, ICMP_* */
+#include <netinet/udp.h> /* struct udphdr */
 #ifdef IPV6
 # include <netinet/ip6.h>
 # include <netinet/icmp6.h>
