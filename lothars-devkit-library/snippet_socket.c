@@ -965,7 +965,16 @@ void sock_set_addr(struct sockaddr *sa, socklen_t salen, const void *addr)
 
 
 /*
-  sock_set_port.c
+  sock_set_port()
+
+  Obtain the specific struct sockaddr_?? instance and initialize the
+  specific member variable with the port number. The function
+  represents a generic interface for initializing AF_INET,
+  AF_INET6,... and others.
+
+  @sa: The generic struct sockaddr instance.
+  @salen: The size of the sockaddr instance.
+  @port: The port number to set.
 */
 void sock_set_port(struct sockaddr *sa, socklen_t salen, int port)
 {
