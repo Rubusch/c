@@ -501,10 +501,10 @@ struct protocol proto_v6 = { icmpcode_v6, recv_v6, NULL, NULL, NULL, NULL, 0, IP
 
 /* file wide globals in .c file to hide them from outside */
 
-int datalen = sizeof(struct rec); // TODO redefinition, already defined in .h
+int datalen = sizeof(struct rec);
 
 int ttl; // actual time to live (ttl)
-int max_ttl = 30; // TODO redefinition, already defined in .h
+int max_ttl = 30;
 int verbose;
 
 int probe; // actual probe counter
@@ -626,15 +626,11 @@ void worker_routine(void)
 					fprintf(stdout, " (ICMP %s)", (*proto->icmpcode) (code)); // print icmp code
 				}
 			}
-			fflush(stdout); // TODO needed?                
+			fflush(stdout); // "real time" output
 		}
 		fprintf(stdout, "\n");
 	}
 }
-
-
-// TODO check      
-//extern int gotalarm;
 
 
 /*
@@ -977,7 +973,6 @@ int main(int argc, char** argv)
 	if (ai->ai_family == AF_INET) {
 		proto = &proto_v4;
 
-//#ifdef IPV4 // TODO check       
 #ifdef IPV6
 	} else if (ai->ai_family == AF_INET6) {
 		proto = &proto_v6;

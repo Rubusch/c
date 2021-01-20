@@ -29,7 +29,6 @@
   constants
 */
 
-#define LISTENQ 1024 /* the listen queue - serving as backlog for listen, can also be provided as env var */ // TODO check is needed?      
 #define BUFSIZE 1500 /* buffer size for packet frames */
 #define MAXLINE 4096 /* max text line length */
 
