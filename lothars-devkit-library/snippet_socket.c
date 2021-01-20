@@ -288,11 +288,14 @@ char* gf_time(void)
 
 
 /*
-  demo snippet - my addrs
-*/
+  my_addrs
 
-/*
-  pt. 1/2
+  Provide the address family and obtain the address of the host
+  machine.
+
+  @addrtype: The adddress family.
+
+  Returns a pointer to the address.
 */
 char** my_addrs(int *addrtype)
 {
@@ -311,11 +314,6 @@ char** my_addrs(int *addrtype)
 
 	return hptr->h_addr_list;
 }
-
-
-/*
-  pt 2/2
-*/
 char** lothars__my_addrs(int *pfamily) // TODO name!             
 {
 	char **pptr;
