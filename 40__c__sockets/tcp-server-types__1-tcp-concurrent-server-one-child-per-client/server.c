@@ -482,7 +482,7 @@ int main(int argc, char** argv)
 			// child process
 
 			// close listening socket
-			lothars__close(fd_listen);
+			lothars__close(&fd_listen);
 
 			// process loop - never returnes
 			worker_routine(fd_conn);
@@ -493,7 +493,7 @@ int main(int argc, char** argv)
 		// parent process
 
 		// closes connected socket
-		lothars__close(fd_conn);
+		lothars__close(&fd_conn);
 		fprintf(stdout, "parent: READY.\n");
 		if (NULL != cliaddr) free(cliaddr);
 		cliaddr = NULL;
