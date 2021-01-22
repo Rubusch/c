@@ -46,8 +46,7 @@ void lothars__bind(int, const struct sockaddr *, socklen_t);
 void lothars__listen(int, int);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__write(int, void *, size_t);
-void lothars__close(int);
-
+void lothars__close(int *);
 
 /*
   internal helpers
@@ -148,11 +147,40 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 }
 
 
-void lothars__close(int fd)
+/*
+  The close() function shall deallocate the file descriptor indicated
+  by fd. To deallocate means to make the file descriptor available for
+  return by subsequent calls to open() or other functions that
+  allocate file descriptors. All outstanding record locks owned by the
+  process on the file associated with the file descriptor shall be
+  removed (that is, unlocked).
+
+  If close() is interrupted by a signal that is to be caught, it shall
+  return -1 with errno set to [EINTR] and the state of fildes is
+  unspecified. If an I/O error occurred while reading from or writing
+  to the file system during close(), it may return -1 with errno set
+  to [EIO]; if this error is returned, the state of fildes is
+  unspecified.
+
+  This wrapper sets the fp to NULL;
+
+  #include <unistd.h>
+
+  @fd: Points to the file descriptor to the specific connection.
+*/
+void lothars__close(int *fd)
 {
-	if (-1 == close(fd)) {
-		err_sys("close error");
+	if (NULL == fd) {
+		fprintf(stderr, "%s() fd was NULL\n", __func__);
+		return;
 	}
+	if (-1 == close(*fd)) {
+		err_sys("%s() error", __func__);
+	}
+	*fd = 0;
+#if _XOPEN_SOURCE >= 500
+	sync();
+#endif /* _XOPEN_SOURCE */
 }
 
 
@@ -206,7 +234,7 @@ int main(int argc, char** argv)
 		lothars__write(fd_conn, buf, strlen(buf));
 
 		// close connection after sending
-		lothars__close(fd_conn);
+		lothars__close(&fd_conn);
 		fprintf(stdout, "READY.\n");
 	}
 
