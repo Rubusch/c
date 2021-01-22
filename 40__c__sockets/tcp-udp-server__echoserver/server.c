@@ -1,4 +1,3 @@
-// server.c
 /*
   TCP and UDP echo server
 
@@ -6,7 +5,6 @@
   using select() to multiplex a TCP and UDP socket
 */
 
-/* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 #define _XOPEN_SOURCE 600
 
 #include <stdio.h> /* readline() */
@@ -57,7 +55,7 @@ void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, so
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 int lothars__socket(int, int, int);
 pid_t lothars__fork();
-void lothars__close(int);
+void lothars__close(int *);
 
 
 /*
@@ -293,11 +291,40 @@ pid_t lothars__fork(void)
 }
 
 
-void lothars__close(int fd)
+/*
+  The close() function shall deallocate the file descriptor indicated
+  by fd. To deallocate means to make the file descriptor available for
+  return by subsequent calls to open() or other functions that
+  allocate file descriptors. All outstanding record locks owned by the
+  process on the file associated with the file descriptor shall be
+  removed (that is, unlocked).
+
+  If close() is interrupted by a signal that is to be caught, it shall
+  return -1 with errno set to [EINTR] and the state of fildes is
+  unspecified. If an I/O error occurred while reading from or writing
+  to the file system during close(), it may return -1 with errno set
+  to [EIO]; if this error is returned, the state of fildes is
+  unspecified.
+
+  This wrapper sets the fp to NULL;
+
+  #include <unistd.h>
+
+  @fd: Points to the file descriptor to the specific connection.
+*/
+void lothars__close(int *fd)
 {
-	if (-1 == close(fd)) {
-		err_sys("close error");
+	if (NULL == fd) {
+		fprintf(stderr, "%s() fd was NULL\n", __func__);
+		return;
 	}
+	if (-1 == close(*fd)) {
+		err_sys("%s() error", __func__);
+	}
+	*fd = 0;
+#if _XOPEN_SOURCE >= 500
+	sync();
+#endif /* _XOPEN_SOURCE */
 }
 
 
@@ -439,14 +466,14 @@ int main(int argc, char** argv)
 			fd_conn = lothars__accept(fd_listen, (struct sockaddr*) &cliaddr, &len);
 			if (0 == (childpid = lothars__fork())) {
 				// child process (tcp)
-				lothars__close(fd_listen);
+				lothars__close(&fd_listen);
 				worker__echo_serv(fd_conn);
 				fprintf(stdout, "tcp: READY.\n");
 				exit(EXIT_SUCCESS);
 			}
 
 			// parent process
-			lothars__close(fd_conn);
+			lothars__close(&fd_conn);
 		}
 
 		// 4. select case "fd_udp"
