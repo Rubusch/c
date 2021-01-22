@@ -420,7 +420,7 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 		worker_routine(fd_conn);
 
-		lothars__close(fd_conn);
+		lothars__close(&fd_conn);
 		fprintf(stdout, "child %d: READY.\n", getpid());
 	}
 }
