@@ -518,7 +518,7 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 
 		worker_routine(fd_conn);
 
-		lothars__close(fd_conn);
+		lothars__close(&fd_conn);
 		fprintf(stdout, "child %d: READY.\n", getpid());
 	}
 }
@@ -555,7 +555,7 @@ void lock_init(char* pathname)
 	int32_t fd = lothars__open("/dev/zero", O_RDWR, 0);
 	mx_ptr = lothars__mmap(0, sizeof(pthread_mutex_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	lothars__close(fd);
+	lothars__close(&fd);
 
 	lothars__pthread_mutexattr_init(&mxattr);
 	lothars__pthread_mutexattr_setpshared(&mxattr, PTHREAD_PROCESS_SHARED);
