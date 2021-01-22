@@ -91,7 +91,7 @@ ssize_t lothars__read_fd(int, void*, size_t, int *);
 ssize_t lothars__write_fd(int, void*, size_t, int);
 ssize_t lothars__read(int, void *, size_t);
 void lothars__write(int, void *, size_t);
-void lothars__close(int);
+void lothars__close(int *);
 
 
 /*
@@ -413,7 +413,7 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 		if (0 == bind(listenfd, res->ai_addr, res->ai_addrlen)) { // try to bind to the client (tcp)
 			break; // success
 		}
-		lothars__close(listenfd); // bind error, close and try next one
+		lothars__close(&listenfd); // bind error, close and try next one
 
 	} while (NULL != (res = res->ai_next)); // iterate over all clients obtained in address info (ai)
 
@@ -489,11 +489,40 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 }
 
 
-void lothars__close(int fd)
+/*
+  The close() function shall deallocate the file descriptor indicated
+  by fd. To deallocate means to make the file descriptor available for
+  return by subsequent calls to open() or other functions that
+  allocate file descriptors. All outstanding record locks owned by the
+  process on the file associated with the file descriptor shall be
+  removed (that is, unlocked).
+
+  If close() is interrupted by a signal that is to be caught, it shall
+  return -1 with errno set to [EINTR] and the state of fildes is
+  unspecified. If an I/O error occurred while reading from or writing
+  to the file system during close(), it may return -1 with errno set
+  to [EIO]; if this error is returned, the state of fildes is
+  unspecified.
+
+  This wrapper sets the fp to NULL;
+
+  #include <unistd.h>
+
+  @fd: Points to the file descriptor to the specific connection.
+*/
+void lothars__close(int *fd)
 {
-	if (-1 == close(fd)) {
-		err_sys("close error");
+	if (NULL == fd) {
+		fprintf(stderr, "%s() fd was NULL\n", __func__);
+		return;
 	}
+	if (-1 == close(*fd)) {
+		err_sys("%s() error", __func__);
+	}
+	*fd = 0;
+#if _XOPEN_SOURCE >= 500
+	sync();
+#endif /* _XOPEN_SOURCE */
 }
 
 
@@ -579,7 +608,7 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		// process request
 		worker_routine(fd_conn);
 		fprintf(stdout, "child %d: READY.\n", getpid());
-		lothars__close(fd_conn);
+		lothars__close(&fd_conn);
 
 		// tell parent we're ready again (STDERR_FILENO-trick answer)
 		lothars__write(STDERR_FILENO, "", 1);
@@ -605,7 +634,7 @@ pid_t worker_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		/* parent */
 
 		// parent: close childs pipe descriptor fd_sock[1]
-		lothars__close(fd_sock[1]);
+		lothars__close(&fd_sock[1]);
 
 		// parent: init Child_t struct to be passed via the pipe
 		child_ptr[idx].child_pid = pid;
@@ -637,11 +666,11 @@ pid_t worker_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	lothars__dup2(fd_sock[1], STDERR_FILENO);
 
 	// child: now close the listening sockets
-	lothars__close(fd_sock[0]);
-	lothars__close(fd_sock[1]);
+	lothars__close(&fd_sock[0]);
+	lothars__close(&fd_sock[1]);
 
 	// child does not need this open
-	lothars__close(fd_listen);
+	lothars__close(&fd_listen);
 
 	// never returns!!
 	worker_main(idx, fd_listen, addrlen);
@@ -808,7 +837,7 @@ int main(int argc, char** argv)
 			// descriptor, but the recipient does not look
 			// at the contents of this byte; the parent
 			// closes the connected socket
-			lothars__close(fd_conn);
+			lothars__close(&fd_conn);
 
 			// we always start looking for an available
 			// child with the first entry in the array of
