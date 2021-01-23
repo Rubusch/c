@@ -181,6 +181,7 @@ script:
   - cd 40__c__sockets/raw-sockets__udp && make && cd -
   - cd 40__c__sockets/raw-sockets__ping && make && cd -
   - cd 40__c__sockets/raw-sockets__traceroute && make && cd -
+  - cd 40__c__sockets/raw-sockets__synflooding && make && cd -
   - cd 40__c__sockets/tcp-client__portscanner && make && cd -
   - cd 40__c__sockets/tcp-client__sending-xml && make && cd -
   - cd 40__c__sockets/tcp-client__simple && make && cd -
