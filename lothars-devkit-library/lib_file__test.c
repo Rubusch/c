@@ -173,10 +173,6 @@ TEST__BEGIN(lothars__fopen) {
 	TEST__OK;
 } TEST__END
 
-//TEST__BEGIN(lothars__fopen) {
-//// TODO
-//} TEST__END
-
 TEST__BEGIN(lothars__fopen_rw) {
 // TODO
 } TEST__END
