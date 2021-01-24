@@ -12,7 +12,6 @@ SOURCE = \
  snippet_rtt__test.c snippet_rtt.c \
  snippet_socket__test.c snippet_socket.c \
  lib_socket__test.c lib_socket.c \
- lib_streams__test.c lib_streams.c \
  lib_unix__test.c lib_unix.c \
  lib_error.c
 
@@ -41,7 +40,6 @@ all: \
 	snippet_rtt__test.exe \
 	snippet_socket__test.exe \
 	lib_socket__test.exe \
-	lib_streams__test.exe \
 	lib_unix__test.exe
 
 
@@ -66,8 +64,8 @@ lib_read_write__test.exe: lib_read_write__test.o lib_read_write.o lib_error.o
 lib_socket__test.exe: lib_socket__test.o lib_socket.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-lib_streams__test.exe: lib_streams__test.o lib_streams.o lib_error.o
-	$(CC) $(CFLAGS) -o $@ $^
+#lib_streams__test.exe: lib_streams__test.o lib_streams.o lib_error.o
+#	$(CC) $(CFLAGS) -o $@ $^
 
 lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
