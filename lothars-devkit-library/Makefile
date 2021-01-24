@@ -64,9 +64,6 @@ lib_read_write__test.exe: lib_read_write__test.o lib_read_write.o lib_error.o
 lib_socket__test.exe: lib_socket__test.o lib_socket.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-#lib_streams__test.exe: lib_streams__test.o lib_streams.o lib_error.o
-#	$(CC) $(CFLAGS) -o $@ $^
-
 lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
