@@ -1,13 +1,16 @@
 /*
-  file and streams
+  file/streams
 
-  wrapper for streams and file streams
+  A collection of readers and writers to files, in case also
+  streams. Ranging from simple wrappers, convenience wrappers to
+  elaborated solutions and technical implementations.
 
-  Lothar Rubusch
+  author: Lothar Rubusch, GPL
 
   ---
   References:
   Unix Network Programming, Stevens
+  various
 */
 
 #include "lib_file.h"
@@ -90,28 +93,6 @@ char* lothars__fgets(char *ptr, int n, FILE *stream)
 	return rptr;
 }
 
-// TODO rm
-///*
-//  The fopen() function opens the file whose name is the string pointed
-//  to by path and associates a stream with it.
-//
-//  The argument mode points to a string beginning with one of the
-//  following sequences: r, r+, w, w+, a or a+ (see manpage).
-//
-//  #include <stdio.h>
-//
-//  @filename: The file to open.
-//  @mode: The argument mode.
-//*/
-//FILE* lothars__fopen(const char *filename, const char *mode)
-//{
-//	FILE *fp = NULL;
-//	if (NULL == (fp = fopen(filename, mode))) {
-//                err_sys("%s() error", __func__);
-//	}
-//	return fp;
-//}
-
 
 /*
   fputs() writes the string s to stream, without its terminating null
@@ -129,7 +110,7 @@ void lothars__fputs(const char *ptr, FILE *stream)
 	}
 }
 
-     
+
 /*
   The fopen() function opens the file whose name is the string pointed
   to by path and associates a stream with it.
@@ -142,7 +123,6 @@ void lothars__fputs(const char *ptr, FILE *stream)
 
   Returns 0 for ok, or -1 when failed.
 */
-// TODO in case check that fp is not NULL
 int lothars__fopen(FILE **fp, char *path, const char *mode)
 {
 	if (0 == strlen(path)) {
@@ -254,14 +234,6 @@ int lothars__fclose_null(FILE **fp)
 }
 
 
-
-/***
-
-    read from a FILE*
-
-***/
-
-
 /*
   This wrapper reads from a file pointer via fgetc() characterwise
 
@@ -345,7 +317,7 @@ int read_without_spaces(FILE *fp, char **content,
   getline approach() - NOT ANSI C - NOT TESTED
 
   reads the whole file linewise into a char* with a buffer of the given size
-//*/
+*/
 // CHECKED - OK
 int read_linewise(FILE *fp, char **content, unsigned long int *content_size)
 {
@@ -418,7 +390,7 @@ int read_linewise(FILE *fp, char **content, unsigned long int *content_size)
   reads blockwise into a char* from a "R'n'B"-opened file ;)
 
 // CHECKED - OK
-//*/
+*/
 int read_blockwise(FILE *fp, char *content, const unsigned int CONTENT_SIZE)
 {
 #ifdef DEBUG
