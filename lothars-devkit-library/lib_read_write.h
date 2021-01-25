@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <unistd.h> /* write(), read() */
 
+#include <fcntl.h> /* fcntl() */
 #include <sys/socket.h> /* SOL_SOCKET, sendmsg(), recvmesg(),... */
 
 #include "lib_error.h"

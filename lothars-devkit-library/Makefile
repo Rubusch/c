@@ -74,7 +74,7 @@ lib_unix__test.exe: lib_unix__test.o lib_unix.o lib_error.o
 snippet_ifi__test.exe: snippet_ifi__test.o snippet_ifi.o lib_unix.o lib_socket.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-snippet_mcast__test.exe: snippet_mcast__test.o snippet_mcast.o snippet_socket.o lib_socket.o lib_streams.o lib_unix.o lib_read_write.o lib_error.o
+snippet_mcast__test.exe: snippet_mcast__test.o snippet_mcast.o snippet_socket.o lib_socket.o lib_file.o lib_unix.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 snippet_route__test.exe: snippet_route__test.o snippet_route.o lib_error.o
@@ -83,7 +83,7 @@ snippet_route__test.exe: snippet_route__test.o snippet_route.o lib_error.o
 snippet_rtt__test.exe: snippet_rtt__test.o snippet_rtt.o lib_unix.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-snippet_socket__test.exe: snippet_socket__test.o snippet_socket.o lib_socket.o lib_streams.o lib_unix.o lib_read_write.o lib_error.o
+snippet_socket__test.exe: snippet_socket__test.o snippet_socket.o lib_socket.o lib_file.o lib_unix.o lib_read_write.o lib_error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 

@@ -31,7 +31,7 @@
 #include <netdb.h>
 
 #include "lib_socket.h"
-#include "lib_streams.h"
+#include "lib_file.h"
 #include "lib_read_write.h"
 #include "lib_unix.h"
 #include "lib_error.h"
