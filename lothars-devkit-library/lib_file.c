@@ -539,29 +539,27 @@ int write_linewise(FILE *fp, char *content,
 
 
 /*
-  create a file with a given size
-//*/
+  create_file() - Create a file with a given size. At last put a marker and 'x', then
+  close the file pointer.
+
+  @filename: The path and name of the file.
+  @filesize: the provided size of the file.
+*/
+// TODO what is this good for??!!!
 // CHECKED - OK
-int create_file(const char *filename, const unsigned long int SIZE)
+int create_file(const char *filename, const unsigned long int filesize)
 {
-#ifdef DEBUG
-	printf("\tfo::create_file(*filename, SIZE)\n");
-	printf("\t%i - SIZE\n", SIZE);
-#endif
 	if (filename == NULL)
 		return -1;
 
 	FILE *fp = fopen(filename, "wb");
 	if (fp == NULL) {
-		fprintf(
-			stderr,
-			"fo::create_file(const char*, const unsigned long int) - Failed!\n");
+		fprintf(stderr, "%s() failed!\n", __func__);
 		return -1;
 	}
-	fseek(fp, SIZE - 1, SEEK_SET);
+	fseek(fp, filesize - 1, SEEK_SET);
 	putc('x', fp);
-//	fclose(fp); // TODO rm
-	lothars__fclose_null(&fp);
+	fclose(fp);
 
 	return 0;
 }
@@ -592,25 +590,22 @@ int remove_file(const char *path)
 /*
   shred a file
   - depending on remove_file(const char* path)
-//*/
+*/
 // CHECKED - OK
 int shred_file(const char *path)
 {
-#ifdef DEBUG
-	printf("\tfo::shred_file(*path)\n");
-	printf("\t\'%s\' - path\n", path);
-#endif
+	unsigned long count;
+	FILE *fp;
+
 	if (path == NULL)
 		return -1;
-	unsigned long count;
-	FILE *fp = fopen(path, "w+b");
 
+	fp = fopen(path, "w+b");
 	if (fp != NULL) {
 		fseek(fp, 0L, SEEK_END);
 		count = ftell(fp);
 		fwrite("", 1, count, fp);
-//		fclose(fp); // TODO rm
-		lothars__fclose_null(&fp);
+		fclose(fp);
 		return remove_file(path);
 	}
 	return -1;
@@ -677,19 +672,12 @@ int copy_characterwise_unbuffered(const char *src, const char *dest)
 	// unbuffered
 	setvbuf(fpSrc, NULL, _IONBF, BUFSIZ);
 	setvbuf(fpDest, NULL, _IONBF, BUFSIZ);
-	/*
-	  old Version
-	  setbuf(fpSrc, NULL);
-	  setbuf(fpDest, NULL);
-	//*/
 
 	while ((c = getc(fpSrc)) != EOF)
 		putc(c, fpDest);
 
-//	fclose(fpSrc); // TODO rm
-	lothars__fclose_null(&fpSrc);
-//	fclose(fpDest); // TODO rm
-	lothars__fclose_null(&fpDest);
+	fclose(fpSrc);
+	fclose(fpDest);
 
 	return 0;
 }
@@ -736,19 +724,11 @@ int copy_characterwise_buffered(const char *src, const char *dest,
 	setvbuf(fpSrc, NULL, _IOFBF, BUFFER_SIZE);
 	setvbuf(fpDest, NULL, _IOFBF, BUFFER_SIZE);
 
-	/*
-	  old Version
-	  setbuf(fpSrc, NULL);
-	  setbuf(fpDest, NULL);
-	//*/
-
 	while ((c = getc(fpSrc)) != EOF)
 		putc(c, fpDest);
 
-//	fclose(fpSrc); // TODO rm
-	lothars__fclose_null(&fpSrc);
-//	fclose(fpDest); // TODO rm
-	lothars__fclose_null(&fpDest);
+	fclose(fpSrc);
+	fclose(fpDest);
 
 	return 0;
 }
