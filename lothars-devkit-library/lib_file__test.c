@@ -173,7 +173,7 @@ TEST__BEGIN(lothars__fopen) {
 	TEST__OK;
 } TEST__END
 
-TEST__BEGIN(lothars__fopen_rw) {    
+TEST__BEGIN(lothars__fopen_rw) {
 	int fd = -1;
 	FILE *f = NULL;
 	char file[] = "/tmp/test__fopen";
@@ -185,13 +185,13 @@ TEST__BEGIN(lothars__fopen_rw) {
 	memset(buf_read, '\0', sizeof(buf_read));
 	unlink(file); // cleanup artifacts
 
-	/* prepare a file */
+	// prepare a file
 	fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
 	assert(0 <= fd);
 	assert(write(fd, buf, sizeof(buf)) == sizeof(buf));
 	assert(0 == close(fd));
 
-	// open the file with content
+	// call
 	assert(NULL == f);
 	ret = lothars__fopen_rw(&f, file);
 	assert(0 == ret);
@@ -237,7 +237,33 @@ TEST__BEGIN(lothars__fopen_rw) {
 } TEST__END
 
 TEST__BEGIN(lothars__fopen_r) {
-// TODO
+	int fd = -1;
+	FILE *f = NULL;
+	char file[] = "/tmp/test__fopen";
+	char buf[] = "bico meh mini big\n";
+	char buf_read[2*sizeof(buf)];
+	int ret = -1;
+
+	// prepare a file
+	fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+	assert(0 <= fd);
+	assert(write(fd, buf, sizeof(buf)) == sizeof(buf));
+	assert(0 == close(fd));
+
+	// call
+	assert(NULL == f);
+	ret = lothars__fopen_r(&f, file);
+	assert(0 == ret);
+	assert(f);
+
+	// read
+	fgets(buf_read, sizeof(buf_read), f);
+	assert(sizeof(buf) == strlen(buf_read) + 1); // plus string termination
+
+	// close
+	assert(0 == fclose(f));
+	unlink(file);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__fopen_w) {
