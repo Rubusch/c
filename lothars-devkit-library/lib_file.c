@@ -197,41 +197,42 @@ int lothars__fopen_a(FILE **fp, char path[FILENAME_MAX])
 }
 
 
-/*
-  The fclose() function flushes the stream pointed to by fp (writing
-  any buffered output data using fflush(3)) and closes the underlying
-  file descriptor.
-
-  Note that fclose() only flushes the user-space buffers provided by
-  the C library. To ensure that the data is physically stored on disk
-  the kernel buffers must be flushed too, for example, with sync(2) or
-  fsync(2).
-
-  The wrapper nulls the fp, and executes sync() as available.
-
-  #include <stdio.h>
-
-  @fp: The file pointer to close.
-
-  Returns 0 upon completion, else -1.
-*/
-int lothars__fclose_null(FILE **fp)
-{
-	int res = -1;
-	if (NULL == *fp) {
-		err_msg("%() fp was already null", __func__);
-		return -1;
-	}
-	if (0 != (res = fclose(*fp))) {
-		err_msg("%() error", __func__);
-		return -1;
-	}
-	*fp = NULL;
-#if defined(_BSD_SOURCE) || _XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
-	sync();
-#endif
-	return res;
-}
+// TODO rm, fclose() is already null-ing
+///*
+//  The fclose() function flushes the stream pointed to by fp (writing
+//  any buffered output data using fflush(3)) and closes the underlying
+//  file descriptor.
+//
+//  Note that fclose() only flushes the user-space buffers provided by
+//  the C library. To ensure that the data is physically stored on disk
+//  the kernel buffers must be flushed too, for example, with sync(2) or
+//  fsync(2).
+//
+//  The wrapper nulls the fp, and executes sync() as available.
+//
+//  #include <stdio.h>
+//
+//  @fp: The file pointer to close.
+//
+//  Returns 0 upon completion, else -1.
+//*/
+//int lothars__fclose_null(FILE **fp)
+//{
+//	int res = -1;
+//	if (NULL == *fp) {
+//		err_msg("%() fp was already null", __func__);
+//		return -1;
+//	}
+//	if (0 != (res = fclose(*fp))) {
+//		err_msg("%() error", __func__);
+//		return -1;
+//	}
+//	*fp = NULL;
+//#if defined(_BSD_SOURCE) || _XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+//	sync();
+//#endif
+//	return res;
+//}
 
 
 /*

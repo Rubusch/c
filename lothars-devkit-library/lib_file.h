@@ -62,20 +62,12 @@ TODO remove debugging
 void lothars__fclose(FILE **);
 FILE* lothars__fdopen(int, const char *);
 char* lothars__fgets(char *, int, FILE *);
-//FILE* lothars__fopen(const char *, const char *);
 void lothars__fputs(const char *, FILE *);
-
 int lothars__fopen(FILE **fp, char *path, const char *mode);
-//int get_read_write_file_pointer(FILE **, char[]); // TODO rm
 int lothars__fopen_rw(FILE**, char[]);
-//int get_read_file_pointer(FILE **, char[]); // TODO rm
 int lothars__fopen_r(FILE **, char[]);
-//int get_write_file_pointer(FILE **, char[]); // TODO rm
 int lothars__fopen_w(FILE **, char[]);
-//int get_append_file_pointer(FILE **, char[]); // TODO rm
 int lothars__fopen_a(FILE **, char[]);
-//int close_stream(FILE **); // TODO rm
-int lothars__fclose_null(FILE **);
 int read_char(FILE *, char **, unsigned long int *);
 int read_without_spaces(FILE *, char **, unsigned long int *);
 int read_linewise(FILE *, char **, unsigned long int *);

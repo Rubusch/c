@@ -248,10 +248,6 @@ TEST__BEGIN(lothars__fopen_a) {
 // TODO
 } TEST__END
 
-TEST__BEGIN(lothars__fclose_null) {
-// TODO
-} TEST__END
-
 TEST__BEGIN(read_char) {
 // TODO
 } TEST__END
@@ -364,7 +360,7 @@ int main(int argc, char* argv[])
 	test__lothars__fopen_r();
 	test__lothars__fopen_w();
 	test__lothars__fopen_a();
-	test__lothars__fclose_null();
+//	test__lothars__fclose_null();
 	test__read_char();
 	test__read_without_spaces();
 	test__read_linewise();
