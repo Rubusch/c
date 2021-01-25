@@ -148,7 +148,7 @@ int lothars__fopen(FILE **fp, char *path, const char *mode)
 */
 int lothars__fopen_rw(FILE **fp, char path[FILENAME_MAX])
 {
-	return lothars__fopen(fp, path, "rw");
+	return lothars__fopen(fp, path, "rw+");
 }
 
 
