@@ -307,7 +307,54 @@ TEST__BEGIN(lothars__fopen_w) {
 } TEST__END
 
 TEST__BEGIN(lothars__fopen_a) {
-// TODO
+	int fd = -1;
+	FILE *f = NULL;
+	char file[] = "/tmp/test__fopen";
+	char buf[] = "bico meh mini big\n";
+	char baf[] = "maxi muxi\n";
+	char buf_read[2*sizeof(buf)];
+	int ret = -1;
+
+	memset(buf_read, '\0', sizeof(buf_read));
+	unlink(file); // cleanup artifacts
+
+	// prepare a file
+	fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+	assert(0 <= fd);
+	assert(write(fd, buf, sizeof(buf)) == sizeof(buf));
+	assert(0 == close(fd));
+
+	// call
+	assert(NULL == f);
+	ret = lothars__fopen_a(&f, file);
+	assert(0 == ret);
+	assert(f);
+
+	// write buf (append)
+	fputs(baf, f);
+	memset(buf_read, '\0', sizeof(buf_read));
+	assert(0 == strlen(buf_read));
+
+	// close
+	assert(0 == fclose(f));
+	f = NULL;
+
+	// open the file with content (again)
+	assert(NULL == f);
+	f = fopen(file, "r");
+	assert(f);
+
+	// read, again (the first line is read, since we are sure the
+	// text is written to the file [standard functions] we test if
+	// the orig first line is still the first line and was not
+	// overwritten
+	fgets(buf_read, sizeof(buf_read), f);
+	assert(sizeof(buf) == strlen(buf_read) + 1); // plus string termination
+
+	// close
+	assert(0 == fclose(f));
+	unlink(file);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(read_char) {
