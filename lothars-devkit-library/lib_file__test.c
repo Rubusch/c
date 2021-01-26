@@ -267,7 +267,43 @@ TEST__BEGIN(lothars__fopen_r) {
 } TEST__END
 
 TEST__BEGIN(lothars__fopen_w) {
-// TODO
+	FILE *f = NULL;
+	char file[] = "/tmp/test__fopen";
+	char buf[] = "bico meh mini big\n";
+	char buf_read[2*sizeof(buf)];
+	int ret = -1;
+
+	memset(buf_read, '\0', sizeof(buf_read));
+	unlink(file); // cleanup artifacts
+
+	// call
+	assert(NULL == f);
+	ret = lothars__fopen_w(&f, file);
+	assert(0 == ret);
+	assert(f);
+
+	// write buf (append)
+	fputs(buf, f);
+	memset(buf_read, '\0', sizeof(buf_read));
+	assert(0 == strlen(buf_read));
+
+	// close
+	assert(0 == fclose(f));
+	f = NULL;
+
+	// open the file with content (again)
+	assert(NULL == f);
+	f = fopen(file, "r");
+	assert(f);
+
+	// read, again
+	fgets(buf_read, sizeof(buf_read), f);
+	assert(sizeof(buf) == strlen(buf_read) + 1); // plus string termination
+
+	// close
+	assert(0 == fclose(f));
+	unlink(file);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(lothars__fopen_a) {
