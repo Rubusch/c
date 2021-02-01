@@ -122,7 +122,7 @@ script:
   - cd ./20__c__interprocess-communication/signal__alarm && make && cd -
   - cd ./20__c__interprocess-communication/signal__sighandler && make && cd -
   - cd ./20__c__interprocess-communication/signal__sighandler_siginfo01 && make && cd -
-
+  - cd ./20__c__interprocess-communication/signal__sighandler_siginfo02__backtrace && make && cd -
   - cd ./20__c__interprocess-communication/signal__kill && make && cd -
   - cd ./20__c__interprocess-communication/signal__sigmask && make && cd -
   - cd ./20__c__interprocess-communication/signal__syscall && make && cd -
