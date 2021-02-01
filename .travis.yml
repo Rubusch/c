@@ -120,8 +120,9 @@ script:
   - cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make && cd -
   - cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe && cd -
   - cd ./20__c__interprocess-communication/signal__alarm && make && cd -
-  - cd ./20__c__interprocess-communication/signal__signalhandler && make && cd -
-  - cd ./20__c__interprocess-communication/signal__signalhandler__siginfo01 && make && cd -
+  - cd ./20__c__interprocess-communication/signal__sighandler && make && cd -
+  - cd ./20__c__interprocess-communication/signal__sighandler_siginfo01 && make && cd -
+
   - cd ./20__c__interprocess-communication/signal__kill && make && cd -
   - cd ./20__c__interprocess-communication/signal__sigmask && make && cd -
   - cd ./20__c__interprocess-communication/signal__syscall && make && cd -
