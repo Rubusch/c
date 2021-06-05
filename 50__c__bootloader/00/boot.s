@@ -8,7 +8,7 @@
 ##     -rw-r--r-- 1 user user 203 Jun  5 23:04 boot.s
 ##     -rw-r--r-- 1 user user 198 Jun  5 23:00 Makefile
 ##
-## as described boot.o will be already aroudn 696 Bytes, due to object
+## as described boot.o will be already aroudn 696 bytes, due to object
 ## code and ELF format
 
 .code16           ## set the assembler to 16bit mode

@@ -1,6 +1,6 @@
 SOURCE = boot.s
 OBJECT = $(SOURCE:%.s=%.o)
-TARGET = $(SOURCE:%.s=%.exe)
+TARGET = $(SOURCE:%.s=%.bin)
 
 CC = as
 RM = rm -f
