@@ -36,6 +36,6 @@ init:
 
 .fill 510-(.-init), 1, 0 ## pad with zeros
         ## fill up with 0 to position 510, minus current position,
-	## where current position '.' starts from 'init'
+        ## where current position '.' starts from 'init'
 
 .word 0xaa55             ## append 0x55aa, NB: x86 is little endian!
