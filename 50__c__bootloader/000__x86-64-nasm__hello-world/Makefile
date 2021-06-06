@@ -11,6 +11,8 @@ RM = rm -f
 
 all: $(OBJECT)
 	$(LD) -o $(TARGET) $(OBJECT)
+	## now execute the program via:
+	## ./$(TARGET)
 
 clean:
 	$(RM) $(TARGET) $(OBJECT) *~
