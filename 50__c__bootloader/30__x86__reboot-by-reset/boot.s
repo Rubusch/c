@@ -1,7 +1,13 @@
 ## taken from "50 lines of code" by Martin Splitt, 2018
 ## taken parts from "kernel booting process, part 1" by 0xAX, 2014
 ##
-
+## $ make
+##     as -o boot.o boot.s
+##     ld -o boot.bin --oformat binary -e init boot.o
+##
+## now test it in qemu
+## $ qemu-system-x86_64 boot.bin
+##
 ##
 ## 'reset vector' inits a reboot
 ##
@@ -29,8 +35,6 @@
 ## in python, try
 ## >>> hex((0x2000 << 4) + 0x0010)
 ##
-## now test it in qemu
-## $ qemu-system-x86_64 boot.bin
 .code16
 .global init
 
