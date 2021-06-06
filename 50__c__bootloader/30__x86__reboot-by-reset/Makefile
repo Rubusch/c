@@ -11,6 +11,8 @@ RM = rm -f
 
 all: $(OBJECT)
 	$(LD) -o $(TARGET) --oformat binary -e init $(OBJECT)
+	## now test it in qemu:
+	## $ qemu-system-x86_64 -drive format=raw,file=boot.bin
 
 clean:
 	$(RM) $(TARGET) $(OBJECT) *~

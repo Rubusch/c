@@ -6,7 +6,7 @@
 ##     ld -o boot.bin --oformat binary -e init boot.o
 ##
 ## now test it in qemu
-## $ qemu-system-x86_64 boot.bin
+## $ qemu-system-x86_64 -drive format=raw,file=boot.bin
 ##
 ##
 ## 'reset vector' inits a reboot
