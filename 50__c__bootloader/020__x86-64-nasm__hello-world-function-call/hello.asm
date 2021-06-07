@@ -26,12 +26,14 @@
 ; rip                - 64 bit instruction pointer
 ;
 ;
-; so, for function arguments, use: rdi, rsi, rdx
-; e.g.
-;     size_t sys_write(unsigned int fd, const char * buf, size_t count);
-;     -> fd    - rdi
-;     -> *buf  - rsi
-;     -> count - rdx
+; function call
+;
+; rdi - first argument
+; rsi - second argument
+; rdx - third argument
+; rcx - fourth argument
+; r8  - fifth argument
+; r9  - sixth argument
 ;
 ;
 ; every nasm instruction has the form
