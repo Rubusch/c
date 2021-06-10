@@ -398,7 +398,32 @@ TEST__BEGIN(shred_file) {
 } TEST__END
 
 TEST__BEGIN(rename_file) {
-// TODO
+	int a = -1;
+	char file[] = "/tmp/test__rename_file";
+	char buf[] = "bicomeh";
+	char baf[] = "minibig";
+
+	// prepare a file
+        a = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+	assert(0 <= a);
+	assert(write(a, buf, sizeof(buf)) == sizeof(buf));
+	assert(0 == close(a));
+
+	/* call
+TODO assert - stat file under old name does exist
+TODO assert - stat file under new name does not exist
+	assert(NULL == b);
+	ret = lothars__rename_file(&a, &b);
+	assert(0 == ret);
+TODO rename_file() - to be called on stream, filedescriptor or filename?
+TODO assert - stat file under old name does not exist anymore
+TODO assert - stat file under new name does exist
+	*/
+
+	// close
+	assert(0 == fclose(a));
+	unlink(file);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(copy_characterwise_unbuffered) {
