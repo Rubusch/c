@@ -5,7 +5,6 @@
 #include <string.h>
 
 
-//#define LIN_LEN BUFSIZ
 #define LIN_LEN 7
 
 int get_read_file_pointer(FILE **fp, char filename[FILENAME_MAX]);
@@ -94,7 +93,6 @@ int main()
          get_read_file_pointer(&fp, file2), file2);
   printf("%i - Reading file characterwise\n",
          read_char(fp, &content, &content_size));
-  printf("AAA '%ld'\n", content_size);
   printf("content:\n\'%s\', %ld\n", content, content_size);
   strcpy(content, "");
   printf("%i - Close stream\n", close_stream(&fp));
