@@ -358,7 +358,53 @@ TEST__BEGIN(lothars__fopen_a) {
 } TEST__END
 
 TEST__BEGIN(read_char) {
-// TODO
+	int fd = -1;
+	FILE *f = NULL;
+	char file[] = "/tmp/test__read_char";
+	char buf[] = "bico meh mini big\n"; // size: 19 (inclusively
+					    // the \n and \0)
+	char *content = NULL;
+	unsigned long int content_size = 7; // is going to be
+					    // increased by number of
+					    // reallocated memory,
+					    // let's start with 7
+					    // bytes
+	int ret = -1;
+
+	unlink(file); // cleanup artifacts
+
+	// prepare a file
+	fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0600);
+	assert(0 <= fd);
+	assert(write(fd, buf, sizeof(buf)) == sizeof(buf));
+	assert(0 == close(fd));
+
+	// read_char extends with realloc,
+	// thus needs a pointer to allocated memory
+	if (NULL == (content = calloc(2, sizeof(buf)))) {
+		perror("test read_char() - calloc failed.");
+		exit(EXIT_FAILURE);
+	}
+
+	// call
+	assert(NULL == f);
+	f = fopen(file, "r");
+	assert(7 == content_size);
+	ret = read_char(f, &content, &content_size);
+	assert(0 == ret);
+	assert(0 == strncmp(buf, content, sizeof(buf)));
+	assert(content_size > sizeof(buf));
+	assert(19 == sizeof(buf)); // 19, see above
+	assert(21 == content_size); // initial content_size = 7,
+				    // allocates in multiples of
+				    // initial content_size, thus 3 x
+				    // 7 == 21
+
+	// close
+	assert(0 == fclose(f));
+	unlink(file);
+	free(content);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(read_without_spaces) {
