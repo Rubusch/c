@@ -444,6 +444,7 @@ TEST__BEGIN(shred_file) {
 } TEST__END
 
 TEST__BEGIN(rename_file) {
+/* TODO - WIP
 	int a = -1;
 	char file[] = "/tmp/test__rename_file";
 	char buf[] = "bicomeh";
@@ -454,6 +455,7 @@ TEST__BEGIN(rename_file) {
 	assert(0 <= a);
 	assert(write(a, buf, sizeof(buf)) == sizeof(buf));
 	assert(0 == close(a));
+// */
 
 	/* call
 TODO assert - stat file under old name does exist
@@ -466,10 +468,12 @@ TODO assert - stat file under old name does not exist anymore
 TODO assert - stat file under new name does exist
 	*/
 
+/*
 	// close
 	assert(0 == fclose(a));
 	unlink(file);
 	TEST__OK;
+// */
 } TEST__END
 
 TEST__BEGIN(copy_characterwise_unbuffered) {
