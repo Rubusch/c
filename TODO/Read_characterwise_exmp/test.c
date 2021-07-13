@@ -5,7 +5,8 @@
 #include <string.h>
 
 
-#define LIN_LEN BUFSIZ
+//#define LIN_LEN BUFSIZ
+#define LIN_LEN 7
 
 int get_read_file_pointer(FILE **fp, char filename[FILENAME_MAX]);
 int read_char(FILE *fp, char **content, unsigned long int *content_size);
@@ -58,7 +59,7 @@ int get_more_space(char **str, unsigned long int *str_size,
                    const unsigned long int how_much_more)
 {
   char *tmp = NULL;
-  if ((tmp = realloc(str, (*str_size + how_much_more))) == NULL) {
+  if ((tmp = realloc(*str, (size_t) (*str_size + how_much_more))) == NULL) {
     if (tmp != NULL)
       free(tmp);
     tmp = NULL;
@@ -84,7 +85,6 @@ int main()
 {
   // init
   FILE *fp = NULL;
-  fp = malloc(sizeof(FILE));
   char file2[] = "file2.txt";
   unsigned long int content_size = LIN_LEN;
   char *content = malloc(content_size * sizeof(char));
@@ -94,10 +94,12 @@ int main()
          get_read_file_pointer(&fp, file2), file2);
   printf("%i - Reading file characterwise\n",
          read_char(fp, &content, &content_size));
-  printf("content:\n\'%s\'\n", content);
+  printf("AAA '%ld'\n", content_size);
+  printf("content:\n\'%s\', %ld\n", content, content_size);
   strcpy(content, "");
   printf("%i - Close stream\n", close_stream(&fp));
   printf("Done.\n\n");
+  free(content);
 
   return EXIT_SUCCESS;
 }

@@ -13,10 +13,10 @@ RM = rm -f
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-test: ${OBJECTS}
+test.exe: ${OBJECTS}
 	${CC} -o $@ ${OBJECTS} -lm
 
-all: test
+all: test.exe
 
 clean:
 	${RM} test.exe ${OBJECTS} *~ core
