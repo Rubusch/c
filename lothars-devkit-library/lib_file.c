@@ -300,10 +300,11 @@ int read_without_spaces(FILE *fp, char **content,
 	const unsigned long int INITIAL_SIZE = *content_size;
 	unsigned long int idx = 1; // for the '\0' token
 	while ((fscanf(fp, "%127s", pBuf)) != EOF) { // FIXME uses magic number        
-		pBuf[128] = '\0'; // FIXME uses magic number        
+		pBuf[128-1] = '\0'; // FIXME uses magic number        
 		idx += strlen(pBuf);
 		if (idx >= *content_size) {
 			if (-1 == get_more_space(content, content_size, INITIAL_SIZE)) {
+//				err_sys("%s() error", __func__);
 				fprintf(stderr, "fo::read_without_spaces(*fp, char**, unsigned long "
 					"int*) - Failed!\n");
 				exit(EXIT_FAILURE);
