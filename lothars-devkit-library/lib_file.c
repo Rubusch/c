@@ -238,6 +238,8 @@ int lothars__fopen_a(FILE **fp, char path[FILENAME_MAX])
 /*
   This wrapper reads from a file pointer via fgetc() characterwise
 
+  NB: Allocates memory!
+
   @fp: The file/stream descriptor to read from via fgetc().
   @content: The text to be read.
   @content_size: The size of the text read.
@@ -275,6 +277,8 @@ int read_char(FILE *fp, char **content, unsigned long int *content_size)
 
 /*
   reads a formated stream into a char*
+
+  NB: Allocates memory!
 
   UNSAFE:
   fscanf() reads into the buffer but if there is no more space, it
