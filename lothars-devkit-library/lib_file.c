@@ -304,10 +304,7 @@ int read_without_spaces(FILE *fp, char **content,
 		idx += strlen(pBuf);
 		if (idx >= *content_size) {
 			if (-1 == get_more_space(content, content_size, INITIAL_SIZE)) {
-//				err_sys("%s() error", __func__);
-				fprintf(stderr, "fo::read_without_spaces(*fp, char**, unsigned long "
-					"int*) - Failed!\n");
-				exit(EXIT_FAILURE);
+				err_sys("%s() error", __func__);
 			}
 		}
 		strncat(*content, pBuf, 128); // FIXME uses magic number        
