@@ -292,8 +292,8 @@ int read_without_spaces(FILE *fp, char **content,
 		fprintf(stderr, "%s() error: fp was NULL\n", __func__);
 		return -1;
 	}
-
-	char pBuf[128]; // FIXME uses magic number        
+	const unsigned long int PBUF_SIZE = 128;
+	char pBuf[PBUF_SIZE]; // FIXME uses magic number        
 	// strcpy(pBuf, "\0");
 	memset(pBuf, '\0', 128); // FIXME uses magic number        
 
