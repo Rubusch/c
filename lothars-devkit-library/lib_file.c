@@ -293,21 +293,20 @@ int read_without_spaces(FILE *fp, char **content,
 		return -1;
 	}
 	const unsigned long int PBUF_SIZE = 128;
-	char pBuf[PBUF_SIZE]; // FIXME uses magic number        
-	// strcpy(pBuf, "\0");
-	memset(pBuf, '\0', 128); // FIXME uses magic number        
+	char pBuf[PBUF_SIZE];
+	memset(pBuf, '\0', sizeof(pBuf));
 
 	const unsigned long int INITIAL_SIZE = *content_size;
 	unsigned long int idx = 1; // for the '\0' token
 	while ((fscanf(fp, "%127s", pBuf)) != EOF) { // FIXME uses magic number        
-		pBuf[128-1] = '\0'; // FIXME uses magic number        
+		pBuf[sizeof(pBuf)-1] = '\0';
 		idx += strlen(pBuf);
 		if (idx >= *content_size) {
 			if (-1 == get_more_space(content, content_size, INITIAL_SIZE)) {
 				err_sys("%s() error", __func__);
 			}
 		}
-		strncat(*content, pBuf, 128); // FIXME uses magic number        
+		strncat(*content, pBuf, PBUF_SIZE);
 	}
 #ifdef DEBUG
 	printf("%s", *content);
