@@ -443,7 +443,6 @@ TEST__BEGIN(read_without_spaces) {
 	assert(14 == strlen(content));
 	assert(21 == content_size);
 
-
 	// close
 	assert(0 == fclose(f));
 	unlink(file);
@@ -452,7 +451,9 @@ TEST__BEGIN(read_without_spaces) {
 } TEST__END
 
 TEST__BEGIN(read_linewise) {
-// TODO
+
+// TODO: int read_linewise(FILE *, char **, unsigned long int *);
+
 } TEST__END
 
 TEST__BEGIN(read_blockwise) {

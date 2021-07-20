@@ -318,6 +318,8 @@ int read_without_spaces(FILE *fp, char **content,
 /*
   getline approach() - NOT ANSI C - NOT TESTED
 
+  NB: Allocates memory!
+
   reads the whole file linewise into a char* with a buffer of the given size
 */
 // CHECKED - OK
