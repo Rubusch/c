@@ -429,13 +429,14 @@ TEST__BEGIN(read_without_spaces) {
 	// read_char extends with realloc,
 	// thus needs a pointer to allocated memory
 	if (NULL == (content = calloc(2, sizeof(buf)))) {
-		perror("test read_char() - calloc failed.");
+		perror("test read_without_spaces() - calloc failed.");
 		exit(EXIT_FAILURE);
 	}
 
 	// call
 	assert(NULL == f);
 	f = fopen(file, "r");
+	assert(NULL != f);
 	assert(7 == content_size);
 	ret = read_without_spaces(f, &content, &content_size);
 	assert(0 == ret);
