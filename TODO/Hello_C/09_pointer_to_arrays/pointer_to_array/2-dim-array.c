@@ -1,6 +1,6 @@
 /*
   2-dim-array
- 
+ 
   This is kind of the most common structure, a pointer to arrays or an array of
 a pointer. here is just one as example: a pointer to arrays.
 

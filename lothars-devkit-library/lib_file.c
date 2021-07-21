@@ -320,7 +320,8 @@ int read_without_spaces(FILE *fp, char **content,
 
   NB: Allocates memory!
 
-  reads the whole file linewise into a char* with a buffer of the given size
+  reads the whole file linewise into a char* with a buffer of the
+  given size
 */
 // CHECKED - OK
 int read_linewise(FILE *fp, char **content, unsigned long int *content_size)

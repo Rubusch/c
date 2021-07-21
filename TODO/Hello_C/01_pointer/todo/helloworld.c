@@ -6,7 +6,7 @@
       the size is fixed, the memory will be on the stack, the
       memory is called "static memory" which has nothing to do with
       the keyword "static"!!!!
-      
+      
   char* arr;
       pointer, can be allocated dynamically to a number of elements
       it can be used like an array, though the size of the array is
@@ -31,7 +31,7 @@
       pointer = NULL;
 
   this is not 100% but it's safer than nothing!
-  
+  
   Reset the pointer to NULL, because it will continue pointing on the
   address after a free. Just the memory isn't allocated anymore, the
   address still exists. This means, writing to the address is still
@@ -54,7 +54,7 @@ allocation! a "free(ptr)" has to lead to an error!
 
 /*
   function to init the pointer
-  
+  
   when passing a pointer to an "array" allways pass the size of the array!
 //*/
 int func(char *ptr, int size)

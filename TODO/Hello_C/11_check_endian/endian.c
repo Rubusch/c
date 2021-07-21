@@ -2,11 +2,11 @@
 /*
   this is just an interesting snipped of code try to understand
   what happens here!
-  
+  
   C is compiled to different architectures, one of the biggest
   differences is, if the architecture is "little endian" or "big
   endian"
- 
+ 
   in little endian a value is stored "upwards" in memory, along
   increasing memory addresses, in bigendian the values are stored
   "downwards" in increasing memory addresses

@@ -6,7 +6,7 @@ amount of elements to sort).
   Shellsort is NOT stable (an alphabetic order of elements, equal by another
 key, e.g. birth dates sorted another time by that second key, doesn't need to be
 the same alphabetic order).
-  
+  
   Shellsort is basically a type of an insertion sort. Moving elements makes
 insertion sort ineffective, the shell sort concept tries to avoid that by
 putting the elements into an 2-D-array.

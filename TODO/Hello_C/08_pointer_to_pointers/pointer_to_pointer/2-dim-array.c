@@ -1,6 +1,6 @@
 /*
   2-dim-array: pointer to pointer
-  
+  
   a structure pointer to pointer is not necessary the same like a 2-dim-array -
 why? the size of the second arrays refered by the first pointer can vary,
 therefore the number of all elements in the structure is not necessary the
