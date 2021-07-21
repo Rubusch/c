@@ -453,9 +453,66 @@ TEST__BEGIN(read_without_spaces) {
 } TEST__END
 
 TEST__BEGIN(read_linewise) {
+	FILE *f = NULL;
+	char filename[] = "/tmp/test__read_linewise";
+	char chorus[] = "Die Elenden sollen essen";
+	char recitativ_b[] = "Was hilft des Purpurs Majestät";
+	char aria_t[] = "Mein Jesus soll mein alles sein";
+	char recitativ_t[] = "Gott stürzet und erhöhet";
+	char aria_s[] = "Ich nehme mein Leiden mit Freuden auf mich";
+	char recitativ_s[] = "Indes schenkt Gott ein gut Gewissen";
+	char chorale[] = "Was Gott tut, das ist wohlgetan";
+	char *content = NULL;
+	unsigned long int content_size = 7;
+	char expected[231]; memset(expected, '\0', sizeof(expected));
+	int ret = -1;
 
-// TODO: int read_linewise(FILE *, char **, unsigned long int *);
+	unlink(filename);
 
+	// prepare file
+	f = fopen(filename, "w");
+	fputs(chorus, f); fputc('\n', f);
+	fputs(recitativ_b, f); fputc('\n', f);
+	fputs(aria_t, f); fputc('\n', f);
+	fputs(recitativ_t, f); fputc('\n', f);
+	fputs(aria_s, f); fputc('\n', f);
+	fputs(recitativ_s, f); fputc('\n', f);
+	fputs(chorale, f); fputc('\n', f);
+	assert(0 == fclose(f));
+	f = NULL;
+
+	// template
+	strcat(expected, chorus); strcat(expected, "\n");
+	strcat(expected, recitativ_b); strcat(expected, "\n");
+	strcat(expected, aria_t); strcat(expected, "\n");
+	strcat(expected, recitativ_t); strcat(expected, "\n");
+	strcat(expected, aria_s); strcat(expected, "\n");
+	strcat(expected, recitativ_s); strcat(expected, "\n");
+	strcat(expected, chorale); strcat(expected, "\n");
+	//printf("AAA expected '%s'\n", expected);
+
+	// alloc
+	if (NULL == (content = calloc(2, content_size))) {
+		perror("test read_linewise() - calloc failed.");
+		exit(EXIT_FAILURE);
+	}
+
+	// call
+	assert(7 == content_size);
+	assert(NULL == f);
+	f = fopen(filename, "r");
+	assert(NULL != f);
+	ret = read_linewise(f, &content, &content_size);
+	assert(0 == ret);
+	assert(0 == strncmp(content, expected, sizeof(expected)));
+	assert(231 == content_size);
+	//printf("BBB content '%s', %ld\n", content, content_size);
+
+	// close
+	assert(0 == fclose(f));
+	unlink(filename);
+	free(content);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(read_blockwise) {
