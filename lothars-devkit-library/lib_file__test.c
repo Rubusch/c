@@ -389,6 +389,7 @@ TEST__BEGIN(read_char) {
 	// call
 	assert(NULL == f);
 	f = fopen(file, "r");
+	assert(NULL != f);
 	assert(7 == content_size);
 	ret = read_char(f, &content, &content_size);
 	assert(0 == ret);
