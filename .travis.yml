@@ -207,6 +207,9 @@ script:
   - cd 40__c__sockets/udp-client__simple && make && cd -
   - cd 40__c__sockets/udp-server__echoserver && make && cd -
 
+## 50: bootloader and low level C
+  - cd 50__c__bootloader/jmp__setjmp && make && ./*.exe && cd -
+
 ## 99: linux (all just built, since execution in case needs runs in parallel
   - cd 99__c__linux/ptrace__010-fork-show-all-instructions && make && cd -
   - cd 99__c__linux/ptrace__020-fork-syswrite-peekuser && make && cd -
