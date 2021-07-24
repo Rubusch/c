@@ -516,7 +516,65 @@ TEST__BEGIN(read_linewise) {
 } TEST__END
 
 TEST__BEGIN(read_blockwise) {
-// TODO
+	FILE *f = NULL;
+	char *content = NULL;
+	unsigned int content_size = 30;
+	char filename[] = "/tmp/test__read_blockwise";
+	char chorus[] = "Die Elenden sollen essen";
+	char recitativ_b[] = "Was hilft des Purpurs Majestät";
+	char aria_t[] = "Mein Jesus soll mein alles sein";
+	char recitativ_t[] = "Gott stürzet und erhöhet";
+	char aria_s[] = "Ich nehme mein Leiden mit Freuden auf mich";
+	char recitativ_s[] = "Indes schenkt Gott ein gut Gewissen";
+	char chorale[] = "Was Gott tut, das ist wohlgetan";
+	char expected[231]; memset(expected, '\0', sizeof(expected));
+	int ret = -1;
+
+	unlink(filename);
+
+	// alloc
+	if (NULL == (content = malloc(content_size))) {
+		perror("test read_blockwise() - malloc failed.");
+		exit(EXIT_FAILURE);
+	}
+
+	// prepare file
+	f = fopen(filename, "w");
+	fputs(chorus, f); fputc('\n', f);
+	fputs(recitativ_b, f); fputc('\n', f);
+	fputs(aria_t, f); fputc('\n', f);
+	fputs(recitativ_t, f); fputc('\n', f);
+	fputs(aria_s, f); fputc('\n', f);
+	fputs(recitativ_s, f); fputc('\n', f);
+	fputs(chorale, f); fputc('\n', f);
+	assert(0 == fclose(f));
+	f = NULL;
+
+	// template
+	strcat(expected, chorus); strcat(expected, "\n");
+	strcat(expected, recitativ_b); strcat(expected, "\n");
+	strcat(expected, aria_t); strcat(expected, "\n");
+	strcat(expected, recitativ_t); strcat(expected, "\n");
+	strcat(expected, aria_s); strcat(expected, "\n");
+	strcat(expected, recitativ_s); strcat(expected, "\n");
+	strcat(expected, chorale); strcat(expected, "\n");
+	//printf("AAA expected '%s'\n", expected);
+
+	// call
+	assert(NULL == f);
+	f = fopen(filename, "r");
+	assert(NULL != f);
+	ret = read_blockwise(f, content, content_size);
+	//printf("BBB content '%s'\n", content);
+	assert(0 == ret);
+	// note, just the block 'content_size' should have been read
+	assert(0 == strncmp(content, expected, content_size));
+
+	// close
+	assert(0 == fclose(f));
+	unlink(filename);
+	free(content);
+	TEST__OK;
 } TEST__END
 
 TEST__BEGIN(write_char) {
