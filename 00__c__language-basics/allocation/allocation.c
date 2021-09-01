@@ -67,8 +67,8 @@ int init_value(int **pResult, const int value)
 
 
 /*
-  allocates memory and copies into a new char*, if it works out, it changes the
-  old size value to the new value
+  allocates memory and copies into a new char*, if it works out, it
+  changes the old size value to the new value
 
   COPY_SIZE = number of the char's to copy, starting from index '0'
   pOld_size = size of the old string inclusive the '\0'
