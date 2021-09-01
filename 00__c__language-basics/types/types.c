@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 	fprintf(stdout, "%s [%d bit]\t\t: %d\t\t\t... %u\n", "uint", UINT_WIDTH, 0, (unsigned int) UINT_MAX);
 	fprintf(stdout, "\n");
 
-	fprintf(stdout, "%s [%d bit]\t\t: %ld\t... %ld\n", "long", LONG_WIDTH, LONG_MIN, LONG_MAX);
+	fprintf(stdout, "%s [%d bit]\t\t: %ld\t\t... %ld\n", "long", LONG_WIDTH, LONG_MIN, LONG_MAX);
 	fprintf(stdout, "%s [%d bit]\t\t: %ld\t\t\t... %lu\n", "ulong", ULONG_WIDTH, (long) 0, ULONG_MAX);
 	fprintf(stdout, "\n");
 
@@ -44,7 +44,8 @@ int main(int argc, char* argv[]) {
 	fprintf(stdout, "float precision value: %d digit\n", FLT_DIG);
 	fprintf(stdout, "\n");
 
-	fprintf(stdout, "char* size i.e. size of an address: %ld bit\n", (sizeof (char*) * CHAR_BIT));
+//	fprintf(stdout, "char* size i.e. size of an address: %d bit\n", (sizeof (char*) * CHAR_BIT));
+	fprintf(stdout, "char* size i.e. size of an address: %d bit\n", CHAR_BIT);
 	fprintf(stdout, "\n");
 #endif /* __GNUC__ */
 	fprintf(stdout, "READY.\n");
