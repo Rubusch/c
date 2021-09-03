@@ -411,5 +411,5 @@ int main(int argc, char *argv[])
 	lothars__close(&fd_listen);
 
 	fprintf(stdout, "READY.\n");
-	return EXIT_SUCCESS;
+	exit(EXIT_SUCCESS);
 }
