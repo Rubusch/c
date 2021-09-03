@@ -1,3 +1,11 @@
+/*
+  traceroute
+
+  traceroute uses the ICMP ttl to identify the routing path, by
+  increasing ttl then see who sent the ICMP reply until the
+  destination was reached
+ */
+
 #ifndef __TRACEROUTE_H_
 #define __TRACEROUTE_H_
 
