@@ -91,7 +91,7 @@ int main()
   char *identifier = NULL;
   if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
     perror("calloc() failed");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   memset(identifier, '\0', IDENTIFIER_SIZE);
   pid_t pid = 0, pid_parent = getpid();
@@ -99,7 +99,7 @@ int main()
   // fork()
   if (0 > (pid = fork())) {
     perror("fork failed");
-    exit(1);
+    exit(EXIT_FAILURE);
 
   } else if (pid == 0) {
     // child code
@@ -110,7 +110,7 @@ int main()
     sleep(5);
     printf("%sawakes\r\n", identifier);
     printf("%sdone\r\n", identifier);
-    exit(0);
+    exit(EXIT_SUCCESS);
 
   } else {
     // parent code
@@ -159,6 +159,6 @@ int main()
     }
 
     printf("%sdone\r\n", identifier);
-    exit(0);
+    exit(EXIT_SUCCESS);
   }
 }
