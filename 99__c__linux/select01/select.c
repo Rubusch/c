@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 		}
 
 	} else {
-		fprintf(stdout, "\nresult: no data within five seconds\n\n");
+		fprintf(stdout, "\nresult: no data within %d seconds\n\n", nsecs);
 
 	}
 
