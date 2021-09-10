@@ -5,7 +5,8 @@
 
   fastest server, handling several threads / processes
 
-FIXME: this server approach may work, but may hang up not reproducibly (needs investigation)          
+FIXME: this server approach may work, but may hang up not reproducibly
+(needs investigation)
 */
 
 #define _XOPEN_SOURCE 600
