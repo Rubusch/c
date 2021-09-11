@@ -1,9 +1,9 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-SOURCE = canbus.c
-TARGET = $(SOURCE:.c=.exe)
+## Makefile (simple)
+##
+## @author: Lothar Rubusch <L.Rubusch@gmail.com>
+## @license: GPLv3
+TARGET = can_demo.exe
+SOURCE = main.c can_interface.c
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
