@@ -229,7 +229,7 @@ int main(int argc, char** argv)
 			n_bytes = lothars__recvfrom(fd_sock, msg, MAXLINE, 0, pcliaddr, &len);
 			fprintf(stdout, "%s", msg);
 
-			// sende
+			// send
 			lothars__sendto(fd_sock, msg, n_bytes, 0, pcliaddr, len);
 		}
 	}
