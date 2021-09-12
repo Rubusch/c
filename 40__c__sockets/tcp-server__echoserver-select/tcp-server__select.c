@@ -429,14 +429,14 @@ int main(int argc, char* argv[])
 {
 	int idx=-1, maxidx=-1;
 	int nready; // multiplex: number of sd ready to read / process
-	int sd_listen=-1; // sd for waiting on connections
-	int sd_conn=-1; // accepted connection sd
-	int sd=-1; // sd for looping through sd list
+	int sd_listen=-1; // sd, for waiting on connections
+	int sd_conn=-1; // sd, accepted connection
+	int sd=-1; // sd, for looping through sd list
 	char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
 	socklen_t clilen;
 	struct sockaddr_in cliaddr;     // address object for accepting socket connections
 	struct sockaddr_in servaddr;    // address object for binding to this server
-	int sd_max;
+	int sd_max; // sd, to be increased at new connections
 	int client[FD_SETSIZE];
 	fd_set rset, allset; // select - rset, actually checked; allset, for registering fd's
 	char port[16]; memset(port, '\0', sizeof(port));
