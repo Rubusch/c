@@ -52,7 +52,7 @@ main(void)
 	struct sockaddr_can addr;
 	struct can_frame frame;
 	struct ifreq ifr;
-	const char *ifname = "vcan0";
+	const char *ifname = "can0";
 
 	if ((sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW)) == -1) {
 		perror("Error while opening socket");
