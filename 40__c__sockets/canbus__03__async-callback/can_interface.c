@@ -78,7 +78,6 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	return 0;
 }
 
-//int canif__shutdown(const char *ifname, size_t ifname_size)
 int canif__shutdown()
 {
 	return close(sockfd);

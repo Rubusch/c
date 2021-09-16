@@ -118,14 +118,35 @@ main(void)
 		// startup
 		canif__startup(if_name, sizeof(if_name));
 
+
 		// prepare dummy
 		api__prepare_msg(&api_frame);
+
+
+		// send (similar "client")
+		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+
+		// send (similar "client")
+		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+
+		// send (similar "client")
+		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+
+		// send (similar "client")
+		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+
+		// send (similar "client")
+		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+
+		// send (similar "client")
+		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
 
 		// send (similar "client")
 		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
 
 		// print message
-		//TODO api__print();   
+		api__display_msg(&api_frame);
+
 
 	} while (0);
 
