@@ -54,33 +54,38 @@ main(void)
 	struct ifreq ifr;
 	const char *ifname = "can0";
 
-	if ((sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW)) == -1) {
-		perror("Error while opening socket");
-		exit(EXIT_FAILURE);
-	}
+	do {
+		sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+		if (-1 == sockfd) {
+			perror("Error while opening socket");
+			break;
+		}
 
-	strcpy(ifr.ifr_name, ifname);
-	if (0 > ioctl(sockfd, SIOCGIFINDEX, &ifr)) {
-		perror("Error in ioctl");
-		exit(EXIT_FAILURE);
-	}
+		strcpy(ifr.ifr_name, ifname);
+		if (0 > ioctl(sockfd, SIOCGIFINDEX, &ifr)) {
+			perror("Error in ioctl");
+			break;
+		}
 
-	addr.can_family  = AF_CAN;
-	addr.can_ifindex = ifr.ifr_ifindex;
-	printf("%s at index %d\n", ifname, ifr.ifr_ifindex);
+		addr.can_family  = AF_CAN;
+		addr.can_ifindex = ifr.ifr_ifindex;
+		printf("%s at index %d\n", ifname, ifr.ifr_ifindex);
 
-	if (-1 == bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
-		perror("Error in binding socket to address");
-		return -2;
-	}
+		if (-1 == bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
+			perror("Error in binding socket to address");
+			break;
+		}
 
-	frame.can_id  = 0x123;
-	frame.can_dlc = 2;
-	frame.data[0] = 0x11;
-	frame.data[1] = 0x22;
+		frame.can_id  = 0x123;
+		frame.can_dlc = 2;
+		frame.data[0] = 0x11;
+		frame.data[1] = 0x22;
 
-	nbytes = write(sockfd, &frame, sizeof(struct can_frame));
+		nbytes = write(sockfd, &frame, sizeof(struct can_frame));
+		printf("wrote %d bytes\n", nbytes);
+	} while (0);
 
-	printf("wrote %d bytes\n", nbytes);
+	close(sockfd);
+
 	exit(EXIT_SUCCESS);
 }
