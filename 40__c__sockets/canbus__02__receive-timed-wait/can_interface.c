@@ -20,6 +20,8 @@ static struct ifreq ifr;
    private interface
 */
 
+# if defined CANIF__DEBUG
+
 static void canif__print(const char* func, const struct can_frame* frame)
 {
 	fprintf(stdout, "CAN_FRAME DEBUG %s() - id: %x, dlc: %d, data: ", func, frame->can_id, frame->can_dlc);
@@ -28,6 +30,8 @@ static void canif__print(const char* func, const struct can_frame* frame)
 	}
 	fprintf(stdout, "\n");
 }
+
+# endif
 
 
 /*
