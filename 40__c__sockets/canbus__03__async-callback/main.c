@@ -20,13 +20,13 @@
   +------------------------+
 
   asynchronous implementation
-
+  
   startup initializes and binds a socketcan socket (CAN_RAW), and
   forks off a listener process; the process listenes on the socket, in
   case it receives it puts the frames onto a QUEUE; a canif__recv()
   pops what is already in the queue.
   sending goes directly
-
+  
   @author: Lothar Rubusch <L.Rubusch@gmail.com>
   @license: GPLv3
 
@@ -34,7 +34,8 @@
   https://en.wikipedia.org/wiki/SocketCAN
   https://www.kernel.org/doc/Documentation/networking/can.txt
  */
-// TODO verification via rapsi CAN HAT RS485
+
+// TODO verification via rapsi CAN HAT RS485           
 
 #include <stdint.h> /* uint8_t,... */
 
@@ -88,13 +89,14 @@ void api__prepare_msg(api_frame_p pf)
 
 	pf->frame_id = 0x123;
 
-	pf->frame_dlc = 2;
+	pf->frame_dlc = 3;
 
 	pf->data[0] = 0x11;
 	pf->data[1] = 0x22;
+	pf->data[2] = 0x33;
 }
 
-int receiver_func(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
+int on_receive(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
 {
 	api_frame_p pf;
 	pf = api__frame(can_id, can_dlc, data);
@@ -111,12 +113,13 @@ main(void)
 {
 	char if_name[] = "can0";
 
-	do {
-		// prepare
-		canif__register_recv(&receiver_func);
+	canif__register_recv(&on_receive);
 
+	do {
 		// startup
-		canif__startup(if_name, sizeof(if_name));
+		if (0 > canif__startup(if_name, sizeof(if_name))) {
+			break;
+		}
 
 
 		// prepare dummy
@@ -124,25 +127,24 @@ main(void)
 
 
 		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+			break;
+		}
 
 		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+			break;
+		}
 
 		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+			break;
+		}
 
 		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
-
-		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
-
-		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
-
-		// send (similar "client")
-		canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+			break;
+		}
 
 		// print message
 		api__display_msg(&api_frame);
@@ -152,7 +154,6 @@ main(void)
 
 	// cleanup
 	canif__shutdown();
-	// TODO       
 
 	exit(EXIT_SUCCESS); /* cleans up remaining acquired memory */
 }

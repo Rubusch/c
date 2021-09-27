@@ -7,6 +7,26 @@
 
 #include "can_interface.h"
 
+#define CANIF__DEBUG 1
+
+
+/*
+   private interface
+*/
+
+# if defined CANIF__DEBUG
+
+static void canif__print(const char* func, const struct can_frame* frame)
+{
+	fprintf(stdout, "CAN_FRAME DEBUG %s() - id: %x, dlc: %d, data: ", func, frame->can_id, frame->can_dlc);
+	for (int idx=0; idx< frame->can_dlc; idx++) {
+		fprintf(stdout, "%x ", frame->data[idx]);
+	}
+	fprintf(stdout, "\n");
+}
+
+# endif
+
 
 /*
   "private"
@@ -23,17 +43,23 @@ void canif__listener()
 	int ret = -1;
 
 	do {
-		ret = read(sockfd, &frame, sizeof(frame));
+		ret = read(sockfd, &frame, sizeof(frame));   
+		
 		if (-1 == ret) {
 			perror("Error in read()");
 			return;
 		}
 
-		ret = canif__recv_cb(frame.can_id, frame.can_dlc, frame.data);
+		ret = canif__on_receive(frame.can_id, frame.can_dlc, frame.data);
 		if (0 > ret) {
-			perror("Error in canif__recv_cb()");
+			fprintf(stderr, "Error in %s()", __func__);
 			return;
 		}
+
+# if defined CANIF__DEBUG
+	canif__print(__func__, &frame);
+# endif
+
 	} while (1);
 }
 
@@ -44,7 +70,8 @@ void canif__listener()
 
 int canif__startup(const char *ifname, size_t ifname_size)
 {
-	if (-1 == (sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW))) {
+	sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+	if (-1 == sockfd) {
 		perror("Error while opening socket");
 		return -1;
 	}
@@ -83,30 +110,28 @@ int canif__shutdown()
 	return close(sockfd);
 }
 
-// TODO simplify     
 int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[])
 {
 	int nbytes = -1;
 	struct can_frame frame;
-/*
-  // TODO test, rm
-	frame.can_id  = 0x123;
-	frame.can_dlc = 2;
-	frame.data[0] = 0x11;
-	frame.data[1] = 0x22;
-*/
+
 	frame.can_id = *can_id;
 	frame.can_dlc = *can_dlc;
 	memcpy(frame.data, data, *can_dlc);
 
-	nbytes = write(sockfd, &frame, sizeof(struct can_frame));
-	// TODO check write error conditions
+# if defined CANIF__DEBUG
+	canif__print(__func__, &frame);
+# endif
 
+	nbytes = write(sockfd, &frame, sizeof(struct can_frame));
+	if (0 > nbytes) {
+		fprintf(stderr, "%s() failed\n", __func__);
+	}
 	return nbytes;
 }
 
-void canif__register_recv(int (*recv_cb)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]))
+void canif__register_recv(int (*on_receive)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]))
 {
-	canif__recv_cb = recv_cb;
+	canif__on_receive = on_receive;
 }
 

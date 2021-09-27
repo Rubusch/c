@@ -50,7 +50,7 @@ int canif__send(const uint32_t *can_id, const uint8_t* can_dlc, uint8_t data[]);
 /**
    registeres callback and triggeres when frames are incoming
  */
-int (*canif__recv_cb)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]);
+int (*canif__on_receive)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]);
 void canif__register_recv(int (*recv_cb)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]));
 
 
