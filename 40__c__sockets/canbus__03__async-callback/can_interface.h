@@ -31,7 +31,22 @@
 #include <linux/sockios.h>
 
 #include <linux/can.h>
+#include <signal.h>
 
+#define CANIF_NAMESIZE 16
+
+/* ID */
+#define CANIF_ID 0x010
+
+/* channel on ID, to be ORed to the ID, e.g. 0x410 or 0x210 */
+#define CANIF_MGMT 0x400
+#define CANIF_COM 0x200
+// further facilities can be here..
+
+/* data, if MGMT the data[0] byte */
+#define CANIF_MGMT_TERM 0x15 /* e.g. $> cansend can0 410#15 */
+
+pid_t pid_listener;
 
 /**
    start the interface socket, bind it to the name and unique

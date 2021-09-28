@@ -35,7 +35,6 @@ static int sockfd;
 static struct sockaddr_can addr;
 static struct ifreq ifr;
 
-static pid_t pid_listener;
 
 void canif__listener()
 {
@@ -43,22 +42,39 @@ void canif__listener()
 	int ret = -1;
 
 	do {
-		ret = read(sockfd, &frame, sizeof(frame));   
-		
+		// blocking
+		ret = read(sockfd, &frame, sizeof(frame));
 		if (-1 == ret) {
 			perror("Error in read()");
 			return;
 		}
 
-		ret = canif__on_receive(frame.can_id, frame.can_dlc, frame.data);
-		if (0 > ret) {
-			fprintf(stderr, "Error in %s()", __func__);
-			return;
+# if defined CANIF__DEBUG
+		canif__print(__func__, &frame);
+# endif
+
+		if ((CANIF_ID | CANIF_MGMT) == frame.can_id) {
+			/* management channel */
+# if defined CANIF__DEBUG
+			fprintf(stdout, "DEBUG: triggering socket signalling - %x\n", frame.can_id);
+# endif
+			if (CANIF_MGMT_TERM == frame.data[0]) {
+				break;
+			}
+
+		} else if ((CANIF_ID | CANIF_COM) == frame.can_id) {
+			/* communication channel */
+			ret = canif__on_receive(frame.can_id, frame.can_dlc, frame.data);
+			if (0 > ret) {
+				fprintf(stderr, "Error in %s()", __func__);
+				return;
+			}
+
+		} else {
+			// dropped
+			continue;
 		}
 
-# if defined CANIF__DEBUG
-	canif__print(__func__, &frame);
-# endif
 
 	} while (1);
 }
@@ -107,6 +123,12 @@ int canif__startup(const char *ifname, size_t ifname_size)
 
 int canif__shutdown()
 {
+# if defined CANIF__DEBUG
+//	sleep(30);
+# endif
+
+	fprintf(stdout, "CANIF - shutting down..\n");
+	kill(pid_listener, SIGTERM);
 	return close(sockfd);
 }
 

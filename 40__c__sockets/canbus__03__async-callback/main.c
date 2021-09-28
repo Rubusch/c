@@ -19,14 +19,43 @@
   | CAN Controller         |
   +------------------------+
 
-  asynchronous implementation
-  
-  startup initializes and binds a socketcan socket (CAN_RAW), and
-  forks off a listener process; the process listenes on the socket, in
-  case it receives it puts the frames onto a QUEUE; a canif__recv()
-  pops what is already in the queue.
-  sending goes directly
-  
+  asynchronous implementation via callback and async listener
+
+
+  device #1:
+  $ ip l set can0 up type can bitrate 125000 sample-point 0.875 restart-ms 100
+  $ ./can_demo.exe can0
+    if_name = 'can0'
+    can0 at index 4
+    CAN_FRAME DEBUG canif__send() - id: 123, dlc: 3, data: 11 22 33
+    CAN_FRAME DEBUG canif__send() - id: 123, dlc: 3, data: 11 22 33
+    CAN_FRAME DEBUG canif__send() - id: 123, dlc: 3, data: 11 22 33
+    CAN_FRAME DEBUG canif__send() - id: 123, dlc: 3, data: 11 22 33
+    DEBUG: frame_id: '123', frame_dlc: '3', 112233
+  $
+  <main() came back, the listener continues to run>
+  <receiving "terminate">
+  $ CAN_FRAME DEBUG canif__listener() - id: 410, dlc: 1, data: 15
+    DEBUG: triggering socket signalling - 410
+    CANIF - shutting down.
+
+
+  device #2:
+  $ ip l set can0 up type can bitrate 125000 sample-point 0.875 restart-ms 100
+  <send terminate command>
+  $ cansend can0 410#15
+
+
+  device #3 (or second shell on #2)
+  $ candump -L can0
+    (1632840876.558852) can0 123#112233
+    (1632840876.560014) can0 123#112233
+    (1632840876.561136) can0 123#112233
+    (1632840876.562281) can0 123#112233
+  <now, send terminate command>
+    (1632841020.926788) can0 410#15
+
+
   @author: Lothar Rubusch <L.Rubusch@gmail.com>
   @license: GPLv3
 
@@ -34,8 +63,6 @@
   https://en.wikipedia.org/wiki/SocketCAN
   https://www.kernel.org/doc/Documentation/networking/can.txt
  */
-
-// TODO verification via rapsi CAN HAT RS485           
 
 #include <stdint.h> /* uint8_t,... */
 
@@ -78,7 +105,10 @@ void api__display_msg(api_frame_p pf)
 		fprintf(stderr, "DEBUG: pf: NULL\n");
 		return;
 	}
-	fprintf(stdout, "DEBUG: frame_id: '%d', frame_dlc: '%d', data: '%s'\n", pf->frame_id, pf->frame_dlc, pf->data);
+	fprintf(stdout, "DEBUG: frame_id: '%X', frame_dlc: '%d', ", pf->frame_id, pf->frame_dlc);
+	for (int idx=0; idx<pf->frame_dlc ; idx++)
+		fprintf(stdout, "%X", pf->data[idx]);
+	fprintf(stdout, "\n");
 }
 
 void api__prepare_msg(api_frame_p pf)
@@ -109,10 +139,23 @@ int on_receive(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
 }
 
 int
-main(void)
+main(int argc, char* argv[])
 {
-	char if_name[] = "can0";
+	char if_name[CANIF_NAMESIZE];
+	memset(if_name, '\0', CANIF_NAMESIZE);
+	if (1 == argc) {
+		strcpy(if_name, "can0");
+	} else {
+		int len = strlen(argv[1]);
+		if (CANIF_NAMESIZE <= len-1) {
+			fprintf(stderr, "usage:\n\t%s\nor\n\t%s <IF Name>\n", argv[0], argv[0]);
+			exit(EXIT_FAILURE);
+		}
+		strncpy(if_name, argv[1], len);
+	}
+	fprintf(stdout, "if_name = '%s'\n", if_name);
 
+	// register callback
 	canif__register_recv(&on_receive);
 
 	do {
@@ -121,10 +164,8 @@ main(void)
 			break;
 		}
 
-
 		// prepare dummy
 		api__prepare_msg(&api_frame);
-
 
 		// send (similar "client")
 		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
@@ -151,9 +192,6 @@ main(void)
 
 
 	} while (0);
-
-	// cleanup
-	canif__shutdown();
 
 	exit(EXIT_SUCCESS); /* cleans up remaining acquired memory */
 }
