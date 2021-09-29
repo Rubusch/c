@@ -5,16 +5,17 @@
  * @license: GPLv3
  * @date: 2013-april-28
  */
-/*
-  Implementation of a single linked dequeue
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <assert.h>
+
 #include "dequeue_item.h"
 
 #define NUMBER_OF_ELEMENTS 10
+#define CONTENT_SIZE 10
+#define CONTENT_PREFIX "Blahblah"
 
 void output();
 void insert(int, char *);
@@ -22,33 +23,94 @@ void insert(int, char *);
 
 int main(int argc, char **argv)
 {
-  printf("Single Linked Dequeue\n\n");
+	int res = 0;
+//	int cnt = 0;
+	item_p item = NULL;
+/*, *item_a = NULL, *item_b = NULL;
+	content_t *content = NULL;
 
-  char str[] = "Blahblah";
+	char content_idx[3];
+	char content_prefix[CONTENT_SIZE]; memset(content_prefix, '\0', CONTENT_SIZE);
+// */
+	fprintf(stdout, "Single Linked Dequeue\n");
 
-  printf("Generate dequeue:\n");
-  int cnt = 0;
-  char szInt[3];
-  char szStr[8];
-  char *szTemp;
-  for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
-    szTemp = 0;
-    strcpy(szInt, "00");
-    strcpy(szStr, str);
+	// TEST: particular
+	fprintf(stdout, "TEST: 0 == dequeue__size()");
+	res = dequeue__size();
+	assert(0 == res);
+	fprintf(stdout, " - OK\n");
 
-    szStr[7] =
-        '\0'; // avoids buffer overflow reading - stop token needs to be reset!
+	fprintf(stdout, "TEST: NULL == dequeue__first()");
+	item = dequeue__first();
+	assert(NULL == item);
+	fprintf(stdout, " - OK\n");
 
-    // convert int -> string
-    sprintf(szInt, "%d", cnt);
-    szTemp = strcat(szStr, szInt);
+	fprintf(stdout, "TEST: NULL == dequeue__last()");
+	item = dequeue__last();
+	assert(NULL == item);
+	fprintf(stdout, " - OK\n");
+/*
+		content = malloc(sizeof(content));
+		if (NULL == content) {
+			perror("malloc() for content failed");
+			exit(EXIT_FAILURE);
+		}
+		dequeue__append(content);
+		item_a = dequeue__first();
+		assert(NULL != item_a);
 
-    printf("\telement #%i added: %s\n", cnt, szTemp);
-    addItem(szTemp);
-  }
+		item_b = dequeue__last();
+		assert(NULL != item_b);
+		assert(item_a == item_b);
 
-  // dequeue size
-  printf("\nDequeuesize: %i\n\n", dequeueSize());
+		dequeue__remove(item_a);
+		free(content);
+		item_a = dequeue__first();
+		item_b = dequeue__last();
+		assert(NULL == item_a);
+		assert(NULL == item_b);
+		assert(item_a == item_b);
+	}
+
+
+	/ * TEST: bulk
+
+	// preparation bulk
+	fprintf(stdout, "preparation\n");
+	for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
+		content = NULL;
+		content = malloc(CONTENT_SIZE * sizeof(*content));
+		if (NULL == content) {
+			perror("malloc() failed");
+			exit(EXIT_FAILURE); // cleaning up already performed allocations
+		}
+		strcpy(content_idx, "00");
+		strcpy(content_prefix, CONTENT_PREFIX);
+		sprintf(content_idx, "%d", cnt);
+		content = strcat(content_prefix, content_idx);
+		fprintf(stdout, "\telement #%i added: %s\n", cnt, content);
+		dequeue__append(content);
+	}
+
+
+	fprintf(stdout, "TEST dequeue\n\n");
+
+
+	// dequeue size
+	{
+		res = dequeue__size();
+		assert(NUMBER_OF_ELEMENTS == res);
+		assert(res == dequeue__size());
+		if (NULL != dequeue__first()) {
+			for (cnt = 1, deuque_item_t item = dequeue__first()
+				     ; item != dequeue__last()
+				     ; item = dequeue__next(item), cnt++)
+				;
+		}
+		assert(res == cnt);
+
+	}
+
 
   // output of the dequeue content
   output();
@@ -65,9 +127,10 @@ int main(int argc, char **argv)
   // output of the dequeue content
   output();
 
-  printf("Dequeuesize: %i\n", dequeueSize());
+  printf("Dequeuesize: %i\n", dequeue__size());
 
   printf("\nRemove item 5\n\n");
+  // TODO obtain pointer to element[5]->content, then free        
   removeItemAt(5);
 
   // output of the dequeue content
@@ -75,17 +138,18 @@ int main(int argc, char **argv)
 
   printf("\nThe item with the content \"CCC\" is now at positions: %i\n",
          find("CCC", 3));
+// */
 
   printf("READY.\n");
-  return 0;
+  exit(EXIT_SUCCESS);
 };
 
-
+/*
 void output()
 {
   printf("The dequeue's content:\n");
   int cnt = 0;
-  int max = dequeueSize();
+  int max = dequeue__size();
   for (cnt = 0; cnt < max; ++cnt) {
     if (getContentAt(cnt) == NULL)
       printf("NO CONTENT HERE!!\n");
@@ -101,3 +165,4 @@ void insert(int pos, char sz[])
   insertItemAt(pos, sz);
   printf("\n");
 };
+// */

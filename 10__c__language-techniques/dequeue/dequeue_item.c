@@ -5,15 +5,39 @@
  * @license: GPLv3
  * @date: 2013-april-28
  */
+// TODO make first public  
+// TODO make last public  
+// TODO make content a mere pointer  
+
 #include "dequeue_item.h"
 
-static item *first;
-static item *last;
 
+static item_p first;
+static item_p last;
+static int size = 0;
+
+/*
 static item *getNextItem(item *);
 static item *getPrevItem(item *);
+// */
+
+int dequeue__size()
+{
+	return size;
+}
+
+item_p dequeue__first()
+{
+	return first;
+}
+
+item_p dequeue__last()
+{
+	return last;
+}
 
 
+/*
 item *getNewItem(char content[])
 {
   item *pItem = malloc(sizeof(item));
@@ -27,7 +51,7 @@ item *getNewItem(char content[])
 };
 
 
-void addItem(char content[])
+void dequeue__append(char content[])
 {
   if (first == NULL) {
     last = getNewItem(content);
@@ -43,7 +67,7 @@ void addItem(char content[])
 
 void removeItemAt(int idx)
 {
-  if ((idx < 0) || (idx >= dequeueSize()))
+  if ((idx < 0) || (idx >= dequeue__size()))
     return;
 
   item *pItem = getItemAt(idx);
@@ -83,8 +107,8 @@ void insertItemAt(int idx, char content[])
     return;
   }
 
-  if (idx >= dequeueSize()) {
-    addItem(content);
+  if (idx >= dequeue__size()) {
+    dequeue__append(content);
     return;
   }
 
@@ -97,25 +121,15 @@ void insertItemAt(int idx, char content[])
   pItem->next = pAfter;
   pAfter->prev = pItem;
 };
+// */
 
+/*
 
-int dequeueSize()
-{
-  if (first == NULL)
-    return 0;
-
-  item *pItem = first;
-  int cnt = 0;
-  for (cnt = 0; pItem != NULL; ++cnt, pItem = pItem->next)
-    ;
-
-  return cnt;
-};
-
+                 
 
 item *getItemAt(int idx)
 {
-  int size = dequeueSize();
+  int size = dequeue__size();
   if ((idx >= size) || (idx < 0))
     return NULL;
 
@@ -183,3 +197,4 @@ static item *getPrevItem(item *pItem)
     return NULL;
   return pItem->prev;
 };
+// */
