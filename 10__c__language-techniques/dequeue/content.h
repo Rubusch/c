@@ -11,6 +11,7 @@
 struct content_s {
 	/* this can be literally anything */
 	char msg[MESSAGE_LENGTH];
+	int len;
 };
 typedef struct content_s content_t;
 typedef content_t* content_p;

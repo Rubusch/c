@@ -94,7 +94,7 @@ void dequeue__remove(item_p elem)
 	if (elem != last)
 		elem_after = dequeue__next(elem);
 
-	if (elem_before != NULL || elem_after != NULL) {
+	if (elem_before != NULL && elem_after != NULL) {
 		elem_before->next = elem_after;
 		elem_after->prev = elem_before;
 	} else if (elem_before == NULL && elem_after != NULL) {
@@ -113,94 +113,45 @@ void dequeue__remove(item_p elem)
 	size--;
 }
 
-
-
-
-/*
-void insertItemAt(int idx, char content[])
+void dequeue__insert_after(item_p elem_before, content_p content)
 {
-  item *pItem = dequeue__new(content);
-  if (idx <= 0) {
-    pItem->next = first;
-    first->prev = pItem;
-    first = pItem;
-    return;
-  }
+	item_p item = dequeue__new(content);
+	item_p elem_after;
 
-  if (idx >= dequeue__size()) {
-    dequeue__append(content);
-    return;
-  }
+	if (NULL != elem_before) {
+		elem_after = dequeue__next(elem_before);
+		elem_before->next = item;
+	} else {
+		if (NULL == dequeue__first()) {
+			dequeue__append(content);
+			return;
+		}
+		elem_after = dequeue__first();
+	}
+	item->prev = elem_before;
 
-  item *elem_before = getItemAt(idx - 1);
-  item *elem_after = getItemAt(idx);
+	if (NULL != elem_after) {
+		elem_after->prev = item;
+	}
+	item->next = elem_after;
 
-  elem_before->next = pItem;
-  pItem->prev = elem_before;
+	size++;
+}
 
-  pItem->next = elem_after;
-  elem_after->prev = pItem;
-};
-// */
-
-/*
-
-                 
-
-item *getItemAt(int idx)
+item_p dequeue__find(content_p content)
 {
-  int size = dequeue__size();
-  if ((idx >= size) || (idx < 0))
-    return NULL;
-
-  item *pItem = NULL;
-  if (idx + 1 <= size / 2) {
-    pItem = first;
-    int cnt = 0;
-    for (cnt = 0; (cnt != idx) && (cnt < size); ++cnt)
-      pItem = dequeue__next(pItem);
-
-  } else {
-    pItem = last;
-    int cnt = size - 1;
-    for (cnt = size - 1; (cnt != idx) && (cnt >= 0); --cnt) {
-      pItem = dequeue__prev(pItem);
-    }
-  }
-
-  return pItem;
+	item_p item = first;
+	while (item != NULL) {
+		/* comparator, function to be rather part of content_t */
+		if (!strcmp(item->content->msg, content->msg)) {
+			int i = 0;
+			for (i = 0; i < content->len; ++i)
+				if (item->content->msg[i] != content->msg[i])
+					break;
+			if (i == content->len)
+				return item;
+		}
+		item = item->next;
+	}
+	return NULL;
 };
-
-
-char *getContentAt(int idx)
-{
-  item *pItem = getItemAt(idx);
-  if (pItem == NULL)
-    return NULL;
-  else
-    return pItem->content;
-};
-
-
-int find(char content[], int length)
-{
-  item *pItem = first;
-  int cnt = 0;
-  while (pItem != NULL) {
-    if (!strcmp(pItem->content, content)) {
-      int i = 0;
-      for (i = 0; i < length; ++i)
-        if (pItem->content[i] != content[i])
-          break;
-
-      if (i == length)
-        return cnt;
-    }
-    pItem = pItem->next;
-    ++cnt;
-  }
-  return -1;
-};
-
-
-// */

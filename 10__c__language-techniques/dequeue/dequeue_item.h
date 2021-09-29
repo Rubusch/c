@@ -24,9 +24,8 @@ typedef struct dequeue_item_s item_t;
 typedef struct dequeue_item_s* item_p;
 
 
-// TODO change char[] as content to content_t* type  
-//item *getNewItem(char[]); 
 int dequeue__size();
+
 item_p dequeue__first();
 item_p dequeue__last();
 
@@ -36,18 +35,8 @@ item_p dequeue__prev(item_p elem);
 void dequeue__append(content_p content);
 void dequeue__remove(item_p item);
 
-/*
-//void dequeue__insert_after(dequeue_item_t* prev, dequeue_item_t* item);
-//dequeue_item_t* dequeue__find(content_t*);
-//
-
-item *getItemAt(int); // TODO rename
-
-void removeItemAt(int); // TODO rm
-void insertItemAt(int, char[]); // TODO rm
-char *getContentAt(int); // TODO rm   
-int find(char[], int); // TODO rm
-// */
+void dequeue__insert_after(item_p elem_before, content_p content);
+item_p dequeue__find(content_p);
 
 
 #endif
