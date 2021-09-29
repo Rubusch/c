@@ -14,12 +14,30 @@
 
 static item_p first;
 static item_p last;
-static int size = 0;
+static int size;
 
-/*
+/*    
 static item *getNextItem(item *);
 static item *getPrevItem(item *);
 // */
+
+
+/* private */
+
+item_p dequeue__new(content_t* content)
+{
+  item_p item = malloc(sizeof(item));
+  if (item == NULL) {
+    fprintf(stderr, "dequeue_item::dequeue__new() - bad allocation!\n");
+    exit(8);
+  }
+  item->content = content;
+
+  return item;
+};
+
+
+/* public */
 
 int dequeue__size()
 {
@@ -36,70 +54,72 @@ item_p dequeue__last()
 	return last;
 }
 
+item_p dequeue__next(item_p elem)
+{
+	if (elem == NULL)
+		return NULL;
+	return elem->next;
+};
+
+item_p dequeue__prev(item_p elem)
+{
+	if (elem == NULL)
+		return NULL;
+	return elem->prev;
+}
+
+void dequeue__append(content_p content)
+{
+	if (first == NULL) {
+		last = dequeue__new(content);
+		first = last;
+	} else {
+		item_p item = dequeue__new(content);
+		last->next = item;
+		item->prev = last;
+		last = last->next;
+	}
+
+	size++;
+}
+
+void dequeue__remove(item_p elem)
+{
+	/* NB: make sure content is free*d before */
+	item_p elem_before = NULL;
+	if (elem != first)
+		elem_before = dequeue__prev(elem);
+
+	item_p elem_after = NULL;
+	if (elem != last)
+		elem_after = dequeue__next(elem);
+
+	if (elem_before != NULL || elem_after != NULL) {
+		elem_before->next = elem_after;
+		elem_after->prev = elem_before;
+	} else if (elem_before == NULL && elem_after != NULL) {
+		first = dequeue__next(first);
+		first->prev = NULL;
+	} else if (elem_after == NULL && elem_before != NULL) {
+		last = dequeue__prev(last);
+		last->next = NULL;
+	} else {
+		/* remove: first == last */
+		first = NULL;
+		last = NULL;
+	}
+	free(elem);
+
+	size--;
+}
+
+
+
 
 /*
-item *getNewItem(char content[])
-{
-  item *pItem = malloc(sizeof(item));
-  if (pItem == NULL) {
-    fprintf(stderr, "dequeue_item::getNewItem() - bad allocation!\n");
-    exit(8);
-  }
-  strcpy(pItem->content, content);
-
-  return pItem;
-};
-
-
-void dequeue__append(char content[])
-{
-  if (first == NULL) {
-    last = getNewItem(content);
-    first = last;
-  } else {
-    item *pItem = getNewItem(content);
-    last->next = pItem;
-    pItem->prev = last;
-    last = last->next;
-  }
-};
-
-
-void removeItemAt(int idx)
-{
-  if ((idx < 0) || (idx >= dequeue__size()))
-    return;
-
-  item *pItem = getItemAt(idx);
-
-  item *pBefore = NULL;
-  if (pItem != first)
-    pBefore = getPrevItem(pItem);
-
-  item *pAfter = NULL;
-  if (pItem != last)
-    pAfter = getNextItem(pItem);
-
-
-  if ((pBefore != NULL) || (pAfter != NULL)) {
-    pBefore->next = pAfter;
-    pAfter->prev = pBefore;
-  } else if (pBefore == NULL) {
-    first = getNextItem(first);
-    first->prev = NULL;
-  } else if (pAfter == NULL) {
-    last = getPrevItem(last);
-    last->next = NULL;
-  }
-
-  free(pItem);
-  pItem = NULL;
-};
-
-
 void insertItemAt(int idx, char content[])
 {
-  item *pItem = getNewItem(content);
+  item *pItem = dequeue__new(content);
   if (idx <= 0) {
     pItem->next = first;
     first->prev = pItem;
@@ -112,14 +132,14 @@ void insertItemAt(int idx, char content[])
     return;
   }
 
-  item *pBefore = getItemAt(idx - 1);
-  item *pAfter = getItemAt(idx);
+  item *elem_before = getItemAt(idx - 1);
+  item *elem_after = getItemAt(idx);
 
-  pBefore->next = pItem;
-  pItem->prev = pBefore;
+  elem_before->next = pItem;
+  pItem->prev = elem_before;
 
-  pItem->next = pAfter;
-  pAfter->prev = pItem;
+  pItem->next = elem_after;
+  elem_after->prev = pItem;
 };
 // */
 
@@ -138,13 +158,13 @@ item *getItemAt(int idx)
     pItem = first;
     int cnt = 0;
     for (cnt = 0; (cnt != idx) && (cnt < size); ++cnt)
-      pItem = getNextItem(pItem);
+      pItem = dequeue__next(pItem);
 
   } else {
     pItem = last;
     int cnt = size - 1;
     for (cnt = size - 1; (cnt != idx) && (cnt >= 0); --cnt) {
-      pItem = getPrevItem(pItem);
+      pItem = dequeue__prev(pItem);
     }
   }
 
@@ -183,18 +203,4 @@ int find(char content[], int length)
 };
 
 
-static item *getNextItem(item *pItem)
-{
-  if (pItem == NULL)
-    return NULL;
-  return pItem->next;
-};
-
-
-static item *getPrevItem(item *pItem)
-{
-  if (pItem == NULL)
-    return NULL;
-  return pItem->prev;
-};
 // */
