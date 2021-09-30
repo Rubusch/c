@@ -40,7 +40,6 @@ item_p fifo__next(item_p elem);
 item_p fifo__prev(item_p elem);
 
 void fifo__push(content_p content);
-//void fifo__remove(item_p item); // TODO fifo__pop()
 content_p fifo__pop();
 
 #endif
