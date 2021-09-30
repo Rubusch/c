@@ -8,9 +8,16 @@
 #ifndef DEQUEUE
 #define DEQUEUE
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define DEBUG_DEQUEUE 1
+
+# ifdef DEBUG_DEQUEUE
+#include <assert.h>
+# endif
 
 #include "content.h"
 

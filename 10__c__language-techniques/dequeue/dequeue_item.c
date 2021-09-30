@@ -8,6 +8,7 @@
 
 #include "dequeue_item.h"
 
+
 /* private */
 
 static item_p first;
@@ -77,25 +78,41 @@ void dequeue__append(content_p content)
 
 void dequeue__remove(item_p elem)
 {
-	/* NB: make sure content is free*d before */
-	item_p elem_before = NULL;
-	if (elem != first)
-		elem_before = dequeue__prev(elem);
+	/* NB: make sure item->content is free*d, and NULLed in advance */
+//	item_p elem_before = NULL;
+//	if (elem != first)
+//		elem_before = dequeue__prev(elem);
+	item_p elem_before = dequeue__prev(elem);
 
-	item_p elem_after = NULL;
-	if (elem != last)
-		elem_after = dequeue__next(elem);
+//	item_p elem_after = NULL;
+//	if (elem != last)
+//		elem_after = dequeue__next(elem);
+	item_p elem_after = dequeue__next(elem);
 
 	if (elem_before != NULL && elem_after != NULL) {
 		elem_before->next = elem_after;
 		elem_after->prev = elem_before;
 	} else if (elem_before == NULL && elem_after != NULL) {
+# ifdef DEBUG_DEQUEUE
+		assert(elem == first);
+		assert(elem != last);
+# endif
 		first = dequeue__next(first);
 		first->prev = NULL;
 	} else if (elem_after == NULL && elem_before != NULL) {
+# ifdef DEBUG_DEQUEUE
+		assert(elem != first);
+		assert(elem == last);
+# endif
 		last = dequeue__prev(last);
 		last->next = NULL;
 	} else {
+# ifdef DEBUG_DEQUEUE
+		assert(elem == first);
+		assert(elem == last);
+		assert(elem->prev == NULL);
+		assert(elem->next == NULL);
+# endif
 		/* remove: first == last */
 		first = NULL;
 		last = NULL;
