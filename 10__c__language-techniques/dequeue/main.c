@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 		memset(msg, '\0', STR_SIZE);
 		memset(str_idx, '\0', STR_IDX_SIZE);
 		memset(str_prefix, '\0', STR_PREFIX_SIZE);
-
+//*
 		fprintf(stdout, "TEST: 0 == dequeue__size()");
 		res = dequeue__size();
 		assert(0 == res);
@@ -146,7 +146,8 @@ int main(int argc, char **argv)
 		res = dequeue__size();
 		assert(0 == res);
 		fprintf(stdout, " - OK\n");
-
+// */
+//*
 		fprintf(stdout, "\nbulk tests preparation\n\n");
 		for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
 			content = NULL;
@@ -208,6 +209,7 @@ int main(int argc, char **argv)
 			item = dequeue__first();
 			content = item->content;
 			free(content); // make sure to free content first!
+			item->content = NULL;
 			dequeue__remove(item);
 			item = dequeue__first();
 			if (dequeue__first() != dequeue__last())
@@ -229,7 +231,8 @@ int main(int argc, char **argv)
 		item = dequeue__last();
 		assert(NULL == item);
 		fprintf(stdout, " - OK\n");
-
+// */
+//*
 		fprintf(stdout, "\ndequeue insertion\n\n");
 		for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
 			content = NULL;
@@ -260,7 +263,7 @@ int main(int argc, char **argv)
 		free(content);
 		assert(NULL == item);
 		fprintf(stdout, " - OK\n");
-
+//*
 		// append "AAA" after element containing "Blahblah7"
 		fprintf(stdout, "TEST: '%d' == dequeue__size()", NUMBER_OF_ELEMENTS+1);
 		content = NULL;
@@ -289,7 +292,7 @@ int main(int argc, char **argv)
 		dequeue__insert_after(item, content);
 		assert(NUMBER_OF_ELEMENTS+1 == dequeue__size());
 		fprintf(stdout, " - OK\n");
-
+/*
 		fprintf(stdout, "TEST: NULL != dequeue__find(%s)", "AAA");
 		content = NULL;
 		content = malloc(sizeof(*content));
@@ -326,7 +329,7 @@ int main(int argc, char **argv)
 		fprintf(stdout, "TEST: '%d' == dequeue__size()", NUMBER_OF_ELEMENTS);
 		assert(NUMBER_OF_ELEMENTS == dequeue__size());
 		fprintf(stdout, " - OK\n");
-
+// */
 		while (dequeue__size()) {
 			fprintf(stdout, "TEST: dequeue__remove(first) - '%s'", dequeue__first()->content->msg);
 			item = dequeue__first();
@@ -338,6 +341,7 @@ int main(int argc, char **argv)
 				assert(NULL != item);
 			fprintf(stdout, " - OK\n");
 		}
+// */
 	}
 
 	muntrace(); /* memory trace */

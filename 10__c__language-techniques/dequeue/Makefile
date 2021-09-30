@@ -22,5 +22,5 @@ Dequeue.exe: ${OBJECTS}
 all:	Dequeue.exe
 
 clean:
-	${RM} -f ${OBJECTS} Dequeue.exe *~
+	${RM} -f ${OBJECTS} Dequeue.exe *~ *.log
 

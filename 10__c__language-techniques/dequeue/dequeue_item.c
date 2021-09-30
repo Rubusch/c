@@ -5,35 +5,27 @@
  * @license: GPLv3
  * @date: 2013-april-28
  */
-// TODO make first public  
-// TODO make last public  
-// TODO make content a mere pointer  
 
 #include "dequeue_item.h"
 
+/* private */
 
 static item_p first;
 static item_p last;
 static int size;
 
-/*    
-static item *getNextItem(item *);
-static item *getPrevItem(item *);
-// */
-
-
-/* private */
-
 item_p dequeue__new(content_t* content)
 {
-  item_p item = malloc(sizeof(item));
-  if (item == NULL) {
-    fprintf(stderr, "dequeue_item::dequeue__new() - bad allocation!\n");
-    exit(8);
-  }
-  item->content = content;
+	item_p item = malloc(sizeof(item));
+	if (item == NULL) {
+		perror("allocation of new dequeue element failed");
+		exit(EXIT_FAILURE);
+	}
+	item->content = content;
+	item->prev = NULL;
+	item->next = NULL;
 
-  return item;
+	return item;
 };
 
 
