@@ -86,7 +86,7 @@ jobs:
 
 
 ## 10: techniques
-      - run: cd ./10__c__language-techniques/dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
+      - run: cd ./10__c__language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
       - run: cd ./10__c__language-techniques/endianness && make && ./*.exe
       - run: cd ./10__c__language-techniques/file__operations && make && ./*.exe
       - run: cd ./10__c__language-techniques/file__tempfile && make && ./*.exe
