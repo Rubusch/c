@@ -1,0 +1,296 @@
+# circle ci config (github)
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - checkout
+
+#      - run:
+#          name: Greeting
+#          command: echo Hello, world.
+
+#      - run:
+#          name: Installing SUDO
+#          command: 'apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*'
+
+      - run:
+          name: Installing BUILD-ESSENTIAL
+          command: 'apt-get update && apt-get install -y build-essential'
+
+#      - run:
+#          name: Installing GIT
+#          environment:
+#            TZ: "America/Los_Angeles"
+#            DEBIAN_FRONTEND: "noninteractive"
+#          command: 'apt-get update && apt-get install -y git-all'
+
+      - run:
+          name: Installing GCC
+          command: 'apt-get update && apt-get install -y gcc g++'
+
+      - run:
+          name: Installing CLANG
+          command: 'apt-get update && apt-get install -y clang clang-tools clang-format'
+
+      - run:
+          name: Install CMAKE
+          environment:
+            TZ: "America/Los_Angeles"
+            DEBIAN_FRONTEND: "noninteractive"
+          command: 'apt-get update && apt-get install -y cmake'
+
+#      - run:
+#          name: Install NINJA
+#          command: 'apt-get update && apt-get install -y ninja-build'
+
+
+
+      - run: date
+
+## 00: basics
+      - run: cd ./00__c__language-basics/atoi02 && make && ./*.exe
+      - run: cd ./00__c__language-basics/2dim__pointer-to-pointer && make && ./*.exe
+      - run: cd ./00__c__language-basics/pointer__arithmetics && make && ./*.exe
+      - run: cd ./00__c__language-basics/atoi01 && make && ./*.exe
+      - run: cd ./00__c__language-basics/2dim__array-of-array && make && ./*.exe
+      - run: cd ./00__c__language-basics/argumentlist && make && ./*.exe
+      - run: cd ./00__c__language-basics/2dim__pointer-to-array && make && ./*.exe
+      - run: cd ./00__c__language-basics/void-pointer && make && ./*.exe
+      - run: cd ./00__c__language-basics/allocation && make && ./*.exe
+      - run: cd ./00__c__language-basics/HelloWorld && make && ./*.exe
+      - run: cd ./00__c__language-basics/string__cmp && make && ./*.exe
+      - run: cd ./00__c__language-basics/string-to-int-to-string && make && ./*.exe
+      - run: cd ./00__c__language-basics/struct && make && ./*.exe
+      - run: cd ./00__c__language-basics/pointer__assignment && make && ./*.exe
+      - run: cd ./00__c__language-basics/preprocessor && make && ./*.exe
+      - run: cd ./00__c__language-basics/memfoo_functions && make && ./*.exe
+      - run: cd ./00__c__language-basics/function-pointer__typedefed && make && ./*.exe
+      - run: cd ./00__c__language-basics/compiler_configuration && make && ./*.exe
+## needs extended GNU resources
+##      - run: cd ./00__c__language-basics/types && make && ./*.exe
+      - run: cd ./00__c__language-basics/c11__alignof && make && ./*.exe
+      - run: cd ./00__c__language-basics/c11__compound_literal && make && ./*.exe
+
+  ## interactive example (just building)
+      - run: cd ./00__c__language-basics/function-pointer && make
+
+
+## 10: techniques
+      - run: cd ./10__c__language-techniques/dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
+      - run: cd ./10__c__language-techniques/endianness && make && ./*.exe
+      - run: cd ./10__c__language-techniques/file__operations && make && ./*.exe
+      - run: cd ./10__c__language-techniques/file__tempfile && make && ./*.exe
+      - run: cd ./10__c__language-techniques/stdout__fflush-printf-order && make && ./*.exe
+      - run: cd ./10__c__language-techniques/debug__mtrace && make && ./*.exe
+#      - run: cd ./10__c__language-techniques/debug__valgrind-double-free && make && ./*.exe ## has to fail
+      - run: cd ./10__c__language-techniques/debug__valgrind-invalid-pointer && make && ./*.exe
+#      - run: cd ./10__c__language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe
+      - run: cd ./10__c__language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe
+      - run: cd ./10__c__language-techniques/debug__valgrind-uninitialized && make && ./*.exe
+      - run: cd ./10__c__language-techniques/macrolist/listdemo && make && ./*.exe
+      - run: cd ./10__c__language-techniques/macrolist/listdemo_macro_based && make && ./*.exe
+
+
+  ## interactive and/or need fixes
+      - run: cd ./10__c__language-techniques/bintree__demo-TODO && make
+      - run: cd ./10__c__language-techniques/bintree__single-linked-TODO && make
+      - run: cd ./10__c__language-techniques/bitoperations-FIXME && make
+      - run: cd ./10__c__language-techniques/input && make
+      - run: cd ./10__c__language-techniques/input__fgets-digit && make
+      - run: cd ./10__c__language-techniques/input__fgets-number && make
+      - run: cd ./10__c__language-techniques/input__fgetc-number && make
+      - run: cd ./10__c__language-techniques/input__fgetc-string && make
+      - run: cd ./10__c__language-techniques/input__choice && make
+      - run: cd ./10__c__language-techniques/file__filesize && make
+      - run: cd ./10__c__language-techniques/file__fseek-position && make
+      - run: cd ./10__c__language-techniques/stdin__fflush-undefined && make
+      - run: cd ./10__c__language-techniques/file__fsetpos && make
+      - run: cd ./10__c__language-techniques/file__move && make
+      - run: cd ./10__c__language-techniques/input__getch && make
+
+## 20: ipc
+      - run: cd ./20__c__interprocess-communication/pipe__formatted_pinging/itchy && make
+      - run: cd ./20__c__interprocess-communication/pipe__formatted_pinging/scratchy && make && ./*.exe
+      - run: cd ./20__c__interprocess-communication/pipe__half_duplex_named_pipe/receiver && make
+      - run: cd ./20__c__interprocess-communication/pipe__half_duplex_named_pipe/sender && make
+      - run: cd ./20__c__interprocess-communication/pipe__low_level_pinging && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/receiver && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__demo/itchy && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__demo/scratchy && make
+      - run: cd ./20__c__interprocess-communication/signal__demo/itchy && make
+      - run: cd ./20__c__interprocess-communication/signal__demo/scratchy && make
+      - run: cd ./20__c__interprocess-communication/unixsocket__demo02/unixclient && make
+      - run: cd ./20__c__interprocess-communication/unixsocket__demo02/unixserver && make
+      - run: cd ./20__c__interprocess-communication/pipe__fork_demo && make
+      - run: cd ./20__c__interprocess-communication/pipe__popen01 && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__demo/receive && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__demo/send && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__experimental && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__msgctl && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__msgget && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__shmctl && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__shmget && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__server_client/shmclient && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__server_client/shmserver && make
+      - run: cd ./20__c__interprocess-communication/signal__signal_talking && make
+      - run: cd ./20__c__interprocess-communication/signal__trap && make
+      - run: cd ./20__c__interprocess-communication/unixsocket__demo01/client && make
+      - run: cd ./20__c__interprocess-communication/unixsocket__demo01/server && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make
+      - run: cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe
+      - run: cd ./20__c__interprocess-communication/signal__alarm && make
+      - run: cd ./20__c__interprocess-communication/signal__sighandler && make
+      - run: cd ./20__c__interprocess-communication/signal__sighandler_siginfo01 && make
+      - run: cd ./20__c__interprocess-communication/signal__sighandler_siginfo02__backtrace && make
+      - run: cd ./20__c__interprocess-communication/signal__kill && make
+      - run: cd ./20__c__interprocess-communication/signal__sigmask && make
+      - run: cd ./20__c__interprocess-communication/signal__syscall && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__common_message_struct/client && make
+      - run: cd ./20__c__interprocess-communication/messagequeue__common_message_struct/server && make
+      - run: cd ./20__c__interprocess-communication/sharedmemory__shm_attach_detach__TODO && make
+
+## 30: pthreads
+      - run: cd 30__c__pthreads/pthread__join02 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__signalhandler02 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__stack-management && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__create && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__mutex01 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__restaurant && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__signalhandler01 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__hello_world && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__mutex00 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__mutex02 && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__producer-consumer && make && ./*.exe ./source.txt ./destination.txt
+      - run: cd 30__c__pthreads/pthread__rwlock && make && ./*.exe
+      - run: cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe
+      - run: cd 30__c__pthreads/semaphore && make && ./*.exe
+      - run: cd 30__c__pthreads/semaphore__semctl && make
+#      - run: cd 30__c__pthreads/semaphore__semget && make
+      - run: cd 30__c__pthreads/semaphore__ipc-synchronization && make && ./*.exe
+
+  ## needs command line arguments
+      - run: cd 30__c__pthreads/pthread__passing-arguments01 && make
+      - run: cd 30__c__pthreads/pthread__passing-arguments02 && make
+      - run: cd 30__c__pthreads/pthread__passing-arguments03 && make
+      - run: cd 30__c__pthreads/pthread__six-threads && make
+      - run: cd 30__c__pthreads/pthread__deadlock && make
+      - run: cd 30__c__pthreads/pthread__manythreads && make
+
+  ## server, thus waiting for connection
+      - run: cd 30__c__pthreads/pthread__socket-server && make
+
+  ## thread cancellation, to be watched on top
+      - run: cd 30__c__pthreads/pthread__posix-cancellation && make
+
+  ## travis seems to have trouble with the following, thus just compiling
+      - run: cd 30__c__pthreads/pthread__join00 && make
+      - run: cd 30__c__pthreads/pthread__join01 && make && ./*.exe
+
+
+## 40: sockets and networking
+      - run: cd 40__c__sockets/ioctl__get-ip && make
+      - run: cd 40__c__sockets/ioctl__interface-information && make
+      - run: cd 40__c__sockets/ioctl__interface-mac && make
+      - run: cd 40__c__sockets/ioctl__interface-names && make
+      - run: cd 40__c__sockets/multicast__client && make
+      - run: cd 40__c__sockets/multicast__sender-and-receiver && make
+      - run: cd 40__c__sockets/multicast__server && make
+#      - run: cd 40__c__sockets/multicast__sntp-client__TODO && make
+      - run: cd 40__c__sockets/raw-sockets__tcp && make
+      - run: cd 40__c__sockets/raw-sockets__udp && make
+      - run: cd 40__c__sockets/raw-sockets__ping && make
+      - run: cd 40__c__sockets/raw-sockets__traceroute && make
+      - run: cd 40__c__sockets/raw-sockets__synflooding && make
+      - run: cd 40__c__sockets/tcp-client__portscanner && make
+      - run: cd 40__c__sockets/tcp-client__sending-xml && make
+      - run: cd 40__c__sockets/tcp-client__simple && make
+      - run: cd 40__c__sockets/tcp-client__SO_LINGER && make
+      - run: cd 40__c__sockets/tcp-client__tcp-server-types__multi-clients && make
+      - run: cd 40__c__sockets/tcp-server__echoserver && make
+      - run: cd 40__c__sockets/tcp-server__echoserver-poll && make
+      - run: cd 40__c__sockets/tcp-server__echoserver-select && make
+      - run: cd 40__c__sockets/tcp-server-types__0-tcp-iterative-server && make
+      - run: cd 40__c__sockets/tcp-server-types__1-tcp-concurrent-server-one-child-per-client && make
+      - run: cd 40__c__sockets/tcp-server-types__2a-tcp-preforked-no-locking-around-accept && make
+      - run: cd 40__c__sockets/tcp-server-types__2b-tcp-preforked-no-locking-around-accept-using-select && make
+      - run: cd 40__c__sockets/tcp-server-types__3-tcp-preforked-server-file-locking-around-accept && make
+      - run: cd 40__c__sockets/tcp-server-types__4-tcp-preforked-server-thread-locking-around-accept && make
+      - run: cd 40__c__sockets/tcp-server-types__5-tcp-preforked-server-descriptor-passing && make
+      - run: cd 40__c__sockets/tcp-server-types__6-tcp-concurrent-server-on-thread-per-client && make
+      - run: cd 40__c__sockets/tcp-server-types__7-tcp-prethreaded-server-per-thread-calls-accept && make
+      - run: cd 40__c__sockets/tcp-server-types__8-tcp-prethreaded-server-main-thread-calls-accept && make
+      - run: cd 40__c__sockets/tcp-udp-server__echoserver && make
+      - run: cd 40__c__sockets/udp-client__reliable && make
+      - run: cd 40__c__sockets/udp-client__simple && make
+      - run: cd 40__c__sockets/udp-server__echoserver && make
+
+## 50: bootloader and low level C
+      - run: cd 50__c__bootloader/jmp__setjmp && make && ./*.exe
+
+## 99: linux (all just built, since execution in case needs runs in parallel
+      - run: cd 99__c__linux/ptrace__010-fork-show-all-instructions && make
+      - run: cd 99__c__linux/ptrace__020-fork-syswrite-peekuser && make
+      - run: cd 99__c__linux/ptrace__021-fork-syswrite-peekuser-getregs && make
+      - run: cd 99__c__linux/ptrace__030-fork-syswrite-peekuser-peekdata-pokedata && make
+      - run: cd 99__c__linux/ptrace__031-fork-syswrite-getregs-peekdata-pokedata && make
+      - run: cd 99__c__linux/ptrace__032-fork-getregs-show-syscalls && make
+      - run: cd 99__c__linux/ptrace__033-fork-getregs-show-syscalls-peekdata-pokedata-change-syswrite && make
+      - run: cd 99__c__linux/ptrace__034-fork-getregs-show-syscalls-results && make
+      - run: cd 99__c__linux/ptrace__035-fork-getregs-show-syscalls-inject-result-eperm && make
+      - run: cd 99__c__linux/ptrace__040-fork-syswrite-getregs-peektext-singlestep && make
+      - run: cd 99__c__linux/ptrace__041-fork-syswrite-getregs-peektext-singlestep-all-instructions && make
+      - run: cd 99__c__linux/ptrace__050-attach-detatch && make
+      - run: cd 99__c__linux/ptrace__051-attach-stop-restart-detach && make
+      - run: cd 99__c__linux/ptrace__052-attach-stop-inject-restart-detach && make
+      - run: cd 99__c__linux/ptrace__053-attach-stop-inject-reestablish-restart-detach && make
+      - run: cd 99__c__linux/ptrace__060-injection-replace && make
+      - run: cd 99__c__linux/ptrace__070-injection-shift-to-next-free-space && make
+      - run: cd 99__c__linux/ptrace__100-debugger-loop-instructions && make
+      - run: cd 99__c__linux/ptrace__110-debugger-watchpoint && make
+      - run: cd 99__c__linux/ptrace__120-debugger-proc && make
+#      - run: cd 99__c__linux/ptrace__130-debugger-singlestep-multithreading__FIXME && make
+      - run: cd 99__c__linux/asm__00-hello-world && make
+      - run: cd 99__c__linux/asm__01-add-numbers && make
+      - run: cd 99__c__linux/asm__02-add-numbers && make
+      - run: cd 99__c__linux/asm__03-compare-values && make
+      - run: cd 99__c__linux/asm__04-set-clear-bit && make
+      - run: cd 99__c__linux/asm__05-strcpy && make
+      - run: cd 99__c__linux/asm__06-move-block && make
+      - run: cd 99__c__linux/asm__07-syscall && make
+      - run: cd 99__c__linux/asm__08-eval-sys-exit && make
+      - run: cd 99__c__linux/asm__09-syscall-generic && make
+      - run: cd 99__c__linux/asm__10-string-section && make
+      - run: cd 99__c__linux/fork__simple && make
+      - run: cd 99__c__linux/fork__cli-command && make
+      - run: cd 99__c__linux/fork && make
+      - run: cd 99__c__linux/execl && make
+      - run: cd 99__c__linux/execlp && make
+      - run: cd 99__c__linux/execv && make
+      - run: cd 99__c__linux/execve && make
+      - run: cd 99__c__linux/execvp && make
+      - run: cd 99__c__linux/gid-and-pid && make
+      - run: cd 99__c__linux/kill && make
+      - run: cd 99__c__linux/killpg && make
+      - run: cd 99__c__linux/system && make
+      - run: cd 99__c__linux/vfork && make
+      - run: cd 99__c__linux/wait && make
+      - run: cd 99__c__linux/waitpid && make
+      - run: cd 99__c__linux/start_javaprg && make
+      - run: cd 99__c__linux/pid && make
+      - run: cd 99__c__linux/sharedobject__dynamic-fixed && make
+      - run: cd 99__c__linux/sharedobject__dynamic-shared && make
+      - run: cd 99__c__linux/sharedobject__static-lib && make
+      - run: cd 99__c__linux/timer && make
+      - run: cd 99__c__linux/timer__measuring && make
+      - run: cd 99__c__linux/rc5_inputstring && make
+      - run: cd 99__c__linux/select01 && make
+
+## devkit lib
+      - run: cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ./${item}; done
+
