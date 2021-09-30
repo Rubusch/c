@@ -41,7 +41,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h> /* freeadddrinfo(), getaddrinfo() */
+#if HAVE_STROPTS_H
 #include <stropts.h> /* ioctl() */
+#else
+#include <sys/ioctl.h> /* ioctl() */
+#endif
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <linux/in.h> /* struct ip_mreqn */   
 #include <time.h> /* time(), ctime() */
@@ -279,7 +283,7 @@ void lothars__gettimeofday(struct timeval *tv)
   The ioctl() function shall perform a variety of control functions on
   STREAMS devices.
 
-  #include <stropts.h>
+  #include <sys/ioctl.h>
 
   @fd: The file descriptor on the stream.
   @request: The ioctl() request (see manpages).

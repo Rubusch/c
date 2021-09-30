@@ -14,7 +14,11 @@
 #include <stdio.h> /* readline() */
 #include <stdlib.h>
 #include <string.h> /* memset() */
+#if HAVE_STROPTS_H
 #include <stropts.h> /* ioctl() */
+#else
+#include <sys/ioctl.h> /* ioctl() */
+#endif
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <arpa/inet.h> /* inet_ntop(), inet_pton() */
 #include <stdarg.h> /* va_start(), va_end(),... */

@@ -13,7 +13,11 @@
 #include <stdlib.h>
 
 #include <netinet/in.h>  // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
+#if HAVE_STROPTS_H
 #include <stropts.h> /* ioctl() */
+#else
+#include <sys/ioctl.h> /* ioctl() */
+#endif
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <sys/un.h>  /* unix sockets, close() */

@@ -17,7 +17,11 @@
 #include <sys/un.h>  /* unix sockets, close() */
 #include <unistd.h> /* close() */
 #include <netdb.h> /* NI_NUMERICHOST,... */
+#if HAVE_STROPTS_H
 #include <stropts.h> /* ioctl() */
+#else
+#include <sys/ioctl.h> /* ioctl() */
+#endif
 #include <stdarg.h> /* va_start(), va_end(),... */
 
 // here both header families (linux and posix) seem to be ok
