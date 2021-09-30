@@ -2,11 +2,11 @@
 /*
  * Rich Schiavi writes:  		Sept 11, 1994
  *
- * I believe the recommended way to kill certain threads is
- * using a signal handler which then will exit that particular
- * thread properly. I'm not sure the exact reason (I can't remember), but
- * if you take out the signal_handler routine in my example, you will see what
- * you describe, as the main process dies even if you send the
+ * I believe the recommended way to kill certain threads is using a
+ * signal handler which then will exit that particular thread
+ * properly. I'm not sure the exact reason (I can't remember), but if
+ * you take out the signal_handler routine in my example, you will see
+ * what you describe, as the main process dies even if you send the
  * thr_kill to the specific thread.
  *
  * Dave Marshall writes:
@@ -64,7 +64,7 @@ int main()
     if (idx == 5) {
       pthread_kill(thr_one, SIGTERM);
     }
-    sleep(3);
+    sleep(1);
   }
   pthread_kill(thr_two, SIGTERM);
   sleep(5);
