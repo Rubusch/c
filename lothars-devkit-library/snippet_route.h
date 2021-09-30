@@ -26,7 +26,6 @@
 #include <unistd.h> /* socklen_t */
 #include <netinet/in.h> /* struct sockaddr */
 #include <linux/rtnetlink.h> /* RTAX_MAX */
-#include <sys/sysctl.h> /* CTL_NET, sysctl() */
 
 #include "lib_error.h"
 

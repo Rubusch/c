@@ -40,8 +40,7 @@
 
 #include <linux/can.h>
 
-// FIXME: find include for struct ifr
-//#include <linux/can/raw.h>
+#include <mcheck.h> // debugging
 
 
 int
@@ -53,6 +52,8 @@ main(void)
 	struct can_frame frame;
 	struct ifreq ifr;
 	const char *ifname = "can0";
+
+	mtrace();
 
 	do {
 		sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -87,5 +88,6 @@ main(void)
 
 	close(sockfd);
 
+	muntrace();
 	exit(EXIT_SUCCESS);
 }
