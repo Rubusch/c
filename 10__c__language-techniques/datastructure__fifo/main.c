@@ -127,16 +127,13 @@ int main(int argc, char **argv)
 		fprintf(stdout, " - OK\n");
 
 		fprintf(stdout, "TEST: fifo__pop() - NULL == fifo__first()");
-		free(content); // make sure to free content first!
-		fifo__pop();
-		item_a = fifo__first();
-		assert(NULL == item_a);
+		content = fifo__pop();
+		assert(0 == strncmp(str_prefix, content->msg, content->len));
 		fprintf(stdout, " - OK\n");
 
 		fprintf(stdout, "TEST: fifo__pop() - NULL == fifo__last()");
 		item_b = fifo__last();
 		assert(NULL == item_b);
-		assert(item_a == item_b);
 		fprintf(stdout, " - OK\n");
 
 		fprintf(stdout, "TEST: 0 == fifo__size()");
@@ -205,12 +202,8 @@ int main(int argc, char **argv)
 
 		while (fifo__size()) {
 			fprintf(stdout, "TEST: fifo__pop() - '%s'", fifo__first()->content->msg);
-			item = fifo__first();
 			content = fifo__pop();
 			free(content);
-			item = fifo__first();
-			if (fifo__first() != fifo__last())
-				assert(NULL != item);
 			fprintf(stdout, " - OK\n");
 		}
 
