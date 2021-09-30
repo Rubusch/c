@@ -55,7 +55,7 @@ script:
 
 
 ## 10: techniques
-  - cd ./10__c__language-techniques/dequeue && make && ./*.exe && cd -
+  - cd ./10__c__language-techniques/dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log && cd -
   - cd ./10__c__language-techniques/endianness && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/file__operations && make && ./*.exe && cd -
   - cd ./10__c__language-techniques/file__tempfile && make && ./*.exe && cd -
