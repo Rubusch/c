@@ -103,7 +103,7 @@ int main()
 
   } else if (pid == 0) {
     // child code
-    strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT));
+    strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT)+1);
 
     printf("%schild pid: %i, parent: %i\r\n", identifier, getpid(), pid_parent);
     printf("%ssleeps\r\n", identifier);
@@ -114,7 +114,7 @@ int main()
 
   } else {
     // parent code
-    strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT));
+    strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT)+1);
     printf("%swaiting on pid %i\r\n", identifier, pid);
 
     /*
