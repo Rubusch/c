@@ -151,7 +151,7 @@ void lothars__gettimeofday(struct timeval *tv)
   The ioctl() function shall perform a variety of control functions on
   STREAMS devices.
 
-  #include <stropts.h>
+  #include <sys/ioctl.h>
 
   @fd: The file descriptor on the stream.
   @request: The ioctl() request (see manpages).

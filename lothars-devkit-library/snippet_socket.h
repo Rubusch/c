@@ -20,7 +20,11 @@
 #include <time.h> /* ctime() */
 #include <fcntl.h> /* fcntl(), F_GETFL */
 
+#if HAVE_STROPTS_H
 #include <stropts.h> /* ioctl() */
+#else
+#include <sys/ioctl.h> /* ioctl() */
+#endif
 #include <sys/poll.h> /* struct pollfd */
 #include <sys/socket.h>
 #include <sys/types.h>

@@ -29,7 +29,11 @@
 
 #include <unistd.h>
 #include <fcntl.h> /* fcntl() */
+#if HAVE_STROPTS_H
 #include <stropts.h> /* ioctl() */
+#else
+#include <sys/ioctl.h> /* ioctl() */
+#endif
 #include <sys/mman.h> /* mmap() */
 #include <sys/stat.h>
 #include <sys/types.h>
