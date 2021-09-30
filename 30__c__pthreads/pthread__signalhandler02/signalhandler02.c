@@ -59,12 +59,12 @@ int main()
   }
 
   int idx = 0;
-  for (idx = 0; idx < 10; idx++) {
+  for (idx = 0; idx < 15; idx++) {
     fprintf(stderr, "main loop: %d\n", idx);
     if (idx == 5) {
       pthread_kill(thr_one, SIGTERM);
     }
-    sleep(1);
+//    sleep(1);
   }
   pthread_kill(thr_two, SIGTERM);
   sleep(5);
