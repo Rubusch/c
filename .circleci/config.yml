@@ -88,6 +88,7 @@ jobs:
 ## 10: techniques
       - run: cd ./10__c__language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
       - run: cd ./10__c__language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
+      - run: cd ./10__c__language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
       - run: cd ./10__c__language-techniques/endianness && make && ./*.exe
       - run: cd ./10__c__language-techniques/file__operations && make && ./*.exe
       - run: cd ./10__c__language-techniques/file__tempfile && make && ./*.exe
@@ -165,8 +166,8 @@ jobs:
 ## 30: pthreads
       - run: cd 30__c__pthreads/pthread__join02 && make && ./*.exe
       ## signalhandler02 seems to show different timings and, in case
-      ## dies already by signal instead of run to the end -> true
-      - run: cd 30__c__pthreads/pthread__signalhandler02 && make && ./*.exe || true
+      ## dies already by signal instead of run to the end -> true for build
+      - run: cd 30__c__pthreads/pthread__signalhandler02 && make
       - run: cd 30__c__pthreads/pthread__stack-management && make && ./*.exe
       - run: cd 30__c__pthreads/pthread__create && make && ./*.exe
       - run: cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe
