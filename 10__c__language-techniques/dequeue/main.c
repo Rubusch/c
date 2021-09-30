@@ -61,7 +61,6 @@ int main(int argc, char **argv)
 	content_p content = NULL;
 	char msg[STR_SIZE]; memset(msg, '\0', STR_SIZE);
 	char str_idx[STR_IDX_SIZE]; memset(str_idx, '\0', STR_IDX_SIZE);
-//	char str_prefix[STR_PREFIX_SIZE]; memset(str_prefix, '\0', STR_PREFIX_SIZE);
 	const char str_prefix[] = STR_PREFIX;
 
 	fprintf(stdout, "\nSingle Linked Dequeue\n\n");
@@ -77,8 +76,6 @@ int main(int argc, char **argv)
 		content = NULL;
 		memset(msg, '\0', STR_SIZE);
 		memset(str_idx, '\0', STR_IDX_SIZE);
-//		memset(str_prefix, '\0', STR_PREFIX_SIZE);
-//		strcpy(str_prefix, STR_PREFIX); // TODO rm
 //*
 		fprintf(stdout, "TEST: 0 == dequeue__size()");
 		res = dequeue__size();
@@ -96,15 +93,12 @@ int main(int argc, char **argv)
 		fprintf(stdout, " - OK\n");
 
 		fprintf(stdout, "TEST: dequeue__append(content) - NULL != dequeue__first()");
-//		content = malloc(sizeof(*content));
-		content = malloc(sizeof(struct content_s));
+		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() for content failed");
 			exit(EXIT_FAILURE);
 		}
-//		content->len = strlen(STR_PREFIX)+1;
 		content->len = strlen(str_prefix)+1;
-//		strncpy(content->msg, STR_PREFIX, content->len);  
 		strncpy(content->msg, str_prefix, content->len);
 		dequeue__append(content);
 		item_a = dequeue__first();
@@ -122,13 +116,11 @@ int main(int argc, char **argv)
 		assert(1 == res);
 		fprintf(stdout, " - OK\n");
 
-//		fprintf(stdout, "TEST: '%s' == first->content->msg", STR_PREFIX); // TODO rm  
 		fprintf(stdout, "TEST: '%s' == first->content->msg", str_prefix);
 		item_a = dequeue__first();
 		assert(0 == strcmp(STR_PREFIX, item_a->content->msg));
 		fprintf(stdout, " - OK\n");
 
-//		fprintf(stdout, "TEST: '%s' == last->content->msg", STR_PREFIX); // TODO rm  
 		fprintf(stdout, "TEST: '%s' == last->content->msg", str_prefix);
 		item_b = dequeue__last();
 		assert(0 == strcmp(STR_PREFIX, item_b->content->msg));
@@ -156,16 +148,13 @@ int main(int argc, char **argv)
 		fprintf(stdout, "\nbulk tests preparation\n\n");
 		for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
 			content = NULL;
-//			content = malloc(sizeof(*content));
-			content = malloc(sizeof(struct content_s));
+			content = malloc(sizeof(*content));
 			if (NULL == content) {
 				perror("malloc() failed");
 				exit(EXIT_FAILURE); // cleaning up already performed allocations
 			}
-//			strcpy(str_prefix, STR_PREFIX); // TODO rm
 			strcpy(str_idx, "00");
 			sprintf(str_idx, "%d", cnt);
-//			strcpy(content->msg, strcat(str_prefix, str_idx)); // TODO rm
 			memset(content->msg, '\0', MESSAGE_LENGTH);
 			strcat(content->msg, str_prefix);
 			strcat(content->msg, str_idx);
@@ -202,13 +191,10 @@ int main(int argc, char **argv)
 
 		item = dequeue__first();
 		for (cnt = 0; cnt < dequeue__size(); cnt++) {
-//			fprintf(stdout, "TEST: %s%d == elem", STR_PREFIX, cnt); // TODO rm  
 			fprintf(stdout, "TEST: %s%d == elem", str_prefix, cnt);
 			memset(msg, '\0', STR_SIZE);
-//			strcpy(str_prefix, STR_PREFIX); // TODO rm  
 			strcpy(str_idx, "00");
 			sprintf(str_idx, "%d", cnt);
-//			strcpy(msg, strcat(str_prefix, str_idx)); // TODO rm  
 			memset(msg, '\0', MESSAGE_LENGTH);
 			strcat(msg, str_prefix);
 			strcat(msg, str_idx);
@@ -248,16 +234,13 @@ int main(int argc, char **argv)
 		fprintf(stdout, "\ndequeue insertion\n\n");
 		for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
 			content = NULL;
-//			content = malloc(sizeof(*content));
-			content = malloc(sizeof(struct content_s));
+			content = malloc(sizeof(*content));
 			if (NULL == content) {
 				perror("malloc() failed");
 				exit(EXIT_FAILURE); // cleaning up already performed allocations
 			}
-//			strcpy(str_prefix, STR_PREFIX); // TODO rm
 			strcpy(str_idx, "00");
 			sprintf(str_idx, "%d", cnt);
-			//strcpy(content->msg, strcat(str_prefix, str_idx)); // TODO rm
 			memset(content->msg, '\0', MESSAGE_LENGTH);
 			strcat(content->msg, str_prefix);
 			strcat(content->msg, str_idx);
@@ -268,8 +251,7 @@ int main(int argc, char **argv)
 
 		fprintf(stdout, "TEST: NULL == dequeue__find(%s)", "AAA");
 		content = NULL;
-//		content = malloc(sizeof(*content));
-		content = malloc(sizeof(struct content_s));
+		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() failed");
 			exit(EXIT_FAILURE); // cleaning up already performed allocations
@@ -284,18 +266,15 @@ int main(int argc, char **argv)
 		// append "AAA" after element containing "Blahblah7"
 		fprintf(stdout, "TEST: '%d' == dequeue__size()", NUMBER_OF_ELEMENTS+1);
 		content = NULL;
-//		content = malloc(sizeof(*content));
-		content = malloc(sizeof(struct content_s));
+		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() failed");
 			exit(EXIT_FAILURE); // cleaning up already performed allocations
 		}
 		cnt = 7;
 		memset(msg, '\0', STR_SIZE);
-//		strcpy(str_prefix, STR_PREFIX); // TODO rm
 		strcpy(str_idx, "00");
 		sprintf(str_idx, "%d", cnt);
-//		strcpy(content->msg, strcat(str_prefix, str_idx)); // TODO rm
 		memset(content->msg, '\0', MESSAGE_LENGTH);
 		strcat(content->msg, str_prefix);
 		strcat(content->msg, str_idx);
@@ -303,8 +282,7 @@ int main(int argc, char **argv)
 		item = dequeue__find(content);
 		free(content);
 		content = NULL;
-//		content = malloc(sizeof(*content));
-		content = malloc(sizeof(struct content_s));
+		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() failed");
 			exit(EXIT_FAILURE); // cleaning up already performed allocations
@@ -317,8 +295,7 @@ int main(int argc, char **argv)
 
 		fprintf(stdout, "TEST: NULL != dequeue__find(%s)", "AAA");
 		content = NULL;
-//		content = malloc(sizeof(*content));
-		content = malloc(sizeof(struct content_s));
+		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() failed");
 			exit(EXIT_FAILURE); // cleaning up already performed allocations
@@ -332,8 +309,7 @@ int main(int argc, char **argv)
 //*
 		fprintf(stdout, "TEST: dequeue__remove(content) - '%s'", "AAA");
 		content = NULL;
-//		content = malloc(sizeof(*content));
-		content = malloc(sizeof(struct content_s));
+		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() failed");
 			exit(EXIT_FAILURE); // cleaning up already performed allocations

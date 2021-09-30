@@ -79,14 +79,7 @@ void dequeue__append(content_p content)
 void dequeue__remove(item_p elem)
 {
 	/* NB: make sure item->content is free*d, and NULLed in advance */
-//	item_p elem_before = NULL;
-//	if (elem != first)
-//		elem_before = dequeue__prev(elem);
 	item_p elem_before = dequeue__prev(elem);
-
-//	item_p elem_after = NULL;
-//	if (elem != last)
-//		elem_after = dequeue__next(elem);
 	item_p elem_after = dequeue__next(elem);
 
 	if (elem_before != NULL && elem_after != NULL) {
@@ -113,7 +106,6 @@ void dequeue__remove(item_p elem)
 		assert(elem->prev == NULL);
 		assert(elem->next == NULL);
 # endif
-		/* remove: first == last */
 		first = NULL;
 		last = NULL;
 	}
