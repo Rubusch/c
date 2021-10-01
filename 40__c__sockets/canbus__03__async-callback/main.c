@@ -138,8 +138,7 @@ int on_receive(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
 	return 0;
 }
 
-int
-main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	char if_name[CANIF_NAMESIZE];
 	memset(if_name, '\0', CANIF_NAMESIZE);
@@ -189,7 +188,6 @@ main(int argc, char* argv[])
 
 		// print message
 		api__display_msg(&api_frame);
-
 
 	} while (0);
 

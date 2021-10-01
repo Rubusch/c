@@ -75,7 +75,6 @@ void canif__listener()
 			continue;
 		}
 
-
 	} while (1);
 }
 
