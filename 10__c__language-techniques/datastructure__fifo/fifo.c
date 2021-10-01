@@ -26,7 +26,7 @@ item_p fifo__new(content_t* content)
 	item->next = NULL;
 
 	return item;
-};
+}
 
 
 /* public */
@@ -51,7 +51,7 @@ item_p fifo__next(item_p elem)
 	if (elem == NULL)
 		return NULL;
 	return elem->next;
-};
+}
 
 item_p fifo__prev(item_p elem)
 {
