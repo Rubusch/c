@@ -32,6 +32,27 @@
 
 #include <linux/can.h>
 
+#include "fifo/fifo.h"
+#include "fifo/content.h"
+
+#define CANIF_NAMESIZE 16
+
+/*
+  e.g. shutdown $> cansend can0 410#15
+ */
+
+/* ID */
+#define CANIF_ID 0x010
+
+/* channel on ID, to be ORed to the ID, e.g. 0x410 or 0x210 */
+#define CANIF_MGMT 0x400
+#define CANIF_COM 0x200
+// further facilities can be here..
+
+/* data, if MGMT the data[0] byte */
+#define CANIF_MGMT_TERM 0x15
+
+/* drop limit */
 #define RCV_QUEUE_MAX 100
 
 /**
@@ -51,10 +72,7 @@ int canif__send(const uint32_t *can_id, const uint8_t* can_dlc, uint8_t data[]);
 /**
    fetches asynchronously from the queue, returns nbytes or 0 in case the queue was empty
  */
-//int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t *data[CAN_MAX_DLEN]);
-//int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t *data[]);
-//int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t **data);
-int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t data[]);
+int canif__recv(uint8_t* can_dlc, uint8_t data[]);
 
 
 #endif /* CAN_INTERFACE_H_ */

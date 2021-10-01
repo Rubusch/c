@@ -7,6 +7,21 @@
 
 #include "can_interface.h"
 
+#define CANIF__DEBUG 1
+
+# if defined CANIF__DEBUG
+
+static void canif__print(const char* func, const struct can_frame* frame)
+{
+	fprintf(stdout, "CAN_FRAME DEBUG %s() - id: %x, dlc: %d, data: ", func, frame->can_id, frame->can_dlc);
+	for (int idx=0; idx< frame->can_dlc; idx++) {
+		fprintf(stdout, "%x ", frame->data[idx]);
+	}
+	fprintf(stdout, "\n");
+}
+
+# endif
+
 
 /*
   "private"
@@ -16,113 +31,77 @@ static pid_t pid_listener;
 static struct sockaddr_can addr;
 static struct ifreq ifr;
 
-// receveiver
-typedef struct rcv_queue_s {
-	struct rcv_queue_s *next;
-	struct can_frame* content;
-} rcv_queue_t;
-typedef struct rcv_queue_s* rcv_queue_p;
-
-typedef struct receiver_s {
-	int rcv_queue_cnt;
-	rcv_queue_p first;
-	rcv_queue_p last;
-	// TODO lock
-} receiver_t;
-
-static receiver_t receiver = {
-	.rcv_queue_cnt = 0,
-	.first = NULL,
-	.last = NULL
-};
-
-
-static int canif__rcv__pushback(struct can_frame *pf)
-{
-	rcv_queue_p pelem = NULL;
-
-	if (RCV_QUEUE_MAX == 1 + receiver.rcv_queue_cnt) {
-		fprintf(stderr, "%s(): frame dropped!\n", __func__);
-		return 0;
-	}
-
-	if (NULL == (pelem = malloc(sizeof(*pelem)))) {
-		perror("Error at allocation of queue element");
-		return -1;
-	}
-	pelem->next = NULL;
-	pelem->content = pf;
-
-// TODO receiver.lock    
-	if (NULL == receiver.first) {
-		receiver.last = pelem;
-		receiver.first = receiver.last;
-	} else {
-		receiver.last->next = pelem;
-	}
-	receiver.rcv_queue_cnt++;
-// TODO receiver.unlock    
-
-	return 0;
-}
-
-static struct can_frame* canif__rcv__popfirst()
-{
-	struct can_frame* pf;
-	rcv_queue_p iter = receiver.first;
-
-// TODO receiver.lock    
-	if (!receiver.last) {
-		receiver.rcv_queue_cnt = 0;
-		//receiver.rcv_queue_cnt--;
-		//assert(0 == receiver.rcv_queue_cnt); // TEST
-		pf = NULL;
-	} else {
-		pf = receiver.last->content;
-		if (!iter->next) {
-			free(receiver.last);
-			receiver.last = NULL;
-
-		} else {
-			while (&receiver.last != &iter->next) { // TODO verify  
-				iter = iter->next;
-			}
-			iter->next = NULL;
-			free(receiver.last);
-			receiver.last = iter;
-		}
-		receiver.rcv_queue_cnt--;
-	}
-// TODO receiver.unlock    
-
-	return pf;
-}
 
 void canif__listener()
 {
-	struct can_frame* pf;
+	struct can_frame frame;
+	content_p content = NULL;
 	int ret = -1;
-	do {
-		pf = malloc(sizeof(*pf));
-		if (NULL == pf) {
-			perror("Error in allocation");
-			close(sockfd);
-			exit(EXIT_FAILURE);
-		}
 
-		// TODO check number of connected clients?   
-		ret = read(sockfd, pf, sizeof(*pf)); // TODO check blocking?      
+# if defined CANIF__DEBUG
+	fprintf(stdout, "%s() started\n", __func__);
+# endif
+
+	do {
+		content = NULL;
+		ret = read(sockfd, &frame, sizeof(frame));
 		if (-1 == ret) {
 			perror("Error in read()");
-			free(pf);
-			return;
+			break;
 		}
-		ret = canif__rcv__pushback(pf);
-		if (0 > ret) {
-			free(pf);
-			return;
+
+# if defined CANIF__DEBUG
+		canif__print(__func__, &frame);
+# endif
+
+		if ((CANIF_ID | CANIF_MGMT) == frame.can_id) {
+# if defined CANIF__DEBUG
+			fprintf(stdout, "%s() management channel\n", __func__);
+			fprintf(stdout, "DEBUG: triggering socket signalling - %x\n", frame.can_id);
+# endif
+			if (CANIF_MGMT_TERM == frame.data[0]) {
+				break;
+			}
+
+		} else if ((CANIF_ID | CANIF_COM) == frame.can_id) {
+# if defined CANIF__DEBUG
+			fprintf(stdout, "%s() communication channel\n", __func__);
+# endif
+
+// check size of fifo, if limit reached, drop package (free frame!)
+			if (RCV_QUEUE_MAX >= fifo__size())
+				continue;
+
+// alloc content element
+			content = malloc(sizeof(*content));
+			if (NULL == content) {
+				perror("Error in allocation content_p");
+				break;
+			}
+			memset(content->msg, '\0', MESSAGE_LENGTH);
+
+// copy data to content->msg
+			content->len = frame.can_dlc;
+			memcpy(content->msg, frame.data, frame.can_dlc);
+
+// push content to fifo
+			fifo__push(content);
+// (improvement: use locks to guarantee access to the fifo)
+
+		} else {
+# if defined CANIF__DEBUG
+			fprintf(stdout, "%s() dropped\n", __func__);
+# endif
+
+			// dropped
+			continue;
 		}
+
 	} while (1);
+
+# if defined CANIF__DEBUG
+	fprintf(stdout, "%s() ended\n", __func__);
+# endif
 }
 
 
@@ -132,16 +111,17 @@ void canif__listener()
 
 int canif__startup(const char *ifname, size_t ifname_size)
 {
-	if (-1 == (sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW))) {
+	sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+	if (-1 == sockfd) {
 		perror("Error while opening socket");
-		exit(EXIT_FAILURE);
+		return -1;
 	}
 
 	strncpy(ifr.ifr_name, ifname, ifname_size);
 	ifr.ifr_name[ifname_size-1] = '\0';
 	if (0 > ioctl(sockfd, SIOCGIFINDEX, &ifr)) {
 		perror("Error in ioctl");
-		exit(EXIT_FAILURE);
+		return -1;
 	}
 
 	memset(&addr, 0, sizeof(addr));
@@ -151,7 +131,7 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	if (-1 == bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
 		perror("Error at binding socket to address");
 		close(sockfd);
-		exit(EXIT_FAILURE);
+		return -1;
 	}
 
 	pid_listener = fork();
@@ -166,57 +146,48 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	return 0;
 }
 
-//int canif__shutdown(const char *ifname, size_t ifname_size)
 int canif__shutdown()
 {
-	// free queue
-	uint32_t dummy_can_id;
-	uint8_t dummy_can_dlc;
-	uint8_t dummy_data[CAN_MAX_DLEN];
+# if defined CANIF__DEBUG
+	sleep(10);
+# endif
 
-	while (0 == canif__recv(&dummy_can_id, &dummy_can_dlc, dummy_data))
-	       ;
+
+	content_p content = NULL;
+
+	while (0 < fifo__size()) {
+		content = fifo__pop();
+		free(content);
+		content = NULL;
+	}
 
 	return close(sockfd);
 }
 
-//int canif__send(uint32_t *can_id, uint8_t *can_dlc, uint8_t *data[CAN_MAX_DLEN])
 int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[])
 {
 	int nbytes = -1;
 	struct can_frame frame;
-/*
-  // TODO test, rm
-	frame.can_id  = 0x123;
-	frame.can_dlc = 2;
-	frame.data[0] = 0x11;
-	frame.data[1] = 0x22;
-*/
+
 	frame.can_id = *can_id;
 	frame.can_dlc = *can_dlc;
 	memcpy(frame.data, data, *can_dlc);
-
 	nbytes = write(sockfd, &frame, sizeof(struct can_frame));
-	// TODO check write error conditions
 
 	return nbytes;
 }
 
-//int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t *data[CAN_MAX_DLEN])
-//int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t *data[])
-//int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t **data)
-int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t data[])
+int canif__recv(uint8_t* can_dlc, uint8_t data[])
 {
-	struct can_frame* pf;
+	content_p content = fifo__pop();
 
-	pf = canif__rcv__popfirst();
-	if (!pf)
+	if (NULL == content)
 		return -1;
 
-	*can_id = pf->can_id; 
-	*can_dlc = pf->can_dlc; 
-	memcpy(pf->data, data, pf->can_dlc); 
-	free(pf);
+	*can_dlc = content->len;
+	memcpy(data, content->msg, content->len);
+	free(content);
+
 	return 0;
 }
 
