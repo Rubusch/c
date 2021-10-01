@@ -87,8 +87,8 @@ jobs:
 
 ## 10: techniques
       - run: cd ./10__c__language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
-      - run: cd ./10__c__language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
-      - run: cd ./10__c__language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
+      - run: cd ./10__c__language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe
+      - run: cd ./10__c__language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe
       - run: cd ./10__c__language-techniques/endianness && make && ./*.exe
       - run: cd ./10__c__language-techniques/file__operations && make && ./*.exe
       - run: cd ./10__c__language-techniques/file__tempfile && make && ./*.exe
@@ -204,8 +204,11 @@ jobs:
       - run: cd 30__c__pthreads/pthread__join00 && make
       - run: cd 30__c__pthreads/pthread__join01 && make && ./*.exe
 
-
 ## 40: sockets and networking
+      - run: cd 40__c__sockets/canbus__01 && make
+      - run: cd 40__c__sockets/canbus__02__receive-timed-wait && make
+      - run: cd 40__c__sockets/canbus__03__async-callback && make
+      - run: cd 40__c__sockets/canbus__04__async-queue && make
       - run: cd 40__c__sockets/ioctl__get-ip && make
       - run: cd 40__c__sockets/ioctl__interface-information && make
       - run: cd 40__c__sockets/ioctl__interface-mac && make
