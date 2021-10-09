@@ -86,6 +86,8 @@ jobs:
 
 
 ## 10: techniques
+      - run: cd ./10__c__language-techniques/attribute__lto && make && ./*.exe
+      - run: cd ./10__c__language-techniques/attribute__unused && make && ./*.exe
       - run: cd ./10__c__language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
       - run: cd ./10__c__language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe
       - run: cd ./10__c__language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe
