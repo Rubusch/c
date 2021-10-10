@@ -4,6 +4,9 @@
 .\#*
 *.orig
 
+## cachegrind / valgrind
+callgrind.*
+
 ## intermediate
 *.o
 
