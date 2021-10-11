@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 		"Now test the signal hander and send signal SIGTERM to the pid of this demo.\n");
 	memset(&sa, '\0', sizeof(sa));
 
-	// use sa-sigaction when the handler hat more than one parameters
+	// use sa-sigaction when the handler has more than one parameters
 	sa.sa_sigaction = &sig_handler;
 
 	// enable SA_SIGINFO when using siginfo_t for information passing
