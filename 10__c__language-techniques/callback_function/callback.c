@@ -17,7 +17,7 @@
 void populate_array(int *array, size_t arraySize, int (*getNextValue)(void))
 {
 	fprintf(stdout, "execute the passed function pointer\n");
-	for (size_t i=0; i<arraySize; i++) {
+	for (size_t i = 0; i < arraySize; i++) {
 		array[i] = getNextValue();
 		fprintf(stdout, "array[%d] = '%d'\n", i, array[i]);
 	}

@@ -272,31 +272,29 @@
 
 int main(void)
 {
-  int foo = 7;
-  int bar = 1;
-  char cond = 0;
+	int foo = 7;
+	int bar = 1;
+	char cond = 0;
 
-  // check: foo [7]
-  fprintf(stderr, "check: foo--; foo == 0 => %d--; %d == 0 => ", foo, (foo-1));
-  __asm__ __volatile__( "decl %0; sete %1"
-                      : "=m" (foo), "=q" (cond)
-                      : "m" (foo)
-                      : "memory"
-                      );
-  fprintf(stderr, "'%s' [false]\n", (cond?"true":"false"));
+	// check: foo [7]
+	fprintf(stderr, "check: foo--; foo == 0 => %d--; %d == 0 => ", foo,
+		(foo - 1));
+	__asm__ __volatile__("decl %0; sete %1"
+			     : "=m"(foo), "=q"(cond)
+			     : "m"(foo)
+			     : "memory");
+	fprintf(stderr, "'%s' [false]\n", (cond ? "true" : "false"));
 
+	// check: bar [1]
+	fprintf(stderr, "check: bar--; bar == 0 => %d--; %d == 0 => ", bar,
+		(bar - 1));
+	__asm__ __volatile__("decl %0; sete %1"
+			     : "=m"(bar), "=q"(cond)
+			     : "m"(bar)
+			     : "memory");
+	fprintf(stderr, "'%s' [true]\n", (cond ? "true" : "false"));
 
-  // check: bar [1]
-  fprintf(stderr, "check: bar--; bar == 0 => %d--; %d == 0 => ", bar, (bar-1));
-  __asm__ __volatile__( "decl %0; sete %1"
-                      : "=m" (bar), "=q" (cond)
-                      : "m" (bar)
-                      : "memory"
-                      );
-  fprintf(stderr, "'%s' [true]\n", (cond?"true":"false"));
+	fprintf(stderr, "READY.\n");
 
-
-  fprintf(stderr, "READY.\n");
-
-  return 0;
+	return 0;
 }

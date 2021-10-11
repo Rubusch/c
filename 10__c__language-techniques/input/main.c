@@ -11,8 +11,8 @@
 
 int main(int argc, char **argv)
 {
-  unsigned int foo = 0;
-  readnumber(&foo, 5, "enter a value");
+	unsigned int foo = 0;
+	readnumber(&foo, 5, "enter a value");
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

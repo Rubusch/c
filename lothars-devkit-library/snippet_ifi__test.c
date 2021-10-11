@@ -7,26 +7,29 @@
 
 #include "test.h"
 
-
 // test definitions
 
-TEST__BEGIN(get_ifi_info) {
-// TODO
-} TEST__END
+TEST__BEGIN(get_ifi_info)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__get_ifi_info) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__get_ifi_info)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(free_ifi_info) {
-// TODO
-} TEST__END
-
-
+TEST__BEGIN(free_ifi_info)
+{
+	// TODO
+}
+TEST__END
 
 /*
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	test__get_ifi_info();
 	test__lothars__get_ifi_info();

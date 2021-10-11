@@ -194,13 +194,13 @@
 
 int main()
 {
-  static char msg[] = "Hello World!\n";
-  int msg_size = sizeof(msg);
-  long res=0;
+	static char msg[] = "Hello World!\n";
+	int msg_size = sizeof(msg);
+	long res = 0;
 
-  sleep(3); // setup for ptrace
+	sleep(3); // setup for ptrace
 
-/*
+	/*
   // variant I)
 
   // initializing the assembler
@@ -214,22 +214,20 @@ int main()
   asm("syscall");
 // */
 
+	//*
+	// variant II)
 
-//*
-  // variant II)
+	// assembly initialization
+	{
+		__asm__ __volatile__("syscall"
+				     : "=a"(res)
+				     : "a"(SYS_write), "D"(STDOUT), "S"(msg),
+				       "d"(msg_size)
+				     : "memory");
+	}
+	// */
 
-  // assembly initialization
-  {
-    __asm__ __volatile__ (
-                          "syscall"
-                          : "=a" (res)
-                          : "a"(SYS_write), "D"(STDOUT), "S" (msg), "d" (msg_size)
-                          : "memory"
-                          );
-  }
-// */
-
-/*
+	/*
   // variant III)
 
   // assembly instructions
@@ -246,5 +244,5 @@ int main()
   }
 // */
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

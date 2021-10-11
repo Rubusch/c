@@ -2,4 +2,7 @@
 /*
 //*/
 
-void test2(int *val) { *val = 8; }
+void test2(int *val)
+{
+	*val = 8;
+}

@@ -73,119 +73,118 @@ READY.
 #define INT_SIZ 10
 #define CHAR_SIZ 10
 
-
 void func(char *pCh, unsigned int siz_ch, int *pInt, unsigned int siz_i)
 {
-  puts("\tfunction");
+	puts("\tfunction");
 
-  // check for NULL in pointers (a can, not a MUST!):
-  if (NULL == pCh)
-    return;
-  if (NULL == pInt)
-    return;
+	// check for NULL in pointers (a can, not a MUST!):
+	if (NULL == pCh)
+		return;
+	if (NULL == pInt)
+		return;
 
-  // do the actual work in the function
-  puts("\t\tpInt:");
-  printf("\t\tsizeof(pInt)\t= %d\n", sizeof(pInt));
-  printf("\t\telements of pInt= %d\n", sizeof(pInt) / sizeof(int));
-  puts("");
+	// do the actual work in the function
+	puts("\t\tpInt:");
+	printf("\t\tsizeof(pInt)\t= %d\n", sizeof(pInt));
+	printf("\t\telements of pInt= %d\n", sizeof(pInt) / sizeof(int));
+	puts("");
 
-  puts("\t\tpCh:");
-  printf("\t\tsizeof(pCh)\t= %d\n", sizeof(pCh));
-  printf("\t\telements of pCh\t= %d\n", sizeof(pCh) / sizeof(char));
-  printf("\t\tstrlen(pCh)= %d\n", strlen(pCh));
-  puts("");
-  puts("\tfunction finished\n");
+	puts("\t\tpCh:");
+	printf("\t\tsizeof(pCh)\t= %d\n", sizeof(pCh));
+	printf("\t\telements of pCh\t= %d\n", sizeof(pCh) / sizeof(char));
+	printf("\t\tstrlen(pCh)= %d\n", strlen(pCh));
+	puts("");
+	puts("\tfunction finished\n");
 }
-
 
 int main()
 {
-  // definition of variables
-  int *int_pointer = NULL;
-  char *char_pointer = NULL;
-  int int_array[INT_SIZ];
-  char char_array[CHAR_SIZ];
+	// definition of variables
+	int *int_pointer = NULL;
+	char *char_pointer = NULL;
+	int int_array[INT_SIZ];
+	char char_array[CHAR_SIZ];
 
-  puts("allocation and init");
-  // alloc and clean int_pointer
-  if (NULL == (int_pointer = calloc(INT_SIZ, sizeof(*int_pointer)))) {
-    perror("calloc failed");
-    exit(EXIT_FAILURE);
-  }
-  memset(int_pointer, 0, INT_SIZ);
+	puts("allocation and init");
+	// alloc and clean int_pointer
+	if (NULL == (int_pointer = calloc(INT_SIZ, sizeof(*int_pointer)))) {
+		perror("calloc failed");
+		exit(EXIT_FAILURE);
+	}
+	memset(int_pointer, 0, INT_SIZ);
 
+	// alloc and clean char_pointer
+	if (NULL == (char_pointer = calloc(CHAR_SIZ, sizeof(*char_pointer)))) {
+		perror("calloc failed");
+		exit(EXIT_FAILURE);
+	}
+	memset(char_pointer, '\0', CHAR_SIZ);
 
-  // alloc and clean char_pointer
-  if (NULL == (char_pointer = calloc(CHAR_SIZ, sizeof(*char_pointer)))) {
-    perror("calloc failed");
-    exit(EXIT_FAILURE);
-  }
-  memset(char_pointer, '\0', CHAR_SIZ);
+	// init arrays
+	memset(int_array, 0, INT_SIZ);
+	memset(char_array, '\0', CHAR_SIZ);
 
-  // init arrays
-  memset(int_array, 0, INT_SIZ);
-  memset(char_array, '\0', CHAR_SIZ);
+	// set each element of the int array to 7
+	int idx = 0;
+	for (idx = 0; idx < INT_SIZ; ++idx) {
+		int_pointer[idx] = 7;
+	}
 
+	// set each element of the char array to 7
+	strncpy(char_pointer, "777777777", CHAR_SIZ);
 
-  // set each element of the int array to 7
-  int idx = 0;
-  for (idx = 0; idx < INT_SIZ; ++idx) {
-    int_pointer[idx] = 7;
-  }
+	// set each element of the int array to 7
+	for (idx = 0; idx < INT_SIZ; ++idx) {
+		int_array[idx] = 7;
+	}
 
-  // set each element of the char array to 7
-  strncpy(char_pointer, "777777777", CHAR_SIZ);
+	// set each element of the char array to 7
+	strncpy(char_array, "777777777", CHAR_SIZ);
 
-  // set each element of the int array to 7
-  for (idx = 0; idx < INT_SIZ; ++idx) {
-    int_array[idx] = 7;
-  }
+	puts("");
 
-  // set each element of the char array to 7
-  strncpy(char_array, "777777777", CHAR_SIZ);
+	// do the actual work
+	puts("int_pointer:");
+	printf("sizeof(int_pointer)\t= %d\n", sizeof(int_pointer));
+	printf("elements of int_pointer\t= %d\n",
+	       sizeof(int_pointer) / sizeof(int));
+	puts("");
 
-  puts("");
+	puts("char_pointer:");
+	printf("sizeof(char_pointer)\t= %d\n", sizeof(char_pointer));
+	printf("elements of char_pointer= %d\n",
+	       sizeof(char_pointer) / sizeof(char));
+	printf("strlen(char_pointer)\t= %d\n", strlen(char_pointer));
+	puts("");
 
+	puts("int array:");
+	printf("sizeof(int_array)\t= %d\n", sizeof(int_array));
+	printf("elements of int_array\t= %d\n",
+	       sizeof(int_array) / sizeof(int));
+	puts("");
 
-  // do the actual work
-  puts("int_pointer:");
-  printf("sizeof(int_pointer)\t= %d\n", sizeof(int_pointer));
-  printf("elements of int_pointer\t= %d\n", sizeof(int_pointer) / sizeof(int));
-  puts("");
+	puts("char array:");
+	printf("sizeof(char_array)\t= %d\n", sizeof(char_array));
+	printf("elements of char_array\t= %d\n",
+	       sizeof(char_array) / sizeof(char));
+	printf("strlen(char_array)\t= %d\n", strlen(char_array));
+	puts("");
 
-  puts("char_pointer:");
-  printf("sizeof(char_pointer)\t= %d\n", sizeof(char_pointer));
-  printf("elements of char_pointer= %d\n", sizeof(char_pointer) / sizeof(char));
-  printf("strlen(char_pointer)\t= %d\n", strlen(char_pointer));
-  puts("");
+	puts("as you can see:\n\t1. sizeof() has NO knowledge about allocated "
+	     "space.\n\t2. sizeof() has NO knowledge about sizes of arrays in a "
+	     "called function");
 
-  puts("int array:");
-  printf("sizeof(int_array)\t= %d\n", sizeof(int_array));
-  printf("elements of int_array\t= %d\n", sizeof(int_array) / sizeof(int));
-  puts("");
+	// call the function with pointers
+	puts("func with pointers");
+	func(char_pointer, CHAR_SIZ, int_pointer, INT_SIZ);
 
-  puts("char array:");
-  printf("sizeof(char_array)\t= %d\n", sizeof(char_array));
-  printf("elements of char_array\t= %d\n", sizeof(char_array) / sizeof(char));
-  printf("strlen(char_array)\t= %d\n", strlen(char_array));
-  puts("");
+	puts("func with arrays");
+	func(char_array, CHAR_SIZ, int_array, INT_SIZ);
 
-  puts("as you can see:\n\t1. sizeof() has NO knowledge about allocated "
-       "space.\n\t2. sizeof() has NO knowledge about sizes of arrays in a "
-       "called function");
+	// free
+	free(int_pointer);
+	free(char_pointer);
 
-  // call the function with pointers
-  puts("func with pointers");
-  func(char_pointer, CHAR_SIZ, int_pointer, INT_SIZ);
-
-  puts("func with arrays");
-  func(char_array, CHAR_SIZ, int_array, INT_SIZ);
-
-  // free
-  free(int_pointer);
-  free(char_pointer);
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
+	puts("READY.");
+	exit(EXIT_SUCCESS);
 }

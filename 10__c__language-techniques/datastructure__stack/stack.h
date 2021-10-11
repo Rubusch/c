@@ -8,16 +8,15 @@
 #ifndef STACK
 #define STACK
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define DEBUG_STACK 1
 
-# ifdef DEBUG_STACK
+#ifdef DEBUG_STACK
 #include <assert.h>
-# endif
+#endif
 
 #include "content.h"
 
@@ -28,8 +27,7 @@ struct stack_s {
 	content_p content;
 };
 typedef struct stack_s item_t;
-typedef struct stack_s* item_p;
-
+typedef struct stack_s *item_p;
 
 int stack__size();
 

@@ -270,37 +270,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-static inline char* asm_strcpy(char* dest, const char* src)
+static inline char *asm_strcpy(char *dest, const char *src)
 {
-  int d0, d1, d2;
-  __asm__ __volatile__(  "1:\tlodsb\n\t"
-                         "stosb\n\t"
-                         "testb %%al,%%al\n\t"
-                         "jne 1b"
-                         : "=&S" (d0), "=&D" (d1), "=&a" (d2)
-                         : "0" (src),"1" (dest)
-                         : "memory");
-  return dest;
+	int d0, d1, d2;
+	__asm__ __volatile__("1:\tlodsb\n\t"
+			     "stosb\n\t"
+			     "testb %%al,%%al\n\t"
+			     "jne 1b"
+			     : "=&S"(d0), "=&D"(d1), "=&a"(d2)
+			     : "0"(src), "1"(dest)
+			     : "memory");
+	return dest;
 }
-
 
 int main(void)
 {
-  char text[] = "ODI ET AMO. QUARE ID FACIAM, FORTASSE REQUIRIS. NESCIO, SED FIERI SENTIO ET EXCRUCIOR.";
-  char copy[sizeof(text)]; memset(copy, '\0', sizeof(text));
+	char text[] =
+		"ODI ET AMO. QUARE ID FACIAM, FORTASSE REQUIRIS. NESCIO, SED FIERI SENTIO ET EXCRUCIOR.";
+	char copy[sizeof(text)];
+	memset(copy, '\0', sizeof(text));
 
-  fprintf(stderr, "text before:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n", text, strlen(text), copy, strlen(copy));
+	fprintf(stderr,
+		"text before:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n",
+		text, strlen(text), copy, strlen(copy));
 
-  puts("string copy...");
-  if (!asm_strcpy(copy, text)) {
-    perror("asm_strcpy() failed");
-    exit(EXIT_FAILURE);
-  }
+	puts("string copy...");
+	if (!asm_strcpy(copy, text)) {
+		perror("asm_strcpy() failed");
+		exit(EXIT_FAILURE);
+	}
 
-  fprintf(stderr, "text after:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n", text, strlen(text), copy, strlen(copy));
+	fprintf(stderr,
+		"text after:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n",
+		text, strlen(text), copy, strlen(copy));
 
-  fprintf(stderr, "READY.\n");
+	fprintf(stderr, "READY.\n");
 
-  return 0;
+	return 0;
 }

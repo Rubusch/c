@@ -19,7 +19,6 @@
   Returns pid of terminated child on success, else -1
 //*/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,11 +31,11 @@
 #define CHILD_TXT "\tchild - "
 #define IDENTIFIER_SIZE 10
 
-
 int main()
 {
 	char *identifier = NULL;
-	if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
+	if (NULL ==
+	    (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
 		perror("calloc() failed");
 		exit(EXIT_FAILURE);
 	}
@@ -51,10 +50,11 @@ int main()
 
 	} else if (pid == 0) {
 		// child process
-		strncpy(identifier, CHILD_TXT, 1+strlen(CHILD_TXT));
+		strncpy(identifier, CHILD_TXT, 1 + strlen(CHILD_TXT));
 
 		// child code
-		printf("%schild pid: %i, parent: %i\r\n", identifier, getpid(), pid_parent);
+		printf("%schild pid: %i, parent: %i\r\n", identifier, getpid(),
+		       pid_parent);
 		printf("%ssleeps\r\n", identifier);
 		sleep(5);
 		printf("%sawakes\r\n", identifier);
@@ -63,9 +63,10 @@ int main()
 
 	} else {
 		// parent process
-		strncpy(identifier, PARENT_TXT, 1+strlen(PARENT_TXT));
+		strncpy(identifier, PARENT_TXT, 1 + strlen(PARENT_TXT));
 
-		printf("%schild pid: %i, parent: %i\r\n", identifier, pid, getpid());
+		printf("%schild pid: %i, parent: %i\r\n", identifier, pid,
+		       getpid());
 		printf("%swaiting on pid %i\r\n", identifier, pid);
 
 		/*

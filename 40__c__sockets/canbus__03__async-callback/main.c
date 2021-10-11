@@ -71,7 +71,6 @@
 
 #include "can_interface.h"
 
-
 typedef struct api_frame_s {
 	uint32_t frame_id;
 	uint8_t frame_dlc;
@@ -80,7 +79,7 @@ typedef struct api_frame_s {
 				       * size as number of used
 				       * bytes! */
 } api_frame_t;
-typedef struct api_frame_s* api_frame_p;
+typedef struct api_frame_s *api_frame_p;
 static api_frame_t api_frame;
 
 api_frame_p api__frame(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
@@ -105,8 +104,9 @@ void api__display_msg(api_frame_p pf)
 		fprintf(stderr, "DEBUG: pf: NULL\n");
 		return;
 	}
-	fprintf(stdout, "DEBUG: frame_id: '%X', frame_dlc: '%d', ", pf->frame_id, pf->frame_dlc);
-	for (int idx=0; idx<pf->frame_dlc ; idx++)
+	fprintf(stdout, "DEBUG: frame_id: '%X', frame_dlc: '%d', ",
+		pf->frame_id, pf->frame_dlc);
+	for (int idx = 0; idx < pf->frame_dlc; idx++)
 		fprintf(stdout, "%X", pf->data[idx]);
 	fprintf(stdout, "\n");
 }
@@ -138,7 +138,7 @@ int on_receive(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
 	return 0;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	char if_name[CANIF_NAMESIZE];
 	memset(if_name, '\0', CANIF_NAMESIZE);
@@ -146,8 +146,9 @@ int main(int argc, char* argv[])
 		strcpy(if_name, "can0");
 	} else {
 		int len = strlen(argv[1]);
-		if (CANIF_NAMESIZE <= len-1) {
-			fprintf(stderr, "usage:\n\t%s\nor\n\t%s <IF Name>\n", argv[0], argv[0]);
+		if (CANIF_NAMESIZE <= len - 1) {
+			fprintf(stderr, "usage:\n\t%s\nor\n\t%s <IF Name>\n",
+				argv[0], argv[0]);
 			exit(EXIT_FAILURE);
 		}
 		strncpy(if_name, argv[1], len);
@@ -167,22 +168,26 @@ int main(int argc, char* argv[])
 		api__prepare_msg(&api_frame);
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 

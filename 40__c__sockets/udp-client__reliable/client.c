@@ -67,13 +67,11 @@
 #include <sys/time.h> /* gettimeofday() */
 #include <errno.h>
 
-
 // constants
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 
 typedef void Sigfunc(int); /* for signal handlers */
-
 
 /*
   rtt (round trip time) measuring approach (woud be e.g. in separate a header)
@@ -84,9 +82,9 @@ typedef void Sigfunc(int); /* for signal handlers */
 */
 
 //#define RTT_DEBUG
-int  rtt_d_flag = 0;  // debug flag; can be set by caller
+int rtt_d_flag = 0; // debug flag; can be set by caller
 
-struct rtt_info{
+struct rtt_info {
 	float rtt_rtt; // most recent measured RTT, in seconds
 	float rtt_srtt; // smoothed RTT estimator, in seconds
 	float rtt_rttvar; // smoothed mean deviation, in seconds
@@ -110,8 +108,6 @@ static struct hdr {
 	uint32_t ts;
 } sendhdr, recvhdr;
 
-
-
 // forwards
 
 void err_sys(const char *, ...);
@@ -119,12 +115,12 @@ void err_msg(const char *, ...);
 void err_quit(const char *, ...);
 
 void lothars__gettimeofday(struct timeval *, void *);
-Sigfunc* lothars__signal(int, Sigfunc*);
+Sigfunc *lothars__signal(int, Sigfunc *);
 ssize_t lothars__recvmsg(int, struct msghdr *, int);
 void lothars__sendmsg(int, const struct msghdr *, int);
-char* lothars__fgets(char *, int, FILE *);
+char *lothars__fgets(char *, int, FILE *);
 void lothars__fputs(const char *, FILE *);
-void lothars__inet_pton(int, const char*, void*);
+void lothars__inet_pton(int, const char *, void *);
 int lothars__socket(int, int, int);
 
 void rtt_debug(struct rtt_info *);
@@ -134,8 +130,6 @@ int rtt_start(struct rtt_info *);
 void rtt_stop(struct rtt_info *, uint32_t);
 int rtt_timeout(struct rtt_info *);
 uint32_t rtt_ts(struct rtt_info *);
-
-
 
 // utilities
 
@@ -150,19 +144,19 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	errno_save = errno; // value caller might want printed
 
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
+	//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
 
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 }
-
 
 // functions
 
@@ -171,58 +165,53 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    nonfatal error unrelated to system call Print message and return
 */
 void err_msg(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 }
-
 
 /*
    fatal error unrelated to system call Print message and terminate
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
-Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+Sigfunc *lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
-	Sigfunc *sigfunc=NULL;
+	Sigfunc *sigfunc = NULL;
 	if (SIG_ERR == (sigfunc = signal(signo, func))) {
 		err_sys("signal error");
 	}
 	return sigfunc;
 }
 
-
 ssize_t lothars__recvmsg(int fd, struct msghdr *msg, int flags)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = recvmsg(fd, msg, flags))) {
 		err_sys("recvmsg error");
 	}
 	return res;
 }
-
 
 void lothars__sendmsg(int fd, const struct msghdr *msg, int flags)
 {
@@ -239,7 +228,6 @@ void lothars__sendmsg(int fd, const struct msghdr *msg, int flags)
 	}
 }
 
-
 void lothars__gettimeofday(struct timeval *tv, void *foo)
 {
 	if (-1 == gettimeofday(tv, foo)) {
@@ -247,16 +235,14 @@ void lothars__gettimeofday(struct timeval *tv, void *foo)
 	}
 }
 
-
-char* lothars__fgets(char *ptr, int n, FILE *stream)
+char *lothars__fgets(char *ptr, int n, FILE *stream)
 {
 	char *rptr = NULL;
-	if ( (NULL == (rptr = fgets(ptr, n, stream))) && ferror(stream)) {
+	if ((NULL == (rptr = fgets(ptr, n, stream))) && ferror(stream)) {
 		err_sys("fgets error");
 	}
 	return rptr;
 }
-
 
 void lothars__fputs(const char *ptr, FILE *stream)
 {
@@ -264,7 +250,6 @@ void lothars__fputs(const char *ptr, FILE *stream)
 		err_sys("fputs error");
 	}
 }
-
 
 void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
@@ -276,16 +261,14 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 	}
 }
 
-
 int lothars__socket(int family, int type, int protocol)
 {
 	int res;
-	if(0 > (res = socket(family, type, protocol))){
+	if (0 > (res = socket(family, type, protocol))) {
 		err_sys("socket error");
 	}
 	return res;
 }
-
 
 // rtt implementation
 
@@ -294,7 +277,6 @@ int lothars__socket(int family, int type, int protocol)
   smoothed RTT plus four times the deviation
 */
 #define RTT_RTOCALC(ptr) ((ptr)->rtt_srtt + (4.0 * (ptr)->rtt_rttvar))
-
 
 static float rtt_minmax(float rto)
 {
@@ -307,21 +289,19 @@ static float rtt_minmax(float rto)
 	return rto;
 }
 
-
 void rtt_init(struct rtt_info *ptr)
 {
 	struct timeval tv;
 
 	lothars__gettimeofday(&tv, NULL);
-	ptr->rtt_base = tv.tv_sec;  // number of sec since 1/1/1970 at start
+	ptr->rtt_base = tv.tv_sec; // number of sec since 1/1/1970 at start
 
-	ptr->rtt_rtt    = 0;
-	ptr->rtt_srtt   = 0;
+	ptr->rtt_rtt = 0;
+	ptr->rtt_srtt = 0;
 	ptr->rtt_rttvar = 0.75;
 	ptr->rtt_rto = rtt_minmax(RTT_RTOCALC(ptr));
 	// first RTO at (srtt + (4 * rttvar)) = 3 seconds
 }
-
 
 /*
   return the current timestamp
@@ -331,7 +311,7 @@ void rtt_init(struct rtt_info *ptr)
 */
 uint32_t rtt_ts(struct rtt_info *ptr)
 {
-	uint32_t  ts;
+	uint32_t ts;
 	struct timeval tv;
 
 	lothars__gettimeofday(&tv, NULL);
@@ -339,22 +319,18 @@ uint32_t rtt_ts(struct rtt_info *ptr)
 	return ts;
 }
 
-
 void rtt_newpack(struct rtt_info *ptr)
 {
 	ptr->rtt_nrexmt = 0;
 }
-
 
 /*
   return value can be used as: alarm(rtt_start(&foo))
 */
 int rtt_start(struct rtt_info *ptr)
 {
-	return ((int) (ptr->rtt_rto + 0.5));  // round float to int
+	return ((int)(ptr->rtt_rto + 0.5)); // round float to int
 }
-
-
 
 /*
   a response was received
@@ -367,9 +343,9 @@ int rtt_start(struct rtt_info *ptr)
 */
 void rtt_stop(struct rtt_info *ptr, uint32_t ms)
 {
-	double  delta;
+	double delta;
 
-	ptr->rtt_rtt = ms / 1000.0;  // measured RTT in seconds
+	ptr->rtt_rtt = ms / 1000.0; // measured RTT in seconds
 
 	/*
 	  update our estimators of RTT and mean deviation of RTT
@@ -378,17 +354,16 @@ void rtt_stop(struct rtt_info *ptr, uint32_t ms)
 	*/
 
 	delta = ptr->rtt_rtt - ptr->rtt_srtt;
-	ptr->rtt_srtt += delta / 8;  // g = 1/8
+	ptr->rtt_srtt += delta / 8; // g = 1/8
 
 	if (0.0 > delta) {
-		delta = -delta;    // |delta|
+		delta = -delta; // |delta|
 	}
 
 	ptr->rtt_rttvar += (delta - ptr->rtt_rttvar) / 4; // h = 1/4
 
 	ptr->rtt_rto = rtt_minmax(RTT_RTOCALC(ptr));
 }
-
 
 /*
   a timeout has occurred
@@ -397,14 +372,13 @@ void rtt_stop(struct rtt_info *ptr, uint32_t ms)
 */
 int rtt_timeout(struct rtt_info *ptr)
 {
-	ptr->rtt_rto *= 2;  // next RTO
+	ptr->rtt_rto *= 2; // next RTO
 
 	if (++ptr->rtt_nrexmt > RTT_MAXNREXMT) {
-		return -1;   // time to give up for this packet
+		return -1; // time to give up for this packet
 	}
 	return 0;
 }
-
 
 /*
   print debugging information on stderr, if the "rtt_d_flag" is nonzero
@@ -415,17 +389,10 @@ void rtt_debug(struct rtt_info *ptr)
 		return;
 	}
 
-	fprintf(stderr
-		, "rtt = %.3f, srtt = %.3f, rttvar = %.3f, rto = %.3f\n"
-		, ptr->rtt_rtt
-		, ptr->rtt_srtt
-		, ptr->rtt_rttvar
-		, ptr->rtt_rto);
+	fprintf(stderr, "rtt = %.3f, srtt = %.3f, rttvar = %.3f, rto = %.3f\n",
+		ptr->rtt_rtt, ptr->rtt_srtt, ptr->rtt_rttvar, ptr->rtt_rto);
 	fflush(stderr);
 }
-
-
-
 
 /*
   mini signal handler
@@ -436,17 +403,12 @@ static void sig_alarm(int signo)
 	siglongjmp(jmpbuf, 1);
 }
 
-
 /*
   the reliable io - reliability added to send / receive
 */
-ssize_t costumized_send_recv( int fd
-                              , void* outbuff
-                              , size_t outbytes
-                              , void* inbuff
-                              , size_t inbytes
-                              , struct sockaddr* destaddr
-                              , socklen_t destlen)
+ssize_t costumized_send_recv(int fd, void *outbuff, size_t outbytes,
+			     void *inbuff, size_t inbytes,
+			     struct sockaddr *destaddr, socklen_t destlen)
 {
 	ssize_t num;
 	struct iovec iovsend[2], iovrecv[2];
@@ -519,7 +481,6 @@ sendagain:
 	return num - sizeof(struct hdr);
 }
 
-
 /* TODO rm       
   helper to call the "reliable" send / receive
 
@@ -549,18 +510,19 @@ void costumized_dg_cli( FILE* fp
 }   
 // */
 
-
 /*
   main()...
 
   UDP client function
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int fd_sock;
 	struct sockaddr_in servaddr;
-	char serverip[16]; memset(serverip, '\0', sizeof(serverip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char serverip[16];
+	memset(serverip, '\0', sizeof(serverip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (3 != argc) {
 		fprintf(stderr, "usage: %s <serverip> <port>\n", argv[0]);
@@ -586,19 +548,15 @@ int main(int argc, char** argv)
 	// connect the socket to the command line console
 	{
 		ssize_t n_bytes;
-		struct sockaddr* pservaddr = (struct sockaddr*) &servaddr;
+		struct sockaddr *pservaddr = (struct sockaddr *)&servaddr;
 
 		// received line has additionally '\0'
 		char sendline[MAXLINE], recvline[MAXLINE + 1];
 
-		while (NULL != lothars__fgets(sendline, MAXLINE, stdin)){
-			n_bytes = costumized_send_recv( fd_sock
-						    , sendline
-						    , strlen(sendline)
-						    , recvline
-						    , MAXLINE
-						    , pservaddr
-						    , sizeof(servaddr));
+		while (NULL != lothars__fgets(sendline, MAXLINE, stdin)) {
+			n_bytes = costumized_send_recv(
+				fd_sock, sendline, strlen(sendline), recvline,
+				MAXLINE, pservaddr, sizeof(servaddr));
 
 			recvline[n_bytes] = '\0'; // null terminate
 

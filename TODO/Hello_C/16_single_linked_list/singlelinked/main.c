@@ -26,57 +26,56 @@
 
 #include "sl_list.h"
 
-
 int main()
 {
-  // create
-  puts("\ncreating a list");
-  do {
-    // append and create automatically the list
-    if (0 != appendelement("january", 1 + strlen("january"))) {
-      exit(EXIT_FAILURE);
-    }
-    printlist();
+	// create
+	puts("\ncreating a list");
+	do {
+		// append and create automatically the list
+		if (0 != appendelement("january", 1 + strlen("january"))) {
+			exit(EXIT_FAILURE);
+		}
+		printlist();
 
-    // append
-    puts("\nappending elements");
-    if (0 != appendelement("february", 1 + strlen("february"))) {
-      break;
-    }
-    printlist();
-    puts("\nappending elements");
-    if (0 != appendelement("may", 1 + strlen("may"))) {
-      break;
-    }
-    printlist();
+		// append
+		puts("\nappending elements");
+		if (0 != appendelement("february", 1 + strlen("february"))) {
+			break;
+		}
+		printlist();
+		puts("\nappending elements");
+		if (0 != appendelement("may", 1 + strlen("may"))) {
+			break;
+		}
+		printlist();
 
-    // insert
-    puts("\ninserting elements");
-    if (0 != insertelement("february", 1 + strlen("february"), "april",
-                           1 + strlen("april"))) {
-      break;
-    }
-    printlist();
-    puts("\ninserting elements");
-    if (0 != insertelement("february", 1 + strlen("february"), "march",
-                           1 + strlen("march"))) {
-      break;
-    }
-    printlist();
+		// insert
+		puts("\ninserting elements");
+		if (0 != insertelement("february", 1 + strlen("february"),
+				       "april", 1 + strlen("april"))) {
+			break;
+		}
+		printlist();
+		puts("\ninserting elements");
+		if (0 != insertelement("february", 1 + strlen("february"),
+				       "march", 1 + strlen("march"))) {
+			break;
+		}
+		printlist();
 
-    // print
-    puts("\nprint list content");
-    printlist();
-  } while (0);
+		// print
+		puts("\nprint list content");
+		printlist();
+	} while (0);
 
-  // remove all - cleaning up, HAS to occur!!
-  puts("\nremove all");
-  if (0 != removeall()) {
-    puts("deallocation failed!");
-    exit(EXIT_FAILURE);
-  }
-  printlist();
+	// remove all - cleaning up, HAS to occur!!
+	puts("\nremove all");
+	if (0 != removeall()) {
+		puts("deallocation failed!");
+		exit(EXIT_FAILURE);
+	}
+	printlist();
 
-  puts("\nREADY.");
-  exit(EXIT_SUCCESS);
+	puts("\nREADY.");
+	exit(EXIT_SUCCESS);
 }

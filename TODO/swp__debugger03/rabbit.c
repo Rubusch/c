@@ -7,11 +7,11 @@
 /* just some demo code */
 int main(int argc, char **argv)
 {
-  int cnt = 0;
-  while (TRUE) {
-    printf("RABBIT: '%d'\n", cnt);
-    cnt++;
-    sleep(1);
-  }
-  exit(EXIT_SUCCESS);
+	int cnt = 0;
+	while (TRUE) {
+		printf("RABBIT: '%d'\n", cnt);
+		cnt++;
+		sleep(1);
+	}
+	exit(EXIT_SUCCESS);
 }

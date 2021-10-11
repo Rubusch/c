@@ -19,7 +19,6 @@
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
-
 /*
   constants
 */
@@ -32,9 +31,8 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 /*
   min / max - improve using __typeof__
 */
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
-
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 
 /*
   forwards
@@ -44,19 +42,20 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
 void err_sys(const char *, ...);
 
 // socket
-Sigfunc* lothars__signal(int, Sigfunc*);
+Sigfunc *lothars__signal(int, Sigfunc *);
 ssize_t lothars__readn(int, void *, size_t);
 void lothars__writen(int, void *, size_t);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__bind(int, const struct sockaddr *, socklen_t);
 void lothars__listen(int, int);
-ssize_t lothars__recvfrom(int, void *, size_t, int, struct sockaddr *, socklen_t *);
-void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+ssize_t lothars__recvfrom(int, void *, size_t, int, struct sockaddr *,
+			  socklen_t *);
+void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *,
+		     socklen_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 int lothars__socket(int, int, int);
 pid_t lothars__fork();
 void lothars__close(int *);
-
 
 /*
   internal helpers
@@ -70,24 +69,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -100,24 +100,21 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
-
-Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+Sigfunc *lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc = NULL;
-	if(SIG_ERR == (sigfunc = signal(signo, func))){
+	if (SIG_ERR == (sigfunc = signal(signo, func))) {
 		err_sys("signal error");
 	}
 	return sigfunc;
 }
-
 
 /*
   readn
@@ -128,14 +125,14 @@ ssize_t readn(int fd, void *vptr, size_t num)
 {
 	size_t nleft;
 	ssize_t nread;
-	char *ptr=NULL;
+	char *ptr = NULL;
 
 	ptr = vptr;
 	nleft = num;
 	while (nleft > 0) {
-		if ( (nread = read(fd, ptr, nleft)) < 0) {
+		if ((nread = read(fd, ptr, nleft)) < 0) {
 			if (errno == EINTR) {
-				nread = 0;  // and call read() again
+				nread = 0; // and call read() again
 			} else {
 				return -1;
 			}
@@ -143,21 +140,19 @@ ssize_t readn(int fd, void *vptr, size_t num)
 			break; // EOF
 		}
 		nleft -= nread;
-		ptr   += nread;
+		ptr += nread;
 	}
-	return (num - nleft);  // return >= 0
+	return (num - nleft); // return >= 0
 }
-
 
 ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = readn(fd, ptr, nbytes))) {
 		err_sys("readn error");
 	}
 	return res;
 }
-
 
 /*
   writen
@@ -189,7 +184,6 @@ ssize_t writen(int fd, const void *vptr, size_t num)
 	return num;
 }
 
-
 void lothars__writen(int fd, void *ptr, size_t nbytes)
 {
 	if (writen(fd, ptr, nbytes) != nbytes) {
@@ -197,13 +191,14 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 	}
 }
 
-
 int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
 	int res;
 again:
 	if (0 > (res = accept(fd, sa, salenptr))) {
-		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+		if ((errno == EPROTO) ||
+		    (errno ==
+		     ECONNABORTED)) { // deal with some POSIX.1 errors...
 			goto again;
 		} else {
 			err_sys("accept error");
@@ -212,14 +207,12 @@ again:
 	return res;
 }
 
-
 void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
 	if (0 > bind(fd, sa, salen)) {
 		err_sys("bind error");
 	}
 }
-
 
 void lothars__listen(int fd, int backlog)
 {
@@ -234,42 +227,31 @@ void lothars__listen(int fd, int backlog)
 	}
 }
 
-
-ssize_t lothars__recvfrom(int fd
-		  , void *ptr
-		  , size_t nbytes
-		  , int flags
-		  , struct sockaddr *sa
-		  , socklen_t *salenptr)
+ssize_t lothars__recvfrom(int fd, void *ptr, size_t nbytes, int flags,
+			  struct sockaddr *sa, socklen_t *salenptr)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = recvfrom(fd, ptr, nbytes, flags, sa, salenptr))) {
 		err_sys("recvfrom error");
 	}
 	return res;
 }
 
-
-void lothars__sendto( int fd
-	      , const void *ptr
-	      , size_t nbytes
-	      , int flags
-	      , const struct sockaddr *sa
-	      , socklen_t salen)
+void lothars__sendto(int fd, const void *ptr, size_t nbytes, int flags,
+		     const struct sockaddr *sa, socklen_t salen)
 {
-	if (sendto(fd, ptr, nbytes, flags, sa, salen) != (ssize_t) nbytes) {
+	if (sendto(fd, ptr, nbytes, flags, sa, salen) != (ssize_t)nbytes) {
 		err_sys("sendto error");
 	}
 }
 
-
-void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		err_sys("setsockopt error");
 	}
 }
-
 
 int lothars__socket(int family, int type, int protocol)
 {
@@ -280,7 +262,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 pid_t lothars__fork(void)
 {
 	pid_t pid;
@@ -289,7 +270,6 @@ pid_t lothars__fork(void)
 	}
 	return pid;
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -327,7 +307,6 @@ void lothars__close(int *fd)
 #endif /* _XOPEN_SOURCE */
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
@@ -354,7 +333,6 @@ again:
 	}
 }
 
-
 /*
   mini signal handler, calls waitpid to avoid zombies
 */
@@ -368,14 +346,12 @@ void sig_child(int signo)
 	}
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main - tcp and udp echo server implementation
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int fd_listen, fd_conn, fd_udp, n_ready, maxfdpl;
 	char msg[MAXLINE];
@@ -385,7 +361,8 @@ int main(int argc, char** argv)
 	socklen_t len;
 	const int on = 1;
 	struct sockaddr_in cliaddr, servaddr;
-	char port[16]; memset(port, '\0', sizeof(port));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -404,10 +381,12 @@ int main(int argc, char** argv)
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));
 
-	lothars__setsockopt(fd_listen, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+	lothars__setsockopt(fd_listen, SOL_SOCKET, SO_REUSEADDR, &on,
+			    sizeof(on));
 
 	// bind port (tcp)
-	lothars__bind(fd_listen, (struct sockaddr*) &servaddr, sizeof(servaddr));
+	lothars__bind(fd_listen, (struct sockaddr *)&servaddr,
+		      sizeof(servaddr));
 
 	// listen (tcp)
 	lothars__listen(fd_listen, LISTENQ);
@@ -422,7 +401,7 @@ int main(int argc, char** argv)
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));
 
-	lothars__bind(fd_udp, (struct sockaddr*) &servaddr, sizeof(servaddr));
+	lothars__bind(fd_udp, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
 	/* signals / waitpid */
 
@@ -463,7 +442,8 @@ int main(int argc, char** argv)
 			len = sizeof(cliaddr);
 
 			// accept (tcp)
-			fd_conn = lothars__accept(fd_listen, (struct sockaddr*) &cliaddr, &len);
+			fd_conn = lothars__accept(
+				fd_listen, (struct sockaddr *)&cliaddr, &len);
 			if (0 == (childpid = lothars__fork())) {
 				// child process (tcp)
 				lothars__close(&fd_listen);
@@ -481,10 +461,13 @@ int main(int argc, char** argv)
 			fprintf(stdout, "%s() FD_ISSET() -> udp\n", __func__);
 			len = sizeof(cliaddr);
 
-			n_bytes = lothars__recvfrom(fd_udp, msg, MAXLINE, 0, (struct sockaddr*) &cliaddr, &len);
+			n_bytes = lothars__recvfrom(fd_udp, msg, MAXLINE, 0,
+						    (struct sockaddr *)&cliaddr,
+						    &len);
 			fprintf(stdout, "udp:\t%s", msg);
 
-			lothars__sendto(fd_udp, msg, n_bytes, 0, (struct sockaddr*) &cliaddr, len);
+			lothars__sendto(fd_udp, msg, n_bytes, 0,
+					(struct sockaddr *)&cliaddr, len);
 			fprintf(stdout, "udp: READY.\n");
 		}
 	} /* while (1) */
@@ -492,4 +475,3 @@ int main(int argc, char** argv)
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
-

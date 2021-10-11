@@ -12,32 +12,30 @@
 
 double sum(int, ...);
 
-
 int main(int argc, char **argv)
 {
-  double d = sum(5, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6);
-  printf("d = %f\n", d);
+	double d = sum(5, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6);
+	printf("d = %f\n", d);
 }
-
 
 double sum(int numberOfArguments, ...)
 {
-  double result = 0.0;
+	double result = 0.0;
 
-  // define va_list
-  va_list argumentpointer;
+	// define va_list
+	va_list argumentpointer;
 
-  // initialize argumentpointer
-  va_start(argumentpointer, numberOfArguments);
+	// initialize argumentpointer
+	va_start(argumentpointer, numberOfArguments);
 
-  // sum up values
-  int cnt = 0;
-  for (cnt = 0; cnt < numberOfArguments; ++cnt) {
-    result += va_arg(argumentpointer, double);
-  }
+	// sum up values
+	int cnt = 0;
+	for (cnt = 0; cnt < numberOfArguments; ++cnt) {
+		result += va_arg(argumentpointer, double);
+	}
 
-  // over and out
-  va_end(argumentpointer);
+	// over and out
+	va_end(argumentpointer);
 
-  return result;
+	return result;
 }

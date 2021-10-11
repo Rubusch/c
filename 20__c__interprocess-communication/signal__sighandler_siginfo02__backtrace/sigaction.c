@@ -40,8 +40,10 @@ void sig_handler_backtrace(int sig, siginfo_t *info, void *secret)
 	ucontext_t *uc = (ucontext_t *)secret;
 
 	if (sig == SIGSEGV) {
-		fprintf(stdout, "%s() - signal %d, faulty address is %p, from %p\n"
-			, __func__, sig, info->si_addr, (void*)uc->uc_mcontext.gregs[REG_RIP]);
+		fprintf(stdout,
+			"%s() - signal %d, faulty address is %p, from %p\n",
+			__func__, sig, info->si_addr,
+			(void *)uc->uc_mcontext.gregs[REG_RIP]);
 	} else {
 		fprintf(stdout, "Got signal %d\n", sig);
 	}
@@ -50,19 +52,18 @@ void sig_handler_backtrace(int sig, siginfo_t *info, void *secret)
 	trace_size = backtrace(trace, 16);
 
 	// overwrite sigaction with caller's address (approach by linux journal)
-	trace[1] = (void *) uc->uc_mcontext.gregs[REG_RIP];
+	trace[1] = (void *)uc->uc_mcontext.gregs[REG_RIP];
 	messages = backtrace_symbols(trace, trace_size);
 
 	// skip first stack frame (points here)
 	printf("[bt] Execution path:\n");
-	for (i=1; i<trace_size; ++i) {
+	for (i = 1; i < trace_size; ++i) {
 		fprintf(stdout, "[bt] %s\n", messages[i]);
 	}
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
-
 
 /*
   testee (provoking the SIGSEGV)
@@ -72,16 +73,17 @@ void sig_handler_backtrace(int sig, siginfo_t *info, void *secret)
 */
 //*
 // some further backtrace
-int func_another(int a, char b) {
-
+int func_another(int a, char b)
+{
 	char *p = (char *)0xdeadbeef;
 
 	a = a + b;
-	*p = 10;	// CRASH here!!
+	*p = 10; // CRASH here!!
 
-	return 2*a;
+	return 2 * a;
 }
-int func() {
+int func()
+{
 	int res, a = 5;
 	res = 5 + func_another(a, 't');
 	return res;
@@ -102,22 +104,20 @@ int func() {
 }
 // */
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	struct sigaction sa;
 
 	// install signal handler
 	sa.sa_sigaction = sig_handler_backtrace;
-	sigemptyset (&sa.sa_mask);
+	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART | SA_SIGINFO;
 	sigaction(SIGSEGV, &sa, NULL);
 	sigaction(SIGUSR1, &sa, NULL);
 	// further signals go here..
 
-
 	// provoke a SIGSEGV
 	fprintf(stdout, "%d\n", func());
-
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);

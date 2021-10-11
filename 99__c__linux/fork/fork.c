@@ -56,44 +56,44 @@
 
 int varGlobal = 2;
 
-
 int main()
 {
-  int varStack = 20;
-  pid_t pid = 0, my_pid = getpid(); // pid of PARENT
-  char *identifier = NULL;
-  if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
-    perror("malloc() failed");
-    exit(1);
-  }
-  memset(identifier, '\0', IDENTIFIER_SIZE);
+	int varStack = 20;
+	pid_t pid = 0, my_pid = getpid(); // pid of PARENT
+	char *identifier = NULL;
+	if (NULL ==
+	    (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
+		perror("malloc() failed");
+		exit(1);
+	}
+	memset(identifier, '\0', IDENTIFIER_SIZE);
 
-  /*
+	/*
     START HERE
   //*/
 
-  // try to generate child
-  if (0 > (pid = fork())) {
-    // fork failed
-    perror("fork() failed");
-    exit(1);
+	// try to generate child
+	if (0 > (pid = fork())) {
+		// fork failed
+		perror("fork() failed");
+		exit(1);
 
-  } else if (pid == 0) {
-    // code only executed by CHILD process
-    strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT) + 1);
-    ++varGlobal;
-    ++varStack;
-    my_pid = getpid(); // sets pid of child
+	} else if (pid == 0) {
+		// code only executed by CHILD process
+		strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT) + 1);
+		++varGlobal;
+		++varStack;
+		my_pid = getpid(); // sets pid of child
 
-  } else {
-    // code only executed by PARENT process
-    strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT) + 1);
-  }
+	} else {
+		// code only executed by PARENT process
+		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT) + 1);
+	}
 
-  // code executed by BOTH
-  printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid, identifier,
-         varGlobal, varStack);
+	// code executed by BOTH
+	printf("%i %s varGlobal: %i (2), varStack: %i (20)\r\n", my_pid,
+	       identifier, varGlobal, varStack);
 
-  free(identifier);
-  exit(0);
+	free(identifier);
+	exit(0);
 }

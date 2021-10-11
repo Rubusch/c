@@ -4,7 +4,6 @@
 
 #include "lib_if-name-index.h"
 
-
 /*
   The if_nametoindex() function returns the index of the network
   interface corresponding to the name ifname.
@@ -25,7 +24,6 @@ unsigned int lothars__if_nametoindex(const char *name)
 	return idx;
 }
 
-
 /*
   The if_indextoname() function returns the name of the network
   interface corresponding to the interface index ifindex. The name is
@@ -40,7 +38,7 @@ unsigned int lothars__if_nametoindex(const char *name)
   Returns the name of the interface also as return field, or NULL in
   case of error (the wrapper will abort the program).
 */
-char* lothars__if_indextoname(unsigned int index, char name[IF_NAMESIZE])
+char *lothars__if_indextoname(unsigned int index, char name[IF_NAMESIZE])
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = if_indextoname(index, name))) {
@@ -48,8 +46,6 @@ char* lothars__if_indextoname(unsigned int index, char name[IF_NAMESIZE])
 	}
 	return ptr;
 }
-
-
 
 /*
   The if_nameindex() function returns an array of if_nameindex
@@ -76,7 +72,7 @@ char* lothars__if_indextoname(unsigned int index, char name[IF_NAMESIZE])
 
   Returns a pointer to the array, or NULL in case of an error.
 */
-struct if_nameindex* lothars__if_nameindex(void)
+struct if_nameindex *lothars__if_nameindex(void)
 {
 	struct if_nameindex *ifptr = NULL;
 

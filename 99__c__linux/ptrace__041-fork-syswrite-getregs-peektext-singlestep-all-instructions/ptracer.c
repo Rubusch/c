@@ -45,91 +45,99 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 int main(int argc, char **argv)
 {
-  pid_t child;
+	pid_t child;
 
-  child = fork();
-  if (child == 0) {
-    // mark child PTRACE_TRACEME, and exec external program
-    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("./rabbit.exe", "rabbit.exe", NULL);
+	child = fork();
+	if (child == 0) {
+		// mark child PTRACE_TRACEME, and exec external program
+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+		execl("./rabbit.exe", "rabbit.exe", NULL);
 
-  } else {
-    int status;
-    struct user_regs_struct regs;
-    long count = 0;
-    long ins;
+	} else {
+		int status;
+		struct user_regs_struct regs;
+		long count = 0;
+		long ins;
 
-    while (1) {
+		while (1) {
 #if __x86_64__
-      // child still alive
-      wait(&status);
-      if (WIFEXITED(status))
-        break;
+			// child still alive
+			wait(&status);
+			if (WIFEXITED(status))
+				break;
 
-      // display syscall
-      switch(regs.orig_rax) {
+			// display syscall
+			switch (regs.orig_rax) {
 #ifdef SYS_read
-      case SYS_read:
-        fprintf(stderr, "\tSYSCALL: SYS_read, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_read:
+				fprintf(stderr,
+					"\tSYSCALL: SYS_read, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_write
-      case SYS_write:
-        fprintf(stderr, "\tSYSCALL: SYS_write, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_write:
+				fprintf(stderr,
+					"\tSYSCALL: SYS_write, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_open
-      case SYS_execve:
-        fprintf(stderr, "\tSYSCALL: SYS_execve, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_execve:
+				fprintf(stderr,
+					"\tSYSCALL: SYS_execve, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_exit_group
-      case SYS_exit_group:
-        fprintf(stderr, "\tSYSCALL: SYS_exit_group, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_exit_group:
+				fprintf(stderr,
+					"\tSYSCALL: SYS_exit_group, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
-      default:
-        fprintf(stderr, "\tSYSCALL: uncaught or no syscall\n");
-      }
+			default:
+				fprintf(stderr,
+					"\tSYSCALL: uncaught or no syscall\n");
+			}
 
-      // read out registers -> regs for instruction pointer
-      ptrace(PTRACE_GETREGS, child, NULL, &regs);
+			// read out registers -> regs for instruction pointer
+			ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-      // get ins by regs.eip
-      ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
-      printf("%ld. RIP: 0x%08llx Instruction executed: 0x%016lx\n"
-             , count, regs.rip, ins);
+			// get ins by regs.eip
+			ins = ptrace(PTRACE_PEEKTEXT, child, regs.rip, NULL);
+			printf("%ld. RIP: 0x%08llx Instruction executed: 0x%016lx\n",
+			       count, regs.rip, ins);
 
-      // turn on PTRACE_SINGLESTEP
-      ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+			// turn on PTRACE_SINGLESTEP
+			ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
 
-      // increment line counter
-      count++;
+			// increment line counter
+			count++;
 #else
-      // child still alive
-      wait(&status);
-      if (WIFEXITED(status))
-        break;
+			// child still alive
+			wait(&status);
+			if (WIFEXITED(status))
+				break;
 
-      // read out registers -> regs for instruction pointer
-      ptrace(PTRACE_GETREGS, child, NULL, &regs);
+			// read out registers -> regs for instruction pointer
+			ptrace(PTRACE_GETREGS, child, NULL, &regs);
 
-      // get ins by regs.eip
-      ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
-      printf("%ld. EIP: 0x%08lx Instruction executed: 0x%08lx\n"
-             , count, regs.eip, ins);
+			// get ins by regs.eip
+			ins = ptrace(PTRACE_PEEKTEXT, child, regs.eip, NULL);
+			printf("%ld. EIP: 0x%08lx Instruction executed: 0x%08lx\n",
+			       count, regs.eip, ins);
 
-      // turn on PTRACE_SINGLESTEP
-      ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+			// turn on PTRACE_SINGLESTEP
+			ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
 
-      // increment line counter
-      count++;
+			// increment line counter
+			count++;
 #endif
-    }
-  }
+		}
+	}
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

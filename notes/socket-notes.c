@@ -72,14 +72,13 @@
   6. close()
 //*/
 
-
 // STRUCTS
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 struct sockaddr {
-  sa_family_t sa_family; // address family: AF_XXX
-  char sa_data[14];      // protocol address (IP and port number)
+	sa_family_t sa_family; // address family: AF_XXX
+	char sa_data[14]; // protocol address (IP and port number)
 };
 /*
   sockaddr - type for the socket address
@@ -88,15 +87,14 @@ struct sockaddr {
   sockaddr_in
 //*/
 
-
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 struct sockaddr_in {
-  sa_family sin_family;        // address family: AF_XXX
-  unsigned short int sin_port; // port number, in network byte order
-                               // (little & big endian problem!)
-  struct in_addr sin_addr;     // IP-Address
-  unsigned char pad[8];        // fill byte for the sockaddr
+	sa_family sin_family; // address family: AF_XXX
+	unsigned short int sin_port; // port number, in network byte order
+		// (little & big endian problem!)
+	struct in_addr sin_addr; // IP-Address
+	unsigned char pad[8]; // fill byte for the sockaddr
 };
 /*
   newer struct than sockaddr, commonly used sockaddr_in
@@ -114,52 +112,48 @@ int hSocket = 0;
 struct sockaddr_in server_addr;
 struct hostent *host;
 if (!inet_aton(szServerIP, &server_addr.sin_addr)) {
-  if (!(host = gethostbyname(szServerIP))) {
-    perror("gethostbyname() failed");
-    return 2;
-  }
-  server_addr.sin_addr = *( struct in_addr * )host->h_addr;
+	if (!(host = gethostbyname(szServerIP))) {
+		perror("gethostbyname() failed");
+		return 2;
+	}
+	server_addr.sin_addr = *(struct in_addr *)host->h_addr;
 }
 server_addr.sin_port = htons(serverPort);
 server_addr.sin_family = AF_INET;
 
-
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 struct iovec {
-  void *iov_base; // starting address
-  size_t iov_len; // number of bytes
+	void *iov_base; // starting address
+	size_t iov_len; // number of bytes
 };
 /*
   array references to a memory area
 //*/
 
-
 #include <netdb.h>
 struct servent {
-  char *s_name;    // official server name
-  char **s_aliases // alias list or NULL
-      int s_port;  // port number to the specified server
-  char *s_proto;   // protocol name
+	char *s_name; // official server name
+	char **s_aliases // alias list or NULL
+		int s_port; // port number to the specified server
+	char *s_proto; // protocol name
 };
 /*
   server address structure
 //*/
 
-
 #include <netdb.h>
 struct hostent {
-  char *h_name;       // official host name
-  char **h_aliases;   // alias list or NULL
-  short h_addrtype;   // address type, AF_XXX for IPv4
-  short h_length;     // length of the numeric address
-  char **h_addr_list; // array of pointers to addresses for the corresponding
-                      // computers
+	char *h_name; // official host name
+	char **h_aliases; // alias list or NULL
+	short h_addrtype; // address type, AF_XXX for IPv4
+	short h_length; // length of the numeric address
+	char **h_addr_list; // array of pointers to addresses for the corresponding
+		// computers
 };
 /*
   host address structure
 //*/
-
 
 // FUNCTIONS
 
@@ -189,11 +183,10 @@ int socket(int domain, int type, int protocol);
 int s;
 s = socket(AF_INET, SOCK_STREAM, 0);
 if (s == -1) {
-  perror("socket() failed");
-  return 1;
+	perror("socket() failed");
+	return 1;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -212,14 +205,13 @@ int s;
 struct sockaddr_in addr;
 // ... e.g. s = socket(...);
 addr.sin_addr.s_addr = ...; // e.g. inet_addr("127.0.0.1");
-addr.sin_port = ...;        // e.g. htons(80);
+addr.sin_port = ...; // e.g. htons(80);
 addr.sin_family = AF_INET;
-if (connect(s, ( struct sockaddr * )&addr, sizeof(addr)) == -1) {
-  perror("connect() failed");
-  return 2;
+if (connect(s, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+	perror("connect() failed");
+	return 2;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -244,12 +236,11 @@ struct sockaddr_in addr;
 addr.sin_addr.s_addr = INADDR_ANY; // e.g. inet_addr("127.0.0.1");
 addr.sin_port = htons(27976);
 addr.sin_family = AF_INET;
-if (-1 == (bind(hSocket, ( struct sockaddr * )&addr, sizeof(addr)))) {
-  perror("bind() failed");
-  return 2;
+if (-1 == (bind(hSocket, (struct sockaddr *)&addr, sizeof(addr)))) {
+	perror("bind() failed");
+	return 2;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -267,11 +258,10 @@ same port EBADF                               // socket descriptor invalid
 //*/
 // Example:
 if (listen(s, 3) == -1) {
-  perror("listen() failed");
-  return 3;
+	perror("listen() failed");
+	return 3;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -304,22 +294,21 @@ enough free memory EPROTO (fails)                      // protocol error EPERM
 struct sockaddr_in cli;
 socklen_t cli_size;
 cli_size = sizeof(cli);
-if ((c = accept(s, ( struct sockaddr * )&cli, &cli_size)) == -1) {
-  /* in case of no automatically restarting systemcalls
+if ((c = accept(s, (struct sockaddr *)&cli, &cli_size)) == -1) {
+	/* in case of no automatically restarting systemcalls
      if(errno == EINTR) ...
   */
-  perror("accept() failed");
-  return 4;
+	perror("accept() failed");
+	return 4;
 }
 //*/
 
-
 #include <sys/select.h> // according to POSIX.1-2001 or
-#include <sys/time.h>   // according to earlier standards
-#include <sys/types.h>  //
-#include <unistd.h>     //
+#include <sys/time.h> // according to earlier standards
+#include <sys/types.h> //
+#include <unistd.h> //
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
-           struct timeval *timeout);
+	   struct timeval *timeout);
 void FD_CLR(int fd, fd_set *set);
 int FD_ISSET(int fd, fd_set *set);
 void FD_SET(int fd, fd_set *set);
@@ -327,7 +316,7 @@ void FD_ZERO(fd_set *set);
 #define _XOPEN_SOURCE 600
 #include <sys/select.h>
 int pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
-            const struct timespec *timeout, const sigset_t *sigmask);
+	    const struct timespec *timeout, const sigset_t *sigmask);
 /*
   int nfds                            // highest numbered file descriptor plus
 one fd_set* readfds                     // read file descriptor fd_set* writefds
@@ -356,32 +345,31 @@ memory
 #include <unistd.h>
 int main(void)
 {
-  fd_set rdfs;
-  struct timeval tv;
-  int retval;
+	fd_set rdfs;
+	struct timeval tv;
+	int retval;
 
-  // watch stdin (fd 0) to see when it has input
-  FD_ZERO(&rfds);
-  FD_set(0, &rfds);
+	// watch stdin (fd 0) to see when it has input
+	FD_ZERO(&rfds);
+	FD_set(0, &rfds);
 
-  // wait up to five seconds
-  tv.tv_sec = 5;
-  tv.tv_usec = 0;
+	// wait up to five seconds
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
 
-  retval = select(1, &rfds, NULL, NULL, &tv);
-  // don't rely on the value of tv now!
+	retval = select(1, &rfds, NULL, NULL, &tv);
+	// don't rely on the value of tv now!
 
-  if (retval == -1)
-    perror("select()");
-  else if (retval)
-    printf("Data is available now.\n");
-  else
-    printf("No data within five seconds.\n");
+	if (retval == -1)
+		perror("select()");
+	else if (retval)
+		printf("Data is available now.\n");
+	else
+		printf("No data within five seconds.\n");
 
-  return 0;
+	return 0;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -394,7 +382,6 @@ size_t read(int sockfd, void *data, size_t data_len);
   sends to the other socket
   without flags, only when connected!
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -409,7 +396,6 @@ size_t write(int sockfd, void *data, size_t data_len);
 //*/
 // Example:
 // TODO
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -426,17 +412,16 @@ ssize_t send(int sockfd, const void *data, size_t data_len, int flags);
 // Example:
 int send_banner(int s)
 {
-  int bytes;
-  char banner[] = "Welcome to the Foobar server!\r\n";
-  bytes = send(s, banner, strlen(banner), 0);
-  if (bytes == -1) {
-    perror("send() failed");
-    return 1;
-  }
-  return 0;
+	int bytes;
+	char banner[] = "Welcome to the Foobar server!\r\n";
+	bytes = send(s, banner, strlen(banner), 0);
+	if (bytes == -1) {
+		perror("send() failed");
+		return 1;
+	}
+	return 0;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -458,24 +443,23 @@ dsize_t recv(int sockfd, void *data, size_t data_len, int flags);
 // ...
 int get_banner(int s)
 {
-  char buf[BUF_SIZ];
-  int bytes;
-  bytes = recv(s, buf, sizeof(buf) - 1, 0);
-  if (bytes == -1) {
-    perror("recv() failed");
-    return 1;
-  }
-  buf[bytes] = '\0';
-  printf("Banner is \"%s\"\n", buf);
-  return 0;
+	char buf[BUF_SIZ];
+	int bytes;
+	bytes = recv(s, buf, sizeof(buf) - 1, 0);
+	if (bytes == -1) {
+		perror("recv() failed");
+		return 1;
+	}
+	buf[bytes] = '\0';
+	printf("Banner is \"%s\"\n", buf);
+	return 0;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 ssize_t sendto(int sockfd, const void *data, size_t data_len, int flags,
-               struct sockaddr *destaddr, int destLen);
+	       struct sockaddr *destaddr, int destLen);
 /*
   int sockfd                          // socket descriptor
   const void* data                    // data to send
@@ -498,18 +482,17 @@ s = ...; // socket() e.g. using SOCK_DGRAM
 addr.sin_addr.sin_addr = inet_addr("192.168.1.1");
 addr.sin_family = AF_INET;
 addr.sin_port = htons(4711);
-if (sendto(s, text, strlen(text), 0, ( struct sockaddr * )&addr,
-           sizeof(addr)) == -1) {
-  perror("sendto() failed");
-  return 1;
+if (sendto(s, text, strlen(text), 0, (struct sockaddr *)&addr, sizeof(addr)) ==
+    -1) {
+	perror("sendto() failed");
+	return 1;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 size_t recvfrom(int sockfd, void *data, size_t data_len, unsigned int flags,
-                struct sockaddr *fromaddr, int addrlen);
+		struct sockaddr *fromaddr, int addrlen);
 /*
   int sockfd                          // socket descriptor
   void* data                          // data to send
@@ -529,21 +512,20 @@ size_t recvfrom(int sockfd, void *data, size_t data_len, unsigned int flags,
 //...
 int get_banner_from_localhost(int s)
 {
-  char buf[BUF_SIZ];
-  int bytes;
-  struct sockaddr_in addr;
-  bytes = recvfrom(s, buf, sizeof(buf) - 1, 0, ( struct sockaddr * )&addr,
-                   sizeof(addr));
-  if (bytes = -1) {
-    perror("recvfrom() failed");
-    return 1;
-  }
-  buf[bytes] = '\0';
-  printf("Server sent \"%s\"\n", buf);
-  return 0;
+	char buf[BUF_SIZ];
+	int bytes;
+	struct sockaddr_in addr;
+	bytes = recvfrom(s, buf, sizeof(buf) - 1, 0, (struct sockaddr *)&addr,
+			 sizeof(addr));
+	if (bytes = -1) {
+		perror("recvfrom() failed");
+		return 1;
+	}
+	buf[bytes] = '\0';
+	printf("Server sent \"%s\"\n", buf);
+	return 0;
 }
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -556,7 +538,6 @@ int readv(int sockfd, sonst struct iovec *vector, size_t count);
 // Example:
 // TODO
 
-
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 int writev(int sockfd, const struct iovec *vector, size_t count);
@@ -567,7 +548,6 @@ int writev(int sockfd, const struct iovec *vector, size_t count);
 //*/
 // Example:
 // TODO
-
 
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
@@ -580,7 +560,6 @@ int sendmsg(int sockfd, const struct msghdr *msg, int flags);
 // Example:
 // TODO
 
-
 #include <sys/socket.h>
 #include <sys/types.h> // before <sys/socket.h> !!!
 int recvmsg(int sockfd, struct msghdr *msg, int flags);
@@ -591,7 +570,6 @@ int recvmsg(int sockfd, struct msghdr *msg, int flags);
 //*/
 // Example:
 // TODO
-
 
 #include <unistd.h>
 int close(int fd);
@@ -608,7 +586,6 @@ int close(int fd);
 // Example:
 close(s);
 //*/
-
 
 #include <sys/socket.h>
 int shutdown(int s, int how);
@@ -633,7 +610,6 @@ disallowed
 shutdown(s, SHUT_WR);
 //*/
 
-
 #include <netinet/in.h>
 unsigned short int htons(unsigned short int hostshort);
 /*
@@ -641,7 +617,6 @@ unsigned short int htons(unsigned short int hostshort);
 
   return:  network-byte-order
 //*/
-
 
 #include <netinet/in.h>
 unsigned long int htonl(unsigned long int hostlong);
@@ -651,7 +626,6 @@ unsigned long int htonl(unsigned long int hostlong);
   return:  network-byte-order
 //*/
 
-
 #include <netinet/in.h>
 unsigned short int ntohs(unsigned short int netshort);
 /*
@@ -660,7 +634,6 @@ unsigned short int ntohs(unsigned short int netshort);
   return:  host-byte-order
 //*/
 
-
 #include <netinet/in.h>
 unsigned long int ntohl(unsigned long int netlong);
 /*
@@ -668,7 +641,6 @@ unsigned long int ntohl(unsigned long int netlong);
 
   return:  host-byte-order
 //*/
-
 
 #include <netdb.h>
 struct servent *getservbyname(const char *name, const char *proto);
@@ -687,12 +659,11 @@ struct servent *getservbyname(const char *name, const char *proto);
 struct servernt *serv;
 serv = getservbyname("ftp", "tcp");
 if (!serv) {
-  perror("getservbyname() failed");
-  return 1;
+	perror("getservbyname() failed");
+	return 1;
 }
 printf("serv->s_port = %u\n", ntohs(serv->s_port));
 //*/
-
 
 #include <netdb.h>
 struct servent *getservbyport(int port, const char *proto);
@@ -707,12 +678,11 @@ struct servent *getservbyport(int port, const char *proto);
 struct servent *serv;
 serv = getservbyport(htons(80), "tcp");
 if (!serv) {
-  perror("getservbyname() failed");
-  return 1;
+	perror("getservbyname() failed");
+	return 1;
 }
 printf("serv->s_name = %\n", serv->s_name);
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -734,9 +704,8 @@ struct sockaddr_in addr;
 sockelnt_t len;
 // ... // s = socket ....
 len = sizeof(addr);
-getsockname(s, ( struct sockaddr * )&addr, &len);
+getsockname(s, (struct sockaddr *)&addr, &len);
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -759,9 +728,8 @@ struct sockaddr_in addr;
 socklen_t len;
 // ...
 len = sizeof(addr);
-getpeername(s, ( struct sockaddr * )&addr, &len);
+getpeername(s, (struct sockaddr *)&addr, &len);
 //*/
-
 
 #include <netdb.h>
 struct hostent *gethostbyname(const char *name);
@@ -784,14 +752,13 @@ struct hostent *host;
 // ...
 host = gethostbyname("www.freebsd.org");
 if (!host) {
-  herror("gethostbyname() failed");
-  return 1;
+	herror("gethostbyname() failed");
+	return 1;
 }
 // ...
-addr.sin_addr = *( struct in_addr * )host->h_addr;
+addr.sin_addr = *(struct in_addr *)host->h_addr;
 // ...
 //*/
-
 
 #include <netdb.h>
 extern int h_errno;
@@ -812,14 +779,13 @@ again later
 struct in_addr addr;
 struct hostent *host;
 addr.s_addr = inet_addr("127.0.0.1");
-host = gethostbyaddr(( char * )&addr, sizeof(addr), AF_INET);
+host = gethostbyaddr((char *)&addr, sizeof(addr), AF_INET);
 if (!host) {
-  herror("gethostbyaddr() failed");
-  return 1;
+	herror("gethostbyaddr() failed");
+	return 1;
 }
 printf("host->h_name = %s\n", host->h_name);
 //*/
-
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -838,11 +804,10 @@ int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
   ENOTSOCK                             // s is a file not a socket
 //*/
 
-
 #include <sys/socket.h>
 #include <sys/types.h>
 int setsockopt(int s, int level, int optname, const void *optval,
-               socklen_t optlen);
+	       socklen_t optlen);
 /*
   int s                                // socket descriptor
   int level                            // SOL_SOCKET level
@@ -858,7 +823,6 @@ int setsockopt(int s, int level, int optname, const void *optval,
   ENOTSOCK                             // s is a file not a socket
 //*/
 
-
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -871,7 +835,6 @@ and stores it in struct in_addr* pin                  // ...this address
 structure
 //*/
 
-
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -883,7 +846,6 @@ in_addr_t inet_addr(const char *cp);
 notation
 //*/
 
-
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -894,7 +856,6 @@ char *inet_ntoa(struct in_addr in);
   struct in_addr in                    // internet host address to string
 //*/
 
-
 // EXAMPLES
 /*
   - send strings using ssprintf() or snprintf() as char* and
@@ -903,7 +864,6 @@ char *inet_ntoa(struct in_addr in);
   - IPv4 or IPv6: in6_addr, sockaddr_in6, getaddrinfo(), getnameinfo(),
   getipnodebyname(), geteipnodebyaddr()
 //*/
-
 
 /*
   Example:
@@ -916,15 +876,14 @@ unsigned long addr;
 // Alternative to memset() -> bzero() ;-)
 memset(&server, 0, sizeof(server));
 addr = inet_addr(argv[1]);
-memcpy(( char * )&server.sin_addr, &addr, sizeof(addr));
+memcpy((char *)&server.sin_addr, &addr, sizeof(addr));
 server.sin_family = AF_INET;
 server.sin_port = htons(80);
 // ...
 // establish a connection to the server
-if (connect(sock, ( struct sockaddr * )&server, sizeof(server)) < 0) {
-  // handle error at connect()
+if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
+	// handle error at connect()
 }
-
 
 /*
   Example: Assignment by the server
@@ -937,10 +896,9 @@ server.sin_family = AF_INET;
 server.sin_addr.s_addr = htonl(INADDR_ANY);
 // Portnumber 1234
 server.sin_port = htons(1234);
-if (bind(sock, ( struct sockaddr * )&server, sizeof(server)) < 0) {
-  // handle error at bind()
+if (bind(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
+	// handle error at bind()
 }
-
 
 /*
   Example: main loop - server
@@ -949,14 +907,13 @@ stuct sockaddr_in client;
 int sock, sock2;
 socklen_t len;
 for (;;) {
-  len - sizeof(client);
-  sock2 = accept(sock, ( struct sockaddr * )&client, &len);
-  if (sock2 < 0) {
-    // handle error at accept()
-  }
-  // data exchange here
+	len - sizeof(client);
+	sock2 = accept(sock, (struct sockaddr *)&client, &len);
+	if (sock2 < 0) {
+		// handle error at accept()
+	}
+	// data exchange here
 }
-
 
 /*
   sleep using select()
@@ -965,7 +922,6 @@ struct timeval tv;
 tv.tv_sec = 0;
 tv.tv_usec = 35000; // 35000 microsecs - 35 millisecs
 select(0, NULL, NULL, NULL, &tv);
-
 
 /*
   not blocking sockets
@@ -976,7 +932,6 @@ ioctlsocket(s, FIONBIO, &ul);
 #else
 fcntl(s, F_SETFL, O_NONBLOCK);
 #endif
-
 
 /*
   Errors:

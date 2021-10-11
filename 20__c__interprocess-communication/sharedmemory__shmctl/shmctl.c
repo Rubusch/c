@@ -23,7 +23,6 @@ int isnumber(const char *, const unsigned int);
 void readnumber(unsigned int *, const unsigned int, const char *);
 void readdigit(unsigned int *, const char *);
 
-
 int main()
 {
 	// shm_id
@@ -120,7 +119,6 @@ int main()
 	exit(EXIT_SUCCESS);
 }
 
-
 static void do_shmctl(int shm_id, int shm_cmd, struct shmid_ds *buf)
 {
 	if (buf == NULL)
@@ -129,11 +127,13 @@ static void do_shmctl(int shm_id, int shm_cmd, struct shmid_ds *buf)
 	register int result; // hold area in CPU
 	printf("calling shmctl(%d, %d, buf)\n", shm_id, shm_cmd);
 
-
 	if (shm_cmd == IPC_SET) {
-		fprintf(stderr, "\tbuf->shm_perm.uid == %d\n", buf->shm_perm.uid);
-		fprintf(stderr, "\tbuf->shm_perm.gid == %d\n", buf->shm_perm.gid);
-		fprintf(stderr, "\tbuf->shm_perm.mode == %#o\n", buf->shm_perm.mode);
+		fprintf(stderr, "\tbuf->shm_perm.uid == %d\n",
+			buf->shm_perm.uid);
+		fprintf(stderr, "\tbuf->shm_perm.gid == %d\n",
+			buf->shm_perm.gid);
+		fprintf(stderr, "\tbuf->shm_perm.mode == %#o\n",
+			buf->shm_perm.mode);
 	}
 
 	if (0 > (result = shmctl(shm_id, shm_cmd, buf))) {
@@ -166,7 +166,6 @@ static void do_shmctl(int shm_id, int shm_cmd, struct shmid_ds *buf)
 	fprintf(stderr, "\tshm_ctime = %s", ctime(&buf->shm_ctime));
 }
 
-
 int isnumber(const char *str, const unsigned int size)
 {
 	char arr[size];
@@ -188,9 +187,8 @@ int isnumber(const char *str, const unsigned int size)
 	return 1;
 }
 
-
 void readnumber(unsigned int *iVal, const unsigned int digits,
-                const char *comment)
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -228,7 +226,6 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 	} while (!isnumber(cTxt, (1 + strlen(cTxt))));
 	*iVal = atoi(cTxt);
 }
-
 
 void readdigit(unsigned int *iChr, const char *comment)
 {

@@ -24,7 +24,6 @@
 extern FILE *popen(const char *, const char *);
 extern int pclose(FILE *);
 
-
 int main(void)
 {
 	char line[LINE_SIZ];

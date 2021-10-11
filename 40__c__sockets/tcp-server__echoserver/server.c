@@ -15,14 +15,12 @@
 #include <unistd.h> /* fork(), close(),... */
 #include <errno.h>
 
-
 /*
   constants
 */
 
 #define MAXSIZE 4096
 #define MAXLINE 4096 /* max text line length */
-
 
 /*
   forwards
@@ -43,8 +41,6 @@ int lothars__socket(int, int, int);
 void lothars__close(int *);
 pid_t lothars__fork();
 
-
-
 /*
   internal helpers
 */
@@ -57,24 +53,25 @@ pid_t lothars__fork();
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -87,13 +84,12 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /*
   The accept() function shall extract the first connection on the
@@ -128,7 +124,6 @@ again:
 	return res;
 }
 
-
 /*
   The bind() function shall assign a local socket address address to a
   socket identified by descriptor socket that has no local socket
@@ -150,7 +145,6 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 		err_sys("bind error");
 	}
 }
-
 
 /*
   The listen() function shall mark a connection-mode socket, specified
@@ -174,7 +168,6 @@ void lothars__listen(int fd, int backlog)
 		err_sys("listen error");
 	}
 }
-
 
 /*
   The recv() function shall receive data from a connection-mode or
@@ -219,7 +212,6 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
 	return res;
 }
 
-
 /*
   The send() function shall initiate transmission of data from the
   specified socket to its peer. The send() function shall send a
@@ -244,16 +236,12 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
           communications. The significance and semantics of
           out-of-band data are protocol-specific.
 */
-void lothars__send( int fd
-	    , const void *ptr
-	    , size_t nbytes
-	    , int flags)
+void lothars__send(int fd, const void *ptr, size_t nbytes, int flags)
 {
-	if (send(fd, ptr, nbytes, flags) != (ssize_t) nbytes) {
+	if (send(fd, ptr, nbytes, flags) != (ssize_t)nbytes) {
 		err_sys("send error");
 	}
 }
-
 
 /*
   The socket() function shall create an unbound socket in a
@@ -278,7 +266,6 @@ int lothars__socket(int family, int type, int protocol)
 	}
 	return res;
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -314,7 +301,6 @@ void lothars__close(int *fd)
 	sync();
 }
 
-
 /*
   The fork() function shall create a new process.
 */
@@ -326,7 +312,6 @@ pid_t lothars__fork(void)
 	}
 	return pid;
 }
-
 
 /********************************************************************************************/
 // worker implementation
@@ -356,9 +341,7 @@ void worker(int fd_sock)
 	fprintf(stdout, "READY.\n");
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main
@@ -369,7 +352,8 @@ int main(int argc, char *argv[])
 	pid_t childpid;
 	socklen_t clilen;
 	struct sockaddr_in cliaddr, servaddr;
-	char port[16]; memset(port, '\0', sizeof(port));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -386,7 +370,8 @@ int main(int argc, char *argv[])
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));
-	lothars__bind(fd_listen, ( struct sockaddr * )&servaddr, sizeof(servaddr));
+	lothars__bind(fd_listen, (struct sockaddr *)&servaddr,
+		      sizeof(servaddr));
 
 	// listen
 	lothars__listen(fd_listen, 7);
@@ -394,7 +379,8 @@ int main(int argc, char *argv[])
 	do {
 		// accept
 		clilen = sizeof(cliaddr);
-		fd_conn = lothars__accept(fd_listen, ( struct sockaddr * )&cliaddr, &clilen);
+		fd_conn = lothars__accept(fd_listen,
+					  (struct sockaddr *)&cliaddr, &clilen);
 
 		if (0 == (childpid = lothars__fork())) {
 			// child

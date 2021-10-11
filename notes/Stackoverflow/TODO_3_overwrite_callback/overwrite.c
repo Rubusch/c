@@ -37,40 +37,41 @@
 #define SHIFT 53
 
 //* // gives a warning
-unsigned long sp(void) { __asm__("movl %esp,%eax"); }
+unsigned long sp(void)
+{
+	__asm__("movl %esp,%eax");
+}
 //*/
 
 void func(int a, int b, int c)
 {
-  char buf_1[5];
-  char *buf_2 = buf_1;
+	char buf_1[5];
+	char *buf_2 = buf_1;
 
-  // move pointer to the address to be changed
-  buf_2 += SHIFT;
+	// move pointer to the address to be changed
+	buf_2 += SHIFT;
 
-  // modify address / instruction
-  unsigned long **tmp;
-  *tmp = ( unsigned long * )buf_2;
-  (*tmp) += SHIFT;
-  printf("*tmp\t= 0x%lx - **tmp = 0x%lx\n", ( unsigned long )*tmp, **tmp);
+	// modify address / instruction
+	unsigned long **tmp;
+	*tmp = (unsigned long *)buf_2;
+	(*tmp) += SHIFT;
+	printf("*tmp\t= 0x%lx - **tmp = 0x%lx\n", (unsigned long)*tmp, **tmp);
 }
-
 
 int main(void)
 {
-  int x;
+	int x;
 
-  // TODO: check
-  printf("stack\t= 0x%lx\n", sp());
+	// TODO: check
+	printf("stack\t= 0x%lx\n", sp());
 
+	x = 0;
+	printf("&x\t= 0x%lx - x = %d\n", (unsigned long)&x, x);
 
-  x = 0;
-  printf("&x\t= 0x%lx - x = %d\n", ( unsigned long )&x, x);
+	func(1, 2, 3);
 
-  func(1, 2, 3);
+	x = 1;
+	printf("&x\t= 0x%lx - x = %d\n", (unsigned long)&x, x);
 
-  x = 1;
-  printf("&x\t= 0x%lx - x = %d\n", ( unsigned long )&x, x);
-
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

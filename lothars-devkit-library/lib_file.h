@@ -17,7 +17,6 @@ TODO check references
 TODO remove debugging
 */
 
-
 #define _GNU_SOURCE
 #include <stddef.h>
 #include <stdarg.h>
@@ -29,7 +28,6 @@ TODO remove debugging
 #include <fcntl.h>
 
 #include "lib_error.h"
-
 
 /* forwards */
 
@@ -43,7 +41,6 @@ TODO remove debugging
   Unix Network Programming, Stevens (1996)
 */
 
-
 /* includes */
 
 //#define _XOPEN_SOURCE 600
@@ -56,15 +53,14 @@ TODO remove debugging
 
 #include "lib_error.h"
 
-
 /* forwards */
 
 void lothars__fclose(FILE **);
-FILE* lothars__fdopen(int, const char *);
-char* lothars__fgets(char *, int, FILE *);
+FILE *lothars__fdopen(int, const char *);
+char *lothars__fgets(char *, int, FILE *);
 void lothars__fputs(const char *, FILE *);
 int lothars__fopen(FILE **fp, char *path, const char *mode);
-int lothars__fopen_rw(FILE**, char[]);
+int lothars__fopen_rw(FILE **, char[]);
 int lothars__fopen_r(FILE **, char[]);
 int lothars__fopen_w(FILE **, char[]);
 int lothars__fopen_a(FILE **, char[]);
@@ -81,7 +77,8 @@ int remove_file(const char *);
 int shred_file(const char *);
 int rename_file(const char *, const char *);
 int copy_characterwise_unbuffered(const char *, const char *);
-int copy_characterwise_buffered(const char *, const char *, const unsigned long int);
+int copy_characterwise_buffered(const char *, const char *,
+				const unsigned long int);
 unsigned int number_of_tempfiles();
 unsigned int number_of_characters_in_static_temp();
 // int create_tmp(FILE**, char[]);
@@ -91,10 +88,11 @@ int check_eof(FILE *);
 int check_error(FILE *);
 int get_bufsize();
 int read_without_eof(FILE *, char *, const unsigned int);
-int read_nth_line(FILE *, char *, const unsigned long int, const unsigned long int);
-int read_lines(FILE *, char *, const unsigned long int, const unsigned long int, const unsigned long int);
+int read_nth_line(FILE *, char *, const unsigned long int,
+		  const unsigned long int);
+int read_lines(FILE *, char *, const unsigned long int, const unsigned long int,
+	       const unsigned long int);
 int read_lines_with_pattern(FILE *, char *, const unsigned long int, char *);
 int get_more_space(char **, unsigned long int *, const unsigned long int);
-
 
 #endif

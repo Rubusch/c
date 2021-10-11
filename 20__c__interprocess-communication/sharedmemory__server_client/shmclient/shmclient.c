@@ -16,7 +16,6 @@
 
 #define SHM_SIZ 27
 
-
 int main(int argc, char **argv)
 {
 	// shm_key
@@ -31,7 +30,7 @@ int main(int argc, char **argv)
 
 	// shmat - attach the shared memory
 	char *shm = NULL;
-	if ((( char * )-1) == (shm = shmat(shm_id, NULL, 0))) {
+	if (((char *)-1) == (shm = shmat(shm_id, NULL, 0))) {
 		perror("shmat failed");
 		exit(EXIT_FAILURE);
 	}

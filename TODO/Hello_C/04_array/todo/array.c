@@ -55,49 +55,47 @@ READY.
 
 #define ARRAY_SIZ 10
 
-
 void print_content(char *arr, unsigned int arr_siz)
 {
-  if (NULL == arr)
-    return;
+	if (NULL == arr)
+		return;
 
-  puts("content of the array:");
-  puts("\taddress,\tindex\t\t: content");
-  puts("\t------------------------------------------");
-  // do a recommendation to "register" to gain performance for "running indexes"
-  // - only possible if the variable (here idx) won't be "referenced" (=used
-  // with a '&')
-  register unsigned int idx = 0;
-  for (idx = 0; idx < arr_siz; ++idx) {
-    // TODO
-  }
+	puts("content of the array:");
+	puts("\taddress,\tindex\t\t: content");
+	puts("\t------------------------------------------");
+	// do a recommendation to "register" to gain performance for "running indexes"
+	// - only possible if the variable (here idx) won't be "referenced" (=used
+	// with a '&')
+	register unsigned int idx = 0;
+	for (idx = 0; idx < arr_siz; ++idx) {
+		// TODO
+	}
 }
-
 
 int main()
 {
-  puts("arrays");
+	puts("arrays");
 
-  // init
-  char arr1[ARRAY_SIZ];
-  strncpy(arr1, "tentokens", ARRAY_SIZ);
-  char arr2[] = "anotherword";
+	// init
+	char arr1[ARRAY_SIZ];
+	strncpy(arr1, "tentokens", ARRAY_SIZ);
+	char arr2[] = "anotherword";
 
-  // print length:
-  puts("arr1:");
-  // call the function print_content with arr1
-  // TODO
+	// print length:
+	puts("arr1:");
+	// call the function print_content with arr1
+	// TODO
 
-  // print out one line with length and size of arr1
-  // TODO
-  puts("");
+	// print out one line with length and size of arr1
+	// TODO
+	puts("");
 
-  puts("arr2:");
-  // call the function print_content with arr2:
-  // TODO
-  // print out one line with length and size of arr2
-  puts("");
+	puts("arr2:");
+	// call the function print_content with arr2:
+	// TODO
+	// print out one line with length and size of arr2
+	puts("");
 
-  puts("READY.");
-  exit(EXIT_SUCCESS);
+	puts("READY.");
+	exit(EXIT_SUCCESS);
 }

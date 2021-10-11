@@ -31,22 +31,21 @@
 
 int main(int argc, char **argv)
 {
-  int arr[ARRAYSIZE];
-  arr[0] = 10;
-  arr[1] = 5;
+	int arr[ARRAYSIZE];
+	arr[0] = 10;
+	arr[1] = 5;
 
 #ifdef DEBUG
-  // belongs to 2.
-  printf("Debugging output: a = %i, b = %i\n", arr[0], arr[1]);
+	// belongs to 2.
+	printf("Debugging output: a = %i, b = %i\n", arr[0], arr[1]);
 #endif
 
-  printf("Is %i greater than %i? %s\n", arr[0], arr[1],
-         ((MAX(arr[0], arr[1])) ? (TRUE) : (FALSE)));
+	printf("Is %i greater than %i? %s\n", arr[0], arr[1],
+	       ((MAX(arr[0], arr[1])) ? (TRUE) : (FALSE)));
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 #endif
-
 
 /*
   How things work:

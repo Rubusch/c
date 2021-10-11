@@ -8,10 +8,9 @@
   powerpc - is motorola / big endian
 //*/
 
-
 // not portable code, e.g.
 int i = 4;
-char c = *( char * )i;
+char c = *(char *)i;
 
 // also not portable is
 write(fd, &i, sizeof(i));
@@ -21,10 +20,10 @@ int j;
 char buf[4];
 ssize_t ret;
 for (j = 0; j < 4; ++j) {
-  buf[j] = (i >> (j * 8)) & 0xff;
+	buf[j] = (i >> (j * 8)) & 0xff;
 }
 if (0 > (ret = write(fd, buf, 4))) {
-  fprintf(stderr, "%d; %d - write failed!", __FILE__, __LINE__);
+	fprintf(stderr, "%d; %d - write failed!", __FILE__, __LINE__);
 }
 
 // memcpy here is not portable!

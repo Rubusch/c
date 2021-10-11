@@ -21,7 +21,6 @@ void handle_alarm(int dummy)
 	fflush(stdout);
 }
 
-
 int main(int argc, char **argv)
 {
 	fprintf(stderr, "%s set up signalhandler\n", ME);

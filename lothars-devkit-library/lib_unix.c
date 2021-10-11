@@ -11,7 +11,6 @@
   Unix Interprocess Communication, Stevens
 */
 
-
 #include "lib_unix.h"
 
 /*
@@ -26,7 +25,7 @@
   @nmemb: Number of elements
   @size: Size of element
 */
-void* lothars__calloc(size_t nmemb, size_t size)
+void *lothars__calloc(size_t nmemb, size_t size)
 {
 	void *ptr = NULL;
 	if (NULL == (ptr = calloc(nmemb, size))) {
@@ -34,7 +33,6 @@ void* lothars__calloc(size_t nmemb, size_t size)
 	}
 	return ptr;
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -72,7 +70,6 @@ void lothars__close(int *fd)
 #endif /* _XOPEN_SOURCE */
 }
 
-
 /*
   dup, dup2 - duplicate an open file descriptor. The dup() and dup2()
   functions provide an alternative interface to the service provided
@@ -106,7 +103,6 @@ void lothars__dup2(int fd1, int fd2)
 	}
 }
 
-
 /*
   The fcntl() function shall perform the operations described below on
   open files. The fildes argument is a file descriptor.
@@ -128,7 +124,6 @@ int lothars__fcntl(int fd, int cmd, int arg)
 	return res;
 }
 
-
 /*
   The gettimeofday() function shall obtain the current time, expressed
   as seconds and microseconds since the Epoch, and store it in the
@@ -141,11 +136,13 @@ int lothars__fcntl(int fd, int cmd, int arg)
 */
 void lothars__gettimeofday(struct timeval *tv)
 {
-	if (-1 == gettimeofday(tv, NULL)) { // if 'tzp' is not a NULL pointer, the behavior is unspecified
+	if (-1 ==
+	    gettimeofday(
+		    tv,
+		    NULL)) { // if 'tzp' is not a NULL pointer, the behavior is unspecified
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The ioctl() function shall perform a variety of control functions on
@@ -159,13 +156,12 @@ void lothars__gettimeofday(struct timeval *tv)
 */
 int lothars__ioctl(int fd, int request, void *arg)
 {
-	int  res;
+	int res;
 	if (-1 == (res = ioctl(fd, request, arg))) {
 		err_sys("%s() error", __func__);
 	}
 	return res; // streamio of I_LIST returns value
 }
-
 
 /*
   The fork() function shall create a new process.
@@ -181,7 +177,6 @@ pid_t lothars__fork(void)
 	return pid;
 }
 
-
 /*
   The malloc() function allocates size bytes and returns a pointer to
   the allocated memory. The memory is not initialized. If size is 0,
@@ -192,7 +187,7 @@ pid_t lothars__fork(void)
 
   @size: Size of the memory in byte to allocate.
 */
-void* lothars__malloc(size_t size)
+void *lothars__malloc(size_t size)
 {
 	void *ptr;
 	if (NULL == (ptr = malloc(size))) {
@@ -200,7 +195,6 @@ void* lothars__malloc(size_t size)
 	}
 	return ptr;
 }
-
 
 /*
   The mkstemp() function generates a unique temporary filename from
@@ -226,12 +220,14 @@ int lothars__mkstemp(char *template)
 {
 	int idx;
 
-#if defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || _XOPEN_SOURCE >= 500 || defined(_XOPEN_SOURCE) && defined(_XOPEN_SOURCE_EXTENDED) || _POSIX_C_SOURCE >= 200112L
+#if defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || _XOPEN_SOURCE >= 500 ||   \
+	defined(_XOPEN_SOURCE) && defined(_XOPEN_SOURCE_EXTENDED) ||           \
+	_POSIX_C_SOURCE >= 200112L
 	if (0 > (idx = mkstemp(template))) {
 		err_quit("mkstemp error, returned -1");
 	}
 #else
-	if((mktemp(template) == NULL) || (template[0] == 0)){
+	if ((mktemp(template) == NULL) || (template[0] == 0)) {
 		err_quit("mktemp error, NULL or not defined");
 	}
 
@@ -239,7 +235,6 @@ int lothars__mkstemp(char *template)
 #endif
 	return idx;
 }
-
 
 /*
   The mmap() function shall establish a mapping between a process'
@@ -274,15 +269,15 @@ int lothars__mkstemp(char *template)
 
   Returns the memory object pa as a result.
 */
-void* lothars__mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
+void *lothars__mmap(void *addr, size_t len, int prot, int flags, int fd,
+		    off_t offset)
 {
 	void *ptr;
-	if (((void *) -1) == (ptr = mmap(addr, len, prot, flags, fd, offset))) {
+	if (((void *)-1) == (ptr = mmap(addr, len, prot, flags, fd, offset))) {
 		err_sys("%s() error", __func__);
 	}
 	return ptr;
 }
-
 
 /*
   The open() function shall establish the connection between a file
@@ -310,7 +305,6 @@ int lothars__open(const char *pathname, int oflag, mode_t mode)
 	return fd;
 }
 
-
 /*
   The pipe() function shall create a pipe and place two file
   descriptors, one each into the arguments fildes[0] and fildes[1],
@@ -333,7 +327,6 @@ void lothars__pipe(int fds[2])
 	}
 }
 
-
 /*
   sigaddset() and sigdelset() add and delete respectively signal
   signum from set.
@@ -350,7 +343,6 @@ void lothars__sigaddset(sigset_t *set, int signo)
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   sigaddset() and sigdelset() add and delete respectively signal
@@ -369,7 +361,6 @@ void lothars__sigdelset(sigset_t *set, int signo)
 	}
 }
 
-
 /*
   sigemptyset() initializes the signal set given by set to empty, with
   all signals excluded from the set.
@@ -386,7 +377,6 @@ void lothars__sigemptyset(sigset_t *set)
 	}
 }
 
-
 /*
   sigfillset() initializes set to full, including all signals.
 
@@ -402,7 +392,6 @@ void lothars__sigfillset(sigset_t *set)
 	}
 }
 
-
 /*
   sigismember() tests whether signum is a member of set.
 
@@ -414,13 +403,12 @@ void lothars__sigfillset(sigset_t *set)
 */
 int lothars__sigismember(const sigset_t *set, int signo)
 {
-	int  res;
+	int res;
 	if (-1 == (res = sigismember(set, signo))) {
 		err_sys("%s() error", __func__);
 	}
 	return res;
 }
-
 
 /*
   signal_intr / sigaction - examine and change a signal action
@@ -435,7 +423,7 @@ int lothars__sigismember(const sigset_t *set, int signo)
   @signo: The signal number.
   @func: The signal handler function.
 */
-Sigfunc* signal_intr(int signo, Sigfunc *func)
+Sigfunc *signal_intr(int signo, Sigfunc *func)
 {
 	struct sigaction act, oact;
 
@@ -448,7 +436,7 @@ Sigfunc* signal_intr(int signo, Sigfunc *func)
 	}
 	return oact.sa_handler;
 }
-Sigfunc* lothars__signal_intr(int signo, Sigfunc *func)
+Sigfunc *lothars__signal_intr(int signo, Sigfunc *func)
 {
 	Sigfunc *sigfunc;
 	if (SIG_ERR == (sigfunc = signal_intr(signo, func))) {
@@ -456,7 +444,6 @@ Sigfunc* lothars__signal_intr(int signo, Sigfunc *func)
 	}
 	return sigfunc;
 }
-
 
 /*
 // Linux provides signal() - reimplementation
@@ -485,7 +472,6 @@ Sigfunc* signal(int signo, Sigfunc *func)
 }
 */
 
-
 /*
   DEPRECATED: use sigaction(), resp. lothars__signal_intr()
 
@@ -502,15 +488,14 @@ Sigfunc* signal(int signo, Sigfunc *func)
   @signo: The signal number.
   @func: The handler function to be called.
 */
-Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+Sigfunc *lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
-	Sigfunc *sigfunc=NULL;
+	Sigfunc *sigfunc = NULL;
 	if (SIG_ERR == (sigfunc = signal(signo, func))) {
 		err_sys("%s() error", __func__);
 	}
 	return sigfunc;
 }
-
 
 /*
   The sigpending() function shall store, in the location referenced by
@@ -528,7 +513,6 @@ void lothars__sigpending(sigset_t *set)
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The pthread_sigmask() function shall examine or change (or both) the
@@ -553,7 +537,6 @@ void lothars__sigprocmask(int how, const sigset_t *set, sigset_t *oset)
 	}
 }
 
-
 /*
   The strdup() function returns a pointer to a new string which is a
   duplicate of the string s. Memory for the new string is obtained
@@ -569,7 +552,7 @@ void lothars__sigprocmask(int how, const sigset_t *set, sigset_t *oset)
   @str: The string to duplicate, in case duplicates allocated memory
       by new allocation!
 */
-char* lothars__strdup(const char *str)
+char *lothars__strdup(const char *str)
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = strdup(str))) {
@@ -577,7 +560,6 @@ char* lothars__strdup(const char *str)
 	}
 	return ptr;
 }
-
 
 /*
   sysconf - get configuration information at run time.
@@ -590,13 +572,12 @@ char* lothars__strdup(const char *str)
 long lothars__sysconf(int name)
 {
 	long val;
-	errno = 0;  /* in case sysconf() does not change this */
+	errno = 0; /* in case sysconf() does not change this */
 	if (-1 == (val = sysconf(name))) {
 		err_sys("%s() error", __func__);
 	}
 	return val;
 }
-
 
 /*
   The _sysctl() call reads and/or writes kernel parameters. For
@@ -614,7 +595,6 @@ void lothars__sysctl(int *name, uint32_t namelen, void *oldp, size_t *oldlenp, v
 	}
 }
 // */
-
 
 /*
   unlink - remove a directory entry.
@@ -637,7 +617,6 @@ void lothars__unlink(const char *pathname)
 	}
 }
 
-
 /*
   The wait() and waitpid() functions shall obtain status information
   pertaining to one of the caller's child processes. Various options
@@ -659,7 +638,6 @@ pid_t lothars__wait(int *iptr)
 	}
 	return pid;
 }
-
 
 /*
   The wait() and waitpid() functions shall obtain status information
@@ -687,5 +665,3 @@ pid_t lothars__waitpid(pid_t pid, int *iptr, int options)
 	}
 	return retpid;
 }
-
-

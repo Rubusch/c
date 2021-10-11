@@ -25,7 +25,6 @@ typedef struct {
 	char msg_text[MSG_SIZ];
 } msgbuf;
 
-
 int main(int argc, char **argv)
 {
 	msgbuf msg_buf;
@@ -66,7 +65,8 @@ int main(int argc, char **argv)
 		memset(tmp, '\0', MSG_SIZ);
 
 		// receive
-		if (0 > msgrcv(mq_id, ( msgbuf * )&msg_buf, sizeof(msg_buf), 0, 0)) {
+		if (0 >
+		    msgrcv(mq_id, (msgbuf *)&msg_buf, sizeof(msg_buf), 0, 0)) {
 			perror("msgrcv failed");
 			exit(EXIT_FAILURE);
 		}

@@ -38,44 +38,50 @@
 
 int main(int argc, char **argv)
 {
-  pid_t child;
-  long instr;
+	pid_t child;
+	long instr;
 
-  if (0 > (child = fork())) {
-    perror("fork failed");
+	if (0 > (child = fork())) {
+		perror("fork failed");
 
-  } else if (0 == child) {
-    /* child: target */
-    if (0 > ptrace(PTRACE_TRACEME, 0, 0, 0)) {
-      perror("ptrace"); // ptrace, child
-      exit(EXIT_FAILURE);
-    }
-    execl("/bin/pwd", "pwd", NULL);
+	} else if (0 == child) {
+		/* child: target */
+		if (0 > ptrace(PTRACE_TRACEME, 0, 0, 0)) {
+			perror("ptrace"); // ptrace, child
+			exit(EXIT_FAILURE);
+		}
+		execl("/bin/pwd", "pwd", NULL);
 
-  } else {
-    /* parent: debugger */
-    int status, cnt=0;
-    wait(&status);
-    while (WIFSTOPPED(status)) {
-      cnt++;
-      struct user_regs_struct regs;
-      ptrace(PTRACE_GETREGS, child, 0, &regs);
+	} else {
+		/* parent: debugger */
+		int status, cnt = 0;
+		wait(&status);
+		while (WIFSTOPPED(status)) {
+			cnt++;
+			struct user_regs_struct regs;
+			ptrace(PTRACE_GETREGS, child, 0, &regs);
 #if __x86_64__
-      instr = ptrace(PTRACE_PEEKTEXT, child, regs.rax, 0);
-      fprintf(stderr, "%d. EIP = '0x%016llx', instr = '0x%016lx', RAX = '0x%016llx', RBX = '0x%016llx', RCX = '0x%016llx'\n", cnt, regs.rip, instr, regs.rax, regs.rbx, regs.rcx);
+			instr = ptrace(PTRACE_PEEKTEXT, child, regs.rax, 0);
+			fprintf(stderr,
+				"%d. EIP = '0x%016llx', instr = '0x%016lx', RAX = '0x%016llx', RBX = '0x%016llx', RCX = '0x%016llx'\n",
+				cnt, regs.rip, instr, regs.rax, regs.rbx,
+				regs.rcx);
 #else
-      instr = ptrace(PTRACE_PEEKTEXT, child, regs.eax, 0);
-      fprintf(stderr, "%d. EIP = '0x%08x', instr = '0x%08x', EAX = '0x%08x', EBX = '0x%08x', ECX = '0x%08x'\n", cnt, regs.eip, instr, regs.eax, regs.ebx, regs.ecx);
+			instr = ptrace(PTRACE_PEEKTEXT, child, regs.eax, 0);
+			fprintf(stderr,
+				"%d. EIP = '0x%08x', instr = '0x%08x', EAX = '0x%08x', EBX = '0x%08x', ECX = '0x%08x'\n",
+				cnt, regs.eip, instr, regs.eax, regs.ebx,
+				regs.ecx);
 #endif
 
-      if (0 > (ptrace(PTRACE_SINGLESTEP, child, 0, 0))) {
-        perror("ptrace, single step");
-        exit(EXIT_FAILURE);
-      }
-      wait(&status);
-    }
-  }
-  puts("parent: READY.");
+			if (0 > (ptrace(PTRACE_SINGLESTEP, child, 0, 0))) {
+				perror("ptrace, single step");
+				exit(EXIT_FAILURE);
+			}
+			wait(&status);
+		}
+	}
+	puts("parent: READY.");
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

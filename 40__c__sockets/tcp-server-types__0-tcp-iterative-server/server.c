@@ -27,15 +27,13 @@
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
-
 /*
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 #define BUFFSIZE 8192 /* buffer size for reads and writes */
 #define LISTENQ 1024 /* the listen queue - serving as backlog for listen */
-
 
 /*
   forwards
@@ -60,24 +58,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
-	if(errnoflag){
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+	if (errnoflag) {
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -90,13 +89,12 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
@@ -105,14 +103,12 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
 void lothars__listen(int fd, int backlog)
 {
 	if (0 > listen(fd, backlog)) {
 		err_sys("listen error");
 	}
 }
-
 
 int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
@@ -128,7 +124,6 @@ again:
 	return res;
 }
 
-
 int lothars__socket(int family, int type, int protocol)
 {
 	int res;
@@ -138,14 +133,12 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
 	if (nbytes != write(fd, ptr, nbytes)) {
 		err_sys("write error");
 	}
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -183,7 +176,6 @@ void lothars__close(int *fd)
 #endif /* _XOPEN_SOURCE */
 }
 
-
 /*
   main
 
@@ -193,11 +185,12 @@ void lothars__close(int *fd)
   the iterative tcp server implementation is a server w/o fork(),
   it has the fastest response times, but is very limited
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int fd_listen, fd_conn;
 	struct sockaddr_in servaddr;
-	char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE];
+	memset(buf, '\0', sizeof(buf));
 	int port;
 	time_t ticks;
 
@@ -217,7 +210,8 @@ int main(int argc, char** argv)
 	servaddr.sin_port = htons(port); // connect to provided port
 
 	// bind "listen socket" to the "server address"
-	lothars__bind(fd_listen, (struct sockaddr*) &servaddr, sizeof(servaddr));
+	lothars__bind(fd_listen, (struct sockaddr *)&servaddr,
+		      sizeof(servaddr));
 
 	// listen on socket (queue length == LISTENQ == 1024)
 	lothars__listen(fd_listen, LISTENQ);
@@ -225,7 +219,8 @@ int main(int argc, char** argv)
 	// server loop
 	while (1) {
 		// accept (blocking!) - ...listen socket to connection socket
-		fd_conn = lothars__accept(fd_listen, (struct sockaddr*) NULL, NULL);
+		fd_conn = lothars__accept(fd_listen, (struct sockaddr *)NULL,
+					  NULL);
 
 		// example action: send a string containing the system time
 		ticks = time(NULL);

@@ -31,87 +31,83 @@ something completely diferent (a common error - therefore the compiler gives
 warinings about implicit type conversions! Allways debug your warnings!!!).
 //*/
 
-
 // given inits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-
 #define ELEMENT_COUNT 10
 #define ELEMENT_LENGTH 8
-
 
 // forward declaration of function
 void output(char **);
 
-
 int main(int argc, char **argv)
 {
+	// Definition and allocation of pointer to pointers
+	// first pointer:
+	char **arr = NULL;
+	if (NULL == (arr = calloc(ELEMENT_COUNT, sizeof(*arr)))) {
+		perror("allocation failed");
+		exit(EXIT_FAILURE);
+	}
 
-  // Definition and allocation of pointer to pointers
-  // first pointer:
-  char **arr = NULL;
-  if (NULL == (arr = calloc(ELEMENT_COUNT, sizeof(*arr)))) {
-    perror("allocation failed");
-    exit(EXIT_FAILURE);
-  }
+	// second pointer:
+	int cnt;
+	for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
+		if (NULL ==
+		    (arr[cnt] = calloc(ELEMENT_LENGTH, sizeof(**arr)))) {
+			perror("allocation failed");
+			exit(EXIT_FAILURE);
+		}
+	}
 
-  // second pointer:
-  int cnt;
-  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
-    if (NULL == (arr[cnt] = calloc(ELEMENT_LENGTH, sizeof(**arr)))) {
-      perror("allocation failed");
-      exit(EXIT_FAILURE);
-    }
-  }
+	// initialization of pointer to pointers
+	char str[6];
+	memset(str, '\0', 6);
+	for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
+		// adding the number to the content of str ;)
+		memset(str, '\0', 6);
+		sprintf(str, "str %1d", cnt);
+		strncpy(arr[cnt], str, 6);
+	}
 
-  // initialization of pointer to pointers
-  char str[6];
-  memset(str, '\0', 6);
-  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
-    // adding the number to the content of str ;)
-    memset(str, '\0', 6);
-    sprintf(str, "str %1d", cnt);
-    strncpy(arr[cnt], str, 6);
-  }
+	// Pass and call of a function with pointer to pointers
+	output(arr);
 
-  // Pass and call of a function with pointer to pointers
-  output(arr);
+	// free second pointer (to the elements)
+	for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
+		if (NULL != arr[cnt]) {
+			free(arr[cnt]);
+		}
+	}
 
-  // free second pointer (to the elements)
-  for (cnt = 0; cnt < ELEMENT_COUNT; ++cnt) {
-    if (NULL != arr[cnt]) {
-      free(arr[cnt]);
-    }
-  }
+	// free first pointer
+	if (NULL != arr) {
+		free(arr);
+	}
 
-  // free first pointer
-  if (NULL != arr) {
-    free(arr);
-  }
-
-  printf("READY.");
-  return 0;
+	printf("READY.");
+	return 0;
 }
-
 
 // Definition of a funcion with pointer to pointers
 void output(char **arr)
 {
-  // CAUTION: here the size of the pointer to pointers is unknown - has to be
-  // passed as param!!!
-  printf("\nSize of the array is: %i - FAILS!\n", (sizeof arr));
+	// CAUTION: here the size of the pointer to pointers is unknown - has to be
+	// passed as param!!!
+	printf("\nSize of the array is: %i - FAILS!\n", (sizeof arr));
 
-  // print out
-  int idx;
-  int jdx;
-  for (idx = 0; idx < ELEMENT_COUNT; ++idx) {
-    printf("%i. element:\t", idx);
-    for (jdx = 0; jdx < (strlen(arr[idx]) + 1); ++jdx) {
-      printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")), arr[idx][jdx]);
-    }
-    printf("\n");
-  }
-  printf("\n");
+	// print out
+	int idx;
+	int jdx;
+	for (idx = 0; idx < ELEMENT_COUNT; ++idx) {
+		printf("%i. element:\t", idx);
+		for (jdx = 0; jdx < (strlen(arr[idx]) + 1); ++jdx) {
+			printf("%s\'%c\'", ((0 == jdx) ? ("") : (", ")),
+			       arr[idx][jdx]);
+		}
+		printf("\n");
+	}
+	printf("\n");
 }

@@ -44,9 +44,11 @@
 #include <math.h> /* pow() */
 
 // Each compound literal creates only a single object in its scope:
-int func (void)
+int func(void)
 {
-	struct strunk {int mem;} *ptr = 0, *quack;
+	struct strunk {
+		int mem;
+	} *ptr = 0, *quack;
 	int idx = 0;
 
 	/*
@@ -74,30 +76,30 @@ again:
 	return ptr == quack && quack->mem == 1; // always returns 1
 }
 
-
 /* compound literal: global usage */
-int *pglobal = (int[]) {2, 4};
-    // creates an unnamed static array of type int[2]
-    // initializes the array to the values {2, 4}
-    // creates pointer p to point at the first element of the array
+int *pglobal = (int[]){ 2, 4 };
+// creates an unnamed static array of type int[2]
+// initializes the array to the values {2, 4}
+// creates pointer p to point at the first element of the array
 
 /* compound literal: read-only compound literal */
-const float *preadonly = (const float []) {1e0, 1e1, 1e2};
-
+const float *preadonly = (const float[]){ 1e0, 1e1, 1e2 };
 
 /* compound literal: TODO */
-struct point {double x,y;};
+struct point {
+	double x, y;
+};
 void drawline_by_value(struct point from, struct point to)
 {
-	printf("\t%s()\n\tfrom.x == %f, from.y == %f and to.x == %f, to.y == %f\n\n", __func__, from.x, from.y, to.x, to.y);
+	printf("\t%s()\n\tfrom.x == %f, from.y == %f and to.x == %f, to.y == %f\n\n",
+	       __func__, from.x, from.y, to.x, to.y);
 }
 
 void drawline_by_address(struct point *from, struct point *to)
 {
-	printf("\t%s()\n\tfrom->x == %f, from->y == %f and to->x == %f, to->y == %f\n\n", __func__, from->x, from->y, to->x, to->y);
+	printf("\t%s()\n\tfrom->x == %f, from->y == %f and to->x == %f, to->y == %f\n\n",
+	       __func__, from->x, from->y, to->x, to->y);
 }
-
-
 
 int main(void)
 {
@@ -110,25 +112,25 @@ int main(void)
 	  With gcc evaluates to "undefined behavior" and fails
 	  compilation.
 	*/
-//	printf("evaluates '%s'\n", ((const char []){"abc"} == "abc") ? "1" : "0");
+	//	printf("evaluates '%s'\n", ((const char []){"abc"} == "abc") ? "1" : "0");
 	printf("\t...does not compile (gcc)\n");
-
 
 	printf("\nC99: compound literal and scope\n");
 	func();
 
 	printf("\nC99: global and readonly\n");
-	for (int idx=0; idx<2; idx++)
-		printf("\tpglobal[%d] = %d [%d]\n", idx, pglobal[idx], 2*(idx+1));
+	for (int idx = 0; idx < 2; idx++)
+		printf("\tpglobal[%d] = %d [%d]\n", idx, pglobal[idx],
+		       2 * (idx + 1));
 
-	for (int idx=0; idx<3; idx++)
-		printf("\tpreadonly[%d] = %f [%f]\n", idx, preadonly[idx], pow(10.0, (float)idx));
-
+	for (int idx = 0; idx < 3; idx++)
+		printf("\tpreadonly[%d] = %f [%f]\n", idx, preadonly[idx],
+		       pow(10.0, (float)idx));
 
 	printf("\nC99: compound literal and unnamed automatic arrays\n");
 	int num = 2, *pipo = &num;
-	pipo = (int [2]){*pipo};
-        /* creates an unnamed automatic array of type int[2]
+	pipo = (int[2]){ *pipo };
+	/* creates an unnamed automatic array of type int[2]
 
 	   initializes the first element to the value formerly held in
 	   *pipo, 2
@@ -141,14 +143,15 @@ int main(void)
 
 	printf("\nC99: compound literal and block scope\n");
 
-	drawline_by_value((struct point){.x=1, .y=1}, (struct point){.x=3, .y=4});
-        /* creates two  structs with block scope  and calls drawline1,
+	drawline_by_value((struct point){ .x = 1, .y = 1 },
+			  (struct point){ .x = 3, .y = 4 });
+	/* creates two  structs with block scope  and calls drawline1,
 	 * passing them by value */
 
-	drawline_by_address(&(struct point){.x=1, .y=1}, &(struct point){.x=3, .y=4});
-        /* creates two structs with block scope and calls drawline2,
+	drawline_by_address(&(struct point){ .x = 1, .y = 1 },
+			    &(struct point){ .x = 3, .y = 4 });
+	/* creates two structs with block scope and calls drawline2,
 	 * passing their addresses */
-
 
 	printf("\nREADY.\n");
 	exit(EXIT_SUCCESS);

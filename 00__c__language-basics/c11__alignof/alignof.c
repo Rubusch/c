@@ -37,7 +37,6 @@
 
 #include <stdalign.h> /* C11: alignof */
 
-
 int main(void)
 {
 	printf("\nC11: type max_align_t\n");
@@ -45,17 +44,19 @@ int main(void)
 	printf("\tAlignment of max_align_t is %zu (%#zx)\n", a, a);
 
 	void *p = malloc(123);
-	printf("\tThe address obtained from malloc(123) is %#" PRIxPTR"\n", (uintptr_t)p);
+	printf("\tThe address obtained from malloc(123) is %#" PRIxPTR "\n",
+	       (uintptr_t)p);
 	free(p);
-
 
 	printf("\nC11: operator alignof()\n");
 	printf("\tAlignment of char = %zu\n", alignof(char));
 	printf("\tAlignment of max_align_t = %zu\n", alignof(max_align_t));
 	printf("\t\talignof(float[10]) = %zu\n", alignof(float[10]));
 
-	printf("\t\talignof(struct{char c; int n;}) = %zu\n", alignof(struct {char c; int n;}));
-
+	printf("\t\talignof(struct{char c; int n;}) = %zu\n", alignof(struct {
+		       char c;
+		       int n;
+	       }));
 
 	printf("\nREADY.\n");
 	exit(EXIT_SUCCESS);

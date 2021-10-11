@@ -22,28 +22,28 @@ Valgrind/memcheck.
 
 void func(int iVar)
 {
-  printf("if(0 == %i)\n", iVar);
-  if (0 == iVar)
-    printf("\tTRUE - Just by chance!\n");
-  else
-    printf("\tFALSE - By chance not!\n");
-  printf("\n");
+	printf("if(0 == %i)\n", iVar);
+	if (0 == iVar)
+		printf("\tTRUE - Just by chance!\n");
+	else
+		printf("\tFALSE - By chance not!\n");
+	printf("\n");
 
-  return;
+	return;
 }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 int main(int argc, char **argv)
 {
-  printf("define but no init..\n");
-  unsigned int iVar; // allways initialize variables
-  // A "gcc -Wall" already warns from this, "-Werror" will fail to build
+	printf("define but no init..\n");
+	unsigned int iVar; // allways initialize variables
+	// A "gcc -Wall" already warns from this, "-Werror" will fail to build
 
-  int cnt;
-  for (cnt = 0; cnt < 10; ++cnt)
-    func(iVar);
-  return EXIT_SUCCESS;
+	int cnt;
+	for (cnt = 0; cnt < 10; ++cnt)
+		func(iVar);
+	return EXIT_SUCCESS;
 }
 #pragma GCC diagnostic pop
 

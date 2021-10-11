@@ -12,13 +12,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #define CONTENT_LENGTH 8
 
 struct bintree_item {
-  struct bintree_item *lhs;
-  struct bintree_item *rhs;
-  char content[CONTENT_LENGTH];
+	struct bintree_item *lhs;
+	struct bintree_item *rhs;
+	char content[CONTENT_LENGTH];
 };
 typedef struct bintree_item item;
 

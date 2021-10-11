@@ -35,13 +35,12 @@
 typedef void *tracee_addr_t;
 
 typedef struct breakpoint {
-  tracee_addr_t code_addr;
-  long code_backup;
+	tracee_addr_t code_addr;
+	long code_backup;
 } breakpoint_t;
 
 // TODO in case typedef to a breakpoint_p type
 typedef breakpoint_t *breakpoint_p;
-
 
 /* declarations */
 struct breakpoint_t;
@@ -67,6 +66,5 @@ breakpoint_t *set_breakpoint(pid_t pid, tracee_addr_t addr);
 
 static int wait_process(const pid_t pid, int *const statusptr);
 static int continue_process(const pid_t pid, int *const statusptr);
-
 
 #endif /* PTRACER_H_ */

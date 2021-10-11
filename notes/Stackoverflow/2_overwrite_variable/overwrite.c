@@ -16,20 +16,19 @@
 
 void func(int a, int b, int c)
 {
-  char buf_1[5];
-  char *buf_2 = buf_1;
+	char buf_1[5];
+	char *buf_2 = buf_1;
 
-  buf_2 += SHIFT;
-  int *tmp = ( int * )buf_2;
-  *tmp = 7;
+	buf_2 += SHIFT;
+	int *tmp = (int *)buf_2;
+	*tmp = 7;
 }
-
 
 int main(void)
 {
-  int x = 0;
-  printf("&x\t= %lu - x = %d\n", ( unsigned long )&x, x);
-  func(1, 2, 3);
-  printf("&x\t= %lu - x = %d\n", ( unsigned long )&x, x);
-  exit(EXIT_SUCCESS);
+	int x = 0;
+	printf("&x\t= %lu - x = %d\n", (unsigned long)&x, x);
+	func(1, 2, 3);
+	printf("&x\t= %lu - x = %d\n", (unsigned long)&x, x);
+	exit(EXIT_SUCCESS);
 }

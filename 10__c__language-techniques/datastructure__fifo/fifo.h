@@ -8,16 +8,15 @@
 #ifndef FIFO
 #define FIFO
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define DEBUG_FIFO 1
 
-# ifdef DEBUG_FIFO
+#ifdef DEBUG_FIFO
 #include <assert.h>
-# endif
+#endif
 
 #include "content.h"
 
@@ -28,8 +27,7 @@ struct fifo_s {
 	content_p content;
 };
 typedef struct fifo_s item_t;
-typedef struct fifo_s* item_p;
-
+typedef struct fifo_s *item_p;
 
 int fifo__size();
 

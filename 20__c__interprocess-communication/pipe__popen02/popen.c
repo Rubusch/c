@@ -26,7 +26,6 @@
 extern FILE *popen(const char *, const char *);
 extern int pclose(FILE *);
 
-
 int main()
 {
 	FILE *fPipe;
@@ -34,7 +33,7 @@ int main()
 	char line[256];
 
 	// open pipe - "r", "w" possible
-	if (NULL == (fPipe = ( FILE * )popen(command, "r"))) {
+	if (NULL == (fPipe = (FILE *)popen(command, "r"))) {
 		perror("popen() failed");
 		exit(1);
 	}

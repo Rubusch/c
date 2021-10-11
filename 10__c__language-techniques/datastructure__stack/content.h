@@ -5,7 +5,6 @@
 #ifndef CONTENT_H_
 #define CONTENT_H_
 
-
 #define MESSAGE_LENGTH 32
 
 struct content_s {
@@ -14,7 +13,6 @@ struct content_s {
 	int len;
 };
 typedef struct content_s content_t;
-typedef content_t* content_p;
-
+typedef content_t *content_p;
 
 #endif /* CONTENT_H_ */

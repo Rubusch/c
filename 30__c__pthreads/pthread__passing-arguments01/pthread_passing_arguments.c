@@ -14,41 +14,41 @@ start routine.
 
 #define NUM_THREADS 5
 
-
 void *print_hello(void *thread_id)
 {
-  unsigned long tid = ( unsigned long )thread_id;
-  printf("Hello World! It's me, thread %lu!\n", ( unsigned long )tid);
+	unsigned long tid = (unsigned long)thread_id;
+	printf("Hello World! It's me, thread %lu!\n", (unsigned long)tid);
 
-  // shutdown thread
-  pthread_exit(NULL);
+	// shutdown thread
+	pthread_exit(NULL);
 }
-
 
 int main(int argc, char **argv)
 {
-  pthread_t threads[NUM_THREADS];
+	pthread_t threads[NUM_THREADS];
 
-  // something to pass to a thread at initiation
-  int *taskids[NUM_THREADS];
+	// something to pass to a thread at initiation
+	int *taskids[NUM_THREADS];
 
-  int return_code = 0, cnt = 0;
-  for (cnt = 0; cnt < NUM_THREADS; ++cnt) {
-    if (NULL == (taskids[cnt] = ( int * )malloc(sizeof(int)))) {
-      perror("malloc failed");
-      exit(1);
-    }
-    *(taskids[cnt]) = cnt;
-    printf("creating thread %d\n", cnt);
+	int return_code = 0, cnt = 0;
+	for (cnt = 0; cnt < NUM_THREADS; ++cnt) {
+		if (NULL == (taskids[cnt] = (int *)malloc(sizeof(int)))) {
+			perror("malloc failed");
+			exit(1);
+		}
+		*(taskids[cnt]) = cnt;
+		printf("creating thread %d\n", cnt);
 
-    // now passes taskids[] to the thread handling function
-    if (0 != (return_code = pthread_create(&threads[cnt], NULL, print_hello,
-                                           ( void * )taskids[cnt]))) {
-      fprintf(stderr, "ERROR; return code from pthread_create() is %d\n",
-              return_code);
-      exit(-1);
-    }
-  }
+		// now passes taskids[] to the thread handling function
+		if (0 != (return_code = pthread_create(&threads[cnt], NULL,
+						       print_hello,
+						       (void *)taskids[cnt]))) {
+			fprintf(stderr,
+				"ERROR; return code from pthread_create() is %d\n",
+				return_code);
+			exit(-1);
+		}
+	}
 
-  pthread_exit(NULL);
+	pthread_exit(NULL);
 }

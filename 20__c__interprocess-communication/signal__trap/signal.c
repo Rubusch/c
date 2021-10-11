@@ -13,7 +13,6 @@
 void handler_int(int);
 void handler_quit(int);
 
-
 int main(int argc, char **argv)
 {
 	// 1. set up the signal handler to the signal
@@ -27,7 +26,6 @@ int main(int argc, char **argv)
 		;
 }
 
-
 // 2. signal handler implementation
 void handler_int(int dummy)
 {
@@ -37,7 +35,6 @@ void handler_int(int dummy)
 
 	puts("you have pressed CTRL-c");
 }
-
 
 void handler_quit(int dummy)
 {

@@ -11,7 +11,7 @@
 
 // shellsort specific
 void analyze_listsize(void *first, unsigned int *, unsigned int *,
-                      unsigned int *);
+		      unsigned int *);
 void setup_array(void *, void **, unsigned int *);
 void cleanup_array(void **, unsigned int);
 void merge_array(); // TODO

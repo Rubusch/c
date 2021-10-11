@@ -15,13 +15,11 @@
 #include <arpa/inet.h> /* inet_pton(), inet_ntop(),.. */
 #include <errno.h>
 
-
 /*
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
-
+#define MAXLINE 4096 /* max text line length */
 
 /*
   forwards
@@ -32,12 +30,11 @@ void err_quit(const char *fmt, ...);
 
 void lothars__connect(int, const struct sockaddr *, socklen_t);
 int lothars__socket(int, int, int);
-char* lothars__fgets(char *, int, FILE *);
+char *lothars__fgets(char *, int, FILE *);
 void lothars__fputs(const char *, FILE *);
 void lothars__inet_pton(int, const char *, void *);
 ssize_t lothars__readline_fd(int, void *, size_t);
 void lothars__writen(int, void *, size_t);
-
 
 /*
   internal helpers
@@ -51,23 +48,24 @@ void lothars__writen(int, void *, size_t);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap);
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -80,7 +78,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
@@ -92,13 +90,12 @@ void err_sys(const char *fmt, ...)
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 {
@@ -106,7 +103,6 @@ void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 		err_sys("connect error");
 	}
 }
-
 
 int lothars__socket(int family, int type, int protocol)
 {
@@ -117,16 +113,14 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
-char* lothars__fgets(char *ptr, int n, FILE *stream)
+char *lothars__fgets(char *ptr, int n, FILE *stream)
 {
 	char *rptr = NULL;
-	if ( (NULL == (rptr = fgets(ptr, n, stream))) && ferror(stream)) {
+	if ((NULL == (rptr = fgets(ptr, n, stream))) && ferror(stream)) {
 		err_sys("fgets error");
 	}
 	return rptr;
 }
-
 
 void lothars__fputs(const char *ptr, FILE *stream)
 {
@@ -134,7 +128,6 @@ void lothars__fputs(const char *ptr, FILE *stream)
 		err_sys("fputs error");
 	}
 }
-
 
 void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
@@ -146,7 +139,6 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 	}
 }
 
-
 /*
   readline_fd
 
@@ -157,7 +149,6 @@ static int read_cnt;
 static char *read_ptr;
 static char read_buf[MAXLINE];
 
-
 static ssize_t readline_fd_read(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
@@ -167,7 +158,7 @@ static ssize_t readline_fd_read(int fd, char *ptr)
 				goto again;
 			}
 			return -1;
-		}else if (read_cnt == 0) {
+		} else if (read_cnt == 0) {
 			return 0;
 		}
 		read_ptr = read_buf;
@@ -177,7 +168,6 @@ static ssize_t readline_fd_read(int fd, char *ptr)
 	*ptr = *read_ptr++;
 	return 1;
 }
-
 
 ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 {
@@ -192,19 +182,18 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 				break; // newline is stored, like fgets()
 			}
 
-		} else if(rc == 0) {
+		} else if (rc == 0) {
 			*ptr = 0;
 			return (cnt - 1); // EOF, n - 1 bytes were read
 
 		} else {
-			return -1;  // error, errno set by read()
+			return -1; // error, errno set by read()
 		}
 	}
 
 	*ptr = 0; /* null terminate like fgets() */
 	return cnt;
 }
-
 
 ssize_t lothars__readline_fd(int fd, void *ptr, size_t maxlen)
 {
@@ -214,7 +203,6 @@ ssize_t lothars__readline_fd(int fd, void *ptr, size_t maxlen)
 	}
 	return bytes;
 }
-
 
 /*
   writen
@@ -246,7 +234,6 @@ ssize_t writen(int fd, const void *vptr, size_t num)
 	return num;
 }
 
-
 void lothars__writen(int fd, void *ptr, size_t nbytes)
 {
 	if (writen(fd, ptr, nbytes) != nbytes) {
@@ -254,10 +241,8 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 	}
 }
 
-
 /********************************************************************************************/
 // worker implementation
-
 
 void worker__echo_cli(FILE *fp, int fd_sock)
 {
@@ -267,16 +252,16 @@ void worker__echo_cli(FILE *fp, int fd_sock)
 	memset(recvline, '\0', sizeof(recvline));
 	while (NULL != lothars__fgets(sendline, sizeof(sendline), fp)) {
 		lothars__writen(fd_sock, sendline, strlen(sendline));
-		if (0 == lothars__readline_fd(fd_sock, recvline, sizeof(recvline)))
-			err_quit("%s(): server terminated prematurely\n", __func__);
+		if (0 ==
+		    lothars__readline_fd(fd_sock, recvline, sizeof(recvline)))
+			err_quit("%s(): server terminated prematurely\n",
+				 __func__);
 
 		lothars__fputs(recvline, stdout);
 	}
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main()
@@ -285,12 +270,14 @@ void worker__echo_cli(FILE *fp, int fd_sock)
 
   a tcp server is expected, serverip and port needs to be provided
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int fd_sock;
 	struct sockaddr_in servaddr;
-	char serverip[16]; memset(serverip, '\0', sizeof(serverip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char serverip[16];
+	memset(serverip, '\0', sizeof(serverip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (3 != argc) {
 		fprintf(stderr, "usage: %s <serverip> <port>\n", argv[0]);
@@ -302,14 +289,14 @@ int main(int argc, char** argv)
 	strncpy(port, argv[2], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-
 	fd_sock = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(atoi(port));
 	lothars__inet_pton(AF_INET, serverip, &servaddr.sin_addr);
-	lothars__connect(fd_sock, (struct sockaddr*) &servaddr, sizeof(servaddr));
+	lothars__connect(fd_sock, (struct sockaddr *)&servaddr,
+			 sizeof(servaddr));
 
 	worker__echo_cli(stdin, fd_sock);
 

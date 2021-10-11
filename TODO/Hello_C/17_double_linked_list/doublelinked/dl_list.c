@@ -26,21 +26,19 @@ static int init(element_t *, const char *, const unsigned int);
 static element_t *first = NULL;
 static element_t *last = NULL;
 
-
 /*
   removes the whole list
 //*/
 int removeall()
 {
-  while (first) {
-    if (0 != removeelement(first->data, 1 + strlen(first->data))) {
-      return -1;
-    }
-  }
+	while (first) {
+		if (0 != removeelement(first->data, 1 + strlen(first->data))) {
+			return -1;
+		}
+	}
 
-  return 0;
+	return 0;
 }
-
 
 /*
   appends an element to the end of the list
@@ -49,27 +47,26 @@ int removeall()
 //*/
 int appendelement(const char *data, const unsigned int data_size)
 {
-  // declaration
-  element_t *tmp = NULL;
+	// declaration
+	element_t *tmp = NULL;
 
-  // allocate space
-  if (NULL == (tmp = getnew())) {
-    return -1;
-  }
+	// allocate space
+	if (NULL == (tmp = getnew())) {
+		return -1;
+	}
 
-  // init
-  if (0 != init(tmp, data, data_size)) {
-    return -1;
-  }
+	// init
+	if (0 != init(tmp, data, data_size)) {
+		return -1;
+	}
 
-  // append
-  if (0 != append(tmp)) {
-    return -1;
-  }
+	// append
+	if (0 != append(tmp)) {
+		return -1;
+	}
 
-  return 0;
+	return 0;
 }
-
 
 /*
   inserts an element after a given element (prev_data)
@@ -79,67 +76,68 @@ int appendelement(const char *data, const unsigned int data_size)
     data_size       size of data
 //*/
 int insertelement(const char *prev_data, const unsigned int prev_data_size,
-                  const char *data, const unsigned int data_size)
+		  const char *data, const unsigned int data_size)
 {
-  // checks
-  if (NULL == data)
-    return -1;
+	// checks
+	if (NULL == data)
+		return -1;
 
-  // if prev_data is null - prepend
-  if (NULL == prev_data) {
-    element_t *tmp = NULL;
-    if (NULL == (tmp = getnew())) {
-      return -1;
-    }
-    if (0 != init(tmp, data, data_size)) {
-      return -1;
-    }
+	// if prev_data is null - prepend
+	if (NULL == prev_data) {
+		element_t *tmp = NULL;
+		if (NULL == (tmp = getnew())) {
+			return -1;
+		}
+		if (0 != init(tmp, data, data_size)) {
+			return -1;
+		}
 
-    // relink - last is already set correctly
-    tmp->next = first;
-    first = tmp;
+		// relink - last is already set correctly
+		tmp->next = first;
+		first = tmp;
 
-    // if tmp is the only element added, set last, too
-    if (NULL == last) {
-      last = first;
-    }
+		// if tmp is the only element added, set last, too
+		if (NULL == last) {
+			last = first;
+		}
 
-    return 0;
-  }
+		return 0;
+	}
 
-  // prev elements
-  element_t *prev = find(prev_data, prev_data_size);
-  if (NULL == prev) {
-    fprintf(stderr, "element \"%s\" not found in list\n", prev_data);
-    return -1;
-  }
+	// prev elements
+	element_t *prev = find(prev_data, prev_data_size);
+	if (NULL == prev) {
+		fprintf(stderr, "element \"%s\" not found in list\n",
+			prev_data);
+		return -1;
+	}
 
-  // new element
-  element_t *tmp = find(data, data_size);
-  if (NULL == tmp) {
-    tmp = getnew();
-    init(tmp, data, data_size);
-  } else {
-    fprintf(stderr, "the element \"%s\" is alredy contained in the list\n",
-            data);
-    return -1;
-  }
+	// new element
+	element_t *tmp = find(data, data_size);
+	if (NULL == tmp) {
+		tmp = getnew();
+		init(tmp, data, data_size);
+	} else {
+		fprintf(stderr,
+			"the element \"%s\" is alredy contained in the list\n",
+			data);
+		return -1;
+	}
 
-  // element is going to be appended
-  element_t *next = prev->next;
-  if (NULL == next) {
-    return appendelement(data, data_size);
-  }
+	// element is going to be appended
+	element_t *next = prev->next;
+	if (NULL == next) {
+		return appendelement(data, data_size);
+	}
 
-  // or element is going to be inserted - relink elements
-  tmp->next = next;
-  next->prev = tmp;
-  prev->next = tmp;
-  tmp->prev = prev;
+	// or element is going to be inserted - relink elements
+	tmp->next = next;
+	next->prev = tmp;
+	prev->next = tmp;
+	tmp->prev = prev;
 
-  return 0;
+	return 0;
 }
-
 
 /*
   removes an element in the list
@@ -150,45 +148,44 @@ int insertelement(const char *prev_data, const unsigned int prev_data_size,
 // FIXME: cut's of elements before!!!
 int removeelement(const char *data, const unsigned int data_size)
 {
-  // checks
-  if (NULL == data)
-    return -1;
+	// checks
+	if (NULL == data)
+		return -1;
 
-  // find and delete
-  element_t *tmp = find(data, data_size);
-  if (NULL == tmp) {
-    fprintf(stderr, "element \"%s\" not found in list\n", data);
-    return -1;
-  }
+	// find and delete
+	element_t *tmp = find(data, data_size);
+	if (NULL == tmp) {
+		fprintf(stderr, "element \"%s\" not found in list\n", data);
+		return -1;
+	}
 
-  // neighbours
-  element_t *prev = tmp->prev;
-  element_t *next = tmp->next;
+	// neighbours
+	element_t *prev = tmp->prev;
+	element_t *next = tmp->next;
 
-  // relink prev
-  if (NULL != prev) {
-    prev->next = next;
-  } else {
-    first = next;
-  }
+	// relink prev
+	if (NULL != prev) {
+		prev->next = next;
+	} else {
+		first = next;
+	}
 
-  // relink next
-  if (NULL != next) {
-    next->prev = prev;
-  } else {
-    last = prev;
-  }
+	// relink next
+	if (NULL != next) {
+		next->prev = prev;
+	} else {
+		last = prev;
+	}
 
-  // remove tmp
-  if (0 != discard(&tmp)) {
-    perror("discard failed");
-    return -1;
-  }
-  tmp = NULL;
+	// remove tmp
+	if (0 != discard(&tmp)) {
+		perror("discard failed");
+		return -1;
+	}
+	tmp = NULL;
 
-  return 0;
+	return 0;
 }
-
 
 /* ******************************************************************************
 
@@ -197,27 +194,25 @@ int removeelement(const char *data, const unsigned int data_size)
 //
 ******************************************************************************/
 
-
 /*
   prints the content of the whole list
 //*/
 int printlist()
 {
-  printf("content: ");
-  element_t *tmp = first;
-  if (NULL == tmp) {
-    printf(" -\n");
-    return 0;
-  }
-  while (tmp) {
-    printf("%s  ", tmp->data);
-    tmp = tmp->next;
-  }
-  printf("\n");
+	printf("content: ");
+	element_t *tmp = first;
+	if (NULL == tmp) {
+		printf(" -\n");
+		return 0;
+	}
+	while (tmp) {
+		printf("%s  ", tmp->data);
+		tmp = tmp->next;
+	}
+	printf("\n");
 
-  return 0;
+	return 0;
 }
-
 
 /*
   find an element by its data
@@ -229,20 +224,19 @@ int printlist()
 //*/
 static element_t *find(const char *data, const unsigned int data_size)
 {
-  if (NULL == data)
-    return NULL;
+	if (NULL == data)
+		return NULL;
 
-  element_t *tmp = first;
-  while (tmp) {
-    if (0 == strncmp(tmp->data, data, data_size)) {
-      return tmp;
-    }
-    tmp = tmp->next;
-  }
+	element_t *tmp = first;
+	while (tmp) {
+		if (0 == strncmp(tmp->data, data, data_size)) {
+			return tmp;
+		}
+		tmp = tmp->next;
+	}
 
-  return NULL;
+	return NULL;
 }
-
 
 /*
   appends an element to the list
@@ -250,24 +244,23 @@ static element_t *find(const char *data, const unsigned int data_size)
 //*/
 static int append(element_t *tmp)
 {
-  // checks
-  if (NULL == tmp)
-    return -1;
+	// checks
+	if (NULL == tmp)
+		return -1;
 
-  if (NULL == first) {
-    // tmp is first element
-    first = tmp;
-    last = first;
-  } else {
-    // tmp is a trivial element to append
-    last->next = tmp;
-    tmp->prev = last;
-    last = tmp;
-  }
+	if (NULL == first) {
+		// tmp is first element
+		first = tmp;
+		last = first;
+	} else {
+		// tmp is a trivial element to append
+		last->next = tmp;
+		tmp->prev = last;
+		last = tmp;
+	}
 
-  return 0;
+	return 0;
 }
-
 
 /*
   removes and frees the space of an element
@@ -275,21 +268,20 @@ static int append(element_t *tmp)
 //*/
 static int discard(element_t **tmp)
 {
-  // checks
-  if (NULL == *tmp)
-    return -1;
+	// checks
+	if (NULL == *tmp)
+		return -1;
 
-  // free the element
-  if (NULL != (*tmp)->data)
-    free((*tmp)->data);
-  free(*tmp);
+	// free the element
+	if (NULL != (*tmp)->data)
+		free((*tmp)->data);
+	free(*tmp);
 
-  // reset to NULL
-  *tmp = NULL;
+	// reset to NULL
+	*tmp = NULL;
 
-  return 0;
+	return 0;
 }
-
 
 /*
   allocates space for a new element
@@ -298,18 +290,17 @@ static int discard(element_t **tmp)
 //*/
 static element_t *getnew()
 {
-  element_t *tmp = NULL;
+	element_t *tmp = NULL;
 
-  // allocate
-  if (NULL == (tmp = malloc(sizeof(*tmp)))) {
-    perror("allocation failed");
-    exit(EXIT_FAILURE);
-  }
+	// allocate
+	if (NULL == (tmp = malloc(sizeof(*tmp)))) {
+		perror("allocation failed");
+		exit(EXIT_FAILURE);
+	}
 
-  // return it
-  return tmp;
+	// return it
+	return tmp;
 }
-
 
 /*
   init the value of an element
@@ -319,25 +310,25 @@ static element_t *getnew()
 //*/
 static int init(element_t *tmp, const char *data, const unsigned int data_size)
 {
-  // checks
-  if (NULL == tmp)
-    return -1;
-  if (DATASIZ < data_size)
-    return -1;
+	// checks
+	if (NULL == tmp)
+		return -1;
+	if (DATASIZ < data_size)
+		return -1;
 
-  // init
-  tmp->data = NULL;
-  tmp->next = NULL;
-  tmp->prev = NULL;
+	// init
+	tmp->data = NULL;
+	tmp->next = NULL;
+	tmp->prev = NULL;
 
-  // alloc
-  if (NULL == (tmp->data = calloc(data_size, sizeof(tmp->data)))) {
-    perror("allocation failed");
-    return -1;
-  }
+	// alloc
+	if (NULL == (tmp->data = calloc(data_size, sizeof(tmp->data)))) {
+		perror("allocation failed");
+		return -1;
+	}
 
-  // init
-  strncpy(tmp->data, data, data_size);
+	// init
+	strncpy(tmp->data, data, data_size);
 
-  return 0;
+	return 0;
 }

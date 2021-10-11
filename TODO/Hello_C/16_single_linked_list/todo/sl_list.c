@@ -45,19 +45,17 @@ static int init(element_t *, const char *, const unsigned int);
 static element_t *first = NULL;
 static element_t *last = NULL;
 
-
 /*
   removes the whole list
 //*/
 int removeall()
 {
-  while (first) {
-    // TODO: use removelastelement()
-  }
+	while (first) {
+		// TODO: use removelastelement()
+	}
 
-  return 0;
+	return 0;
 }
-
 
 /*
   appends an element to the end of the list
@@ -67,48 +65,46 @@ int removeall()
 //*/
 int appendelement(const char *data, const unsigned int data_size)
 {
-  // declaration
-  element_t *tmp = NULL;
+	// declaration
+	element_t *tmp = NULL;
 
-  // allocate space
-  // TODO use getnew()
+	// allocate space
+	// TODO use getnew()
 
-  // init
-  // TODO use init()
+	// init
+	// TODO use init()
 
-  // append
-  // TODO use append()
+	// append
+	// TODO use append()
 
-  return 0;
+	return 0;
 }
-
 
 /*
   removes the last element
 //*/
 int removelastelement()
 {
-  // checks
-  if (NULL == first)
-    return -1;
+	// checks
+	if (NULL == first)
+		return -1;
 
-  // get previous element
-  element_t *prev = first;
-  if (first != last) {
-    // TODO: go thru the elements using while()
-  } else {
-    first = NULL;
-  }
+	// get previous element
+	element_t *prev = first;
+	if (first != last) {
+		// TODO: go thru the elements using while()
+	} else {
+		first = NULL;
+	}
 
-  // remove
-  // TODO: use discard()
+	// remove
+	// TODO: use discard()
 
-  // relink
-  // TODO
+	// relink
+	// TODO
 
-  return 0;
+	return 0;
 }
-
 
 /*
   inserts an element after a given element (prev_data)
@@ -118,52 +114,51 @@ int removelastelement()
     data_size       size of data
 //*/
 int insertelement(const char *prev_data, const unsigned int prev_data_size,
-                  const char *data, const unsigned int data_size)
+		  const char *data, const unsigned int data_size)
 {
-  // checks
-  if (NULL == data)
-    return -1;
+	// checks
+	if (NULL == data)
+		return -1;
 
-  // special case: if prev_data is null - prepend the new element
-  if (NULL == prev_data) {
-    element_t *tmp = NULL;
-    if (NULL == (tmp = getnew())) {
-      return -1;
-    }
-    if (0 != init(tmp, data, data_size)) {
-      return -1;
-    }
+	// special case: if prev_data is null - prepend the new element
+	if (NULL == prev_data) {
+		element_t *tmp = NULL;
+		if (NULL == (tmp = getnew())) {
+			return -1;
+		}
+		if (0 != init(tmp, data, data_size)) {
+			return -1;
+		}
 
-    // relink - last is already set correctly
-    tmp->next = first;
-    first = tmp;
+		// relink - last is already set correctly
+		tmp->next = first;
+		first = tmp;
 
-    // if tmp is the only element added, set last, too
-    if (NULL == last) {
-      last = first;
-    }
+		// if tmp is the only element added, set last, too
+		if (NULL == last) {
+			last = first;
+		}
 
-    return 0;
-  }
+		return 0;
+	}
 
-  // normal case: prev elements
-  // TODO get prev
+	// normal case: prev elements
+	// TODO get prev
 
-  // new element
-  element_t *tmp = find(data, data_size);
-  // TODO: what if no tmp was found
+	// new element
+	element_t *tmp = find(data, data_size);
+	// TODO: what if no tmp was found
 
-  // next element
-  element_t *next = prev->next;
-  // TODO, the next
+	// next element
+	element_t *next = prev->next;
+	// TODO, the next
 
-  // relink elements
-  tmp->next = next;
-  prev->next = tmp;
+	// relink elements
+	tmp->next = next;
+	prev->next = tmp;
 
-  return 0;
+	return 0;
 }
-
 
 /* ******************************************************************************
 
@@ -171,7 +166,6 @@ int insertelement(const char *prev_data, const unsigned int prev_data_size,
 
 //
 ******************************************************************************/
-
 
 /*
   removes an element within the list
@@ -181,69 +175,66 @@ int insertelement(const char *prev_data, const unsigned int prev_data_size,
 //*/
 int removeelement(const char *data, const unsigned int data_size)
 {
-  // checks
-  if (NULL == data)
-    return -1;
+	// checks
+	if (NULL == data)
+		return -1;
 
-  // find and delete
-  element_t *tmp = find(data, data_size);
-  if (NULL == tmp) {
-    fprintf(stderr, "element \"%s\" not found in list\n", data);
-    return -1;
-  }
+	// find and delete
+	element_t *tmp = find(data, data_size);
+	if (NULL == tmp) {
+		fprintf(stderr, "element \"%s\" not found in list\n", data);
+		return -1;
+	}
 
-  // element was first
-  if (tmp == first) {
+	// element was first
+	if (tmp == first) {
+		// list only has one element
+		if (first == last) {
+			// TODO use discard first.. reset elements
+			return 0;
+		}
 
-    // list only has one element
-    if (first == last) {
-      // TODO use discard first.. reset elements
-      return 0;
-    }
+		first = first->next;
+		if (0 != discard(&tmp)) {
+			return -1;
+		}
+		tmp = NULL;
+		return 0;
+	}
 
-    first = first->next;
-    if (0 != discard(&tmp)) {
-      return -1;
-    }
-    tmp = NULL;
-    return 0;
-  }
+	// get prev element
+	element_t *prev = first;
+	while (prev->next) {
+		if (prev->next == tmp) {
+			break;
+		}
+	}
 
-  // get prev element
-  element_t *prev = first;
-  while (prev->next) {
-    if (prev->next == tmp) {
-      break;
-    }
-  }
+	// next element
+	element_t *next = prev->next;
+	if (NULL == next) {
+		return removelastelement();
+	}
 
-  // next element
-  element_t *next = prev->next;
-  if (NULL == next) {
-    return removelastelement();
-  }
+	// unlink
+	prev->next = next;
 
-  // unlink
-  prev->next = next;
+	// delete
+	if (0 != discard(&tmp)) {
+		return -1;
+	}
 
-  // delete
-  if (0 != discard(&tmp)) {
-    return -1;
-  }
-
-  return 0;
+	return 0;
 }
-
 
 /*
   prints the content of the whole list
 //*/
 int printlist()
 {
-  // TODO implement printlist() that it works the way like in the output
-  return 0;
+	// TODO implement printlist() that it works the way like in the output
+	return 0;
 }
-
 
 /*
   find an element by its data
@@ -255,10 +246,9 @@ int printlist()
 //*/
 static element_t *find(const char *data, const unsigned int data_size)
 {
-  // TODO - implement the find()
-  return NULL;
+	// TODO - implement the find()
+	return NULL;
 }
-
 
 /*
   appends an element to the list
@@ -266,22 +256,21 @@ static element_t *find(const char *data, const unsigned int data_size)
 //*/
 static int append(element_t *tmp)
 {
-  // checks
-  if (NULL == tmp)
-    return -1;
+	// checks
+	if (NULL == tmp)
+		return -1;
 
-  if (NULL == first) {
-    // tmp is first element
-    first = tmp;
-    last = first;
-  } else {
-    // tmp is a trivial element to append
-    last->next = tmp;
-    last = tmp;
-  }
-  return 0;
+	if (NULL == first) {
+		// tmp is first element
+		first = tmp;
+		last = first;
+	} else {
+		// tmp is a trivial element to append
+		last->next = tmp;
+		last = tmp;
+	}
+	return 0;
 }
-
 
 /*
   removes and frees the space of an element
@@ -290,21 +279,20 @@ static int append(element_t *tmp)
 //*/
 static int discard(element_t **tmp)
 {
-  // checks
-  if (NULL == *tmp)
-    return -1;
+	// checks
+	if (NULL == *tmp)
+		return -1;
 
-  // free the element
-  if (NULL != (*tmp)->data)
-    free((*tmp)->data);
-  free(*tmp);
+	// free the element
+	if (NULL != (*tmp)->data)
+		free((*tmp)->data);
+	free(*tmp);
 
-  // reset to NULL
-  *tmp = NULL;
+	// reset to NULL
+	*tmp = NULL;
 
-  return 0;
+	return 0;
 }
-
 
 /*
   allocates space for a new element
@@ -313,15 +301,14 @@ static int discard(element_t **tmp)
 //*/
 static element_t *getnew()
 {
-  element_t *tmp = NULL;
+	element_t *tmp = NULL;
 
-  // allocate
-  // TODO
+	// allocate
+	// TODO
 
-  // return it
-  return tmp;
+	// return it
+	return tmp;
 }
-
 
 /*
   init the value of an element
@@ -331,6 +318,6 @@ static element_t *getnew()
 //*/
 static int init(element_t *tmp, const char *data, const unsigned int data_size)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }

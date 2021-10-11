@@ -29,23 +29,22 @@
 #include <mcheck.h> /* mcheck */
 #include <stdlib.h> /* mcheck */
 
-
 int main()
 {
-  char *ptr = NULL;
+	char *ptr = NULL;
 
-  mtrace(); /* mtrace */
+	mtrace(); /* mtrace */
 
-  if (NULL == (ptr = malloc(sizeof(*ptr)))) {
-    perror("Allocation failed!");
-  }
+	if (NULL == (ptr = malloc(sizeof(*ptr)))) {
+		perror("Allocation failed!");
+	}
 
-  // free( ptr );
-  ptr = NULL;
+	// free( ptr );
+	ptr = NULL;
 
-  muntrace(); /* mtrace */
+	muntrace(); /* mtrace */
 
-  puts("READY.");
+	puts("READY.");
 
-  return 0;
+	return 0;
 }

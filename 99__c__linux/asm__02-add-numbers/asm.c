@@ -272,20 +272,21 @@
 
 int main(void)
 {
-  int foo = 10;
-  int bar = 15;
-  fprintf(stderr, "foo + bar = %d + %d = ", foo, bar);
+	int foo = 10;
+	int bar = 15;
+	fprintf(stderr, "foo + bar = %d + %d = ", foo, bar);
 
-  __asm__ __volatile__(
-                       "   lock       ;\n" /* makes the instruction 'atomic' and could also be removed */
-                       "   addl %1,%0 ;\n"
-                       : "=m" (foo)
-                       : "ir" (bar), "m" (foo) /* 'ir' says bar is an integer, but should reside outside the used registers */
-                       : /* no clobber-list */
-                       );
+	__asm__ __volatile__(
+		"   lock       ;\n" /* makes the instruction 'atomic' and could also be removed */
+		"   addl %1,%0 ;\n"
+		: "=m"(foo)
+		: "ir"(bar),
+		  "m"(foo) /* 'ir' says bar is an integer, but should reside outside the used registers */
+		: /* no clobber-list */
+	);
 
-  fprintf(stderr, "'%d'\n", foo);
-  fprintf(stderr, "READY.\n");
+	fprintf(stderr, "'%d'\n", foo);
+	fprintf(stderr, "READY.\n");
 
-  return 0;
+	return 0;
 }

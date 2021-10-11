@@ -21,7 +21,6 @@ void sighup();
 void sigint();
 void sigquit();
 
-
 int main(int argc, char **argv)
 {
 	pid_t pid = 0;
@@ -59,20 +58,17 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-
 void sighup()
 {
 	signal(SIGHUP, sighup);
 	puts("child - I have received a SIGHUP");
 }
 
-
 void sigint()
 {
 	signal(SIGINT, sigint);
 	puts("child - I have received a SIGINT");
 }
-
 
 void sigquit()
 {

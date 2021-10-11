@@ -71,104 +71,100 @@ READY.
 #define INT_SIZ 10
 #define CHAR_SIZ 10
 
-
 void func(char *pCh, unsigned int siz_ch, int *pInt, unsigned int siz_i)
 {
-  puts("\tfunction");
+	puts("\tfunction");
 
-  // check for NULL in pointers (a can, not a MUST!):
-  if (NULL == pCh)
-    return;
-  if (NULL == pInt)
-    return;
+	// check for NULL in pointers (a can, not a MUST!):
+	if (NULL == pCh)
+		return;
+	if (NULL == pInt)
+		return;
 
-  // do the actual work in the function
-  puts("\t\tpInt:");
-  printf("\t\tsizeof(pInt)\t= %d\n", sizeof(pInt));
-  printf("\t\telements of pInt= %d\n", sizeof(pInt) / sizeof(int));
-  puts("");
+	// do the actual work in the function
+	puts("\t\tpInt:");
+	printf("\t\tsizeof(pInt)\t= %d\n", sizeof(pInt));
+	printf("\t\telements of pInt= %d\n", sizeof(pInt) / sizeof(int));
+	puts("");
 
-  puts("\t\tpCh:");
-  printf("\t\tsizeof(pCh)\t= %d\n", sizeof(pCh));
-  printf("\t\telements of pCh\t= %d\n", sizeof(pCh) / sizeof(char));
-  printf("\t\tstrlen(pCh)= %d\n", strlen(pCh));
-  puts("");
-  puts("\tfunction finished\n");
+	puts("\t\tpCh:");
+	printf("\t\tsizeof(pCh)\t= %d\n", sizeof(pCh));
+	printf("\t\telements of pCh\t= %d\n", sizeof(pCh) / sizeof(char));
+	printf("\t\tstrlen(pCh)= %d\n", strlen(pCh));
+	puts("");
+	puts("\tfunction finished\n");
 }
-
 
 int main()
 {
-  // definition of variables
-  int *int_pointer = NULL;
-  char *char_pointer = NULL;
-  int int_array[INT_SIZ];
-  char char_array[CHAR_SIZ];
+	// definition of variables
+	int *int_pointer = NULL;
+	char *char_pointer = NULL;
+	int int_array[INT_SIZ];
+	char char_array[CHAR_SIZ];
 
-  puts("allocation and init");
-  // alloc and clean int_pointer
-  // TODO
+	puts("allocation and init");
+	// alloc and clean int_pointer
+	// TODO
 
+	// alloc and clean char_pointer
+	// TODO
 
-  // alloc and clean char_pointer
-  // TODO
+	// init arrays
+	memset(int_array, 0, INT_SIZ);
+	memset(char_array, '\0', CHAR_SIZ);
 
-  // init arrays
-  memset(int_array, 0, INT_SIZ);
-  memset(char_array, '\0', CHAR_SIZ);
+	// set each element of the int array to 7
+	// TODO
 
+	// set each element of the char array to 7
+	// TODO
 
-  // set each element of the int array to 7
-  // TODO
+	// set each element of the int array to 7
+	for (idx = 0; idx < INT_SIZ; ++idx) {
+		int_array[idx] = 7;
+	}
 
-  // set each element of the char array to 7
-  // TODO
+	// set each element of the char array to 7
+	strncpy(char_array, "777777777", CHAR_SIZ);
 
-  // set each element of the int array to 7
-  for (idx = 0; idx < INT_SIZ; ++idx) {
-    int_array[idx] = 7;
-  }
+	puts("");
 
-  // set each element of the char array to 7
-  strncpy(char_array, "777777777", CHAR_SIZ);
+	// do the actual work
+	puts("int_pointer:");
+	// TODO
+	puts("");
 
-  puts("");
+	puts("char_pointer:");
+	// TODO
+	puts("");
 
+	puts("int array:");
+	// TODO
+	puts("");
 
-  // do the actual work
-  puts("int_pointer:");
-  // TODO
-  puts("");
+	puts("char array:");
+	printf("sizeof(char_array)\t= %d\n", sizeof(char_array));
+	printf("elements of char_array\t= %d\n",
+	       sizeof(char_array) / sizeof(char));
+	printf("strlen(char_array)\t= %d\n", strlen(char_array));
+	puts("");
 
-  puts("char_pointer:");
-  // TODO
-  puts("");
+	puts("as you can see:\n\t1. sizeof() has NO knowledge about allocated "
+	     "space.\n\t2. sizeof() has NO knowledge about sizes of arrays in a "
+	     "called function");
 
-  puts("int array:");
-  // TODO
-  puts("");
+	puts("func with pointers");
+	// call func with the pointers
+	// TODO
 
-  puts("char array:");
-  printf("sizeof(char_array)\t= %d\n", sizeof(char_array));
-  printf("elements of char_array\t= %d\n", sizeof(char_array) / sizeof(char));
-  printf("strlen(char_array)\t= %d\n", strlen(char_array));
-  puts("");
+	puts("func with arrays");
+	// call func with the arrays
+	// TODO
 
-  puts("as you can see:\n\t1. sizeof() has NO knowledge about allocated "
-       "space.\n\t2. sizeof() has NO knowledge about sizes of arrays in a "
-       "called function");
+	// free
+	// TODO
 
-  puts("func with pointers");
-  // call func with the pointers
-  // TODO
-
-  puts("func with arrays");
-  // call func with the arrays
-  // TODO
-
-  // free
-  // TODO
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
+	puts("READY.");
+	exit(EXIT_SUCCESS);
 }

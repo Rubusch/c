@@ -19,37 +19,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 int main(void)
 {
-  // init
-  printf("init vars\n");
-  int *a = NULL, *b = NULL;
-  if ((a = ( int * )malloc(sizeof(int))) == NULL)
-    return EXIT_FAILURE;
-  if ((b = ( int * )malloc(sizeof(int))) == NULL)
-    return EXIT_FAILURE;
+	// init
+	printf("init vars\n");
+	int *a = NULL, *b = NULL;
+	if ((a = (int *)malloc(sizeof(int))) == NULL)
+		return EXIT_FAILURE;
+	if ((b = (int *)malloc(sizeof(int))) == NULL)
+		return EXIT_FAILURE;
 
-  // assignment
-  printf("*a = 5\n");
-  *a = 5;
+	// assignment
+	printf("*a = 5\n");
+	*a = 5;
 
-  printf("*b = 3\n");
-  *b = 3;
+	printf("*b = 3\n");
+	*b = 3;
 
-  // Caution: no more pointer points to a!!
-  printf("a = b\n");
-  a = b;
+	// Caution: no more pointer points to a!!
+	printf("a = b\n");
+	a = b;
 
-  printf("free(a)\n");
-  free(b);
+	printf("free(a)\n");
+	free(b);
 
-  // Error! *a points to the same address as *b, the space allocated for *a
-  // isn't refered anymore.
-  printf("free(b) - Oups!\n\n");
-  free(a);
+	// Error! *a points to the same address as *b, the space allocated for *a
+	// isn't refered anymore.
+	printf("free(b) - Oups!\n\n");
+	free(a);
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 /*

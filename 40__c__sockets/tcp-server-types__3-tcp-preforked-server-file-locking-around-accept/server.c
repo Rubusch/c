@@ -18,7 +18,6 @@
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
-
 /*
   constants
 */
@@ -30,7 +29,6 @@
 
 typedef void Sigfunc(int); /* convenience: for signal handlers */
 
-
 /*
   forwards
 */
@@ -40,21 +38,20 @@ void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
 // commons
-void* lothars__malloc(size_t);
+void *lothars__malloc(size_t);
 void lothars__unlink(const char *);
 int lothars__mkstemp(char *);
 
 // socket
-Sigfunc* lothars__signal(int, Sigfunc*);
+Sigfunc *lothars__signal(int, Sigfunc *);
 ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__listen(int, int);
-int lothars__tcp_listen(const char*, const char*, socklen_t*);
+int lothars__tcp_listen(const char *, const char *, socklen_t *);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
 void lothars__write(int, void *, size_t);
 void lothars__close(int *);
-
 
 /*
   internal helpers
@@ -68,24 +65,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 // used "private" (.c file static) variables for the limited readline implementation
 static int read_cnt;
@@ -96,8 +94,12 @@ static ssize_t readline_fd_doit(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
 	again:
-		if (0 > (read_cnt = read(fd, read_buf, sizeof(read_buf)))) { // use read() to construct a readline() with size limits
-			if (errno == EINTR) goto again; // only in case of interrrupted, try again
+		if (0 >
+		    (read_cnt = read(
+			     fd, read_buf,
+			     sizeof(read_buf)))) { // use read() to construct a readline() with size limits
+			if (errno == EINTR)
+				goto again; // only in case of interrrupted, try again
 			return -1; // else return as error code
 		} else if (read_cnt == 0) {
 			return 0;
@@ -109,7 +111,6 @@ static ssize_t readline_fd_doit(int fd, char *ptr)
 	*ptr = *read_ptr++;
 	return 1;
 }
-
 
 /*
   a pimped readline() version, reading from an filedescriptor (fd),
@@ -123,7 +124,9 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 
 	ptr = vptr;
 	for (cnt = 1; cnt < maxlen; ++cnt) {
-		if (1 == (rc = readline_fd_doit(fd, &chr))) { // main approach in readline_fd_doit
+		if (1 ==
+		    (rc = readline_fd_doit(
+			     fd, &chr))) { // main approach in readline_fd_doit
 			*ptr++ = chr;
 			if (chr == '\n')
 				break; // newline is stored, like fgets()
@@ -133,14 +136,13 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 			return (cnt - 1); // EOF, n - 1 bytes were read
 
 		} else {
-			return -1;  // error, errno set by read()
+			return -1; // error, errno set by read()
 		}
 	}
 
 	*ptr = 0; // null terminate like fgets()
 	return cnt;
 }
-
 
 /*
   helpers / wrappers
@@ -153,28 +155,26 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
   fatal error unrelated to system call Print message and terminate
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
-void* lothars__malloc(size_t size)
+void *lothars__malloc(size_t size)
 {
 	void *ptr = NULL;
 	if (NULL == (ptr = malloc(size))) {
@@ -183,14 +183,12 @@ void* lothars__malloc(size_t size)
 	return ptr;
 }
 
-
 void lothars__unlink(const char *pathname)
 {
 	if (-1 == unlink(pathname)) {
 		err_sys("unlink error for %s", pathname);
 	}
 }
-
 
 int lothars__mkstemp(char *template)
 {
@@ -201,16 +199,14 @@ int lothars__mkstemp(char *template)
 	return idx;
 }
 
-
-Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+Sigfunc *lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc = NULL;
-	if(SIG_ERR == (sigfunc = signal(signo, func))){
+	if (SIG_ERR == (sigfunc = signal(signo, func))) {
 		err_sys("signal error");
 	}
 	return sigfunc;
 }
-
 
 ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 {
@@ -221,7 +217,6 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 	return bytes;
 }
 
-
 pid_t lothars__fork(void)
 {
 	pid_t pid;
@@ -231,14 +226,13 @@ pid_t lothars__fork(void)
 	return pid;
 }
 
-
-void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		err_sys("setsockopt error");
 	}
 }
-
 
 void lothars__listen(int fd, int backlog)
 {
@@ -246,7 +240,6 @@ void lothars__listen(int fd, int backlog)
 		err_sys("listen error");
 	}
 }
-
 
 /*
   tcp_listen() similar to W. Richard Stevens' implementation
@@ -258,7 +251,7 @@ void lothars__listen(int fd, int backlog)
 int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 {
 	int listenfd, eai;
-	const int  on = 1;
+	const int on = 1;
 	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -267,25 +260,32 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	hints.ai_socktype = SOCK_STREAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("tcp_listen error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("tcp_listen error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 
 	ressave = res;
 
 	do {
-		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		listenfd = socket(res->ai_family, res->ai_socktype,
+				  res->ai_protocol);
 		if (0 > listenfd) {
 			continue; // error, try next one
 		}
-		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on,
+				    sizeof(on));
 		// set socket no linger and reuse addresse to avoid zombie sockets lying around in Linux
 
-		if (0 == bind(listenfd, res->ai_addr, res->ai_addrlen)) { // try to bind to the client (tcp)
+		if (0 ==
+		    bind(listenfd, res->ai_addr,
+			 res->ai_addrlen)) { // try to bind to the client (tcp)
 			break; // success
 		}
 		lothars__close(&listenfd); // bind error, close and try next one
 
-	} while (NULL != (res = res->ai_next)); // iterate over all clients obtained in address info (ai)
+	} while (
+		NULL !=
+		(res = res->ai_next)); // iterate over all clients obtained in address info (ai)
 
 	if (NULL == res) { // errno from final socket() or bind()
 		err_sys("tcp_listen error for %s, %s", host, serv);
@@ -302,13 +302,14 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	return listenfd; // returned bound fd
 }
 
-
 int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
 	int res;
 again:
 	if (0 > (res = accept(fd, sa, salenptr))) {
-		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+		if ((errno == EPROTO) ||
+		    (errno ==
+		     ECONNABORTED)) { // deal with some POSIX.1 errors...
 			goto again;
 		} else {
 			err_sys("accept error");
@@ -317,14 +318,12 @@ again:
 	return res;
 }
 
-
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
 	if (nbytes != write(fd, ptr, nbytes)) {
 		err_sys("write error");
 	}
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -362,10 +361,8 @@ void lothars__close(int *fd)
 #endif /* _XOPEN_SOURCE */
 }
 
-
 /********************************************************************************************/
 // worker implementation
-
 
 static pid_t *pid_children;
 
@@ -374,10 +371,9 @@ static struct flock lock_it, unlock_it;
 static int32_t lock_fd = -1;
 
 // the file lock utils
-void lock_init(char*);
+void lock_init(char *);
 void lock_wait();
 void lock_release();
-
 
 /*
   worker - routine
@@ -399,7 +395,9 @@ void worker_routine(int32_t fd_sock)
 		// read
 		if (0 == (n_read = lothars__readline(fd_sock, line, MAXLINE))) {
 			// nothing more to read -> exit
-			fprintf(stdout, "child %d: read '%s', n_read '%ld' - reading over, return\n", getpid(), line, n_read);
+			fprintf(stdout,
+				"child %d: read '%s', n_read '%ld' - reading over, return\n",
+				getpid(), line, n_read);
 			return;
 		}
 
@@ -420,7 +418,6 @@ void worker_routine(int32_t fd_sock)
 	}
 }
 
-
 /*
   worker - main function
 */
@@ -433,7 +430,6 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	fprintf(stdout, "child %d: starting\n", getpid());
 
 	while (1) {
-
 		clilen = addrlen;
 
 		// file lock, to avoid collisions on the blocking accept
@@ -452,7 +448,6 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	}
 }
 
-
 /*
   worker - constructor
 */
@@ -469,11 +464,10 @@ pid_t worker_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	return pid;
 }
 
-
 /*
   fcntl() will fail if lock_init() not called!
 */
-void lock_init(char* pathname)
+void lock_init(char *pathname)
 {
 	char lock_file[1024];
 
@@ -485,9 +479,9 @@ void lock_init(char* pathname)
 	}
 
 	// mkstemp()
-        // NB: tmp file MUST end with "XXXXXX"!!! (remember the issues at files and tmp_files...)
-	strncpy(lock_file, pathname, sizeof(lock_file)-1);
-	strncat(lock_file, "XXXXXX", sizeof(lock_file)-1);
+	// NB: tmp file MUST end with "XXXXXX"!!! (remember the issues at files and tmp_files...)
+	strncpy(lock_file, pathname, sizeof(lock_file) - 1);
+	strncat(lock_file, "XXXXXX", sizeof(lock_file) - 1);
 
 	//  lock_file[strlen(lock_file+1)] = '\0';
 	lock_fd = lothars__mkstemp(lock_file);
@@ -506,7 +500,6 @@ void lock_init(char* pathname)
 	unlock_it.l_len = 0;
 }
 
-
 /*
   try file lock
 */
@@ -523,7 +516,6 @@ void lock_wait()
 	}
 }
 
-
 /*
   release the file lock
 */
@@ -533,7 +525,6 @@ void lock_release()
 		err_sys("fcntl error for lock_release");
 	}
 }
-
 
 /*
   print user time and system time on shutting down
@@ -554,16 +545,19 @@ void pr_cpu_time()
 	}
 
 	// calculate user time
-	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
-	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
+	user = (double)usage_parent.ru_utime.tv_sec +
+	       usage_parent.ru_utime.tv_usec / 1000000.0;
+	user += (double)usage_child.ru_utime.tv_sec +
+		usage_child.ru_utime.tv_usec / 1000000.0;
 
 	// calculate system time
-	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
-	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
+	sys = (double)usage_parent.ru_stime.tv_sec +
+	      usage_parent.ru_stime.tv_usec / 1000000.0;
+	sys += (double)usage_child.ru_stime.tv_sec +
+	       usage_child.ru_stime.tv_usec / 1000000.0;
 
 	fprintf(stdout, "\nuser time = %gs, sys time = %gs\n", user, sys);
 }
-
 
 /*
   int sig handler - action when server is shutdown by CTRL + c
@@ -572,10 +566,11 @@ void sig_int(int32_t signo)
 {
 	int32_t idx;
 
-	for (idx=0; idx<NWORKER; ++idx) {
+	for (idx = 0; idx < NWORKER; ++idx) {
 		kill(pid_children[idx], SIGTERM);
 	}
-	free(pid_children); pid_children = NULL;
+	free(pid_children);
+	pid_children = NULL;
 
 	while (0 < wait(NULL))
 		;
@@ -588,20 +583,19 @@ void sig_int(int32_t signo)
 	exit(EXIT_SUCCESS);
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main
 
   the pre-allocating server implementation
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int32_t fd_listen, idx;
 	socklen_t addrlen;
-	char port[16]; memset(port, '\0', sizeof(port));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -620,9 +614,10 @@ int main(int argc, char** argv)
 	pid_children = lothars__malloc(NWORKER * sizeof(*pid_children));
 
 	// init the unique file lock here...
-	lock_init("/tmp/lock.1234567"); // i.e. one lock file for all children (of course)!!!
+	lock_init(
+		"/tmp/lock.1234567"); // i.e. one lock file for all children (of course)!!!
 
-	for (idx=0; idx<NWORKER; ++idx) {
+	for (idx = 0; idx < NWORKER; ++idx) {
 		// create children, only parent returns
 		pid_children[idx] = worker_make(idx, fd_listen, addrlen);
 	}
@@ -636,4 +631,3 @@ int main(int argc, char** argv)
 
 	exit(EXIT_SUCCESS);
 }
-

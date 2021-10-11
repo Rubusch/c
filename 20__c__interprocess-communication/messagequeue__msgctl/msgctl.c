@@ -27,7 +27,6 @@ void readdigit(unsigned int *, const char *);
 void readstring(char *, const unsigned int, const char *);
 void readnumber(unsigned int *, const unsigned int, const char *);
 
-
 int main(int argc, char **argv)
 {
 	puts("!!! May need root permissions !!!");
@@ -37,7 +36,8 @@ int main(int argc, char **argv)
 	// get a key by reading in
 	char filename[FILENAME_MAX];
 	memset(filename, '\0', FILENAME_MAX);
-	readstring(filename, FILENAME_MAX, "enter a filename to generate a key:");
+	readstring(filename, FILENAME_MAX,
+		   "enter a filename to generate a key:");
 	key_t key = ftok(filename, 'B');
 
 	// msgget() part
@@ -78,28 +78,39 @@ int main(int argc, char **argv)
 			// get a copy of the current message queue control struture and show it to
 			// the user
 			do_msgctl(mq_id, IPC_STAT, &buf);
-			fprintf(stderr, "msqid_ds.msg_perm.uid = %d\n", buf.msg_perm.uid);
-			fprintf(stderr, "msqid_ds.msg_perm.gid = %d\n", buf.msg_perm.gid);
-			fprintf(stderr, "msqid_ds.msg_perm.cuid = %d\n", buf.msg_perm.cuid);
-			fprintf(stderr, "msqid_ds.msg_perm.cgid = %d\n", buf.msg_perm.cgid);
-			fprintf(stderr, "msqid_ds.msg_perm.mode = %#o\n", buf.msg_perm.mode);
-			fprintf(stderr, "access permissions = %#o\n", buf.msg_perm.mode & 0777);
+			fprintf(stderr, "msqid_ds.msg_perm.uid = %d\n",
+				buf.msg_perm.uid);
+			fprintf(stderr, "msqid_ds.msg_perm.gid = %d\n",
+				buf.msg_perm.gid);
+			fprintf(stderr, "msqid_ds.msg_perm.cuid = %d\n",
+				buf.msg_perm.cuid);
+			fprintf(stderr, "msqid_ds.msg_perm.cgid = %d\n",
+				buf.msg_perm.cgid);
+			fprintf(stderr, "msqid_ds.msg_perm.mode = %#o\n",
+				buf.msg_perm.mode);
+			fprintf(stderr, "access permissions = %#o\n",
+				buf.msg_perm.mode & 0777);
 			//	fprintf(stderr, "msqid_ds.msg_cbytes = %d\n", buf.msg_cbytes);
 			//// check NA?!
 			fprintf(stderr,
 				"msqid_ds.msg_qbytes = %d (max number of bytes on queue)\n",
-				( unsigned short )buf.msg_qbytes);
+				(unsigned short)buf.msg_qbytes);
 			fprintf(stderr, "msqid_ds.msg_qnum = %d\n",
-				( unsigned short )buf.msg_qnum);
-			fprintf(stderr, "msqid_ds.msg_lspid = %d (pid of last msgsnd)\n",
+				(unsigned short)buf.msg_qnum);
+			fprintf(stderr,
+				"msqid_ds.msg_lspid = %d (pid of last msgsnd)\n",
 				buf.msg_lspid);
-			fprintf(stderr, "msqid_ds.msg_lrpid = %d (last receive pid)\n",
+			fprintf(stderr,
+				"msqid_ds.msg_lrpid = %d (last receive pid)\n",
 				buf.msg_lrpid);
-			fprintf(stderr, "msqid_ds.msg_stime = %s (last msgsnd time)\n",
+			fprintf(stderr,
+				"msqid_ds.msg_stime = %s (last msgsnd time)\n",
 				buf.msg_stime ? ctime(&buf.msg_stime) : "N/A");
-			fprintf(stderr, "msqid_ds.msg_rtime = %s (last msgrcv time)\n",
+			fprintf(stderr,
+				"msqid_ds.msg_rtime = %s (last msgrcv time)\n",
 				buf.msg_rtime ? ctime(&buf.msg_rtime) : "N/A");
-			fprintf(stderr, "msqid_ds.msg_ctime = %s (last change time)\n",
+			fprintf(stderr,
+				"msqid_ds.msg_ctime = %s (last change time)\n",
 				buf.msg_ctime ? ctime(&buf.msg_ctime) : "N/A");
 
 			if (mq_cmd != IPC_SET) {
@@ -110,11 +121,13 @@ int main(int argc, char **argv)
 
 			char tmp[TMP_SIZ];
 			memset(tmp, '\0', TMP_SIZ);
-			readnumber(&buf.msg_perm.uid, TMP_SIZ, "enter msg_perm.uid:");
-			readnumber(&buf.msg_perm.gid, TMP_SIZ, "enter msg_perm.gid:");
-			readnumber(( unsigned int * )&buf.msg_perm.mode, TMP_SIZ,
+			readnumber(&buf.msg_perm.uid, TMP_SIZ,
+				   "enter msg_perm.uid:");
+			readnumber(&buf.msg_perm.gid, TMP_SIZ,
+				   "enter msg_perm.gid:");
+			readnumber((unsigned int *)&buf.msg_perm.mode, TMP_SIZ,
 				   "enter msg_perm.mode:"); // FIXME
-			readnumber(( unsigned int * )&buf.msg_qbytes, TMP_SIZ,
+			readnumber((unsigned int *)&buf.msg_qbytes, TMP_SIZ,
 				   "enter msg_qbytes:"); // FIXME
 
 			// perform changes
@@ -125,7 +138,7 @@ int main(int argc, char **argv)
 			puts("IPC_RMID");
 			mq_cmd = IPC_RMID;
 			// reset the system
-			do_msgctl(mq_id, mq_cmd, ( struct msqid_ds * )NULL);
+			do_msgctl(mq_id, mq_cmd, (struct msqid_ds *)NULL);
 
 		default:
 			puts("try again\n");
@@ -137,7 +150,6 @@ int main(int argc, char **argv)
 	puts("READY.");
 	exit(EXIT_SUCCESS);
 }
-
 
 int isnumber(const char *str, const unsigned int size)
 {
@@ -159,7 +171,6 @@ int isnumber(const char *str, const unsigned int size)
 	}
 	return 1;
 }
-
 
 void readdigit(unsigned int *iChr, const char *comment)
 {
@@ -198,7 +209,6 @@ void readdigit(unsigned int *iChr, const char *comment)
 	*iChr = atoi(cChr);
 }
 
-
 void readstring(char *cTxt, const unsigned int textSize, const char *comment)
 {
 	if (NULL == comment) {
@@ -236,9 +246,8 @@ void readstring(char *cTxt, const unsigned int textSize, const char *comment)
 	} while (0 == strlen(cTxt));
 }
 
-
 void readnumber(unsigned int *iTxt, const unsigned int digits,
-                const char *comment)
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -276,7 +285,6 @@ void readnumber(unsigned int *iTxt, const unsigned int digits,
 	} while (!isnumber(cTxt, (1 + strlen(cTxt))));
 	*iTxt = atoi(cTxt);
 }
-
 
 static void do_msgctl(int mq_id, int cmd, struct msqid_ds *buf)
 {

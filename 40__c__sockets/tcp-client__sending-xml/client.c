@@ -28,8 +28,7 @@
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
-
+#define MAXLINE 4096 /* max text line length */
 
 /*
   forwards
@@ -45,8 +44,7 @@ void lothars__send(int, const void *, size_t, int);
 int lothars__socket(int, int, int);
 
 // unix
-void lothars__close(int*);
-
+void lothars__close(int *);
 
 /*
   internal helpers
@@ -60,21 +58,22 @@ void lothars__close(int*);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap);
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 }
-
 
 /*
   helpers / wrappers
@@ -87,13 +86,12 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /*
   The connect() function shall attempt to make a connection on a socket.
@@ -113,7 +111,6 @@ void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 		err_sys("connect error");
 	}
 }
-
 
 /*
   The recv() function shall receive data from a connection-mode or
@@ -158,7 +155,6 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
 	return res;
 }
 
-
 /*
   The send() function shall initiate transmission of data from the
   specified socket to its peer. The send() function shall send a
@@ -183,16 +179,12 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
           communications. The significance and semantics of
           out-of-band data are protocol-specific.
 */
-void lothars__send( int fd
-	    , const void *ptr
-	    , size_t nbytes
-	    , int flags)
+void lothars__send(int fd, const void *ptr, size_t nbytes, int flags)
 {
-	if (send(fd, ptr, nbytes, flags) != (ssize_t) nbytes) {
+	if (send(fd, ptr, nbytes, flags) != (ssize_t)nbytes) {
 		err_sys("send error");
 	}
 }
-
 
 /*
   The socket() function shall create an unbound socket in a
@@ -217,7 +209,6 @@ int lothars__socket(int family, int type, int protocol)
 	}
 	return res;
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -253,13 +244,10 @@ void lothars__close(int *fd)
 	sync();
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
-
 /********************************************************************************************/
-
 
 /*
   main()
@@ -268,13 +256,17 @@ int main(int argc, char *argv[])
 {
 	int fd_sock;
 	struct sockaddr_in serveraddr;
-	char buf[MAXLINE]; memset(buf, '\0', MAXLINE);
+	char buf[MAXLINE];
+	memset(buf, '\0', MAXLINE);
 	unsigned int echolen;
 	int nbytes = 0;
 	int read = 0;
-	char message[4096]; memset(message, '\0', 4096);
-	char serverip[16]; memset(serverip, '\0', sizeof(serverip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char message[4096];
+	memset(message, '\0', 4096);
+	char serverip[16];
+	memset(serverip, '\0', sizeof(serverip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (3 != argc) {
 		fprintf(stderr, "usage: %s <serverip> <port>\n", argv[0]);
@@ -305,7 +297,8 @@ int main(int argc, char *argv[])
 	serveraddr.sin_family = AF_INET; // AF_INET for addresses
 	serveraddr.sin_addr.s_addr = inet_addr(serverip);
 	serveraddr.sin_port = htons(atoi(port));
-	lothars__connect(fd_sock, ( struct sockaddr * )&serveraddr, sizeof(serveraddr));
+	lothars__connect(fd_sock, (struct sockaddr *)&serveraddr,
+			 sizeof(serveraddr));
 	fprintf(stdout, " - ok\n");
 
 	fprintf(stdout, "send()");

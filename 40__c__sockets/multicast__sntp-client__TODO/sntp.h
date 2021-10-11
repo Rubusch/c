@@ -6,23 +6,23 @@
 #define JAN_1970 2208988800UL // 1970 - 1900 in seconds
 
 // 64-bit fixed-point
-struct l_fixedpt{
+struct l_fixedpt {
 	uint32_t int_part;
 	uint32_t fraction;
 };
 
 // 32-bit fixed-point
-struct s_fixedpt{
+struct s_fixedpt {
 	uint16_t int_part;
 	uint16_t franction;
 };
 
 // NTP header
-struct ntpdata{
+struct ntpdata {
 	uint8_t status;
 	uint8_t stratum;
 	uint8_t ppoll;
-	int precision:8;
+	int precision : 8;
 	struct s_fixedpt distance;
 	struct s_fixedpt dispersion;
 	uint32_t refid;
@@ -32,9 +32,9 @@ struct ntpdata{
 	struct l_fixedpt xmt;
 };
 
-#define VERSION_MASK   0x38
-#define MODE_MASK      0x07
+#define VERSION_MASK 0x38
+#define MODE_MASK 0x07
 
-#define MODE_CLIENT    3
-#define MODE_SERVER    4
+#define MODE_CLIENT 3
+#define MODE_SERVER 4
 #define MODE_BROADCAST 5

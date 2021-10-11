@@ -35,8 +35,6 @@ CREATE_LIST(some)
 #pragma GCC diagnostic pop
 #endif
 
-
-
 #ifndef UNIQUE_LIST
 
 #define UNIQUE_LIST
@@ -56,7 +54,8 @@ static int unique__remove_duplicates()
 		return -1;
 
 	for (elem = unique__first; elem->next != NULL; elem = elem->next) {
-		for (unique_t *elem__runner = elem; elem__runner->next != NULL; elem__runner = elem__runner->next) {
+		for (unique_t *elem__runner = elem; elem__runner->next != NULL;
+		     elem__runner = elem__runner->next) {
 			if (0 == strcmp(elem->data, elem__runner->data)) {
 				elem = elem->next;
 				unique__remove(elem__runner->data);
@@ -66,13 +65,12 @@ static int unique__remove_duplicates()
 			}
 		}
 	}
-	done:
+done:
 
 	return 0;
 }
 
 #endif /* UNIQUE_LIST */
-
 
 int main()
 {
@@ -111,7 +109,6 @@ int main()
 	some__print();
 	printf("expected: [empty]\n\n");
 
-
 	/* second list */
 	puts("init by 3 elements");
 	unique__append("AAA");
@@ -129,7 +126,6 @@ int main()
 	unique__removeall();
 	unique__print();
 	printf("expected: [empty]\n\n");
-
 
 	puts("READY.");
 	exit(EXIT_SUCCESS);

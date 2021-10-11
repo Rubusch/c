@@ -17,9 +17,9 @@
 unsigned int global_list_size;
 
 typedef struct listelement {
-  struct listelement *next;
-  struct listelement *prev;
-  unsigned int data;
+	struct listelement *next;
+	struct listelement *prev;
+	unsigned int data;
 } element_t;
 
 void printlist(void *);

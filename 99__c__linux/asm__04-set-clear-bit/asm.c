@@ -270,50 +270,50 @@
 #include <stdio.h>
 #include <string.h>
 
-
-void binary(int foo_cpy, char* ret, const int ret_size)
+void binary(int foo_cpy, char *ret, const int ret_size)
 {
-  int idx = ret_size;
-  memset(ret, '0', ret_size);
-  ret[idx-1] = '\0';
-  while (foo_cpy) {
-    ret[idx--] = foo_cpy & 1 ?'1':'0';
-    foo_cpy >>= 1;
-  }
+	int idx = ret_size;
+	memset(ret, '0', ret_size);
+	ret[idx - 1] = '\0';
+	while (foo_cpy) {
+		ret[idx--] = foo_cpy & 1 ? '1' : '0';
+		foo_cpy >>= 1;
+	}
 }
-
 
 int main(void)
 {
-  int foo = 0xffffff;
-  int pos = 4; // we can set/clear any bit from 0th to 31st of the variable at ADDR
+	int foo = 0xffffff;
+	int pos =
+		4; // we can set/clear any bit from 0th to 31st of the variable at ADDR
 
-  const int foo_size = sizeof(int)*8+1;
-  char foo_representation[foo_size];
+	const int foo_size = sizeof(int) * 8 + 1;
+	char foo_representation[foo_size];
 
-  // check: foo [7]
-  fprintf(stderr, "set/clear %d. bit (starting from 0) in '0x%x': 0b", pos, foo);
+	// check: foo [7]
+	fprintf(stderr, "set/clear %d. bit (starting from 0) in '0x%x': 0b",
+		pos, foo);
 
-  // print binary
-  binary(foo, foo_representation, foo_size);
-  fprintf(stderr, "%s", foo_representation);
+	// print binary
+	binary(foo, foo_representation, foo_size);
+	fprintf(stderr, "%s", foo_representation);
 
-  __asm__ __volatile__( "btrl %1,%0" /* use 'btrl' to clear, and 'btsl' to set the bit */
-                        : "=m" (foo)
-                        : "Ir" (pos)
-                        : "cc"
-                        );
+	__asm__ __volatile__(
+		"btrl %1,%0" /* use 'btrl' to clear, and 'btsl' to set the bit */
+		: "=m"(foo)
+		: "Ir"(pos)
+		: "cc");
 
-  fprintf(stderr, " => '0x%x': 0b", foo);
+	fprintf(stderr, " => '0x%x': 0b", foo);
 
-  // print binary (redundant)
-  memset(foo_representation, 0, foo_size);
-  binary(foo, foo_representation, foo_size);
-  fprintf(stderr, "%s", foo_representation);
+	// print binary (redundant)
+	memset(foo_representation, 0, foo_size);
+	binary(foo, foo_representation, foo_size);
+	fprintf(stderr, "%s", foo_representation);
 
-  fprintf(stderr, "\n");
+	fprintf(stderr, "\n");
 
-  fprintf(stderr, "READY.\n");
+	fprintf(stderr, "READY.\n");
 
-  return 0;
+	return 0;
 }

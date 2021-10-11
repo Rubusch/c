@@ -88,77 +88,79 @@
 
 int main()
 {
-  char *identifier = NULL;
-  if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
-    perror("calloc() failed");
-    exit(EXIT_FAILURE);
-  }
-  memset(identifier, '\0', IDENTIFIER_SIZE);
-  pid_t pid = 0, pid_parent = getpid();
+	char *identifier = NULL;
+	if (NULL ==
+	    (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
+		perror("calloc() failed");
+		exit(EXIT_FAILURE);
+	}
+	memset(identifier, '\0', IDENTIFIER_SIZE);
+	pid_t pid = 0, pid_parent = getpid();
 
-  // fork()
-  if (0 > (pid = fork())) {
-    perror("fork failed");
-    exit(EXIT_FAILURE);
+	// fork()
+	if (0 > (pid = fork())) {
+		perror("fork failed");
+		exit(EXIT_FAILURE);
 
-  } else if (pid == 0) {
-    // child code
-    strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT)+1);
+	} else if (pid == 0) {
+		// child code
+		strncpy(identifier, CHILD_TXT, strlen(CHILD_TXT) + 1);
 
-    printf("%schild pid: %i, parent: %i\r\n", identifier, getpid(), pid_parent);
-    printf("%ssleeps\r\n", identifier);
-    sleep(5);
-    printf("%sawakes\r\n", identifier);
-    printf("%sdone\r\n", identifier);
-    exit(EXIT_SUCCESS);
+		printf("%schild pid: %i, parent: %i\r\n", identifier, getpid(),
+		       pid_parent);
+		printf("%ssleeps\r\n", identifier);
+		sleep(5);
+		printf("%sawakes\r\n", identifier);
+		printf("%sdone\r\n", identifier);
+		exit(EXIT_SUCCESS);
 
-  } else {
-    // parent code
-    strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT)+1);
-    printf("%swaiting on pid %i\r\n", identifier, pid);
+	} else {
+		// parent code
+		strncpy(identifier, PARENT_TXT, strlen(PARENT_TXT) + 1);
+		printf("%swaiting on pid %i\r\n", identifier, pid);
 
-    /*
+		/*
       1. set wait condition
     //*/
-    pid_t pid_wait = -1;
+		pid_t pid_wait = -1;
 
-    /*
+		/*
       2. child exit status
     //*/
-    int childExitStatus = 0;
+		int childExitStatus = 0;
 
-    /*
+		/*
       3. wait on child, pid_wait = -1, wait on all childs
     //*/
-    pid_wait = pid;
-    while (0 == waitpid(pid_wait, &childExitStatus, 0))
-      ;
-    printf("%swaiting done\r\n", identifier);
+		pid_wait = pid;
+		while (0 == waitpid(pid_wait, &childExitStatus, 0))
+			;
+		printf("%swaiting done\r\n", identifier);
 
-    /*
+		/*
       in case: 4. evaluation of term conditions of the child
     //*/
-    if (WIFEXITED(childExitStatus)) {
-      printf("%schild exited with exit(): %i\r\n", identifier,
-             WEXITSTATUS(childExitStatus));
-    }
+		if (WIFEXITED(childExitStatus)) {
+			printf("%schild exited with exit(): %i\r\n", identifier,
+			       WEXITSTATUS(childExitStatus));
+		}
 
-    if (WIFSIGNALED(childExitStatus)) {
-      printf("%schild exited with a SIGNAL: %i\r\n", identifier,
-             WIFSIGNALED(childExitStatus));
-    }
+		if (WIFSIGNALED(childExitStatus)) {
+			printf("%schild exited with a SIGNAL: %i\r\n",
+			       identifier, WIFSIGNALED(childExitStatus));
+		}
 
-    if (WTERMSIG(childExitStatus)) {
-      printf("%schild exited with SIGTERM: %i\r\n", identifier,
-             WTERMSIG(childExitStatus));
-    }
+		if (WTERMSIG(childExitStatus)) {
+			printf("%schild exited with SIGTERM: %i\r\n",
+			       identifier, WTERMSIG(childExitStatus));
+		}
 
-    if (WIFSTOPPED(childExitStatus)) {
-      printf("%schild exited with SIGSTOP: %i\r\n", identifier,
-             WIFSTOPPED(childExitStatus));
-    }
+		if (WIFSTOPPED(childExitStatus)) {
+			printf("%schild exited with SIGSTOP: %i\r\n",
+			       identifier, WIFSTOPPED(childExitStatus));
+		}
 
-    printf("%sdone\r\n", identifier);
-    exit(EXIT_SUCCESS);
-  }
+		printf("%sdone\r\n", identifier);
+		exit(EXIT_SUCCESS);
+	}
 }

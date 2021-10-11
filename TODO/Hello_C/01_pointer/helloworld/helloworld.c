@@ -51,7 +51,6 @@ allocation! a "free(ptr)" has to lead to an error!
 #include <stdlib.h>
 #include <string.h>
 
-
 /*
   function to init the pointer
 
@@ -59,41 +58,40 @@ allocation! a "free(ptr)" has to lead to an error!
 //*/
 int func(char *ptr, int size)
 {
-  // initializing a string with "strncpy()"
-  strncpy(( char * )ptr, "blabla", size);
+	// initializing a string with "strncpy()"
+	strncpy((char *)ptr, "blabla", size);
 
-  // everything ok, return 0
-  return 0;
+	// everything ok, return 0
+	return 0;
 }
-
 
 int main()
 {
-  // allways init variables!
-  char *ptr = NULL;
-  int ptr_siz = 7;
+	// allways init variables!
+	char *ptr = NULL;
+	int ptr_siz = 7;
 
-  // allocate some memory
-  if (NULL == (ptr = calloc(sizeof(*ptr), ptr_siz))) {
-    perror("malloc failed");
-    exit(EXIT_FAILURE);
-  }
+	// allocate some memory
+	if (NULL == (ptr = calloc(sizeof(*ptr), ptr_siz))) {
+		perror("malloc failed");
+		exit(EXIT_FAILURE);
+	}
 
-  // init the pointer in another function
-  func(ptr, ptr_siz);
+	// init the pointer in another function
+	func(ptr, ptr_siz);
 
-  // the result
-  printf("pointer was \"%s\"\n", ptr);
+	// the result
+	printf("pointer was \"%s\"\n", ptr);
 
-  // free the allocated memory
-  free(ptr);
+	// free the allocated memory
+	free(ptr);
 
-  /*
+	/*
     the stdlib defines the exit() function, which calls the _exit()
     function to help the operating system to do the clean up (ideally!).
 
     the two macros: EXIT_SUCCESS and EXIT_FAILURE are defined for that
     purpose
   //*/
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

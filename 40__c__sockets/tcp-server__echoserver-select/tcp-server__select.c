@@ -44,9 +44,9 @@
 */
 
 #define OPEN_MAX 256
-#define MAXLINE  4096 /* max text line length */
-#define LISTENQ 1024 /* the listen queue - serving as backlog for listen, can also be provided as env var */
-
+#define MAXLINE 4096 /* max text line length */
+#define LISTENQ                                                                \
+	1024 /* the listen queue - serving as backlog for listen, can also be provided as env var */
 
 /*
   forwards
@@ -70,7 +70,6 @@ void lothars__writen(int, void *, size_t);
 // unix
 void lothars__close(int *);
 
-
 /*
   internal helpers
 */
@@ -83,24 +82,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -108,32 +108,29 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
   mainly to cover error handling and display error message
 */
 
-
 /*
    Fatal error related to system call. Print message and terminate.
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    Fatal error unrelated to system call. Print message and terminate.
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /*
   socket
@@ -163,7 +160,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /*
   The bind() function shall assign a local socket address address to a
   socket identified by descriptor socket that has no local socket
@@ -186,7 +182,6 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The listen() function shall mark a connection-mode socket, specified
@@ -211,7 +206,6 @@ void lothars__listen(int fd, int backlog)
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The accept() function shall extract the first connection on the
@@ -243,7 +237,6 @@ again:
 	}
 	return res;
 }
-
 
 /*
   The pselect() function shall examine the file descriptor sets whose
@@ -290,24 +283,19 @@ again:
       parameter is not a null pointer, it specifies a maximum interval
       to wait for the selection to complete.
 */
-int lothars__select(int nfds
-	    , fd_set *readfds
-	    , fd_set *writefds
-	    , fd_set *exceptfds
-	    , struct timeval *timeout)
+int lothars__select(int nfds, fd_set *readfds, fd_set *writefds,
+		    fd_set *exceptfds, struct timeval *timeout)
 {
-	int  res;
+	int res;
 	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
 		err_sys("%s() error", __func__);
 	}
-	return res;  /* can return 0 on timeout */
+	return res; /* can return 0 on timeout */
 }
-
 
 /*
   read/write
 */
-
 
 /*
   The read() function shall attempt to read nbyte bytes from the file
@@ -326,13 +314,12 @@ int lothars__select(int nfds
 */
 ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 	if (-1 == (bytes = read(fd, ptr, nbytes))) {
 		err_sys("read error");
 	}
 	return bytes;
 }
-
 
 /*
   The write() function shall attempt to write nbyte bytes from the
@@ -378,7 +365,6 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 	}
 }
 
-
 /*
   The close() function shall deallocate the file descriptor indicated
   by fd. To deallocate means to make the file descriptor available for
@@ -415,31 +401,33 @@ void lothars__close(int *fd)
 #endif /* _XOPEN_SOURCE */
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
 /********************************************************************************************/
 
-
 /*
   main
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	int idx=-1, maxidx=-1;
+	int idx = -1, maxidx = -1;
 	int nready; // multiplex: number of sd ready to read / process
-	int sd_listen=-1; // sd, for waiting on connections
-	int sd_conn=-1; // sd, accepted connection
-	int sd=-1; // sd, for looping through sd list
-	char buf[MAXLINE]; memset(buf, '\0', sizeof(buf));
+	int sd_listen = -1; // sd, for waiting on connections
+	int sd_conn = -1; // sd, accepted connection
+	int sd = -1; // sd, for looping through sd list
+	char buf[MAXLINE];
+	memset(buf, '\0', sizeof(buf));
 	socklen_t clilen;
-	struct sockaddr_in cliaddr;     // address object for accepting socket connections
-	struct sockaddr_in servaddr;    // address object for binding to this server
+	struct sockaddr_in
+		cliaddr; // address object for accepting socket connections
+	struct sockaddr_in servaddr; // address object for binding to this server
 	int sd_max; // sd, to be increased at new connections
 	int client[FD_SETSIZE];
-	fd_set rset, allset; // select - rset, actually checked; allset, for registering fd's
-	char port[16]; memset(port, '\0', sizeof(port));
+	fd_set rset,
+		allset; // select - rset, actually checked; allset, for registering fd's
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -454,9 +442,11 @@ int main(int argc, char* argv[])
 	// bind
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); // in case, bind to all interfaces
+	servaddr.sin_addr.s_addr =
+		htonl(INADDR_ANY); // in case, bind to all interfaces
 	servaddr.sin_port = htons(atoi(port));
-	lothars__bind(sd_listen, (struct sockaddr*) &servaddr, sizeof(servaddr));
+	lothars__bind(sd_listen, (struct sockaddr *)&servaddr,
+		      sizeof(servaddr));
 
 	// listen
 	lothars__listen(sd_listen, LISTENQ);
@@ -464,7 +454,7 @@ int main(int argc, char* argv[])
 	// client register - init values and list entries to -1
 	sd_max = sd_listen; // initialize
 	maxidx = -1; // index into client[] array
-	for (idx=0; idx < FD_SETSIZE; ++idx) {
+	for (idx = 0; idx < FD_SETSIZE; ++idx) {
 		client[idx] = -1; // -1 indicates available entry
 	}
 
@@ -475,7 +465,6 @@ int main(int argc, char* argv[])
 	// select - register sd_listen in allset
 	fprintf(stderr, "FD_SET( sd_listen, &allset )\n");
 	FD_SET(sd_listen, &allset);
-
 
 	while (1) {
 		// select - structure assignment allset to rset!!!
@@ -496,30 +485,33 @@ int main(int argc, char* argv[])
 		  become undefined, so do not rely on their contents
 		  after an error.
 		*/
-		nready = lothars__select(sd_max+1, &rset, NULL, NULL, NULL );
-
+		nready = lothars__select(sd_max + 1, &rset, NULL, NULL, NULL);
 
 		// select - sd_listen available for read and write
 		if (FD_ISSET(sd_listen, &rset)) { // new client connection
-			fprintf( stderr, "FD_ISSET(sd_listen, &rset)\n");
+			fprintf(stderr, "FD_ISSET(sd_listen, &rset)\n");
 
 			// accept
-			clilen = sizeof( cliaddr );
-			sd_conn = lothars__accept(sd_listen, (struct sockaddr*) &cliaddr, &clilen);
+			clilen = sizeof(cliaddr);
+			sd_conn = lothars__accept(sd_listen,
+						  (struct sockaddr *)&cliaddr,
+						  &clilen);
 
 			/*
 			  Get latest free place in fd list, to store
 			  new fd.
 			*/
-			for (idx=0; idx<FD_SETSIZE; ++idx) {
-				if (0 > client[idx] ) {
-					fprintf( stderr, "\tregister new client\n" );
-					client[idx] = sd_conn; // save descriptor
+			for (idx = 0; idx < FD_SETSIZE; ++idx) {
+				if (0 > client[idx]) {
+					fprintf(stderr,
+						"\tregister new client\n");
+					client[idx] =
+						sd_conn; // save descriptor
 					break;
 				}
 			}
 			// client register - check if full
-			if (idx == FD_SETSIZE){
+			if (idx == FD_SETSIZE) {
 				perror("too many clients");
 				exit(EXIT_FAILURE);
 			}
@@ -527,46 +519,52 @@ int main(int argc, char* argv[])
 			// select - register sd_conn in allset
 			FD_SET(sd_conn, &allset);
 			if (sd_conn > sd_max) {
-				fprintf( stderr, "\tupdate sd_max for select\n");
+				fprintf(stderr, "\tupdate sd_max for select\n");
 				sd_max = sd_conn;
 			}
 
 			// max index in client[] array
-			if (maxidx < idx) maxidx = idx;
+			if (maxidx < idx)
+				maxidx = idx;
 
 			// no more readable descriptors
-			if (0 >= --nready) continue;
+			if (0 >= --nready)
+				continue;
 		} /* for */
 
-
-		fprintf( stderr, "loop over all clients to check for data\n");
-		for (idx=0; idx <= maxidx; ++idx) { // loop over all clients to check for data
+		fprintf(stderr, "loop over all clients to check for data\n");
+		for (idx = 0; idx <= maxidx;
+		     ++idx) { // loop over all clients to check for data
 			if (0 > (sd = client[idx])) {
 				continue; // -1, no client fd set
 			}
 
-
 			// select - sd available for read and write
 			if (FD_ISSET(sd, &rset)) {
-				fprintf( stderr, "FD_ISSET( sd, &rset )\n" );
+				fprintf(stderr, "FD_ISSET( sd, &rset )\n");
 
 				ssize_t num;
 				memset(buf, '\0', sizeof(buf));
-				if (0 == (num = lothars__read(sd, buf, MAXLINE))) {
-					fprintf( stderr, "\tconnection closed by client\n");
+				if (0 ==
+				    (num = lothars__read(sd, buf, MAXLINE))) {
+					fprintf(stderr,
+						"\tconnection closed by client\n");
 
-					if ( 0 > close( sd ) ){
-						perror( "close failed" );
-						exit( EXIT_FAILURE );
+					if (0 > close(sd)) {
+						perror("close failed");
+						exit(EXIT_FAILURE);
 					}
 
 					// select - clear sd from allset
-					fprintf( stderr, "FD_CLR(sd, &allset)\n" );
-					FD_CLR( sd, &allset );
+					fprintf(stderr,
+						"FD_CLR(sd, &allset)\n");
+					FD_CLR(sd, &allset);
 					client[idx] = -1;
 				} else {
 					// work
-					fprintf(stderr, "\tclient says '%s', answering...\n", buf);
+					fprintf(stderr,
+						"\tclient says '%s', answering...\n",
+						buf);
 
 					// send echo
 					//writen(sd, buf, num);
@@ -574,12 +572,12 @@ int main(int argc, char* argv[])
 				}
 
 				if (--nready <= 0) {
-					fprintf(stderr, "\tselect return value '%d' - nothing left to process\n", nready);
+					fprintf(stderr,
+						"\tselect return value '%d' - nothing left to process\n",
+						nready);
 					break; // no more readable descriptors
 				}
 			}
-
-
 		}
 	}
 

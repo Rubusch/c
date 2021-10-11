@@ -8,16 +8,15 @@
 #ifndef DEQUEUE
 #define DEQUEUE
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define DEBUG_DEQUEUE 1
 
-# ifdef DEBUG_DEQUEUE
+#ifdef DEBUG_DEQUEUE
 #include <assert.h>
-# endif
+#endif
 
 #include "content.h"
 
@@ -28,8 +27,7 @@ struct dequeue_item_s {
 	content_p content;
 };
 typedef struct dequeue_item_s item_t;
-typedef struct dequeue_item_s* item_p;
-
+typedef struct dequeue_item_s *item_p;
 
 int dequeue__size();
 
@@ -44,6 +42,5 @@ void dequeue__remove(item_p item);
 
 void dequeue__insert_after(item_p elem_before, content_p content);
 item_p dequeue__find(content_p);
-
 
 #endif

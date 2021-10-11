@@ -39,25 +39,25 @@
 
 /* Data item comparison function. */
 typedef int avl_comparison_func(const void *avl_a, const void *avl_b,
-                                void *avl_param);
+				void *avl_param);
 typedef void avl_node_func(void *bst_data, void *bst_param);
 typedef void *avl_copy_func(void *avl_data, void *avl_param);
 
 /* An AVL tree node. */
 struct avl_node {
-  struct avl_node *avl_link[2]; /* Subtrees. */
-  void *avl_data;               /* Pointer to data. */
-  signed char avl_bal;          /* Balance factor. */
-  unsigned char avl_cache;      /* Caches comparisons on insertion. */
-  char avl_pad[2];              /* Unused.  Reserved for threaded trees. */
+	struct avl_node *avl_link[2]; /* Subtrees. */
+	void *avl_data; /* Pointer to data. */
+	signed char avl_bal; /* Balance factor. */
+	unsigned char avl_cache; /* Caches comparisons on insertion. */
+	char avl_pad[2]; /* Unused.  Reserved for threaded trees. */
 };
 
 /* A binary search tree. */
 struct avl_tree {
-  struct avl_node *avl_root;        /* Tree's root. */
-  avl_comparison_func *avl_compare; /* Comparison function. */
-  void *avl_param;                  /* Extra argument to |avl_compare|. */
-  size_t avl_count;                 /* Number of items in tree. */
+	struct avl_node *avl_root; /* Tree's root. */
+	avl_comparison_func *avl_compare; /* Comparison function. */
+	void *avl_param; /* Extra argument to |avl_compare|. */
+	size_t avl_count; /* Number of items in tree. */
 };
 
 #ifndef AVL_MAX_HEIGHT
@@ -65,9 +65,9 @@ struct avl_tree {
 #endif
 
 struct avl_traverser {
-  struct avl_node *avl_node;
-  struct avl_node *avl_stack[AVL_MAX_HEIGHT];
-  size_t avl_height;
+	struct avl_node *avl_node;
+	struct avl_node *avl_stack[AVL_MAX_HEIGHT];
+	size_t avl_height;
 };
 
 void *avl_allocate(size_t);
@@ -78,14 +78,14 @@ struct avl_tree *avl_create(avl_comparison_func *, void *);
 #define AVL_LE 2
 void *avl_find(const struct avl_tree *, const void *, int flag);
 void *avl_find_and_traverser_init(const struct avl_tree *, const void *,
-                                  int flag, struct avl_traverser *);
+				  int flag, struct avl_traverser *);
 void *avl_insert(struct avl_tree *, void *);
 void *avl_replace(struct avl_tree *, void *);
 void *avl_delete(struct avl_tree *, const void *);
 void *avl_first(struct avl_tree *, struct avl_traverser *);
 void *avl_next(struct avl_traverser *);
 struct avl_tree *avl_copy(const struct avl_tree *org, avl_copy_func *copy,
-                          avl_node_func *destroy);
+			  avl_node_func *destroy);
 void avl_destroy(struct avl_tree *, avl_node_func *);
 
 /* Returns the number of items in |TREE|. */

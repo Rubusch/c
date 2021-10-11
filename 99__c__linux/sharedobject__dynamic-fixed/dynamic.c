@@ -29,10 +29,10 @@ void test2(int *);
 
 int main()
 {
-  int val = 7;
-  printf("val (before call)\t = %d\n", val);
-  test1(&val);
-  printf("val (after call)\t = %d\n", val);
+	int val = 7;
+	printf("val (before call)\t = %d\n", val);
+	test1(&val);
+	printf("val (after call)\t = %d\n", val);
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

@@ -1,7 +1,6 @@
 #ifndef DEVKIT_SNIPPET_MCAST
 #define DEVKIT_SNIPPET_MCAST
 
-
 /*
   multi cast (mcast) snippets
 
@@ -69,7 +68,6 @@
   Unix Network Programming, Stevens (1996) book and sources
 */
 
-
 /* includes */
 
 //#define _XOPEN_SOURCE 600
@@ -89,21 +87,25 @@
 #include "snippet_socket.h"
 #include "lib_error.h"
 
-
 /* forwards */
 
 void lothars__mcast_leave(int, const struct sockaddr *, socklen_t);
-void lothars__mcast_join(int, const struct sockaddr *, socklen_t, const char *, uint32_t);
-void lothars__mcast_leave_source_group(int, const struct sockaddr *, socklen_t, const struct sockaddr *, socklen_t);
-void lothars__mcast_join_source_group(int, const struct sockaddr *, socklen_t, const struct sockaddr *, socklen_t, const char *, uint32_t);
-void lothars__mcast_block_source(int, const struct sockaddr *, socklen_t, const struct sockaddr *, socklen_t);
-void lothars__mcast_unblock_source(int, const struct sockaddr *, socklen_t, const struct sockaddr *, socklen_t);
+void lothars__mcast_join(int, const struct sockaddr *, socklen_t, const char *,
+			 uint32_t);
+void lothars__mcast_leave_source_group(int, const struct sockaddr *, socklen_t,
+				       const struct sockaddr *, socklen_t);
+void lothars__mcast_join_source_group(int, const struct sockaddr *, socklen_t,
+				      const struct sockaddr *, socklen_t,
+				      const char *, uint32_t);
+void lothars__mcast_block_source(int, const struct sockaddr *, socklen_t,
+				 const struct sockaddr *, socklen_t);
+void lothars__mcast_unblock_source(int, const struct sockaddr *, socklen_t,
+				   const struct sockaddr *, socklen_t);
 int lothars__mcast_get_if(int);
 int lothars__mcast_get_loop(int);
 int lothars__mcast_get_ttl(int);
 void lothars__mcast_set_if(int, const char *, uint32_t);
 void lothars__mcast_set_loop(int, int);
 void lothars__mcast_set_ttl(int, int);
-
 
 #endif /* DEVKIT_SNIPPET_MCAST */

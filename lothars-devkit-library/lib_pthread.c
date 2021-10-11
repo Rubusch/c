@@ -13,18 +13,15 @@
   @func: The routine function for the thread to create.
   @arg: The arguments for the routine function.
 */
-void lothars__pthread_create( pthread_t *tid
-			      , const pthread_attr_t *attr
-			      , void * (*func)(void *)
-			      , void *arg)
+void lothars__pthread_create(pthread_t *tid, const pthread_attr_t *attr,
+			     void *(*func)(void *), void *arg)
 {
-	int  res;
+	int res;
 	if (0 != (res = pthread_create(tid, attr, func, arg))) {
 		errno = res;
 		err_sys("pthread_create error");
 	}
 }
-
 
 /*
   The pthread_join() function waits for the thread specified by thread
@@ -40,8 +37,7 @@ void lothars__pthread_create( pthread_t *tid
       target thread supplied to pthread_exit(3)) into the location
       pointed to by *status.
 */
-void lothars__pthread_join(pthread_t tid
-			   , void **status)
+void lothars__pthread_join(pthread_t tid, void **status)
 {
 	int res;
 	if (0 != (res = pthread_join(tid, status))) {
@@ -49,7 +45,6 @@ void lothars__pthread_join(pthread_t tid
 		err_sys("pthread_join error");
 	}
 }
-
 
 /*
   The pthread_detach() function marks the thread identified by thread
@@ -70,7 +65,6 @@ void lothars__pthread_detach(pthread_t tid)
 	}
 }
 
-
 /*
   The pthread_kill() function sends the signal sig to thread, a thread
   in the same process as the caller. The signal is asynchronously
@@ -87,13 +81,12 @@ void lothars__pthread_detach(pthread_t tid)
 */
 void lothars__pthread_kill(pthread_t tid, int signo)
 {
-	int  res;
+	int res;
 	if (0 != (res = pthread_kill(tid, signo))) {
 		errno = res;
 		err_sys("pthread_kill error");
 	}
 }
-
 
 /*
   The pthread_mutexattr_init() function shall initialize a mutex
@@ -115,7 +108,6 @@ void lothars__pthread_mutexattr_init(pthread_mutexattr_t *attr)
 		err_sys("pthread_mutexattr_init error");
 	}
 }
-
 
 /*
   The pthread_mutexattr_setpshared() function shall set the
@@ -139,8 +131,7 @@ void lothars__pthread_mutexattr_init(pthread_mutexattr_t *attr)
       attribute.
   @flag: The process-shared attribute value to set.
 */
-void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr
-					   , int flag)
+void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int flag)
 {
 	int res;
 	if (0 != (res = pthread_mutexattr_setpshared(attr, flag))) {
@@ -148,7 +139,6 @@ void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr
 		err_sys("pthread_mutexattr_setpshared error");
 	}
 }
-
 
 /*
   The pthread_mutex_init() function shall initialize the mutex
@@ -163,8 +153,8 @@ void lothars__pthread_mutexattr_setpshared(pthread_mutexattr_t *attr
   @mptr: The mutex to be initialized (mutex).
   @attr: The attribute for the mutex to be initialized.
 */
-void lothars__pthread_mutex_init(pthread_mutex_t *mptr
-				 , pthread_mutexattr_t *attr)
+void lothars__pthread_mutex_init(pthread_mutex_t *mptr,
+				 pthread_mutexattr_t *attr)
 {
 	int res;
 	if (0 != (res = pthread_mutex_init(mptr, attr))) {
@@ -172,7 +162,6 @@ void lothars__pthread_mutex_init(pthread_mutex_t *mptr
 		err_sys("pthread_mutex_init error");
 	}
 }
-
 
 /*
   The mutex object referenced by mutex shall be locked by calling
@@ -220,7 +209,6 @@ void lothars__pthread_mutex_lock(pthread_mutex_t *mptr)
 		err_sys("pthread_mutex_lock error");
 	}
 }
-
 
 /*
   The mutex object referenced by mutex shall be locked by calling
@@ -277,7 +265,6 @@ void lothars__pthread_mutex_unlock(pthread_mutex_t *mptr)
 	}
 }
 
-
 /*
   These functions shall unblock threads blocked on a condition
   variable.
@@ -308,7 +295,6 @@ void lothars__pthread_cond_broadcast(pthread_cond_t *cptr)
 	}
 }
 
-
 /*
   These functions shall unblock threads blocked on a condition
   variable.
@@ -330,7 +316,6 @@ void lothars__pthread_cond_signal(pthread_cond_t *cptr)
 	}
 }
 
-
 /*
   The pthread_cond_timedwait() and pthread_cond_wait() functions shall
   block on a condition variable. They shall be called with mutex
@@ -350,8 +335,7 @@ void lothars__pthread_cond_signal(pthread_cond_t *cptr)
   @cptr: Points to the specified conditional variable (cond).
   @mptr: The mutex to be locked at call.
 */
-void lothars__pthread_cond_wait(pthread_cond_t *cptr
-				, pthread_mutex_t *mptr)
+void lothars__pthread_cond_wait(pthread_cond_t *cptr, pthread_mutex_t *mptr)
 {
 	int res;
 	if (0 != (res = pthread_cond_wait(cptr, mptr))) {
@@ -387,9 +371,9 @@ void lothars__pthread_cond_wait(pthread_cond_t *cptr
   @mptr: The mutex to be locked at call.
   @tsptr: The timer object.
 */
-void lothars__pthread_cond_timedwait(pthread_cond_t *cptr
-				     , pthread_mutex_t *mptr
-				     , const struct timespec *tsptr)
+void lothars__pthread_cond_timedwait(pthread_cond_t *cptr,
+				     pthread_mutex_t *mptr,
+				     const struct timespec *tsptr)
 {
 	int res;
 	if (0 != (res = pthread_cond_timedwait(cptr, mptr, tsptr))) {
@@ -397,7 +381,6 @@ void lothars__pthread_cond_timedwait(pthread_cond_t *cptr
 		err_sys("pthread_cond_timedwait error");
 	}
 }
-
 
 /*
   The first call to pthread_once() by any thread in a process, with a
@@ -417,8 +400,7 @@ void lothars__pthread_cond_timedwait(pthread_cond_t *cptr
   @ptr: The once control object (once_control).
   @func: The function to call w/o any arguments (init_routine).
 */
-void lothars__pthread_once(pthread_once_t *ptr
-			   , void (*func)(void))
+void lothars__pthread_once(pthread_once_t *ptr, void (*func)(void))
 {
 	int res;
 	if (0 != (res = pthread_once(ptr, func))) {
@@ -426,7 +408,6 @@ void lothars__pthread_once(pthread_once_t *ptr
 		err_sys("pthread_once error");
 	}
 }
-
 
 /*
   The pthread_key_create() function shall create a thread-specific
@@ -465,8 +446,7 @@ void lothars__pthread_once(pthread_once_t *ptr
   @key: The key to be created.
   @func: The optional destructor to be provided.
 */
-void lothars__pthread_key_create(pthread_key_t *key
-				 , void (*func)(void *))
+void lothars__pthread_key_create(pthread_key_t *key, void (*func)(void *))
 {
 	int res;
 	if (0 != (res = pthread_key_create(key, func))) {
@@ -474,7 +454,6 @@ void lothars__pthread_key_create(pthread_key_t *key
 		err_sys("pthread_key_create error");
 	}
 }
-
 
 /*
   The pthread_setspecific() function shall associate a thread-specific
@@ -490,8 +469,7 @@ void lothars__pthread_key_create(pthread_key_t *key
   @value: The value to pass, typicall a pointer to dynamically
       allocated memory.
 */
-void lothars__pthread_setspecific(pthread_key_t key
-				  , const void *value)
+void lothars__pthread_setspecific(pthread_key_t key, const void *value)
 {
 	int res;
 	if (0 != (res = pthread_setspecific(key, value))) {

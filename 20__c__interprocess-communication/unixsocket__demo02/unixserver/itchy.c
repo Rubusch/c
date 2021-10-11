@@ -18,7 +18,6 @@
 #define ME "ITCHY:"
 #define MESSAGE "Itchymessage"
 
-
 int main(int argc, char **argv)
 {
 	int sd_listen = -1;
@@ -40,11 +39,14 @@ int main(int argc, char **argv)
 		fprintf(stderr, "%s init server address\n", ME);
 		memset(&adr_server, 0, sizeof(adr_server));
 		adr_server.sun_family = AF_UNIX;
-		strncpy(adr_server.sun_path, SERVER_PATH, 1 + strlen(SERVER_PATH));
+		strncpy(adr_server.sun_path, SERVER_PATH,
+			1 + strlen(SERVER_PATH));
 
 		// bind socket to address
-		fprintf(stderr, "%s bind \"listen socket\" to the server address\n", ME);
-		if (0 > bind(sd_listen, ( struct sockaddr * )&adr_server,
+		fprintf(stderr,
+			"%s bind \"listen socket\" to the server address\n",
+			ME);
+		if (0 > bind(sd_listen, (struct sockaddr *)&adr_server,
 			     sizeof(adr_server))) {
 			perror("bind failed");
 			break;
@@ -99,7 +101,6 @@ int main(int argc, char **argv)
 		}
 
 	} while (0);
-
 
 	// in case something crashed - clean up
 	if (-1 != sd_listen)

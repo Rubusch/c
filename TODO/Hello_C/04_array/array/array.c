@@ -57,48 +57,46 @@ READY.
 
 #define ARRAY_SIZ 10
 
-
 void print_content(char *arr, unsigned int arr_siz)
 {
-  if (NULL == arr)
-    return;
+	if (NULL == arr)
+		return;
 
-  puts("content of the array:");
-  puts("\taddress,\tindex\t\t: content");
-  puts("\t------------------------------------------");
-  // do a recommendation to "register" to gain performance for "running indexes"
-  // - only possible if the variable (here idx) won't be "referenced" (=used
-  // with a '&')
-  register unsigned int idx = 0;
-  for (idx = 0; idx < arr_siz; ++idx) {
-    printf("\t0x%lx,\telement %d\t: \"%c\"\n", ( unsigned long )&arr[idx], idx,
-           arr[idx]);
-  }
+	puts("content of the array:");
+	puts("\taddress,\tindex\t\t: content");
+	puts("\t------------------------------------------");
+	// do a recommendation to "register" to gain performance for "running indexes"
+	// - only possible if the variable (here idx) won't be "referenced" (=used
+	// with a '&')
+	register unsigned int idx = 0;
+	for (idx = 0; idx < arr_siz; ++idx) {
+		printf("\t0x%lx,\telement %d\t: \"%c\"\n",
+		       (unsigned long)&arr[idx], idx, arr[idx]);
+	}
 }
-
 
 int main()
 {
-  puts("arrays");
+	puts("arrays");
 
-  // init
-  char arr1[ARRAY_SIZ];
-  strncpy(arr1, "tentokens", ARRAY_SIZ);
-  char arr2[] = "anotherword";
+	// init
+	char arr1[ARRAY_SIZ];
+	strncpy(arr1, "tentokens", ARRAY_SIZ);
+	char arr2[] = "anotherword";
 
-  // print length:
-  puts("arr1:");
-  print_content(arr1, ARRAY_SIZ - 1);
-  printf("arr1 length: %d, size: %d\n", strlen(arr1),
-         (sizeof(arr1) / sizeof(char)));
-  puts("");
+	// print length:
+	puts("arr1:");
+	print_content(arr1, ARRAY_SIZ - 1);
+	printf("arr1 length: %d, size: %d\n", strlen(arr1),
+	       (sizeof(arr1) / sizeof(char)));
+	puts("");
 
-  puts("arr2:");
-  print_content(arr2, (sizeof(arr2) / sizeof(char)) - 1);
-  printf("arr2 length: %d, size: %d\n", strlen(arr2),
-         (sizeof(arr2) / sizeof(char)));
-  puts("");
+	puts("arr2:");
+	print_content(arr2, (sizeof(arr2) / sizeof(char)) - 1);
+	printf("arr2 length: %d, size: %d\n", strlen(arr2),
+	       (sizeof(arr2) / sizeof(char)));
+	puts("");
 
-  puts("READY.");
-  exit(EXIT_SUCCESS);
+	puts("READY.");
+	exit(EXIT_SUCCESS);
 }

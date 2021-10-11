@@ -38,15 +38,13 @@ typedef struct msgbuf {
 } msgbuf;
 #endif
 
-
 static int ask();
 char first_on_queue[] = "->first message on queue",
-	full_buf[] = "Message buffer overflow. Extra message text discarded.";
+     full_buf[] = "Message buffer overflow. Extra message text discarded.";
 int isnumber(const char *, const unsigned int);
 void readnumber(unsigned int *, const unsigned int, const char *);
 void readstring(char *, const unsigned int, const char *);
 void readdigit(int *, const char *);
-
 
 int main(int argc, char **argv)
 {
@@ -120,9 +118,11 @@ int main(int argc, char **argv)
 
 				int idx = 0;
 				register int c = 0;
-				for (idx = 0; ('\n' != (c = getchar())); ++idx) {
+				for (idx = 0; ('\n' != (c = getchar()));
+				     ++idx) {
 					if (idx >= max_msg_size) {
-						fprintf(stderr, "\n%s\n", full_buf);
+						fprintf(stderr, "\n%s\n",
+							full_buf);
 						while ('\n' != (c = getchar()))
 							;
 						break;
@@ -130,25 +130,31 @@ int main(int argc, char **argv)
 					msg_ptr->mtext[idx] = c;
 				}
 				msg_size = idx;
-				msg_ptr->mtype = msg_type; // just set any number >0
+				msg_ptr->mtype =
+					msg_type; // just set any number >0
 			} else {
 				msg_size = 0;
-				msg_ptr->mtype = 0; // msgsnd() won't deliver if <=0
+				msg_ptr->mtype =
+					0; // msgsnd() won't deliver if <=0
 			}
 			// read in flag
 			fprintf(stderr, "\available msgsnd flags:\n");
-			fprintf(stderr, "\tIPC_NOWAIT = \t%#8.8o\n", IPC_NOWAIT);
+			fprintf(stderr, "\tIPC_NOWAIT = \t%#8.8o\n",
+				IPC_NOWAIT);
 
 			{ // set IPC_NOWAIT flag
 				int repeat = 1;
 				do {
 					memset(tmp, '\0', TMP_SIZE);
-					readstring(tmp, TMP_SIZE, "enter msgflg (y/n): ");
+					readstring(tmp, TMP_SIZE,
+						   "enter msgflg (y/n): ");
 					if (0 < strlen(tmp)) {
-						if ('y' == tmp[0] || 'Y' == tmp[0]) {
+						if ('y' == tmp[0] ||
+						    'Y' == tmp[0]) {
 							msg_flag = IPC_NOWAIT;
 							repeat = 0;
-						} else if ('n' == tmp[0] || 'N' == tmp[0]) {
+						} else if ('n' == tmp[0] ||
+							   'N' == tmp[0]) {
 							msg_flag = 0;
 							repeat = 0;
 						} else {
@@ -160,9 +166,11 @@ int main(int argc, char **argv)
 
 			// summary
 			fprintf(stderr, "summary\n");
-			fprintf(stderr, "%s(%d, msg_ptr, %d, %#o)\n", "msgop: calling msgsnd",
-				mq_id, msg_size, msg_flag);
-			fprintf(stderr, "msg_ptr->mtype = %ld\n", msg_ptr->mtype);
+			fprintf(stderr, "%s(%d, msg_ptr, %d, %#o)\n",
+				"msgop: calling msgsnd", mq_id, msg_size,
+				msg_flag);
+			fprintf(stderr, "msg_ptr->mtype = %ld\n",
+				msg_ptr->mtype);
 			fprintf(stderr, "msg_ptr->mtext = \"");
 
 			{ // send messages
@@ -173,10 +181,12 @@ int main(int argc, char **argv)
 			}
 			msg_size = sizeof(*msg_ptr);
 			// send
-			if (0 > (res = msgsnd(mq_id, (void*) msg_ptr, msg_size, msg_flag)))
+			if (0 > (res = msgsnd(mq_id, (void *)msg_ptr, msg_size,
+					      msg_flag)))
 				perror("msgsnd failed");
 			else
-				fprintf(stderr, "msgop: msgsnd returned %d\n", res);
+				fprintf(stderr, "msgop: msgsnd returned %d\n",
+					res);
 			break;
 
 		case 2:
@@ -184,13 +194,16 @@ int main(int argc, char **argv)
 
 			// read in read flag
 			fprintf(stderr, "meaningful msgrcv flags are:\n");
-			fprintf(stderr, "\t1. MSG_NOERROR = \t%#8.8o\n", MSG_NOERROR);
-			fprintf(stderr, "\t2. IPC_NOWAIT = \t%#8.8o\n", IPC_NOWAIT);
+			fprintf(stderr, "\t1. MSG_NOERROR = \t%#8.8o\n",
+				MSG_NOERROR);
+			fprintf(stderr, "\t2. IPC_NOWAIT = \t%#8.8o\n",
+				IPC_NOWAIT);
 			{
 				int repeat = 1;
 				do {
 					int flag = 0;
-					readdigit(&flag, "enter msg_flag (1 or 2): ");
+					readdigit(&flag,
+						  "enter msg_flag (1 or 2): ");
 
 					switch (flag) {
 					case 1:
@@ -212,15 +225,19 @@ int main(int argc, char **argv)
 			}
 			// summary
 			msg_size = sizeof(*msg_ptr);
-			fprintf(stderr, "msgop: calling msgrcv(%d, msg_ptr, %d, %ld, %#o);\n",
+			fprintf(stderr,
+				"msgop: calling msgrcv(%d, msg_ptr, %d, %ld, %#o);\n",
 				mq_id, msg_size, msg_type, msg_flag);
 
 			// receive
-			if (-1 == (res = msgrcv(mq_id, msg_ptr, msg_size, msg_type, msg_flag))) {
+			if (-1 == (res = msgrcv(mq_id, msg_ptr, msg_size,
+						msg_type, msg_flag))) {
 				perror("msgop: msgrcv failed");
 			} else {
-				fprintf(stderr, "msgop: msgrcv returned %d\n", res);
-				fprintf(stderr, "msg_ptr->mtype = %ld\n", msg_ptr->mtype);
+				fprintf(stderr, "msgop: msgrcv returned %d\n",
+					res);
+				fprintf(stderr, "msg_ptr->mtype = %ld\n",
+					msg_ptr->mtype);
 				fprintf(stderr, "msg_ptr->mtext = \"");
 				int idx = 0;
 				for (idx = 0; idx < res; ++idx)
@@ -240,7 +257,6 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-
 // ask
 static int ask()
 {
@@ -256,7 +272,6 @@ static int ask()
 
 	return response;
 }
-
 
 // TOOLS
 int isnumber(const char *str, const unsigned int size)
@@ -280,10 +295,9 @@ int isnumber(const char *str, const unsigned int size)
 	return 1;
 }
 
-
 // READING
 void readnumber(unsigned int *iTxt, const unsigned int digits,
-                const char *comment)
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -322,7 +336,6 @@ void readnumber(unsigned int *iTxt, const unsigned int digits,
 	*iTxt = atoi(cTxt);
 }
 
-
 void readstring(char *cTxt, const unsigned int textSize, const char *comment)
 {
 	if (NULL == comment) {
@@ -359,7 +372,6 @@ void readstring(char *cTxt, const unsigned int textSize, const char *comment)
 
 	} while (0 == strlen(cTxt));
 }
-
 
 void readdigit(int *iChr, const char *comment)
 {

@@ -8,14 +8,13 @@
 
 #include "dequeue_item.h"
 
-
 /* private */
 
 static item_p first;
 static item_p last;
 static int size;
 
-item_p dequeue__new(content_t* content)
+item_p dequeue__new(content_t *content)
 {
 	item_p item = malloc(sizeof(item));
 	if (item == NULL) {
@@ -28,7 +27,6 @@ item_p dequeue__new(content_t* content)
 
 	return item;
 };
-
 
 /* public */
 
@@ -86,26 +84,26 @@ void dequeue__remove(item_p elem)
 		elem_before->next = elem_after;
 		elem_after->prev = elem_before;
 	} else if (elem_before == NULL && elem_after != NULL) {
-# ifdef DEBUG_DEQUEUE
+#ifdef DEBUG_DEQUEUE
 		assert(elem == first);
 		assert(elem != last);
-# endif
+#endif
 		first = dequeue__next(first);
 		first->prev = NULL;
 	} else if (elem_after == NULL && elem_before != NULL) {
-# ifdef DEBUG_DEQUEUE
+#ifdef DEBUG_DEQUEUE
 		assert(elem != first);
 		assert(elem == last);
-# endif
+#endif
 		last = dequeue__prev(last);
 		last->next = NULL;
 	} else {
-# ifdef DEBUG_DEQUEUE
+#ifdef DEBUG_DEQUEUE
 		assert(elem == first);
 		assert(elem == last);
 		assert(elem->prev == NULL);
 		assert(elem->next == NULL);
-# endif
+#endif
 		first = NULL;
 		last = NULL;
 	}

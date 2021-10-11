@@ -32,7 +32,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-
 // TODO rm
 //// Run as root or SUID 0, just datagram no data/payload
 //#include <unistd.h>
@@ -46,8 +45,7 @@
 */
 
 #define PACKET_BUFFER_SIZE 8192 /* size of the "poor man's socket buffer" */
-#define MAXLINE  4096 /* max text line length */
-
+#define MAXLINE 4096 /* max text line length */
 
 /*
   forwards
@@ -58,16 +56,16 @@ void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
 // socket
-void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *,
+		     socklen_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 int lothars__socket(int, int, int);
 
 // inet
-void lothars__inet_pton(int, const char*, void*);
+void lothars__inet_pton(int, const char *, void *);
 
 // unix
 void lothars__close(int *);
-
 
 /*
   helpers
@@ -85,24 +83,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /* error */
 
@@ -111,26 +110,24 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    Fatal error unrelated to system call. Print message and terminate.
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /* socket */
 
@@ -151,18 +148,13 @@ void err_quit(const char *fmt, ...)
   @salen: Specifies the length of the sockaddr structure pointed to by
       the dest_addr argument.
 */
-void lothars__sendto( int fd
-	      , const void *ptr
-	      , size_t nbytes
-	      , int flags
-	      , const struct sockaddr *sa
-	      , socklen_t salen)
+void lothars__sendto(int fd, const void *ptr, size_t nbytes, int flags,
+		     const struct sockaddr *sa, socklen_t salen)
 {
-	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
+	if ((ssize_t)nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The setsockopt() function shall set the option specified by the
@@ -182,11 +174,8 @@ void lothars__sendto( int fd
   @optlenptr: The option_len argument shall be modified to indicate
       the actual length of the value.
 */
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		close(fd); /* strict */
@@ -194,7 +183,6 @@ void lothars__setsockopt(int fd
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The socket() function shall create an unbound socket in a
@@ -220,7 +208,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /* inet */
 
 /*
@@ -244,12 +231,13 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
 	int res;
 	if (0 > (res = inet_pton(family, strptr, addrptr))) {
-		err_sys("%s() error for %s (check the passed address family?)", __func__, strptr); // errno set
+		err_sys("%s() error for %s (check the passed address family?)",
+			__func__, strptr); // errno set
 	} else if (0 == res) {
-		err_quit("%s() error for %s (check the passed strptr)", __func__, strptr); // errno not set
+		err_quit("%s() error for %s (check the passed strptr)",
+			 __func__, strptr); // errno not set
 	}
 }
-
 
 /* unix */
 
@@ -287,26 +275,23 @@ void lothars__close(int *fd)
 	sync();
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
-
 // fabricated IP header
 struct ipheader {
-	uint8_t  iph_ihl:5, iph_ver:4; // little endian
-	uint8_t  iph_tos;
+	uint8_t iph_ihl : 5, iph_ver : 4; // little endian
+	uint8_t iph_tos;
 	uint16_t iph_len;
 	uint16_t iph_ident;
-	uint8_t  iph_flags;
+	uint8_t iph_flags;
 	uint16_t iph_offset;
-	uint8_t  iph_ttl;
-	uint8_t  iph_protocol;
+	uint8_t iph_ttl;
+	uint8_t iph_protocol;
 	uint16_t iph_chksum;
 	uint32_t iph_sourceip;
 	uint32_t iph_destip;
 };
-
 
 /* fabricated TCP header */
 struct tcpheader {
@@ -314,22 +299,21 @@ struct tcpheader {
 	uint16_t tcph_destport;
 	uint32_t tcph_seqnum;
 	uint32_t tcph_acknum;
-	uint8_t  tcph_reserved:4, tcph_offset:4;
+	uint8_t tcph_reserved : 4, tcph_offset : 4;
 	// unsigned char tcph_flags;
-	uint32_t tcp_res1:4,    // little-endian
-		tcph_hlen:4,    // length of tcp header in 32-bit words
-		tcph_fin:1,     // finish flag "fin"
-		tcph_syn:1,     // synchronize sequence numbers to start a connection
-		tcph_rst:1,     // reset flag
-		tcph_psh:1,     // push, sends data to the application
-		tcph_ack:1,     // acknowledge
-		tcph_urg:1,     // urgent pointer
-		tcph_res2:2;
+	uint32_t tcp_res1 : 4, // little-endian
+		tcph_hlen : 4, // length of tcp header in 32-bit words
+		tcph_fin : 1, // finish flag "fin"
+		tcph_syn : 1, // synchronize sequence numbers to start a connection
+		tcph_rst : 1, // reset flag
+		tcph_psh : 1, // push, sends data to the application
+		tcph_ack : 1, // acknowledge
+		tcph_urg : 1, // urgent pointer
+		tcph_res2 : 2;
 	uint16_t tcph_win;
 	uint16_t tcph_chksum;
 	uint16_t tcph_urgptr;
 };
-
 
 /*
   Computes a checksum over a buffer of nbytes length.
@@ -350,17 +334,15 @@ unsigned short checksum(unsigned short *buf, int nbytes)
 
 {
 	unsigned long sum;
-	for (sum=0; nbytes>0; nbytes--) {
+	for (sum = 0; nbytes > 0; nbytes--) {
 		sum += *buf++;
 	}
-	sum = (sum >> 16) + (sum &0xffff);
+	sum = (sum >> 16) + (sum & 0xffff);
 	sum += (sum >> 16);
 	return (unsigned short)(~sum);
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main
@@ -375,41 +357,47 @@ int main(int argc, char *argv[])
 	int cnt = 0;
 	int on = 1;
 	const int *val = &on;
-	char source_ip[16]; memset(source_ip, '\0', sizeof(source_ip));
-	char source_port[16]; memset(source_port, '\0', sizeof(source_port));
-	char destination_ip[16]; memset(destination_ip, '\0', sizeof(destination_ip));
-	char destination_port[16]; memset(destination_port, '\0', sizeof(destination_port));
+	char source_ip[16];
+	memset(source_ip, '\0', sizeof(source_ip));
+	char source_port[16];
+	memset(source_port, '\0', sizeof(source_port));
+	char destination_ip[16];
+	memset(destination_ip, '\0', sizeof(destination_ip));
+	char destination_port[16];
+	memset(destination_port, '\0', sizeof(destination_port));
 
 	// init
 	memset(packet_buffer, '\0', sizeof(packet_buffer));
-	ip = (struct ipheader *) packet_buffer;
-	tcp = (struct tcpheader *) (packet_buffer + sizeof(struct ipheader));
+	ip = (struct ipheader *)packet_buffer;
+	tcp = (struct tcpheader *)(packet_buffer + sizeof(struct ipheader));
 
 	// input processing
 	if (argc != 5) {
 		fprintf(stderr, "Usage:\n");
-		fprintf(stderr, "$ %s <source ip> <source port> <destination ip> <destination port>\n", argv[0]);
-		fprintf(stderr, "e.g.\n$ sudo %s 127.0.0.1 21 192.168.123.123 8080 \n", argv[0]);
+		fprintf(stderr,
+			"$ %s <source ip> <source port> <destination ip> <destination port>\n",
+			argv[0]);
+		fprintf(stderr,
+			"e.g.\n$ sudo %s 127.0.0.1 21 192.168.123.123 8080 \n",
+			argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	strncpy(source_ip, argv[1], sizeof(source_ip)-1);
+	strncpy(source_ip, argv[1], sizeof(source_ip) - 1);
 	fprintf(stdout, "source_ip: %s\n", source_ip);
 
-	strncpy(source_port, argv[2], sizeof(source_port)-1);
+	strncpy(source_port, argv[2], sizeof(source_port) - 1);
 	fprintf(stdout, "source_port: %s\n", source_port);
 
-	strncpy(destination_ip, argv[3], sizeof(destination_ip)-1);
+	strncpy(destination_ip, argv[3], sizeof(destination_ip) - 1);
 	fprintf(stdout, "destination_ip: %s\n", destination_ip);
 
-	strncpy(destination_port, argv[4], sizeof(destination_port)-1);
+	strncpy(destination_port, argv[4], sizeof(destination_port) - 1);
 	fprintf(stdout, "destination_port: %s\n", destination_port);
-
 
 	/* raw socket setup */
 	fd_sock = lothars__socket(PF_INET, SOCK_RAW, IPPROTO_TCP);
 	fprintf(stdout, "socket() - using SOCK_RAW and tcp protocol.\n");
-
 
 	/* packet headers */
 	ip->iph_ihl = 5;
@@ -421,10 +409,13 @@ int main(int argc, char *argv[])
 	ip->iph_ttl = 64;
 	ip->iph_protocol = 6; // TCP
 	ip->iph_chksum = 0; // done by kernel
-	ip->iph_sourceip = inet_addr(source_ip); // source ip can be set and also spoofed here!!!
-	ip->iph_destip = inet_addr(destination_ip); // destination ip can be set and also spoofed here!!!
+	ip->iph_sourceip = inet_addr(
+		source_ip); // source ip can be set and also spoofed here!!!
+	ip->iph_destip = inet_addr(
+		destination_ip); // destination ip can be set and also spoofed here!!!
 
-	tcp->tcph_srcport = htons(atoi(source_port)); // change souerce port as needed
+	tcp->tcph_srcport =
+		htons(atoi(source_port)); // change souerce port as needed
 	tcp->tcph_destport = htons(atoi(destination_port));
 	tcp->tcph_seqnum = htonl(1);
 	tcp->tcph_acknum = 0;
@@ -435,8 +426,9 @@ int main(int argc, char *argv[])
 	tcp->tcph_chksum = 0; // done by kernel
 	tcp->tcph_urgptr = 0;
 
-	ip->iph_chksum = checksum((unsigned short *) packet_buffer, sizeof(*ip) + sizeof(*tcp)); // integrity check
-
+	ip->iph_chksum =
+		checksum((unsigned short *)packet_buffer,
+			 sizeof(*ip) + sizeof(*tcp)); // integrity check
 
 	/* kernel */
 
@@ -445,20 +437,21 @@ int main(int argc, char *argv[])
 	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_HDRINCL, val, sizeof(on));
 	fprintf(stdout, "setsockopt()...OK\n");
 
-
 	/* send loop */
-	fprintf(stdout, "Using:::::Source IP: %s port: %u, Target IP: %s port: %u.\n"
-		, source_ip, atoi(source_port), destination_ip, atoi(destination_port));
+	fprintf(stdout,
+		"Using:::::Source IP: %s port: %u, Target IP: %s port: %u.\n",
+		source_ip, atoi(source_port), destination_ip,
+		atoi(destination_port));
 
 	din.sin_family = AF_INET; // prepare sendto() destination
 	din.sin_port = htons(atoi(destination_port));
 	lothars__inet_pton(AF_INET, destination_ip, &din.sin_addr.s_addr);
 	for (cnt = 0; cnt < 5; ++cnt) {
-		lothars__sendto(fd_sock, packet_buffer, ip->iph_len, 0, (struct sockaddr *)&din, sizeof(din));
+		lothars__sendto(fd_sock, packet_buffer, ip->iph_len, 0,
+				(struct sockaddr *)&din, sizeof(din));
 		fprintf(stdout, "Count #%u - sendto() is OK\n", cnt);
 		sleep(1);
 	}
-
 
 	lothars__close(&fd_sock);
 	fprintf(stdout, "READY.\n");

@@ -63,8 +63,7 @@
   be found here: https://www.tenouk.com/Module41c.html
  */
 
-// TODO builds and seems to work, currently (after refac) no mcast capable environment to verify         
-
+// TODO builds and seems to work, currently (after refac) no mcast capable environment to verify
 
 #define _GNU_SOURCE /* struct ip_mreq */
 
@@ -80,25 +79,22 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-
-
 /*
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 struct sockaddr_in addr_local;
 struct ip_mreq mreq_group;
 int fd_sock;
 char databuf[MAXLINE]; // in case use 1024
-
 
 /*
   forwards
 */
 
 // error
-void err_sys(const char*, ...);
+void err_sys(const char *, ...);
 
 // sock
 void lothars__bind(int, const struct sockaddr *, socklen_t);
@@ -107,7 +103,6 @@ void lothars__setsockopt(int, int, int, const void *, socklen_t);
 
 // read/write
 ssize_t lothars__read(int, void *, size_t);
-
 
 /*
   internal helpers
@@ -121,24 +116,25 @@ ssize_t lothars__read(int, void *, size_t);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 // error
 
@@ -147,13 +143,12 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 // sock
 
@@ -180,7 +175,6 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
 /*
   The socket() function shall create an unbound socket in a
   communications domain, and return a file descriptor that can be used
@@ -205,7 +199,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /*
   The setsockopt() function shall set the option specified by the
   option_name argument, at the protocol level specified by the level
@@ -224,11 +217,8 @@ int lothars__socket(int family, int type, int protocol)
   @optlenptr: The option_len argument shall be modified to indicate
       the actual length of the value.
 */
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		close(fd_sock);
@@ -236,7 +226,6 @@ void lothars__setsockopt(int fd
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The read() function shall attempt to read nbyte bytes from the file
@@ -255,33 +244,34 @@ void lothars__setsockopt(int fd
 */
 ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 	if (-1 == (bytes = read(fd, ptr, nbytes))) {
 		err_sys("read error");
 	}
 	return bytes;
 }
 
-
-
 /********************************************************************************************/
 // worker implementation
 
-
 /********************************************************************************************/
-
 
 /*
   main
 */
 int main(int argc, char *argv[])
 {
-	char senderip[16]; memset(senderip, '\0', sizeof(senderip));
-	char groupip[16]; memset(groupip, '\0', sizeof(groupip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char senderip[16];
+	memset(senderip, '\0', sizeof(senderip));
+	char groupip[16];
+	memset(groupip, '\0', sizeof(groupip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (4 != argc) {
-		fprintf(stderr, "usage: %s <senderip> <groupip> <port>\ne.g.\n$> %s 203.106.93.94 226.1.1.1 4321\n", argv[0], argv[0]);
+		fprintf(stderr,
+			"usage: %s <senderip> <groupip> <port>\ne.g.\n$> %s 203.106.93.94 226.1.1.1 4321\n",
+			argv[0], argv[0]);
 		exit(EXIT_FAILURE);
 	}
 	strncpy(senderip, argv[1], sizeof(senderip));
@@ -293,46 +283,46 @@ int main(int argc, char *argv[])
 	strncpy(port, argv[3], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-
 	// create a datagram socket on which to receive
 	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 	fprintf(stdout, "Opening datagram socket....OK.\n");
-
 
 	// enable SO_REUSEADDR to allow multiple instances of this
 	// application to receive copies of the multicast datagrams
 	{
 		int reuse = 1;
-		lothars__setsockopt(fd_sock, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse, sizeof(reuse));
+		lothars__setsockopt(fd_sock, SOL_SOCKET, SO_REUSEADDR,
+				    (char *)&reuse, sizeof(reuse));
 		fprintf(stdout, "Setting SO_REUSEADDR...OK.\n");
 	}
 
-
 	// bind to the proper port number with the IP address
 	// specified as INADDR_ANY
-	memset((char *) &addr_local, 0, sizeof(addr_local));
+	memset((char *)&addr_local, 0, sizeof(addr_local));
 	addr_local.sin_family = AF_INET;
 	addr_local.sin_port = htons(atoi(port)); // e.g. 4321
 	addr_local.sin_addr.s_addr = INADDR_ANY;
-	lothars__bind(fd_sock, (struct sockaddr*)&addr_local, sizeof(addr_local));
+	lothars__bind(fd_sock, (struct sockaddr *)&addr_local,
+		      sizeof(addr_local));
 	fprintf(stdout, "Binding datagram socket...OK.\n");
-
 
 	// join the multicast group 226.1.1.1 on the local
 	// 203.106.93.94 interface. Note that this IP_ADD_MEMBERSHIP
 	// option must be called for each local interface over which
 	// the multicast datagrams are to be received
-	mreq_group.imr_multiaddr.s_addr = inet_addr(groupip); // e.g. "226.1.1.1"
-	mreq_group.imr_interface.s_addr = inet_addr(senderip); // e.g. "203.106.93.94"
-	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&mreq_group, sizeof(mreq_group));
+	mreq_group.imr_multiaddr.s_addr =
+		inet_addr(groupip); // e.g. "226.1.1.1"
+	mreq_group.imr_interface.s_addr =
+		inet_addr(senderip); // e.g. "203.106.93.94"
+	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+			    (char *)&mreq_group, sizeof(mreq_group));
 	fprintf(stdout, "Adding multicast group...OK.\n");
-
 
 	// Read from the socket
 	lothars__read(fd_sock, databuf, MAXLINE);
 	fprintf(stdout, "Reading datagram message...OK.\n");
-	fprintf(stdout, "The message from multicast server is: \"%s\"\n", databuf);
-
+	fprintf(stdout, "The message from multicast server is: \"%s\"\n",
+		databuf);
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);

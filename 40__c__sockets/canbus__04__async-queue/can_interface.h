@@ -14,7 +14,6 @@
 #ifndef CAN_INTERFACE_H_
 #define CAN_INTERFACE_H_
 
-
 #define _GNU_SOURCE /* struct ifreq */
 
 #include <stdio.h>
@@ -67,12 +66,11 @@ int canif__shutdown();
 
 /**
  */
-int canif__send(const uint32_t *can_id, const uint8_t* can_dlc, uint8_t data[]);
+int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[]);
 
 /**
    fetches asynchronously from the queue, returns nbytes or 0 in case the queue was empty
  */
-int canif__recv(uint8_t* can_dlc, uint8_t data[]);
-
+int canif__recv(uint8_t *can_dlc, uint8_t data[]);
 
 #endif /* CAN_INTERFACE_H_ */

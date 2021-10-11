@@ -5,12 +5,11 @@
 
 #include "directory/folder.h"
 
-
 extern void func(const char *);
 
 int main(int argc, char **argv)
 {
-  func("Hello World!");
+	func("Hello World!");
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

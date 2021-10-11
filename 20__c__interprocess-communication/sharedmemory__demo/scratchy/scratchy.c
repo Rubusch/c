@@ -18,7 +18,6 @@
 #define ME "SCRATCHY:"
 #define MESSAGE "Scratchymessage"
 
-
 int main(int argc, char **argv)
 {
 	char message[] = MESSAGE;
@@ -28,7 +27,8 @@ int main(int argc, char **argv)
 
 	// shared memory id and get the shared memory
 	fprintf(stderr,
-		"%s set up shared memory key, ID and get some shared memory\n", ME);
+		"%s set up shared memory key, ID and get some shared memory\n",
+		ME);
 	int shm_id = 0;
 	int shm_flags = IPC_CREAT | 0666;
 	if (0 > (shm_id = shmget(shm_key, SHM_SIZE, shm_flags))) {
@@ -53,7 +53,6 @@ int main(int argc, char **argv)
 
 	// if message size is ok, copy into shared memory
 	if (strlen(message) <= SHM_SIZE) {
-
 		// write into shared memory via pointer
 		strncpy(ptr, message, strlen(message));
 	}
@@ -64,7 +63,6 @@ int main(int argc, char **argv)
 	// wait until message was read
 	while ('*' != *shm)
 		sleep(1);
-
 
 	fprintf(stderr, "%s done!\n", ME);
 	exit(EXIT_SUCCESS);

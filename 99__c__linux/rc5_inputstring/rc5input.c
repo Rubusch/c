@@ -54,7 +54,8 @@ void remote_control(char *rc5_command)
 			//                        puts("STOP");
 			if (4 == command_idx) {
 				for (idx = 0; idx < 5; ++idx) {
-					command_sequence[idx] = command_input[idx];
+					command_sequence[idx] =
+						command_input[idx];
 					// TODO use and reset it again to EMPTY!!
 				}
 			}
@@ -98,7 +99,8 @@ void remote_control(char *rc5_command)
 
 		if (NEGATIVE == *rc5_command) {
 			//                        puts("NEGATIVE");
-			if ((-1 == command_signed) || (command_input[command_idx] != EMPTY)) {
+			if ((-1 == command_signed) ||
+			    (command_input[command_idx] != EMPTY)) {
 				perror("ERROR: pressed negative more than once");
 				command_idx = -1;
 				break;
@@ -107,10 +109,11 @@ void remote_control(char *rc5_command)
 			break;
 		}
 
-		if ((0 == *rc5_command) || (1 == *rc5_command) || (2 == *rc5_command) ||
-		    (3 == *rc5_command) || (4 == *rc5_command) || (5 == *rc5_command) ||
-		    (6 == *rc5_command) || (7 == *rc5_command) || (8 == *rc5_command) ||
-		    (9 == *rc5_command)) {
+		if ((0 == *rc5_command) || (1 == *rc5_command) ||
+		    (2 == *rc5_command) || (3 == *rc5_command) ||
+		    (4 == *rc5_command) || (5 == *rc5_command) ||
+		    (6 == *rc5_command) || (7 == *rc5_command) ||
+		    (8 == *rc5_command) || (9 == *rc5_command)) {
 			//                        puts("READ OUT NUMBER");
 			if (EMPTY != command_input[command_idx]) {
 				//                                puts( "\tfurther digits");
@@ -120,23 +123,27 @@ void remote_control(char *rc5_command)
 					command_idx = -1;
 					break;
 
-				} else if (MAX / 10 == command_input[command_idx]) {
+				} else if (MAX / 10 ==
+					   command_input[command_idx]) {
 					// extract last digit of MAX
-					if ((MAX % (MAX / 10)) < (*rc5_command)) {
+					if ((MAX % (MAX / 10)) <
+					    (*rc5_command)) {
 						perror("ERROR: overrun by number of MAX");
 						command_idx = -1;
 						break;
 					}
 				}
 
-				command_input[command_idx] = 10 * command_input[command_idx];
+				command_input[command_idx] =
+					10 * command_input[command_idx];
 			} else {
 				//                                puts( "\tfirst digit" );
 				command_input[command_idx] = 0;
 			}
 			//                        puts( "\tadd new reading and multiply with
 			//                        signedness" );
-			command_input[command_idx] += command_signed * (*rc5_command);
+			command_input[command_idx] +=
+				command_signed * (*rc5_command);
 		} else {
 			puts("ERROR: wrong key pressed");
 			command_idx = -1;
@@ -147,7 +154,6 @@ void remote_control(char *rc5_command)
 	}
 	command_last_token_hack = (*rc5_command);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -177,7 +183,8 @@ int main(int argc, char **argv)
 	  x_next  = 33
 	  y_next  = -44
 	*/
-	char input[] = {16, 7, 7, 32, 1, 1, 32, 33, 2, 2, 32, 3, 3, 32, 33, 4, 4, 17};
+	char input[] = { 16, 7,  7, 32, 1,  1,  32, 33, 2,
+			 2,  32, 3, 3,  32, 33, 4,  4,  17 };
 
 	// FAIL - negative in between
 	//        char input[] = {16, 7, 7, 32, 1, 1, 32, 2, 2, 32, 3, 3, 32, 4, 33,
@@ -203,7 +210,6 @@ int main(int argc, char **argv)
 	// 110 - FAIL
 	//        char input[] = {16, 7, 7, 32, 1,1,0, 32, 2, 5, 32, 2, 5, 32, 2, 5,
 	//        17 };
-
 
 	int idx = 0;
 	char *rc5_command = input;

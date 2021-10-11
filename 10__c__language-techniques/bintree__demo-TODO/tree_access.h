@@ -41,9 +41,9 @@ int get_max_level(leaf *, unsigned int);
 int data_to_string(char *, const unsigned int, const unsigned int);
 int init_path(char *, const unsigned int, const unsigned int);
 int get_data_by_path(leaf *, char *, const unsigned int, char *,
-                     const unsigned int, const unsigned int);
+		     const unsigned int, const unsigned int);
 int get_paint_mask_per_row(char *, const unsigned int, const unsigned int,
-                           const unsigned int);
+			   const unsigned int);
 int write_tree(leaf *);
 
 // writing to file

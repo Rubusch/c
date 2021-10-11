@@ -361,44 +361,46 @@
 
 int main(int argc, char **argv)
 {
-  pid_t child;
+	pid_t child;
 
 #ifndef __x86_64__
-  fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
-  exit(EXIT_FAILURE);
+	fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
+	exit(EXIT_FAILURE);
 #endif
 
-  if (0 > (child = fork())) {
-    perror("fork() failed");
+	if (0 > (child = fork())) {
+		perror("fork() failed");
 
-  } else if (0 == child) {
-    /* child: tracee */
-    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("/bin/pwd", "pwd", NULL);
+	} else if (0 == child) {
+		/* child: tracee */
+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+		execl("/bin/pwd", "pwd", NULL);
 
-  } else {
-    /* parent: tracer */
-    waitpid(child, 0, 0);
-    ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
+	} else {
+		/* parent: tracer */
+		waitpid(child, 0, 0);
+		ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
 
-    while (1) {
-      // restart the stopped tracee
-      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) { // PTRACE_SYSEMU ends in infinite loop here
-        perror("ptrace: PTRACE_SYSCALL failed");
-        exit(EXIT_FAILURE);
-      }
+		while (1) {
+			// restart the stopped tracee
+			if (0 >
+			    (ptrace(PTRACE_SYSCALL, child, 0,
+				    0))) { // PTRACE_SYSEMU ends in infinite loop here
+				perror("ptrace: PTRACE_SYSCALL failed");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > waitpid(child, 0, 0)) {
-        perror("waitpid: failed");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > waitpid(child, 0, 0)) {
+				perror("waitpid: failed");
+				exit(EXIT_FAILURE);
+			}
 
-      struct user_regs_struct regs;
-      if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
-        perror("ptrace: PTRACE_GETREGS failed");
-        exit(EXIT_FAILURE);
-      }
-/*
+			struct user_regs_struct regs;
+			if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
+				perror("ptrace: PTRACE_GETREGS failed");
+				exit(EXIT_FAILURE);
+			}
+			/*
       fprintf(stderr
               , "syscall: '%lx(%016lx [rdi], %016lx [rsi], %016lx [rdx], %016lx [r10], %016lx [r8], %016lx [r9])'\n"
               , (long)regs.orig_rax
@@ -409,95 +411,122 @@ int main(int argc, char **argv)
               , (long)regs.r8
               , (long)regs.r9);
 // */
-      if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
-        perror("ptrace: process finished");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
+				perror("ptrace: process finished");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > waitpid(child, 0, 0)) {
-        perror("waitpid: process finished");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > waitpid(child, 0, 0)) {
+				perror("waitpid: process finished");
+				exit(EXIT_FAILURE);
+			}
 
-
-      switch(regs.orig_rax) {
+			switch (regs.orig_rax) {
 #ifdef SYS_munmap
-      case SYS_munmap:
-        fprintf(stderr, "SYSCALL: SYS_munmap, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_munmap:
+				fprintf(stderr,
+					"SYSCALL: SYS_munmap, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_arch_prctl
-      case SYS_arch_prctl:
-        fprintf(stderr, "SYSCALL: SYS_arch_prctl, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_arch_prctl:
+				fprintf(stderr,
+					"SYSCALL: SYS_arch_prctl, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_getcwd
-      case SYS_getcwd:
-        fprintf(stderr, "SYSCALL: SYS_getcwd, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_getcwd:
+				fprintf(stderr,
+					"SYSCALL: SYS_getcwd, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_mprotect
-      case SYS_mprotect:
-        fprintf(stderr, "SYSCALL: SYS_mprotect, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_mprotect:
+				fprintf(stderr,
+					"SYSCALL: SYS_mprotect, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_mmap
-      case SYS_mmap:
-        fprintf(stderr, "SYSCALL: SYS_mmap, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_mmap:
+				fprintf(stderr,
+					"SYSCALL: SYS_mmap, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_close
-      case SYS_close:
-        fprintf(stderr, "SYSCALL: SYS_close, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_close:
+				fprintf(stderr,
+					"SYSCALL: SYS_close, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_brk // change the location of the program break, which defines the end of the process's data segment
-      case SYS_brk:
-        fprintf(stderr, "SYSCALL: SYS_brk, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_brk:
+				fprintf(stderr, "SYSCALL: SYS_brk, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_openat
-      case SYS_openat:
-        fprintf(stderr, "SYSCALL: SYS_openat, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_openat:
+				fprintf(stderr,
+					"SYSCALL: SYS_openat, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_access
-      case SYS_access:
-        fprintf(stderr, "SYSCALL: SYS_access, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_access:
+				fprintf(stderr,
+					"SYSCALL: SYS_access, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_fstat
-      case SYS_fstat:
-        fprintf(stderr, "SYSCALL: SYS_fstat, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_fstat:
+				fprintf(stderr,
+					"SYSCALL: SYS_fstat, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_read
-      case SYS_read:
-        fprintf(stderr, "SYSCALL: SYS_read, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_read:
+				fprintf(stderr,
+					"SYSCALL: SYS_read, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_write
-      case SYS_write:
-        fprintf(stderr, "SYSCALL: SYS_write, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_write:
+				fprintf(stderr,
+					"SYSCALL: SYS_write, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_open
-      case SYS_open:
-        fprintf(stderr, "SYSCALL: SYS_open, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_open:
+				fprintf(stderr,
+					"SYSCALL: SYS_open, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_exit_group
-      case SYS_exit_group:
-        fprintf(stderr, "SYSCALL: SYS_exit_group, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_exit_group:
+				fprintf(stderr,
+					"SYSCALL: SYS_exit_group, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 
-      default:
-        fprintf(stderr, "SYSCALL: uncaught, '0x%04lx' XXXXXXX\n", (long)regs.orig_rax);
-      }
+			default:
+				fprintf(stderr,
+					"SYSCALL: uncaught, '0x%04lx' XXXXXXX\n",
+					(long)regs.orig_rax);
+			}
+		}
+	}
 
-    }
-  }
-
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

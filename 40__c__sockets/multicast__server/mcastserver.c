@@ -61,7 +61,7 @@
   Some of the explanations are taken from tenouk's tutorial, to
   be found here: https://www.tenouk.com/Module41c.html
  */
-// TODO builds and seems to work, currently (after refac) no mcast capable environment to verify         
+// TODO builds and seems to work, currently (after refac) no mcast capable environment to verify
 //#include <sys/types.h>
 //#include <sys/socket.h>
 //#include <arpa/inet.h>
@@ -87,12 +87,11 @@
 #include <unistd.h> /* close(), sync() with _XOPEN_SOURCE */
 #include <errno.h>
 
-
 /*
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 struct in_addr addr_local;
 struct sockaddr_in saddr_group;
 int fd_sock;
@@ -109,14 +108,14 @@ void err_quit(const char *, ...);
 // sock
 int lothars__socket(int, int, int);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
-void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *,
+		     socklen_t);
 
 // inet
-void lothars__inet_pton(int, const char*, void*);
+void lothars__inet_pton(int, const char *, void *);
 
 // read/write
 ssize_t lothars__read(int, void *, size_t);
-
 
 /*
   internal helpers
@@ -130,24 +129,25 @@ ssize_t lothars__read(int, void *, size_t);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 // error
 
@@ -156,26 +156,24 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    Fatal error unrelated to system call. Print message and terminate.
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 // sock
 
@@ -198,11 +196,10 @@ int lothars__socket(int family, int type, int protocol)
 {
 	int res;
 	if (0 > (res = socket(family, type, protocol))) {
-                err_sys("%s() error", __func__);
+		err_sys("%s() error", __func__);
 	}
 	return res;
 }
-
 
 /*
   The setsockopt() function shall set the option specified by the
@@ -222,11 +219,8 @@ int lothars__socket(int family, int type, int protocol)
   @optlenptr: The option_len argument shall be modified to indicate
       the actual length of the value.
 */
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		close(fd_sock);
@@ -234,7 +228,6 @@ void lothars__setsockopt(int fd
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The sendto() function shall send a message through a connection-mode
@@ -253,18 +246,13 @@ void lothars__setsockopt(int fd
   @salen: Specifies the length of the sockaddr structure pointed to by
       the dest_addr argument.
 */
-void lothars__sendto( int fd
-		, const void *ptr
-		, size_t nbytes
-		, int flags
-		, const struct sockaddr *sa
-		, socklen_t salen)
+void lothars__sendto(int fd, const void *ptr, size_t nbytes, int flags,
+		     const struct sockaddr *sa, socklen_t salen)
 {
-	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
+	if ((ssize_t)nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   inet_pton - convert IPv4 and IPv6 addresses from text to binary form
@@ -288,12 +276,13 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
 	int res;
 	if (0 > (res = inet_pton(family, strptr, addrptr))) {
-		err_sys("%s() error for %s (check the passed address family?)", __func__, strptr); // errno set
+		err_sys("%s() error for %s (check the passed address family?)",
+			__func__, strptr); // errno set
 	} else if (0 == res) {
-		err_quit("%s() error for %s (check the passed strptr)", __func__, strptr); // errno not set
+		err_quit("%s() error for %s (check the passed strptr)",
+			 __func__, strptr); // errno not set
 	}
 }
-
 
 /*
   The read() function shall attempt to read nbyte bytes from the file
@@ -312,34 +301,35 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 */
 ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 	if (-1 == (bytes = read(fd, ptr, nbytes))) {
 		err_sys("read error");
 	}
 	return bytes;
 }
 
-
-
 /********************************************************************************************/
 // worker implementation
 
-
 /********************************************************************************************/
-
 
 /*
   main
 */
 int main(int argc, char *argv[])
 {
-	char senderip[16]; memset(senderip, '\0', sizeof(senderip));
-	char groupip[16]; memset(groupip, '\0', sizeof(groupip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char senderip[16];
+	memset(senderip, '\0', sizeof(senderip));
+	char groupip[16];
+	memset(groupip, '\0', sizeof(groupip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (4 != argc) {
-		fprintf(stderr, "usage: %s <senderip> <groupip> <port>\ne.g.\n$> %s 203.106.93.94 225.1.1.1 5555\n", argv[0], argv[0]);
-//		fprintf(stderr, "usage: %s <senderip> <groupip> <port>\ne.g.\n$> %s 203.106.93.94 226.1.1.1 4321\n", argv[0], argv[0]);
+		fprintf(stderr,
+			"usage: %s <senderip> <groupip> <port>\ne.g.\n$> %s 203.106.93.94 225.1.1.1 5555\n",
+			argv[0], argv[0]);
+		//		fprintf(stderr, "usage: %s <senderip> <groupip> <port>\ne.g.\n$> %s 203.106.93.94 226.1.1.1 4321\n", argv[0], argv[0]);
 		exit(EXIT_FAILURE);
 	}
 	strncpy(senderip, argv[1], sizeof(senderip));
@@ -351,20 +341,18 @@ int main(int argc, char *argv[])
 	strncpy(port, argv[3], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-
 	// create a datagram socket on which to send
 	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 	fprintf(stdout, "Opening the datagram socket...OK.\n");
 
-
 	// initialize the group sockaddr structure with a group
 	// address and port
-	memset((char *) &saddr_group, 0, sizeof(saddr_group));
+	memset((char *)&saddr_group, 0, sizeof(saddr_group));
 	saddr_group.sin_family = AF_INET;
 	saddr_group.sin_addr.s_addr = inet_addr(groupip); // e.g. "226.1.1.1"
 	saddr_group.sin_port = htons(atoi(port)); // e.g. 4321
 
-/* disable loopback so you do not receive your own datagrams
+	/* disable loopback so you do not receive your own datagrams
 	{
 		char loopch = 0;
 		lothars__setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP, (char *)&loopch, sizeof(loopch));
@@ -377,20 +365,20 @@ int main(int argc, char *argv[])
 	// multicast capable interface
 
 	lothars__inet_pton(AF_INET, senderip, &addr_local.s_addr);
-	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_IF, (char *)&addr_local, sizeof(addr_local));
+	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_IF,
+			    (char *)&addr_local, sizeof(addr_local));
 	fprintf(stdout, "Setting the local interface...OK\n");
 
-
 	// send a message to the multicast group specified by the saddr_group sockaddr structure.
-	lothars__sendto(fd_sock, databuf, MAXLINE, 0, (struct sockaddr*)&saddr_group, sizeof(saddr_group));
+	lothars__sendto(fd_sock, databuf, MAXLINE, 0,
+			(struct sockaddr *)&saddr_group, sizeof(saddr_group));
 	fprintf(stdout, "Sending datagram message...OK\n");
 
-
-//* try the re-read from the socket if the loopback is not disable
+	//* try the re-read from the socket if the loopback is not disable
 	lothars__read(fd_sock, databuf, MAXLINE);
 	fprintf(stdout, "Reading datagram message from client...OK\n");
 	fprintf(stdout, "The message is: %s\n", databuf);
-// */
+	// */
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);

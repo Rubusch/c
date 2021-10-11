@@ -11,14 +11,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ipc.h>   // ftok(), msgget()
-#include <sys/msg.h>   // msgget()
+#include <sys/ipc.h> // ftok(), msgget()
+#include <sys/msg.h> // msgget()
 #include <sys/types.h> // ftok(), msgget()
 
 #include "../messagequeue.h"
 
 #define ME "ITCHY:"
-
 
 int main(int argc, char **argv)
 {

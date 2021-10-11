@@ -13,17 +13,15 @@
 #define NUM_OF_NODES_DIGITS 4
 
 typedef struct tree_leaf {
+	// ptr: lhs
+	struct tree_leaf *left;
 
-  // ptr: lhs
-  struct tree_leaf *left;
+	// ptr: rhs
+	struct tree_leaf *right;
 
-  // ptr: rhs
-  struct tree_leaf *right;
-
-  // data
-  unsigned int data;
+	// data
+	unsigned int data;
 } leaf;
-
 
 // specific tree abstraction
 

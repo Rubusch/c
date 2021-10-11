@@ -1,14 +1,12 @@
 #ifndef DEVKIT_SNIPPET_IFI
 #define DEVKIT_SNIPPET_IFI
 
-
 /*
 
   ---
   References:
   Unix Network Programming, Stevens (1996)
 */
-
 
 /* includes */
 
@@ -26,7 +24,7 @@
 #include <linux/in6.h> // struct sockaddr_in6
 #include <linux/un.h> // struct sockaddr_un
 /*/ // alternative unix implementation
-#include <netinet/in.h>  // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
+#include <netinet/in.h> // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
 #include <sys/un.h> // struct sockaddr_un (official)
 // */
 #include <sys/socket.h>
@@ -41,11 +39,10 @@
 #include "lib_unix.h"
 #include "lib_error.h"
 
-
 /* constants */
 
 #define IFI_NAME 16 /* same as IFNAMSIZ in <net/if.h> */
-#define IFI_HADDR  8 /* allow for 64-bit EUI-64 in future */
+#define IFI_HADDR 8 /* allow for 64-bit EUI-64 in future */
 
 /* ifi_info list */
 struct ifi_info {
@@ -62,14 +59,12 @@ struct ifi_info {
 	struct ifi_info *ifi_next; /* next of these structures */
 };
 
-#define IFI_ALIAS 1   /* ifi_addr is an alias */
-
+#define IFI_ALIAS 1 /* ifi_addr is an alias */
 
 /* forwards */
 
-struct ifi_info* get_ifi_info(int, int);
-struct ifi_info* lothars__get_ifi_info(int, int);
+struct ifi_info *get_ifi_info(int, int);
+struct ifi_info *lothars__get_ifi_info(int, int);
 void free_ifi_info(struct ifi_info *);
-
 
 #endif /* DEVKIT_SNIPPET_IFI */

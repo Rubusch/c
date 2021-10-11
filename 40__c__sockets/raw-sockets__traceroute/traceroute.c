@@ -16,7 +16,6 @@
 
 #include "traceroute.h"
 
-
 /*
   helpers
 */
@@ -38,19 +37,19 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	errno_save = errno; // value caller might want printed
 
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
+	//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
 
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 }
-
 
 /* error */
 
@@ -59,26 +58,24 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    Fatal error unrelated to system call. Print message and terminate.
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /* socket */
 
@@ -106,7 +103,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /*
   The setsockopt() function shall set the option specified by the
   option_name argument, at the protocol level specified by the level
@@ -125,11 +121,8 @@ int lothars__socket(int family, int type, int protocol)
   @optlenptr: The option_len argument shall be modified to indicate
       the actual length of the value.
 */
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		close(fd);
@@ -139,7 +132,6 @@ void lothars__setsockopt(int fd
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The bind() function shall assign a local socket address address to a
@@ -164,7 +156,6 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
 /*
   The sendto() function shall send a message through a connection-mode
   or connectionless-mode socket. If the socket is connectionless-mode,
@@ -182,18 +173,13 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
   @salen: Specifies the length of the sockaddr structure pointed to by
       the dest_addr argument.
 */
-void lothars__sendto( int fd
-	      , const void *ptr
-	      , size_t nbytes
-	      , int flags
-	      , const struct sockaddr *sa
-	      , socklen_t salen)
+void lothars__sendto(int fd, const void *ptr, size_t nbytes, int flags,
+		     const struct sockaddr *sa, socklen_t salen)
 {
-	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
+	if ((ssize_t)nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   host server - by getaddrinfo()
@@ -214,25 +200,25 @@ void lothars__sendto( int fd
 
   Return pointer to first on linked list.
 */
-struct addrinfo* lothars__host_serv(const char *host, const char *serv, int family, int socktype)
+struct addrinfo *lothars__host_serv(const char *host, const char *serv,
+				    int family, int socktype)
 {
 	struct addrinfo hints, *res = NULL;
 	int eai = -1;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_CANONNAME; // always return canonical name
-	hints.ai_family = family;  // 0, AF_INET, AF_INET6, etc.
+	hints.ai_family = family; // 0, AF_INET, AF_INET6, etc.
 	hints.ai_socktype = socktype; // 0, SOCK_STREAM, SOCK_DGRAM, etc
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("%s() error for %s, %s: %s", __func__
-			 , (host == NULL) ? "(no hostname)" : host
-			 , (serv == NULL) ? "(no service name)" : serv
-			 , gai_strerror(eai));
+		err_quit("%s() error for %s, %s: %s", __func__,
+			 (host == NULL) ? "(no hostname)" : host,
+			 (serv == NULL) ? "(no service name)" : serv,
+			 gai_strerror(eai));
 	}
 
 	return res;
 }
-
 
 /* unix */
 
@@ -249,7 +235,7 @@ struct addrinfo* lothars__host_serv(const char *host, const char *serv, int fami
   @signo: The signal number.
   @func: The signal handler function.
 */
-Sigfunc* signal_intr(int signo, Sigfunc *func)
+Sigfunc *signal_intr(int signo, Sigfunc *func)
 {
 	struct sigaction act, oact;
 
@@ -262,7 +248,7 @@ Sigfunc* signal_intr(int signo, Sigfunc *func)
 	}
 	return oact.sa_handler;
 }
-Sigfunc* lothars__signal_intr(int signo, Sigfunc *func)
+Sigfunc *lothars__signal_intr(int signo, Sigfunc *func)
 {
 	Sigfunc *sigfunc;
 	if (SIG_ERR == (sigfunc = signal_intr(signo, func))) {
@@ -270,8 +256,6 @@ Sigfunc* lothars__signal_intr(int signo, Sigfunc *func)
 	}
 	return sigfunc;
 }
-
-
 
 /*
   The gettimeofday() function shall obtain the current time, expressed
@@ -285,11 +269,13 @@ Sigfunc* lothars__signal_intr(int signo, Sigfunc *func)
 */
 void lothars__gettimeofday(struct timeval *tv)
 {
-	if (-1 == gettimeofday(tv, NULL)) { // if 'tzp' is not a NULL pointer, the behavior is unspecified
+	if (-1 ==
+	    gettimeofday(
+		    tv,
+		    NULL)) { // if 'tzp' is not a NULL pointer, the behavior is unspecified
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The malloc() function allocates size bytes and returns a pointer to
@@ -301,7 +287,7 @@ void lothars__gettimeofday(struct timeval *tv)
 
   @size: Size of the memory in byte to allocate.
 */
-void* lothars__malloc(size_t size)
+void *lothars__malloc(size_t size)
 {
 	void *ptr;
 	if (NULL == (ptr = malloc(size))) {
@@ -309,7 +295,6 @@ void* lothars__malloc(size_t size)
 	}
 	return ptr;
 }
-
 
 /* inet */
 
@@ -325,25 +310,25 @@ void* lothars__malloc(size_t size)
 
   Returns the host/ip.
 */
-char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
+char *sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 {
-	static char str[128];  // Unix domain is largest
+	static char str[128]; // Unix domain is largest
 
-	switch (sa->sa_family){
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-		if (NULL == inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
+	switch (sa->sa_family) {
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
+		if (NULL ==
+		    inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
 			return NULL;
 		}
 		return str;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
-		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str, sizeof(str))) {
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
+		if (NULL ==
+		    inet_ntop(AF_INET6, &sin6->sin6_addr, str, sizeof(str))) {
 			return NULL;
 		}
 		return str;
@@ -351,9 +336,8 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 #endif
 
 #ifdef AF_UNIX
-	case AF_UNIX:
-	{
-		struct sockaddr_un *unp = (struct sockaddr_un *) sa;
+	case AF_UNIX: {
+		struct sockaddr_un *unp = (struct sockaddr_un *)sa;
 		/*
 		   OK to have no pathname bound to the socket: happens on
 		   every connect() unless client calls bind() first.
@@ -367,12 +351,14 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	}
 #endif
 	default:
-		snprintf(str, sizeof(str), "sock_ntop_host: unknown AF_xxx: %d, len %d", sa->sa_family, salen);
+		snprintf(str, sizeof(str),
+			 "sock_ntop_host: unknown AF_xxx: %d, len %d",
+			 sa->sa_family, salen);
 		return str;
 	}
 	return NULL;
 }
-char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
+char *lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = sock_ntop_host(sa, salen))) {
@@ -380,7 +366,6 @@ char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	}
 	return ptr;
 }
-
 
 /* snippets socket */
 
@@ -401,7 +386,6 @@ void tv_sub(struct timeval *out, struct timeval *in)
 	out->tv_sec -= in->tv_sec;
 }
 
-
 /*
   sock_set_port()
 
@@ -417,24 +401,21 @@ void tv_sub(struct timeval *out, struct timeval *in)
 void sock_set_port(struct sockaddr *sa, socklen_t salen, int port)
 {
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 		sin->sin_port = port;
 		return;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
 		sin6->sin6_port = port;
 		return;
 	}
 #endif
 	}
 }
-
 
 /*
   sock_cmp_addr()
@@ -453,50 +434,51 @@ void sock_set_port(struct sockaddr *sa, socklen_t salen, int port)
   bytes of s1 is found, respectively, to be less than, to match, or be
   greater than the first n bytes of s2. I.e. 0 means both are equal.
 */
-int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2, socklen_t salen)
+int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2,
+		  socklen_t salen)
 {
 	if (sa1->sa_family != sa2->sa_family) {
 		return -1;
 	}
 
 	switch (sa1->sa_family) {
-	case AF_INET:
-	{
-		return memcmp(&((struct sockaddr_in *) sa1)->sin_addr,
-			      &((struct sockaddr_in *) sa2)->sin_addr,
+	case AF_INET: {
+		return memcmp(&((struct sockaddr_in *)sa1)->sin_addr,
+			      &((struct sockaddr_in *)sa2)->sin_addr,
 			      sizeof(struct in_addr));
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		return memcmp(&((struct sockaddr_in6 *) sa1)->sin6_addr,
-			      &((struct sockaddr_in6 *) sa2)->sin6_addr,
+	case AF_INET6: {
+		return memcmp(&((struct sockaddr_in6 *)sa1)->sin6_addr,
+			      &((struct sockaddr_in6 *)sa2)->sin6_addr,
 			      sizeof(struct in6_addr));
 	}
 #endif
 
 #ifdef AF_UNIX
-	case AF_UNIX:
-	{
-		return strcmp(((struct sockaddr_un *) sa1)->sun_path,
-			      ((struct sockaddr_un *) sa2)->sun_path);
+	case AF_UNIX: {
+		return strcmp(((struct sockaddr_un *)sa1)->sun_path,
+			      ((struct sockaddr_un *)sa2)->sun_path);
 	}
 #endif
 	}
 	return -1;
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
 /* init strategy object */
-struct protocol proto_v4 = { icmpcode_v4, recv_v4, NULL, NULL, NULL, NULL, 0, IPPROTO_ICMP, IPPROTO_IP, IP_TTL };
+struct protocol proto_v4 = { icmpcode_v4, recv_v4, NULL, NULL,
+			     NULL,	NULL,    0,    IPPROTO_ICMP,
+			     IPPROTO_IP,  IP_TTL };
 #ifdef IPV6
-struct protocol proto_v6 = { icmpcode_v6, recv_v6, NULL, NULL, NULL, NULL, 0, IPPROTO_ICMPV6, IPPROTO_IPV6, IPV6_UNICAST_HOPS };
+struct protocol proto_v6 = {
+	icmpcode_v6, recv_v6, NULL,	   NULL,	 NULL,
+	NULL,	0,       IPPROTO_ICMPV6, IPPROTO_IPV6, IPV6_UNICAST_HOPS
+};
 #endif
-
 
 /* file wide globals in .c file to hide them from outside */
 
@@ -520,7 +502,7 @@ char recvbuf[BUFSIZE];
 char sendbuf[BUFSIZE];
 
 // number of data bytes following the ICMP header
-char *host=NULL;
+char *host = NULL;
 
 // increment for each sendto()
 int gotalarm;
@@ -530,8 +512,6 @@ int n_sent;
 int fd_send; // socket file descriptor: udp socket
 int fd_recv; // socket file descriptor: raw socket
 
-
-
 /*
   set flag to note that alarm occured and interrupt the recvfrom
 */
@@ -540,20 +520,20 @@ void sig_alrm(int signo)
 	gotalarm = 1;
 }
 
-
 /*
   The game loop performing the traceroute stored in the strategy
   object.
 */
 void worker_routine(void)
 {
-	int seq=-1, code=-1, done=-1;
-	double rtt=0.0;
-	struct rec *rec=NULL;
+	int seq = -1, code = -1, done = -1;
+	double rtt = 0.0;
+	struct rec *rec = NULL;
 	struct timeval tv_recv;
 
 	// generate raw socket for receiving
-	fd_recv = lothars__socket(proto->sa_send->sa_family, SOCK_RAW, proto->icmp_proto);
+	fd_recv = lothars__socket(proto->sa_send->sa_family, SOCK_RAW,
+				  proto->icmp_proto);
 
 	// don't need special permissions anymore
 	setuid(getuid());
@@ -564,7 +544,8 @@ void worker_routine(void)
 		ICMP6_FILTER_SETBLOCKALL(&v6_filter);
 		ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &v6_filter);
 		ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &v6_filter);
-		setsockopt(fd_recv, IPPROTO_IPV6, ICMP6_FILTER, &v6_filter, sizeof(v6_filter));  
+		setsockopt(fd_recv, IPPROTO_IPV6, ICMP6_FILTER, &v6_filter,
+			   sizeof(v6_filter));
 	}
 #endif
 
@@ -584,45 +565,63 @@ void worker_routine(void)
 
 	seq = 0;
 	done = 0;
-	for (ttl=1; (ttl<=max_ttl) && (done == 0); ++ttl) {
-		lothars__setsockopt(fd_send, proto->ttl_level, proto->ttl_optname, &ttl, sizeof(ttl));
+	for (ttl = 1; (ttl <= max_ttl) && (done == 0); ++ttl) {
+		lothars__setsockopt(fd_send, proto->ttl_level,
+				    proto->ttl_optname, &ttl, sizeof(ttl));
 		memset(proto->sa_last, 0, proto->sa_len);
 		fprintf(stdout, "%2d ", ttl);
 		fflush(stdout);
 
-		for (probe=0; probe<n_probes; ++probe) {
-			rec = (struct rec*) sendbuf;
+		for (probe = 0; probe < n_probes; ++probe) {
+			rec = (struct rec *)sendbuf;
 			rec->rec_seq = ++seq; // use sequence numbers
 			rec->rec_ttl = ttl;
 			lothars__gettimeofday(&rec->rec_tv); // use timestamp
 
-			sock_set_port(proto->sa_send, proto->sa_len, htons(d_port + seq));
-			lothars__sendto(fd_send, sendbuf, datalen, 0, proto->sa_send, proto->sa_len);
+			sock_set_port(proto->sa_send, proto->sa_len,
+				      htons(d_port + seq));
+			lothars__sendto(fd_send, sendbuf, datalen, 0,
+					proto->sa_send, proto->sa_len);
 
 			// now, call receiver function (depends on IPv4, IPv6,...)
-			if (-3 == (code = (*proto->recv) (seq, &tv_recv))) {
+			if (-3 == (code = (*proto->recv)(seq, &tv_recv))) {
 				// timeout, no reply
 				fprintf(stdout, " *");
 
 			} else {
 				char str[NI_MAXHOST];
-				if (0 != sock_cmp_addr(proto->sa_recv, proto->sa_last, proto->sa_len)) {
-					if (0 == getnameinfo(proto->sa_recv, proto->sa_len, str, sizeof(str), NULL, 0, 0)) {
-						fprintf(stdout, " %s (%s)", str, lothars__sock_ntop_host(proto->sa_recv, proto->sa_len));
+				if (0 != sock_cmp_addr(proto->sa_recv,
+						       proto->sa_last,
+						       proto->sa_len)) {
+					if (0 == getnameinfo(proto->sa_recv,
+							     proto->sa_len, str,
+							     sizeof(str), NULL,
+							     0, 0)) {
+						fprintf(stdout, " %s (%s)", str,
+							lothars__sock_ntop_host(
+								proto->sa_recv,
+								proto->sa_len));
 					} else {
-						fprintf(stdout, " %s", lothars__sock_ntop_host(proto->sa_recv, proto->sa_len));
+						fprintf(stdout, " %s",
+							lothars__sock_ntop_host(
+								proto->sa_recv,
+								proto->sa_len));
 					}
-					memcpy(proto->sa_last, proto->sa_recv, proto->sa_len);
+					memcpy(proto->sa_last, proto->sa_recv,
+					       proto->sa_len);
 				}
 				tv_sub(&tv_recv, &rec->rec_tv);
-				rtt = tv_recv.tv_sec * 1000.0 + tv_recv.tv_usec / 1000.0;
+				rtt = tv_recv.tv_sec * 1000.0 +
+				      tv_recv.tv_usec / 1000.0;
 				fprintf(stdout, " %.3f ms", rtt);
 
 				// prot unreachable, at destination
 				if (code == -1) {
 					++done;
 				} else if (0 <= code) {
-					fprintf(stdout, " (ICMP %s)", (*proto->icmpcode) (code)); // print icmp code
+					fprintf(stdout, " (ICMP %s)",
+						(*proto->icmpcode)(
+							code)); // print icmp code
 				}
 			}
 			fflush(stdout); // "real time" output
@@ -630,7 +629,6 @@ void worker_routine(void)
 		fprintf(stdout, "\n");
 	}
 }
-
 
 /*
   IPv4 receive function, inits the tv instance with the timestamp
@@ -641,14 +639,14 @@ void worker_routine(void)
   -1 on ICMP prot unreachable (caller is done)
   >= 0 return value is some other ICMP unreachable code
 */
-int recv_v4(int seq, struct timeval* tv)
+int recv_v4(int seq, struct timeval *tv)
 {
 	int hlen1, hlen2, icmplen, ret;
 	socklen_t len;
 	ssize_t cnt;
-	struct ip *ip=NULL, *ip_host=NULL;
-	struct icmp *icmp=NULL;
-	struct udphdr *udp=NULL;
+	struct ip *ip = NULL, *ip_host = NULL;
+	struct icmp *icmp = NULL;
+	struct udphdr *udp = NULL;
 
 	gotalarm = 0; // global
 	alarm(3);
@@ -659,7 +657,8 @@ int recv_v4(int seq, struct timeval* tv)
 		}
 
 		len = proto->sa_len;
-		cnt = recvfrom(fd_recv, recvbuf, sizeof(recvbuf), 0, proto->sa_recv, &len);
+		cnt = recvfrom(fd_recv, recvbuf, sizeof(recvbuf), 0,
+			       proto->sa_recv, &len);
 		if (cnt < 0) {
 			if (errno == EINTR) { // deal with interrupt (ignore)
 				continue;
@@ -669,34 +668,35 @@ int recv_v4(int seq, struct timeval* tv)
 		}
 
 		// start reading IP header
-		ip = (struct ip*) recvbuf;
+		ip = (struct ip *)recvbuf;
 		hlen1 = ip->ip_hl << 2; // length of IP header
 
 		// start of ICMP header
-		icmp = (struct icmp*) (recvbuf + hlen1);
+		icmp = (struct icmp *)(recvbuf + hlen1);
 		if (8 > (icmplen = cnt - hlen1)) {
 			// not enough to look at ICMP header
 			continue;
 		}
 
 		// evaluation
-		if ((icmp->icmp_type == ICMP_TIMXCEED) && (icmp->icmp_code == ICMP_TIMXCEED_INTRANS)) {
+		if ((icmp->icmp_type == ICMP_TIMXCEED) &&
+		    (icmp->icmp_code == ICMP_TIMXCEED_INTRANS)) {
 			if (icmplen < 8 + sizeof(struct ip)) {
 				// not enough data to look at inner IP
 				continue;
 			}
 
-			ip_host = (struct ip*) (recvbuf + hlen1 + 8);
+			ip_host = (struct ip *)(recvbuf + hlen1 + 8);
 			hlen2 = ip_host->ip_hl << 2;
 			if (icmplen < 8 + hlen2 + 4) {
 				// not enough data to look at UDP ports
 				continue;
 			}
 
-			udp = (struct udphdr*) (recvbuf + hlen1 + 8 + hlen2);
-			if ((ip_host->ip_p == IPPROTO_UDP)
-			   && (udp->source == htons(s_port))
-			   && (udp->dest == htons(d_port)) ) {
+			udp = (struct udphdr *)(recvbuf + hlen1 + 8 + hlen2);
+			if ((ip_host->ip_p == IPPROTO_UDP) &&
+			    (udp->source == htons(s_port)) &&
+			    (udp->dest == htons(d_port))) {
 				// we hit an intermediate router
 				ret = -2;
 				break;
@@ -708,18 +708,17 @@ int recv_v4(int seq, struct timeval* tv)
 				continue;
 			}
 
-			ip_host = (struct ip*) (recvbuf + hlen1 + 8);
+			ip_host = (struct ip *)(recvbuf + hlen1 + 8);
 			hlen2 = ip_host->ip_hl << 2;
 			if (icmplen < 8 + hlen2 + 4) {
 				// not enough data to look at UDP ports
 				continue;
 			}
 
-			udp = (struct udphdr*) (recvbuf + hlen1 + 8 + hlen2);
-			if ((ip_host->ip_p == IPPROTO_UDP)
-			   && (udp->source == htons(s_port))
-			   && (udp->dest = htons(d_port + seq))) {
-
+			udp = (struct udphdr *)(recvbuf + hlen1 + 8 + hlen2);
+			if ((ip_host->ip_p == IPPROTO_UDP) &&
+			    (udp->source == htons(s_port)) &&
+			    (udp->dest = htons(d_port + seq))) {
 				if (icmp->icmp_code == ICMP_UNREACH_PORT) {
 					// have reached destination
 					ret = -1;
@@ -731,10 +730,10 @@ int recv_v4(int seq, struct timeval* tv)
 			}
 		}
 		if (verbose) {
-			fprintf(stdout, " (from %s: type=%d, code %d)\n"
-			       , lothars__sock_ntop_host(proto->sa_recv, proto->sa_len)
-			       , icmp->icmp_type
-			       , icmp->icmp_code);
+			fprintf(stdout, " (from %s: type=%d, code %d)\n",
+				lothars__sock_ntop_host(proto->sa_recv,
+							proto->sa_len),
+				icmp->icmp_type, icmp->icmp_code);
 		}
 		// some other ICMP error, recvfrom() again
 	}
@@ -748,7 +747,6 @@ int recv_v4(int seq, struct timeval* tv)
 	return ret;
 }
 
-
 /*
   receive function, returns
   -3 on timeout
@@ -758,14 +756,14 @@ int recv_v4(int seq, struct timeval* tv)
 */
 int recv_v6(int seq, struct timeval *tv)
 {
-	int ret=-1;
+	int ret = -1;
 #ifdef IPV6
 	int hlen2, icmp6len;
 	ssize_t cnt;
 	socklen_t len;
-	struct ip6_hdr *ip_host6=NULL;
-	struct icmp6_hdr *icmp6=NULL;
-	struct udphdr *udp=NULL;
+	struct ip6_hdr *ip_host6 = NULL;
+	struct icmp6_hdr *icmp6 = NULL;
+	struct udphdr *udp = NULL;
 
 	gotalarm = 0;
 	alarm(3);
@@ -776,7 +774,8 @@ int recv_v6(int seq, struct timeval *tv)
 		}
 
 		len = proto->sa_len;
-		if (0 > (cnt = recvfrom(fd_recv, recvbuf, sizeof(recvbuf), 0, proto->sa_recv, &len))) {
+		if (0 > (cnt = recvfrom(fd_recv, recvbuf, sizeof(recvbuf), 0,
+					proto->sa_recv, &len))) {
 			if (errno == EINTR) {
 				continue;
 			} else {
@@ -785,27 +784,25 @@ int recv_v6(int seq, struct timeval *tv)
 		}
 
 		// ICMP header
-		icmp6 = (struct icmp6_hdr*) recvbuf;
+		icmp6 = (struct icmp6_hdr *)recvbuf;
 		if (8 > (icmp6len = cnt)) {
 			// not enough to look at ICMP header
 			continue;
 		}
 
-		if ( (icmp6->icmp6_type == ICMP6_TIME_EXCEEDED)
-		    && (icmp6->icmp6_code == ICMP6_TIME_EXCEED_TRANSIT)) {
-
+		if ((icmp6->icmp6_type == ICMP6_TIME_EXCEEDED) &&
+		    (icmp6->icmp6_code == ICMP6_TIME_EXCEED_TRANSIT)) {
 			if (icmp6len < (8 + sizeof(struct ip6_hdr) + 4)) {
 				// not enough data to look at inner header
 				continue;
 			}
 
-			ip_host6 = (struct ip6_hdr*) (recvbuf + 8);
+			ip_host6 = (struct ip6_hdr *)(recvbuf + 8);
 			hlen2 = sizeof(struct ip6_hdr);
-			udp = (struct udphdr*) (recvbuf + 8);
-			if ((ip_host6->ip6_nxt == IPPROTO_UDP)
-			   && (udp->source == htons(s_port))
-			   && (udp->dest == htons(d_port + seq)) ) {
-
+			udp = (struct udphdr *)(recvbuf + 8);
+			if ((ip_host6->ip6_nxt == IPPROTO_UDP) &&
+			    (udp->source == htons(s_port)) &&
+			    (udp->dest == htons(d_port + seq))) {
 				// we hit an intermediate router
 				ret = -2;
 			}
@@ -817,14 +814,14 @@ int recv_v6(int seq, struct timeval *tv)
 				continue;
 			}
 
-			ip_host6 = (struct ip6_hdr*) (recvbuf + 8);
+			ip_host6 = (struct ip6_hdr *)(recvbuf + 8);
 			hlen2 = sizeof(struct ip6_hdr);
-			udp = (struct udphdr*) (recvbuf + 8 + hlen2);
-			if ((ip_host6->ip6_nxt == IPPROTO_UDP)
-			   && (udp->source == htons(s_port))
-			   && (udp->dest == htons(d_port + seq))) {
-
-				if (icmp6->icmp6_code == ICMP6_DST_UNREACH_NOPORT) {
+			udp = (struct udphdr *)(recvbuf + 8 + hlen2);
+			if ((ip_host6->ip6_nxt == IPPROTO_UDP) &&
+			    (udp->source == htons(s_port)) &&
+			    (udp->dest == htons(d_port + seq))) {
+				if (icmp6->icmp6_code ==
+				    ICMP6_DST_UNREACH_NOPORT) {
 					ret = -1;
 				} else {
 					ret = icmp6->icmp6_code; // 0, 1, 2, ...
@@ -832,10 +829,10 @@ int recv_v6(int seq, struct timeval *tv)
 				break;
 			}
 		} else if (verbose) {
-			fprintf(stdout, " (from %s: type=%d, code=%d)\n"
-			       , lothars__sock_ntop_host(proto->sa_recv, proto->sa_len)
-			       , icmp6->icmp6_type
-			       , icmp6->icmp6_code);
+			fprintf(stdout, " (from %s: type=%d, code=%d)\n",
+				lothars__sock_ntop_host(proto->sa_recv,
+							proto->sa_len),
+				icmp6->icmp6_type, icmp6->icmp6_code);
 		}
 		// some other ICMP error, recvfrom() again
 	}
@@ -846,35 +843,34 @@ int recv_v6(int seq, struct timeval *tv)
 	return ret;
 }
 
-
 /*
   Returns the description to a provided ICMP code to display.
 */
-const char* icmpcode_v4(int code)
+const char *icmpcode_v4(int code)
 {
 	static char errbuf[100];
 	memset(errbuf, '\0', sizeof(errbuf));
 
 	switch (code) {
-	case  0:
+	case 0:
 		return "network unreachable";
-	case  1:
+	case 1:
 		return "host unreachable";
-	case  2:
+	case 2:
 		return "protocol unreachable";
-	case  3:
+	case 3:
 		return "port unreachable";
-	case  4:
+	case 4:
 		return "fragmentation required but DF bit set";
-	case  5:
+	case 5:
 		return "source route failed";
-	case  6:
+	case 6:
 		return "destination network unknown";
-	case  7:
+	case 7:
 		return "destination host unknown";
-	case  8:
+	case 8:
 		return "source host isolated (obsolete)";
-	case  9:
+	case 9:
 		return "destination network administratively prohibited";
 	case 10:
 		return "destination host administratively prohibited";
@@ -895,11 +891,10 @@ const char* icmpcode_v4(int code)
 	}
 }
 
-
 /*
   Returns the description to a provided ICMP code to display.
 */
-const char* icmpcode_v6(int code)
+const char *icmpcode_v6(int code)
 {
 	static char errbuf[100];
 	memset(errbuf, '\0', sizeof(errbuf));
@@ -924,22 +919,21 @@ const char* icmpcode_v6(int code)
 
 /********************************************************************************************/
 
-
 /*
   main
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int cnt;
-	struct addrinfo *ai=NULL;
-	char *pchr=NULL;
+	struct addrinfo *ai = NULL;
+	char *pchr = NULL;
 
 	/* argument parsing */
 	opterr = 0;
 	while (-1 != (cnt = getopt(argc, argv, "m:v"))) {
 		switch (cnt) {
 		case 'm':
-			if(1 >= (max_ttl = atoi(optarg))){
+			if (1 >= (max_ttl = atoi(optarg))) {
 				err_quit("invalid -m value");
 			}
 			break;
@@ -962,11 +956,9 @@ int main(int argc, char** argv)
 
 	ai = lothars__host_serv(host, NULL, 0, 0);
 	pchr = lothars__sock_ntop_host(ai->ai_addr, ai->ai_addrlen);
-	fprintf(stdout, "traceroute to %s (%s): %d hops max, %d data bytes\n"
-	       , (ai->ai_canonname ? ai->ai_canonname : pchr)
-	       , pchr
-	       , max_ttl
-	       , datalen);
+	fprintf(stdout, "traceroute to %s (%s): %d hops max, %d data bytes\n",
+		(ai->ai_canonname ? ai->ai_canonname : pchr), pchr, max_ttl,
+		datalen);
 
 	// initialize according to protocol
 	if (ai->ai_family == AF_INET) {
@@ -975,7 +967,8 @@ int main(int argc, char** argv)
 #ifdef IPV6
 	} else if (ai->ai_family == AF_INET6) {
 		proto = &proto_v6;
-		if (IN6_IS_ADDR_V4MAPPED( &(((struct sockaddr_in6*) ai->ai_addr)->sin6_addr))) {
+		if (IN6_IS_ADDR_V4MAPPED(&(
+			    ((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr))) {
 			err_quit("cannot traceroute IPv4-mapped IPv6 address");
 		}
 #endif

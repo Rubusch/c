@@ -31,35 +31,33 @@ parent: READY.
 // forward declaration
 // TODO
 
-
 int main()
 {
-  // initializing the value
-  int value = 777;
-  printf("parent:\t%d\n", value);
+	// initializing the value
+	int value = 777;
+	printf("parent:\t%d\n", value);
 
-  // calling the function: pass-by-value
-  // TODO
+	// calling the function: pass-by-value
+	// TODO
 
-  printf("parent:\t%d\n", value);
+	printf("parent:\t%d\n", value);
 
-  puts("parent: READY.");
-  exit(EXIT_SUCCESS);
+	puts("parent: READY.");
+	exit(EXIT_SUCCESS);
 }
-
 
 /*
   called subfunction will get a copy of the value
 //*/
 void subfunction(int arg)
 {
-  puts("\n\t *** subfunction called *** \n");
-  printf("\tpassed value (before):\t%d\n", arg);
+	puts("\n\t *** subfunction called *** \n");
+	printf("\tpassed value (before):\t%d\n", arg);
 
-  puts("\n\t *** change value *** \n");
-  // change value
-  // TODO
+	puts("\n\t *** change value *** \n");
+	// change value
+	// TODO
 
-  printf("\tpassed value (after):\t%d\n", arg);
-  puts("\n\t *** subfunction done *** \n");
+	printf("\tpassed value (after):\t%d\n", arg);
+	puts("\n\t *** subfunction done *** \n");
 }

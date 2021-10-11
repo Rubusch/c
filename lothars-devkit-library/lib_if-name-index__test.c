@@ -7,26 +7,29 @@
 
 #include "test.h"
 
-
 // test definitions
 
-TEST__BEGIN(lothars__if_indextoname) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__if_indextoname)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__if_nametoindex) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__if_nametoindex)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__if_nameindex) {
-// TODO
-} TEST__END
-
-
+TEST__BEGIN(lothars__if_nameindex)
+{
+	// TODO
+}
+TEST__END
 
 /*
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	test__lothars__if_indextoname();
 	test__lothars__if_nametoindex();

@@ -12,7 +12,6 @@
 
 #include "lib_socket.h"
 
-
 /*
   The accept() function shall extract the first connection on the
   queue of pending connections, create a new socket with the same
@@ -44,7 +43,6 @@ again:
 	return res;
 }
 
-
 /*
   The bind() function shall assign a local socket address address to a
   socket identified by descriptor socket that has no local socket
@@ -68,7 +66,6 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
 /*
   The connect() function shall attempt to make a connection on a socket.
 
@@ -88,7 +85,6 @@ void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
 /*
   The getpeername() function shall retrieve the peer address of the
   specified socket, store this address in the sockaddr structure
@@ -101,13 +97,13 @@ void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
   @sa: The address argument to store the address.
   @address_len: The length of the address element.
 */
-void lothars__getpeername(int fd, struct sockaddr *address, socklen_t *address_len)
+void lothars__getpeername(int fd, struct sockaddr *address,
+			  socklen_t *address_len)
 {
 	if (0 > getpeername(fd, address, address_len)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The getsockname() function shall retrieve the locally-bound name of
@@ -121,13 +117,13 @@ void lothars__getpeername(int fd, struct sockaddr *address, socklen_t *address_l
   @sa: The address argument to store the address.
   @address_len: The length of the address element.
 */
-void lothars__getsockname(int fd, struct sockaddr *address, socklen_t *address_len)
+void lothars__getsockname(int fd, struct sockaddr *address,
+			  socklen_t *address_len)
 {
 	if (0 > getsockname(fd, address, address_len)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The getsockopt() function shall retrieve the value for the option
@@ -149,13 +145,13 @@ void lothars__getsockname(int fd, struct sockaddr *address, socklen_t *address_l
   @optlenptr: The option_len argument shall be modified to indicate
       the actual length of the value.
 */
-void lothars__getsockopt(int fd, int level, int optname, void *optval, socklen_t *optlenptr)
+void lothars__getsockopt(int fd, int level, int optname, void *optval,
+			 socklen_t *optlenptr)
 {
 	if (0 > getsockopt(fd, level, optname, optval, optlenptr)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The listen() function shall mark a connection-mode socket, specified
@@ -180,7 +176,6 @@ void lothars__listen(int fd, int backlog)
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The poll() function provides applications with a mechanism for
@@ -213,7 +208,6 @@ int lothars__poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
 	}
 	return res;
 }
-
 
 /*
   The recv() function shall receive data from a connection-mode or
@@ -257,7 +251,6 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
 	return res;
 }
 
-
 /*
   The recvfrom() function shall receive a message from a
   connection-mode or connectionless-mode socket. It is normally used
@@ -276,20 +269,15 @@ ssize_t lothars__recv(int fd, void *ptr, size_t nbytes, int flags)
   @salenptr: Specifies the length of the sockaddr structure pointed to
       by the address argument.
 */
-ssize_t lothars__recvfrom(int fd
-		  , void *ptr
-		  , size_t nbytes
-		  , int flags
-		  , struct sockaddr *sa
-		  , socklen_t *salenptr)
+ssize_t lothars__recvfrom(int fd, void *ptr, size_t nbytes, int flags,
+			  struct sockaddr *sa, socklen_t *salenptr)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = recvfrom(fd, ptr, nbytes, flags, sa, salenptr))) {
 		err_sys("%s() error", __func__);
 	}
 	return res;
 }
-
 
 /*
   The recvmsg() function shall receive a message from a
@@ -318,13 +306,12 @@ ssize_t lothars__recvfrom(int fd
 */
 ssize_t lothars__recvmsg(int fd, struct msghdr *msg, int flags)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = recvmsg(fd, msg, flags))) {
 		err_sys("%s() error", __func__);
 	}
 	return res;
 }
-
 
 /*
   The pselect() function shall examine the file descriptor sets whose
@@ -371,19 +358,15 @@ ssize_t lothars__recvmsg(int fd, struct msghdr *msg, int flags)
       parameter is not a null pointer, it specifies a maximum interval
       to wait for the selection to complete.
 */
-int lothars__select(int nfds
-	    , fd_set *readfds
-	    , fd_set *writefds
-	    , fd_set *exceptfds
-	    , struct timeval *timeout)
+int lothars__select(int nfds, fd_set *readfds, fd_set *writefds,
+		    fd_set *exceptfds, struct timeval *timeout)
 {
-	int  res;
+	int res;
 	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
 		err_sys("%s() error", __func__);
 	}
-	return res;  /* can return 0 on timeout */
+	return res; /* can return 0 on timeout */
 }
-
 
 /*
   The send() function shall initiate transmission of data from the
@@ -408,16 +391,12 @@ int lothars__select(int nfds
           communications. The significance and semantics of
           out-of-band data are protocol-specific.
 */
-void lothars__send( int fd
-	    , const void *ptr
-	    , size_t nbytes
-	    , int flags)
+void lothars__send(int fd, const void *ptr, size_t nbytes, int flags)
 {
-	if ((ssize_t) nbytes != send(fd, ptr, nbytes, flags)) {
+	if ((ssize_t)nbytes != send(fd, ptr, nbytes, flags)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The sendto() function shall send a message through a connection-mode
@@ -436,18 +415,13 @@ void lothars__send( int fd
   @salen: Specifies the length of the sockaddr structure pointed to by
       the dest_addr argument.
 */
-void lothars__sendto( int fd
-	      , const void *ptr
-	      , size_t nbytes
-	      , int flags
-	      , const struct sockaddr *sa
-	      , socklen_t salen)
+void lothars__sendto(int fd, const void *ptr, size_t nbytes, int flags,
+		     const struct sockaddr *sa, socklen_t salen)
 {
-	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
+	if ((ssize_t)nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The sendmsg() function shall send a message through a
@@ -480,7 +454,6 @@ void lothars__sendmsg(int fd, const struct msghdr *msg, int flags)
 	}
 }
 
-
 /*
   The setsockopt() function shall set the option specified by the
   option_name argument, at the protocol level specified by the level
@@ -499,11 +472,8 @@ void lothars__sendmsg(int fd, const struct msghdr *msg, int flags)
   @optlenptr: The option_len argument shall be modified to indicate
       the actual length of the value.
 */
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		close(fd);
@@ -513,7 +483,6 @@ void lothars__setsockopt(int fd
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   The shutdown() function shall cause all or part of a full-duplex
@@ -531,7 +500,6 @@ void lothars__shutdown(int fd, int how)
 		err_sys("%s() error", __func__);
 	}
 }
-
 
 /*
   sockatmark - determine whether socket is at out-of-band mark.
@@ -555,7 +523,6 @@ int lothars__sockatmark(int fd)
 	}
 	return res;
 }
-
 
 /*
   The socket() function shall create an unbound socket in a
@@ -581,7 +548,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /*
   The socketpair() function shall create an unbound pair of connected
   sockets in a specified domain, of a specified type, under the
@@ -603,7 +569,6 @@ void lothars__socketpair(int family, int type, int protocol, int fd[2])
 	}
 }
 
-
 /*
   host server - by getaddrinfo()
 
@@ -623,28 +588,25 @@ void lothars__socketpair(int family, int type, int protocol, int fd[2])
 
   Return pointer to first on linked list.
 */
-struct addrinfo* lothars__host_serv(const char *host, const char *serv, int family, int socktype)
+struct addrinfo *lothars__host_serv(const char *host, const char *serv,
+				    int family, int socktype)
 {
 	struct addrinfo hints, *res = NULL;
 	int eai = -1;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_CANONNAME; // always return canonical name
-	hints.ai_family = family;  // 0, AF_INET, AF_INET6, etc.
+	hints.ai_family = family; // 0, AF_INET, AF_INET6, etc.
 	hints.ai_socktype = socktype; // 0, SOCK_STREAM, SOCK_DGRAM, etc
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("%s() error for %s, %s: %s", __func__
-			 , (host == NULL) ? "(no hostname)" : host
-			 , (serv == NULL) ? "(no service name)" : serv
-			 , gai_strerror(eai));
+		err_quit("%s() error for %s, %s: %s", __func__,
+			 (host == NULL) ? "(no hostname)" : host,
+			 (serv == NULL) ? "(no service name)" : serv,
+			 gai_strerror(eai));
 	}
 
 	return res;
 }
-
-
-
-
 
 // ---
 
@@ -737,6 +699,3 @@ struct addrinfo* lothars__host_serv(const char *host, const char *serv, int fami
 	}
 #endif
 // */ // BSD
-
-
-

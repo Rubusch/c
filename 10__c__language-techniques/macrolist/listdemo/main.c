@@ -8,7 +8,6 @@
 
 #include "macrolist.h"
 
-
 int main()
 {
 	puts("uninitialized");

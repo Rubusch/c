@@ -12,11 +12,11 @@
 
 #include "snippet_socket.h"
 
-
 /*
   connect_nonb.c
 */
-int connect_nonb(int fd_sock, const struct sockaddr *saptr, socklen_t salen, int nsec)
+int connect_nonb(int fd_sock, const struct sockaddr *saptr, socklen_t salen,
+		 int nsec)
 {
 	int flags, res, error;
 	socklen_t len;
@@ -44,8 +44,9 @@ int connect_nonb(int fd_sock, const struct sockaddr *saptr, socklen_t salen, int
 	tval.tv_sec = nsec;
 	tval.tv_usec = 0;
 
-	if (0 == (res = lothars__select(fd_sock+1, &rset, &wset, NULL, (nsec ? &tval : NULL)))) {
-		close(fd_sock);  // timeout
+	if (0 == (res = lothars__select(fd_sock + 1, &rset, &wset, NULL,
+					(nsec ? &tval : NULL)))) {
+		close(fd_sock); // timeout
 		errno = ETIMEDOUT;
 		return -1;
 	}
@@ -53,7 +54,8 @@ int connect_nonb(int fd_sock, const struct sockaddr *saptr, socklen_t salen, int
 	if (FD_ISSET(fd_sock, &rset) || FD_ISSET(fd_sock, &wset)) {
 		len = sizeof(error);
 
-		if (0 > getsockopt(fd_sock, SOL_SOCKET, SO_ERROR, &error, &len)) {
+		if (0 >
+		    getsockopt(fd_sock, SOL_SOCKET, SO_ERROR, &error, &len)) {
 			return -1; // Solaris pending error
 		}
 	} else {
@@ -71,7 +73,6 @@ done:
 	return 0;
 }
 
-
 /*
   connect_timeo.c
 
@@ -82,7 +83,8 @@ static void connect_alarm(int signo)
 {
 	return; // just interrupt the connect()
 }
-int connect_timeo(int fd_sock, const struct sockaddr *saptr, socklen_t salen, int nsec)
+int connect_timeo(int fd_sock, const struct sockaddr *saptr, socklen_t salen,
+		  int nsec)
 {
 	Sigfunc *sigfunc;
 	int res;
@@ -105,15 +107,13 @@ int connect_timeo(int fd_sock, const struct sockaddr *saptr, socklen_t salen, in
 	return res;
 }
 
-
-void lothars__connect_timeo(int fd, const struct sockaddr *sa, socklen_t salen, int sec)
+void lothars__connect_timeo(int fd, const struct sockaddr *sa, socklen_t salen,
+			    int sec)
 {
 	if (0 > connect_timeo(fd, sa, salen, sec)) {
 		err_sys("%s() error", __func__);
 	}
 }
-
-
 
 /*
   daemon_init.c
@@ -122,7 +122,7 @@ void lothars__connect_timeo(int fd, const struct sockaddr *sa, socklen_t salen, 
 //int daemon_proc; // defined in error.c
 int daemon_init(const char *pname, int facility)
 {
-	int  idx;
+	int idx;
 	pid_t pid;
 
 	if (0 > (pid = lothars__fork())) {
@@ -146,7 +146,7 @@ int daemon_init(const char *pname, int facility)
 
 	// child 2 continues...
 
-//	daemon_proc = 1; // for err_XXX() functions
+	//	daemon_proc = 1; // for err_XXX() functions
 
 	chdir("/"); // change working directory
 
@@ -160,7 +160,7 @@ int daemon_init(const char *pname, int facility)
 	open("/dev/null", O_RDWR);
 	open("/dev/null", O_RDWR);
 
-//	openlog(pname, LOG_PID, facility); // TODO rm
+	//	openlog(pname, LOG_PID, facility); // TODO rm
 
 	return 0; // success
 }
@@ -171,29 +171,31 @@ int daemon_init(const char *pname, int facility)
 int daemon_proc; // defined in error.c for syslog
 void daemon_inetd(const char *pname, int facility)
 {
-//	daemon_proc = 1;  // for our err_XXX() functions
-	fprintf(stdout, "setting the eudaimonia to 1 and put this process to the background\n");
-//	openlog(pname, LOG_PID, facility); // use this when logging
+	//	daemon_proc = 1;  // for our err_XXX() functions
+	fprintf(stdout,
+		"setting the eudaimonia to 1 and put this process to the background\n");
+	//	openlog(pname, LOG_PID, facility); // use this when logging
 	fprintf(stdout, "loggging %s: %d\n", pname, facility);
 }
-
 
 /*
   dg_cli.c - prototype snippet
 */
-void dg_cli(FILE *fp, int fd_sock, const struct sockaddr *pservaddr, socklen_t servlen)
+void dg_cli(FILE *fp, int fd_sock, const struct sockaddr *pservaddr,
+	    socklen_t servlen)
 {
 	int n_bytes;
 	char sendline[MAXLINE], recvline[MAXLINE + 1];
 
 	while (lothars__fgets(sendline, MAXLINE, fp) != NULL) {
-		lothars__sendto(fd_sock, sendline, strlen(sendline), 0, pservaddr, servlen);
-		n_bytes = lothars__recvfrom(fd_sock, recvline, MAXLINE, 0, NULL, NULL);
+		lothars__sendto(fd_sock, sendline, strlen(sendline), 0,
+				pservaddr, servlen);
+		n_bytes = lothars__recvfrom(fd_sock, recvline, MAXLINE, 0, NULL,
+					    NULL);
 		recvline[n_bytes] = 0; // null terminate
 		lothars__fputs(recvline, stdout);
 	}
 }
-
 
 /*
   dg_echo.c - prototype snippet
@@ -202,17 +204,17 @@ void dg_echo(int fd_sock, struct sockaddr *pcliaddr, socklen_t clilen)
 {
 	int n_bytes;
 	socklen_t len;
-	char msg[MAXLINE]; memset(msg, '\0', sizeof(msg));
+	char msg[MAXLINE];
+	memset(msg, '\0', sizeof(msg));
 
 	len = clilen;
 	while (1) {
-//		len = clilen; // TODO check
-		n_bytes = lothars__recvfrom(fd_sock, msg, MAXLINE, 0, pcliaddr, &len);
+		//		len = clilen; // TODO check
+		n_bytes = lothars__recvfrom(fd_sock, msg, MAXLINE, 0, pcliaddr,
+					    &len);
 		lothars__sendto(fd_sock, msg, n_bytes, 0, pcliaddr, len);
 	}
 }
-
-
 
 /*
   demo snippet - family to level
@@ -234,7 +236,6 @@ int lothars__family_to_level(int family)
 	}
 }
 
-
 /*
   The getsockname() function shall retrieve the locally-bound name of
   the specified socket, store this address in the sockaddr structure
@@ -254,23 +255,22 @@ int lothars__socket_to_family(int fd_sock)
 	socklen_t len;
 
 	len = sizeof(ss);
-	if (0 > getsockname(fd_sock, (struct sockaddr *) &ss, &len)) {
+	if (0 > getsockname(fd_sock, (struct sockaddr *)&ss, &len)) {
 		err_sys("%s() error", __func__);
 		return -1;
 	}
 	return ss.ss_family;
 }
 
-
 /*
   demo snippet - gf time
 */
 
-char* gf_time(void)
+char *gf_time(void)
 {
 	struct timeval tv;
 	time_t time;
-	static char  str[30];
+	static char str[30];
 	char *ptr;
 
 	if (0 > gettimeofday(&tv, NULL)) {
@@ -281,11 +281,10 @@ char* gf_time(void)
 	strcpy(str, &ptr[11]);
 	// Fri Sep 13 00:00:00 1986\n\0
 	// 0123456789012345678901234 5
-	snprintf(str+8, sizeof(str)-8, ".%06ld", tv.tv_usec);
+	snprintf(str + 8, sizeof(str) - 8, ".%06ld", tv.tv_usec);
 
 	return str;
 }
-
 
 /*
   my_addrs
@@ -297,7 +296,7 @@ char* gf_time(void)
 
   Returns a pointer to the address.
 */
-char** my_addrs(int *addrtype)
+char **my_addrs(int *addrtype)
 {
 	struct hostent *hptr = NULL;
 	struct utsname myname;
@@ -314,7 +313,7 @@ char** my_addrs(int *addrtype)
 
 	return hptr->h_addr_list;
 }
-char** lothars__my_addrs(int *pfamily) // TODO name!             
+char **lothars__my_addrs(int *pfamily) // TODO name!
 {
 	char **pptr;
 	if (NULL == (pptr = my_addrs(pfamily))) {
@@ -323,8 +322,6 @@ char** lothars__my_addrs(int *pfamily) // TODO name!
 
 	return pptr;
 }
-
-
 
 /*
   demo snippets - worker for echo server (general, text)
@@ -355,7 +352,6 @@ again:
 	}
 }
 
-
 /*
   demo snippets - worker for echo client (general, text)
 
@@ -372,14 +368,14 @@ void worker__echo_cli(FILE *fp, int fd_sock)
 	memset(recvline, '\0', sizeof(recvline));
 	while (NULL != lothars__fgets(sendline, sizeof(sendline), fp)) {
 		lothars__writen(fd_sock, sendline, strlen(sendline));
-		if (0 == lothars__readline_fd(fd_sock, recvline, sizeof(recvline)))
-			err_quit("%s(): server terminated prematurely\n", __func__);
+		if (0 ==
+		    lothars__readline_fd(fd_sock, recvline, sizeof(recvline)))
+			err_quit("%s(): server terminated prematurely\n",
+				 __func__);
 
 		lothars__fputs(recvline, stdout);
 	}
 }
-
-
 
 /*
   demo snippets - worker for echo server (text)
@@ -412,7 +408,6 @@ void worker__echo_serv_str(int fd_sock)
 }
 // */
 
-
 /*
   demo snippets - worker for echo server (binary)
 
@@ -439,7 +434,8 @@ void worker__echo_serv_bin(int fd_sock)
 	struct result result;
 
 	while (1) {
-		if (0 == (nbytes = lothars__readn(fd_sock, &args, sizeof(args)))) {
+		if (0 ==
+		    (nbytes = lothars__readn(fd_sock, &args, sizeof(args)))) {
 			fprintf(stdout, "connection closed by other end\n");
 			return;
 		}
@@ -447,7 +443,6 @@ void worker__echo_serv_bin(int fd_sock)
 		lothars__writen(fd_sock, &result, sizeof(result));
 	}
 }
-
 
 /*
   demo snippets - worker for echo client (binary)
@@ -483,7 +478,6 @@ void worker__echo_cli_bin(FILE *fp, int fd_sock)
 	}
 }
 
-
 /*
   demo snippets - tcp_connect.c
 */
@@ -500,18 +494,20 @@ int lothars_tcp_connect(const char *host, const char *serv)
 	hints.ai_socktype = SOCK_STREAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("tcp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("tcp_connect error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 
 	ressave = res;
 
 	do {
-		if (0 > (fd_sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol))) {
+		if (0 > (fd_sock = socket(res->ai_family, res->ai_socktype,
+					  res->ai_protocol))) {
 			continue; // ignore this one
 		}
 
 		if (0 == connect(fd_sock, res->ai_addr, res->ai_addrlen)) {
-			break;  // success
+			break; // success
 		}
 
 		lothars__close(&fd_sock); // ignore this one
@@ -526,7 +522,6 @@ int lothars_tcp_connect(const char *host, const char *serv)
 	return fd_sock;
 }
 
-
 /*
   demo snippets - tcp_listen.c
 */
@@ -534,7 +529,7 @@ int lothars_tcp_connect(const char *host, const char *serv)
 int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 {
 	int listenfd, eai;
-	const int  on = 1;
+	const int on = 1;
 	struct addrinfo hints, *res, *ressave;
 
 	bzero(&hints, sizeof(struct addrinfo));
@@ -543,17 +538,20 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	hints.ai_socktype = SOCK_STREAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("tcp_listen error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("tcp_listen error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 
 	ressave = res;
 
 	do {
-		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		listenfd = socket(res->ai_family, res->ai_socktype,
+				  res->ai_protocol);
 		if (0 > listenfd) {
 			continue; // error, try next one
 		}
-		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on,
+				    sizeof(on));
 		if (0 == bind(listenfd, res->ai_addr, res->ai_addrlen)) {
 			break; // success
 		}
@@ -576,8 +574,6 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	return listenfd;
 }
 
-
-
 /*
   tv_sub
 
@@ -595,29 +591,30 @@ void tv_sub(struct timeval *out, struct timeval *in)
 	out->tv_sec -= in->tv_sec;
 }
 
-
-
 /*
   udp_client.c
 */
-int lothars__udp_client(const char *host, const char *serv, struct sockaddr **saptr, socklen_t *lenp)
+int lothars__udp_client(const char *host, const char *serv,
+			struct sockaddr **saptr, socklen_t *lenp)
 {
 	int fd_sock, eai;
-	struct addrinfo hints, *res=NULL, *ressave=NULL;
+	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
 	bzero(&hints, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("udp_client error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("udp_client error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 	ressave = res;
 
 	do {
-		fd_sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		fd_sock = socket(res->ai_family, res->ai_socktype,
+				 res->ai_protocol);
 		if (fd_sock >= 0)
-			break;  // success
+			break; // success
 	} while (NULL != (res = res->ai_next));
 
 	if (res == NULL) { // errno set from final socket()
@@ -633,7 +630,6 @@ int lothars__udp_client(const char *host, const char *serv, struct sockaddr **sa
 	return fd_sock;
 }
 
-
 /*
   demo snippets - udp_connect.c
 */
@@ -644,25 +640,27 @@ int lothars__udp_client(const char *host, const char *serv, struct sockaddr **sa
 int udp_connect(const char *host, const char *serv)
 {
 	int fd_sock, eai;
-	struct addrinfo hints, *res=NULL, *ressave=NULL;
+	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
 	bzero(&hints, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("udp_connect error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("udp_connect error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 
 	ressave = res;
 
 	do {
-		if (0 > (fd_sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol))) {
+		if (0 > (fd_sock = socket(res->ai_family, res->ai_socktype,
+					  res->ai_protocol))) {
 			continue; // ignore this one
 		}
 
 		if (0 == connect(fd_sock, res->ai_addr, res->ai_addrlen)) {
-			break;  // success
+			break; // success
 		}
 
 		lothars__close(&fd_sock); // ignore this one
@@ -677,7 +675,6 @@ int udp_connect(const char *host, const char *serv)
 	return fd_sock;
 }
 
-
 /*
   pt 2/2
 */
@@ -685,12 +682,11 @@ int lothars__udp_connect(const char *host, const char *serv)
 {
 	int res;
 	if (0 > (res = udp_connect(host, serv))) {
-		err_quit("udp_connect error for %s, %s: %s", host, serv, gai_strerror(-res));
+		err_quit("udp_connect error for %s, %s: %s", host, serv,
+			 gai_strerror(-res));
 	}
 	return res;
 }
-
-
 
 /*
   demo snippet - udp_server.c
@@ -698,7 +694,7 @@ int lothars__udp_connect(const char *host, const char *serv)
 int lothars__udp_server(const char *host, const char *serv, socklen_t *addrlenp)
 {
 	int fd_sock, eai;
-	struct addrinfo hints, *res=NULL, *ressave=NULL;
+	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
 	bzero(&hints, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
@@ -706,13 +702,15 @@ int lothars__udp_server(const char *host, const char *serv, socklen_t *addrlenp)
 	hints.ai_socktype = SOCK_DGRAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("udp_server error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("udp_server error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 
 	ressave = res;
 
 	do {
-		if (0 > (fd_sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol))) {
+		if (0 > (fd_sock = socket(res->ai_family, res->ai_socktype,
+					  res->ai_protocol))) {
 			continue; // error - try next one
 		}
 
@@ -720,7 +718,7 @@ int lothars__udp_server(const char *host, const char *serv, socklen_t *addrlenp)
 			break; // success
 		}
 
-		lothars__close(&fd_sock);  // bind error - close and try next one
+		lothars__close(&fd_sock); // bind error - close and try next one
 	} while (NULL != (res = res->ai_next));
 
 	if (res == NULL) { // errno from final socket() or bind()
@@ -735,8 +733,6 @@ int lothars__udp_server(const char *host, const char *serv, socklen_t *addrlenp)
 
 	return fd_sock;
 }
-
-
 
 /*
   demo snippet - writable_timeo
@@ -756,24 +752,22 @@ int writable_timeo(int fd, int sec)
 	tv.tv_sec = sec;
 	tv.tv_usec = 0;
 
-	return select(fd+1, NULL, &wset, NULL, &tv);
+	return select(fd + 1, NULL, &wset, NULL, &tv);
 	// > 0 if descriptor is writable
 }
-
 
 /*
   pt 2/2
 */
 int lothars__writable_timeo(int fd, int sec)
 {
-	int  bytes;
+	int bytes;
 
 	if (0 > (bytes = writable_timeo(fd, sec))) {
 		err_sys("%s() error", __func__);
 	}
 	return bytes;
 }
-
 
 /*
   sock_bind_wild.c
@@ -783,8 +777,7 @@ int sock_bind_wild(int fd_sock, int family)
 	socklen_t len;
 
 	switch (family) {
-	case AF_INET:
-	{
+	case AF_INET: {
 		struct sockaddr_in sin;
 
 		bzero(&sin, sizeof(sin));
@@ -792,21 +785,20 @@ int sock_bind_wild(int fd_sock, int family)
 		sin.sin_addr.s_addr = htonl(INADDR_ANY);
 		sin.sin_port = htons(0); // bind ephemeral port
 
-		if (0 > bind(fd_sock, (struct sockaddr *) &sin, sizeof(sin))) {
+		if (0 > bind(fd_sock, (struct sockaddr *)&sin, sizeof(sin))) {
 			return -1;
 		}
 
 		len = sizeof(sin);
 
-		if (0 > getsockname(fd_sock, (struct sockaddr *) &sin, &len)) {
+		if (0 > getsockname(fd_sock, (struct sockaddr *)&sin, &len)) {
 			return -1;
 		}
 		return sin.sin_port;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		struct sockaddr_in6 sin6;
 
 		bzero(&sin6, sizeof(sin6));
@@ -814,13 +806,13 @@ int sock_bind_wild(int fd_sock, int family)
 		sin6.sin6_addr = in6addr_any;
 		sin6.sin6_port = htons(0); // bind ephemeral port
 
-		if (0 > bind(fd_sock, (struct sockaddr *) &sin6, sizeof(sin6))) {
+		if (0 > bind(fd_sock, (struct sockaddr *)&sin6, sizeof(sin6))) {
 			return -1;
 		}
 
 		len = sizeof(sin6);
 
-		if (0 > getsockname(fd_sock, (struct sockaddr *) &sin6, &len)) {
+		if (0 > getsockname(fd_sock, (struct sockaddr *)&sin6, &len)) {
 			return -1;
 		}
 
@@ -830,7 +822,6 @@ int sock_bind_wild(int fd_sock, int family)
 	}
 	return -1;
 }
-
 
 int lothars__sock_bind_wild(int fd_sock, int family)
 {
@@ -842,8 +833,6 @@ int lothars__sock_bind_wild(int fd_sock, int family)
 
 	return port;
 }
-
-
 
 /*
   sock_cmp_addr()
@@ -862,70 +851,63 @@ int lothars__sock_bind_wild(int fd_sock, int family)
   bytes of s1 is found, respectively, to be less than, to match, or be
   greater than the first n bytes of s2. I.e. 0 means both are equal.
 */
-int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2, socklen_t salen)
+int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2,
+		  socklen_t salen)
 {
 	if (sa1->sa_family != sa2->sa_family) {
 		return -1;
 	}
 
 	switch (sa1->sa_family) {
-	case AF_INET:
-	{
-		return memcmp(&((struct sockaddr_in *) sa1)->sin_addr,
-			      &((struct sockaddr_in *) sa2)->sin_addr,
+	case AF_INET: {
+		return memcmp(&((struct sockaddr_in *)sa1)->sin_addr,
+			      &((struct sockaddr_in *)sa2)->sin_addr,
 			      sizeof(struct in_addr));
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		return memcmp(&((struct sockaddr_in6 *) sa1)->sin6_addr,
-			      &((struct sockaddr_in6 *) sa2)->sin6_addr,
+	case AF_INET6: {
+		return memcmp(&((struct sockaddr_in6 *)sa1)->sin6_addr,
+			      &((struct sockaddr_in6 *)sa2)->sin6_addr,
 			      sizeof(struct in6_addr));
 	}
 #endif
 
 #ifdef AF_UNIX
-	case AF_UNIX:
-	{
-		return strcmp(((struct sockaddr_un *) sa1)->sun_path,
-			      ((struct sockaddr_un *) sa2)->sun_path);
+	case AF_UNIX: {
+		return strcmp(((struct sockaddr_un *)sa1)->sun_path,
+			      ((struct sockaddr_un *)sa2)->sun_path);
 	}
 #endif
 	}
 	return -1;
 }
 
-
 /*
   sock_cmp_port.c
 */
-int sock_cmp_port(const struct sockaddr *sa1, const struct sockaddr *sa2, socklen_t salen)
+int sock_cmp_port(const struct sockaddr *sa1, const struct sockaddr *sa2,
+		  socklen_t salen)
 {
 	if (sa1->sa_family != sa2->sa_family) {
 		return -1;
 	}
 
 	switch (sa1->sa_family) {
-	case AF_INET:
-	{
-		return( ((struct sockaddr_in *) sa1)->sin_port ==
-			((struct sockaddr_in *) sa2)->sin_port);
+	case AF_INET: {
+		return (((struct sockaddr_in *)sa1)->sin_port ==
+			((struct sockaddr_in *)sa2)->sin_port);
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		return( ((struct sockaddr_in6 *) sa1)->sin6_port ==
-			((struct sockaddr_in6 *) sa2)->sin6_port);
+	case AF_INET6: {
+		return (((struct sockaddr_in6 *)sa1)->sin6_port ==
+			((struct sockaddr_in6 *)sa2)->sin6_port);
 	}
 #endif
-
 	}
 	return -1;
 }
-
-
 
 /*
   sock_get_port.c
@@ -933,16 +915,14 @@ int sock_cmp_port(const struct sockaddr *sa1, const struct sockaddr *sa2, sockle
 int sock_get_port(const struct sockaddr *sa, socklen_t salen)
 {
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 		return sin->sin_port;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
 		return sin6->sin6_port;
 	}
 #endif
@@ -951,32 +931,27 @@ int sock_get_port(const struct sockaddr *sa, socklen_t salen)
 	return -1;
 }
 
-
-
 /*
   sock_set_addr.c
 */
 void sock_set_addr(struct sockaddr *sa, socklen_t salen, const void *addr)
 {
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 		memcpy(&sin->sin_addr, addr, sizeof(struct in_addr));
 		return;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
 		memcpy(&sin6->sin6_addr, addr, sizeof(struct in6_addr));
 		return;
 	}
 #endif
 	}
 }
-
 
 /*
   sock_set_port()
@@ -993,25 +968,21 @@ void sock_set_addr(struct sockaddr *sa, socklen_t salen, const void *addr)
 void sock_set_port(struct sockaddr *sa, socklen_t salen, int port)
 {
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 		sin->sin_port = port;
 		return;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
 		sin6->sin6_port = port;
 		return;
 	}
 #endif
 	}
 }
-
-
 
 /*
   sock_set_wild.c
@@ -1021,8 +992,7 @@ void sock_set_wild(struct sockaddr *sa, socklen_t salen)
 	const void *wildptr;
 
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
+	case AF_INET: {
 		static struct in_addr in4addr_any;
 		in4addr_any.s_addr = htonl(INADDR_ANY);
 		wildptr = &in4addr_any;
@@ -1030,8 +1000,7 @@ void sock_set_wild(struct sockaddr *sa, socklen_t salen)
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		wildptr = &in6addr_any; // in6addr_any.c
 		break;
 	}
@@ -1043,7 +1012,6 @@ void sock_set_wild(struct sockaddr *sa, socklen_t salen)
 	sock_set_addr(sa, salen, wildptr);
 	return;
 }
-
 
 /*
   readable_timeo.c
@@ -1059,14 +1027,13 @@ int readable_timeo(int fd, int sec)
 	tv.tv_sec = sec;
 	tv.tv_usec = 0;
 
-	return select(fd+1, &rset, NULL, NULL, &tv);
+	return select(fd + 1, &rset, NULL, NULL, &tv);
 	// 4> 0 if descriptor is readable
 }
 
-
 int lothars__readable_timeo(int fd, int sec)
 {
-	int  bytes;
+	int bytes;
 	if (0 > (bytes = readable_timeo(fd, sec))) {
 		err_sys("%(): readable_timeo error", __func__);
 	}

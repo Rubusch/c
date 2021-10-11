@@ -136,59 +136,63 @@
 
 int main(int argc, char **argv)
 {
-  pid_t traced_process;
-  struct user_regs_struct regs;
-  long ins;
+	pid_t traced_process;
+	struct user_regs_struct regs;
+	long ins;
 
 #ifndef __x86_64__
-  fprintf(stderr, "Source needs x86_64 to run!!\n");
-  exit(EXIT_FAILURE);
+	fprintf(stderr, "Source needs x86_64 to run!!\n");
+	exit(EXIT_FAILURE);
 #endif
 
-  if (argc < 2) {
-    printf("Usage: %s <pid to be traced: %s>\n", argv[0], argv[1]);
-    printf("e.g.:\n$ ./rabbit.exe & %s $(pidof rabbit.exe)\n", argv[0]);
-    exit(EXIT_FAILURE);
-  }
-  traced_process = atoi(argv[1]);
+	if (argc < 2) {
+		printf("Usage: %s <pid to be traced: %s>\n", argv[0], argv[1]);
+		printf("e.g.:\n$ ./rabbit.exe & %s $(pidof rabbit.exe)\n",
+		       argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	traced_process = atoi(argv[1]);
 
-  // attach to the child process
+	// attach to the child process
 
-  // PTRACE_ATTACH: classic, old approach
-  //ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
-  //
-  // PTRACE_SEIZE: the manpage nowadays recommends this "new" approach
-  ptrace(PTRACE_SEIZE, traced_process, NULL, NULL);
-  ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
+	// PTRACE_ATTACH: classic, old approach
+	//ptrace(PTRACE_ATTACH, traced_process, NULL, NULL);
+	//
+	// PTRACE_SEIZE: the manpage nowadays recommends this "new" approach
+	ptrace(PTRACE_SEIZE, traced_process, NULL, NULL);
+	ptrace(PTRACE_INTERRUPT, traced_process, NULL, NULL);
 
+	wait(NULL);
 
-  wait(NULL);
+	// read out registers
+	ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
 
-  // read out registers
-  ptrace(PTRACE_GETREGS, traced_process, NULL, &regs);
+	// read out instruction
+	ins = ptrace(PTRACE_PEEKTEXT, traced_process, regs.rip, NULL);
 
-  // read out instruction
-  ins = ptrace(PTRACE_PEEKTEXT, traced_process, regs.rip, NULL);
+	// read argument
+	fprintf(stderr,
+		"RIP: process %d with instruction pointer '0x%08lx' [rip]: '0x%08lx' [ins]\n",
+		traced_process, (long)regs.rip, (long)ins);
 
-  // read argument
-  fprintf(stderr, "RIP: process %d with instruction pointer '0x%08lx' [rip]: '0x%08lx' [ins]\n", traced_process, (long)regs.rip, (long)ins);
-
-  switch(regs.orig_rax) {
+	switch (regs.orig_rax) {
 #ifdef SYS_nanosleep
-  case SYS_nanosleep:
-    fprintf(stderr, "\tSYSCALL: SYS_nanosleep, '0x%08lx'\n", (long)regs.orig_rax);
-    break;
+	case SYS_nanosleep:
+		fprintf(stderr, "\tSYSCALL: SYS_nanosleep, '0x%08lx'\n",
+			(long)regs.orig_rax);
+		break;
 #endif
-  default:
-    fprintf(stderr, "\tSYSCALL: uncaught, '0x%08lx' XXXXXXX\n", (long)regs.orig_rax);
-  }
+	default:
+		fprintf(stderr, "\tSYSCALL: uncaught, '0x%08lx' XXXXXXX\n",
+			(long)regs.orig_rax);
+	}
 
-  // detach
-  ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
+	// detach
+	ptrace(PTRACE_DETACH, traced_process, NULL, NULL);
 
-  // clean up
-  fprintf(stderr, "...killing the lab animal...\n");
-  kill(traced_process, SIGKILL);
+	// clean up
+	fprintf(stderr, "...killing the lab animal...\n");
+	kill(traced_process, SIGKILL);
 
-  return 0;
+	return 0;
 }

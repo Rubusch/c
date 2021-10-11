@@ -16,7 +16,6 @@
 
 #define ME "ITCHY:"
 
-
 int main(int argc, char **argv)
 {
 	// shared memory key
@@ -24,7 +23,8 @@ int main(int argc, char **argv)
 
 	// shared memory ID
 	fprintf(stderr,
-		"%s set up shared memory key, ID and get some shared memory\n", ME);
+		"%s set up shared memory key, ID and get some shared memory\n",
+		ME);
 	int shm_id = 0;
 	if (0 > (shm_id = shmget(shm_key, SHM_SIZE, 0666))) {
 		perror("shmget failed");
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 	  shmid to the address space of the calling process.
 	*/
 	char *shm = NULL;
-	if (0 > *(int*)(shm = shmat(shm_id, NULL, 0))) {
+	if (0 > *(int *)(shm = shmat(shm_id, NULL, 0))) {
 		perror("shmat failed");
 		exit(EXIT_FAILURE);
 	}
@@ -49,7 +49,8 @@ int main(int argc, char **argv)
 	memset(buf, '\0', SHM_SIZE);
 	strncpy(buf, shm, SHM_SIZE);
 	memset(shm, '\0', SHM_SIZE);
-	fprintf(stderr, "%s received \"%s\" and confirmed with an \'*\'\n", ME, buf);
+	fprintf(stderr, "%s received \"%s\" and confirmed with an \'*\'\n", ME,
+		buf);
 
 	// confirm by setting "*" (done)
 	*shm = '*';

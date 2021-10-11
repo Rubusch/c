@@ -25,19 +25,20 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-
 int main(int argc, char **argv)
 {
 	int pfd[2];
 	pid_t cpid;
 	char buf;
-	char message[64]; memset(message, '\0', sizeof(message));
+	char message[64];
+	memset(message, '\0', sizeof(message));
 
 	if (2 != argc) {
-		fprintf(stderr, "usage: $ %s <message to send over pipe>\n", argv[0]);
+		fprintf(stderr, "usage: $ %s <message to send over pipe>\n",
+			argv[0]);
 		exit(EXIT_FAILURE);
 	}
-	strncpy(message, argv[1], sizeof(message)-1);
+	strncpy(message, argv[1], sizeof(message) - 1);
 	fprintf(stdout, "message '%s'\n", message);
 
 	// pipe

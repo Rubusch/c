@@ -1,7 +1,6 @@
 #ifndef DEVKIG_SNIPPET_RTT
 #define DEVKIG_SNIPPET_RTT
 
-
 /*
   round trip time (rtt) measuring
 
@@ -11,8 +10,7 @@
   References:
   Unix Network Programming, Stevens (1996)
 */
-// TODO rework                
-
+// TODO rework
 
 /* includes */
 
@@ -25,8 +23,6 @@
 
 #include "lib_unix.h"
 #include "lib_error.h"
-
-
 
 /* constants */
 
@@ -50,7 +46,6 @@ struct rtt_info {
 */
 #define RTT_RTOCALC(ptr) ((ptr)->rtt_srtt + (4.0 * (ptr)->rtt_rttvar))
 
-
 /* forwards */
 
 void rtt_debug(struct rtt_info *);
@@ -60,6 +55,5 @@ int rtt_start(struct rtt_info *);
 void rtt_stop(struct rtt_info *, uint32_t);
 int rtt_timeout(struct rtt_info *);
 uint32_t rtt_ts(struct rtt_info *);
-
 
 #endif /* DEVKIG_SNIPPET_RTT */

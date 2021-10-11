@@ -53,8 +53,8 @@
 #define DATASIZ 64
 
 typedef struct element {
-  struct element *next;
-  char *data;
+	struct element *next;
+	char *data;
 } element_t;
 
 // external usage interface level
@@ -62,7 +62,7 @@ int removeall();
 int appendelement(const char *, const unsigned int);
 int removelastelement();
 int insertelement(const char *, const unsigned int, const char *,
-                  const unsigned int);
+		  const unsigned int);
 int removeelement(const char *, const unsigned int);
 int printlist();
 

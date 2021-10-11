@@ -23,7 +23,6 @@
 #define ME "SCRATCHY:"
 #define BUF_SIZE 64
 
-
 int main(int argc, char **argv)
 {
 	fprintf(stderr, "%s started\n", ME);

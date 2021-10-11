@@ -18,7 +18,6 @@ void readstring(char *, const unsigned int, const char *);
 int isnumber(const char *, const unsigned int);
 void readdigit(unsigned int *, const char *);
 
-
 int main(int argc, char **argv)
 {
 	int msg_flag = 0, mq_id = 0;
@@ -27,13 +26,14 @@ int main(int argc, char **argv)
 	unsigned int iFlag = 0;
 
 	// get a key by reading in
-	readstring(filename, FILENAME_MAX, "enter a filename to generate a key:");
+	readstring(filename, FILENAME_MAX,
+		   "enter a filename to generate a key:");
 	key_t key = ftok(filename, 'B');
 
 	// read in msg_flag
 	do {
 		readdigit(&iFlag, "flag:\n1\tIPC_CREAT\n2\tIPC_PRIVATE\n3\tIPC_"
-			  "EXCL\n4\tIPC_CREAT and IPC_EXCL");
+				  "EXCL\n4\tIPC_CREAT and IPC_EXCL");
 
 		switch (iFlag) {
 		case 1:
@@ -74,7 +74,6 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-
 void readstring(char *cTxt, const unsigned int textSize, const char *comment)
 {
 	if (NULL == comment) {
@@ -112,7 +111,6 @@ void readstring(char *cTxt, const unsigned int textSize, const char *comment)
 	} while (0 == strlen(cTxt));
 }
 
-
 int isnumber(const char *str, const unsigned int size)
 {
 	char arr[size];
@@ -133,7 +131,6 @@ int isnumber(const char *str, const unsigned int size)
 	}
 	return 1;
 }
-
 
 // READ
 void readdigit(unsigned int *iChr, const char *comment)

@@ -2,19 +2,18 @@
 /*
 //*/
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-
 // some function
-void some_function() { puts("READY."); }
-
+void some_function()
+{
+	puts("READY.");
+}
 
 int main()
 {
-
 	// definition
 	typedef void (*funptr)();
 	funptr p_some_function;

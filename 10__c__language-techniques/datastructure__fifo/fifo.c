@@ -7,14 +7,13 @@
 
 #include "fifo.h"
 
-
 /* private */
 
 static item_p first;
 static item_p last;
 static int size;
 
-item_p fifo__new(content_t* content)
+item_p fifo__new(content_t *content)
 {
 	item_p item = malloc(sizeof(item));
 	if (item == NULL) {
@@ -27,7 +26,6 @@ item_p fifo__new(content_t* content)
 
 	return item;
 }
-
 
 /* public */
 

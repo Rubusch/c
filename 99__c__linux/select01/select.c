@@ -3,19 +3,17 @@
   select example of the manpage
 */
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-
 /*
   watch stdin (fd 0) to see when it has input, wait up to five seconds
   then don't rely on the value of "tv"
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	// 0. define a set
 	int nsecs = 3;
@@ -23,7 +21,9 @@ int main(int argc, char** argv)
 	struct timeval timeout;
 	int retval;
 
-	fprintf(stdout, "select example - either press <ENTER> to give some\ninput on the observed readfds or let it timeout in %dsec\n", nsecs);
+	fprintf(stdout,
+		"select example - either press <ENTER> to give some\ninput on the observed readfds or let it timeout in %dsec\n",
+		nsecs);
 
 	// 1. zero the set
 	fprintf(stdout, "\tFD_ZERO() - zero the set\n\n");
@@ -45,7 +45,9 @@ int main(int argc, char** argv)
 	  exceptfds - exception filedescriptor (pointer on exception stream)
 	  timeout   - an upper timeout until select returns
 	*/
-	fprintf(stdout, "\tselect(1, &rset, NULL, ..., timeout) - call to select() or timeout %d secs\n", nsecs);
+	fprintf(stdout,
+		"\tselect(1, &rset, NULL, ..., timeout) - call to select() or timeout %d secs\n",
+		nsecs);
 	retval = select(1, &rset, NULL, NULL, &timeout);
 	if (-1 == retval) {
 		perror("select error");
@@ -56,11 +58,10 @@ int main(int argc, char** argv)
 		}
 
 	} else {
-		fprintf(stdout, "\nresult: no data within %d seconds\n\n", nsecs);
-
+		fprintf(stdout, "\nresult: no data within %d seconds\n\n",
+			nsecs);
 	}
 
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
-

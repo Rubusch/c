@@ -66,90 +66,82 @@ the pointer
 #define INT_SIZE 10
 #define CHAR_SIZE 10
 
-
 int main()
 {
-  puts("addresses");
+	puts("addresses");
 
-  // definition of variables
-  int int_value = 0;
-  char char_value = 0;
-  int *int_pointer = NULL;
-  char *char_pointer = NULL;
+	// definition of variables
+	int int_value = 0;
+	char char_value = 0;
+	int *int_pointer = NULL;
+	char *char_pointer = NULL;
 
-  puts("allocation and init");
+	puts("allocation and init");
 
-  // alloc int_pointer
-  if (NULL == (int_pointer = calloc(INT_SIZE, sizeof(*int_pointer)))) {
-    perror("calloc failed");
-    exit(EXIT_FAILURE);
-  }
+	// alloc int_pointer
+	if (NULL == (int_pointer = calloc(INT_SIZE, sizeof(*int_pointer)))) {
+		perror("calloc failed");
+		exit(EXIT_FAILURE);
+	}
 
+	// init and clean the content of int_pointer
+	memset(int_pointer, 0, sizeof(*int_pointer) * INT_SIZE);
 
-  // init and clean the content of int_pointer
-  memset(int_pointer, 0, sizeof(*int_pointer) * INT_SIZE);
+	// alloc char_pointer
+	if (NULL == (char_pointer = calloc(CHAR_SIZE, sizeof(*char_pointer)))) {
+		perror("calloc failed");
+		exit(EXIT_FAILURE);
+	}
 
+	// init and clean the content of char_pointer
+	memset(char_pointer, '\0', CHAR_SIZE);
 
-  // alloc char_pointer
-  if (NULL == (char_pointer = calloc(CHAR_SIZE, sizeof(*char_pointer)))) {
-    perror("calloc failed");
-    exit(EXIT_FAILURE);
-  }
+	//*
+	puts("set values");
+	// set int_value to 7
+	int_value = 7;
 
+	// set char_value to 7 (as character token)
+	char_value = '7';
 
-  // init and clean the content of char_pointer
-  memset(char_pointer, '\0', CHAR_SIZE);
+	// set each element of the int array to 7
+	int idx = 0;
+	for (idx = 0; idx < INT_SIZE; ++idx) {
+		int_pointer[idx] = 7;
+	}
 
-  //*
-  puts("set values");
-  // set int_value to 7
-  int_value = 7;
+	// set each element of the char array to 7
+	strncpy(char_pointer, "777777777", CHAR_SIZE);
+	//*/
 
-  // set char_value to 7 (as character token)
-  char_value = '7';
+	// print out address of..
+	// ... values
+	puts("address of values:");
+	printf("\tchar_value\t- 0x%lx\n", (unsigned long)&char_value);
+	printf("\tint_value\t- 0x%lx\n", (unsigned long)&int_value);
 
-  // set each element of the int array to 7
-  int idx = 0;
-  for (idx = 0; idx < INT_SIZE; ++idx) {
-    int_pointer[idx] = 7;
-  }
+	// ... content address of pointers
+	puts("address of pointers:");
+	printf("\tchar_pointer\t- 0x%lx\n", (unsigned long)&char_pointer);
+	printf("\tint_pointer\t- 0x%lx\n", (unsigned long)&int_pointer);
+	puts("");
 
-  // set each element of the char array to 7
-  strncpy(char_pointer, "777777777", CHAR_SIZE);
-  //*/
+	// ... content address of pointers
+	puts("address of content of pointers:");
+	printf("\t*char_pointer\t- 0x%lx\n", (unsigned long)&*char_pointer);
+	printf("\t*int_pointer\t- 0x%lx\n", (unsigned long)&*int_pointer);
+	puts("");
 
-  // print out address of..
-  // ... values
-  puts("address of values:");
-  printf("\tchar_value\t- 0x%lx\n", ( unsigned long )&char_value);
-  printf("\tint_value\t- 0x%lx\n", ( unsigned long )&int_value);
+	// ... content of pointers
+	puts("content of pointers (the current element!)");
+	printf("\t*char_pointer\t- %c\n", *char_pointer);
+	printf("\t*int_pointer\t- %d\n", int_pointer[10]);
+	puts("");
 
+	// free
+	free(int_pointer);
+	free(char_pointer);
 
-  // ... content address of pointers
-  puts("address of pointers:");
-  printf("\tchar_pointer\t- 0x%lx\n", ( unsigned long )&char_pointer);
-  printf("\tint_pointer\t- 0x%lx\n", ( unsigned long )&int_pointer);
-  puts("");
-
-
-  // ... content address of pointers
-  puts("address of content of pointers:");
-  printf("\t*char_pointer\t- 0x%lx\n", ( unsigned long )&*char_pointer);
-  printf("\t*int_pointer\t- 0x%lx\n", ( unsigned long )&*int_pointer);
-  puts("");
-
-
-  // ... content of pointers
-  puts("content of pointers (the current element!)");
-  printf("\t*char_pointer\t- %c\n", *char_pointer);
-  printf("\t*int_pointer\t- %d\n", int_pointer[10]);
-  puts("");
-
-
-  // free
-  free(int_pointer);
-  free(char_pointer);
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
+	puts("READY.");
+	exit(EXIT_SUCCESS);
 }

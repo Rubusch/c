@@ -1,14 +1,12 @@
 #ifndef DEVKIT_LIB_IF_NAME_INDEX
 #define DEVKIT_LIB_IF_NAME_INDEX
 
-
 /*
 
   ---
   References:
   Unix Network Programming, Stevens (1996)
 */
-
 
 /* includes */
 
@@ -23,12 +21,10 @@
 
 #include "lib_error.h"
 
-
 /* forwards */
 
-char* lothars__if_indextoname(unsigned int, char*);
-unsigned int lothars__if_nametoindex(const char*);
-struct if_nameindex* lothars__if_nameindex();
-
+char *lothars__if_indextoname(unsigned int, char *);
+unsigned int lothars__if_nametoindex(const char *);
+struct if_nameindex *lothars__if_nameindex();
 
 #endif /* DEVKIT_LIB_IF_NAME_INDEX */

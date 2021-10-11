@@ -15,7 +15,6 @@
 
 #define SHM_SIZ 27
 
-
 int main(int argc, char **argv)
 {
 	// name of the shared memory segment - "5678"

@@ -120,7 +120,8 @@ gas: far function call and jumps
 */
 #include <unistd.h>
 
-int main(void) {
+int main(void)
+{
 	write(1, "Hello World\n", 15);
 	return 0;
 }

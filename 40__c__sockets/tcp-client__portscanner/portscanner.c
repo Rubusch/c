@@ -28,11 +28,9 @@
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 #define MIN_PORT 0 // e.g. 0
 #define MAX_PORT 100 // e.g. 1024
-
-
 
 /*
   forwards
@@ -46,11 +44,10 @@ void err_quit(const char *, ...);
 int lothars__socket(int, int, int);
 
 // inet
-void lothars__inet_pton(int, const char*, void*);
+void lothars__inet_pton(int, const char *, void *);
 
 // unix
 void lothars__close(int *);
-
 
 /*
   helpers
@@ -68,24 +65,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /* error */
 
@@ -94,26 +92,24 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    Fatal error unrelated to system call. Print message and terminate.
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /* socket */
 
@@ -141,7 +137,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /* inet */
 
 /*
@@ -166,12 +161,13 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
 	int res;
 	if (0 > (res = inet_pton(family, strptr, addrptr))) {
-		err_sys("%s() error for %s (check the passed address family?)", __func__, strptr); // errno set
+		err_sys("%s() error for %s (check the passed address family?)",
+			__func__, strptr); // errno set
 	} else if (0 == res) {
-		err_quit("%s() error for %s (check the passed strptr)", __func__, strptr); // errno not set
+		err_quit("%s() error for %s (check the passed strptr)",
+			 __func__, strptr); // errno not set
 	}
 }
-
 
 /* unix */
 
@@ -209,28 +205,27 @@ void lothars__close(int *fd)
 	sync();
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
 /********************************************************************************************/
 
-
 /*
   main
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	struct sockaddr_in addr_target;
-	struct servent *servServer=NULL;
-	int sd=0;
-	unsigned long min_port=0, max_port=0, port=0;
+	struct servent *servServer = NULL;
+	int sd = 0;
+	unsigned long min_port = 0, max_port = 0, port = 0;
 	char targetip[18];
 
 	memset(targetip, '\0', sizeof(targetip));
 
-	if (argc != 4){
-		fprintf(stderr, "usage: %s <ip> <min port> <max port>\n", argv[0]);
+	if (argc != 4) {
+		fprintf(stderr, "usage: %s <ip> <min port> <max port>\n",
+			argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -252,23 +247,26 @@ int main(int argc, char** argv)
 
 	fprintf(stdout, "\nscanning target %s:\n", targetip);
 	for (port = min_port; port <= max_port; ++port) {
-		lothars__inet_pton(AF_INET, targetip, &addr_target.sin_addr.s_addr);
+		lothars__inet_pton(AF_INET, targetip,
+				   &addr_target.sin_addr.s_addr);
 		sd = lothars__socket(AF_INET, SOCK_STREAM, 0);
 
 		// must be set after sin_addr was init
 		addr_target.sin_port = htons(port);
 		addr_target.sin_family = AF_INET;
 
-		if (0 == connect(sd, (struct sockaddr*) &addr_target, sizeof(addr_target))) {
+		if (0 == connect(sd, (struct sockaddr *)&addr_target,
+				 sizeof(addr_target))) {
 			fprintf(stdout, "\t%lu ", port);
-			if (NULL != (servServer = getservbyport(addr_target.sin_port, "tcp"))) {
+			if (NULL != (servServer = getservbyport(
+					     addr_target.sin_port, "tcp"))) {
 				fprintf(stdout, "(%s)", servServer->s_name);
 			} else {
 				fprintf(stdout, "(unknown service)");
 			}
 			fprintf(stdout, " is open\n");
-//		} else {
-//			fprintf(stdout, "\t%lu is closed\n", port);
+			//		} else {
+			//			fprintf(stdout, "\t%lu is closed\n", port);
 		}
 
 		lothars__close(&sd);

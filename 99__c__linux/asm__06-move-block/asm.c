@@ -271,34 +271,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-#define asm_mv_blk(src, dest, numwords) \
-  __asm__ __volatile__ (                                        \
-                        "cld\n\t"                               \
-                        "rep\n\t"                               \
-                        "movsl"                                 \
-                        :                                       \
-                        : "S" (src), "D" (dest), "c" (numwords) \
-                        : "memory"                              \
-                       )
-
+#define asm_mv_blk(src, dest, numwords)                                        \
+	__asm__ __volatile__("cld\n\t"                                         \
+			     "rep\n\t"                                         \
+			     "movsl"                                           \
+			     :                                                 \
+			     : "S"(src), "D"(dest), "c"(numwords)              \
+			     : "memory")
 
 int main(void)
 {
-  char text[] = "ODI ET AMO. QUARE ID FACIAM, FORTASSE REQUIRIS. NESCIO, SED FIERI SENTIO ET EXCRUCIOR.";
-  char copy[sizeof(text)]; memset(copy, '\0', sizeof(text));
+	char text[] =
+		"ODI ET AMO. QUARE ID FACIAM, FORTASSE REQUIRIS. NESCIO, SED FIERI SENTIO ET EXCRUCIOR.";
+	char copy[sizeof(text)];
+	memset(copy, '\0', sizeof(text));
 
-  fprintf(stderr, "text before:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n", text, strlen(text), copy, strlen(copy));
+	fprintf(stderr,
+		"text before:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n",
+		text, strlen(text), copy, strlen(copy));
 
-  puts("string copy...");
-  asm_mv_blk(text, copy, sizeof(text));
+	puts("string copy...");
+	asm_mv_blk(text, copy, sizeof(text));
 
-  // note: this is a move, i.e. the original memory block is destroyed after the move
-  // a move comes in handy e.g. in a swap implementation
-  fprintf(stderr, "text after:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n", "", (long) 0, copy, strlen(copy));
+	// note: this is a move, i.e. the original memory block is destroyed after the move
+	// a move comes in handy e.g. in a swap implementation
+	fprintf(stderr,
+		"text after:\t'%s', size %ld+1\n\t\tcopy: '%s', size %ld+1\n",
+		"", (long)0, copy, strlen(copy));
 
-  fprintf(stderr, "READY.\n");
+	fprintf(stderr, "READY.\n");
 
-  // note: the asm_mv_blk seems to finish unclean, exit() cleans this up, a return ends in a SIGSEGV when finishing
-  exit(EXIT_SUCCESS);
+	// note: the asm_mv_blk seems to finish unclean, exit() cleans this up, a return ends in a SIGSEGV when finishing
+	exit(EXIT_SUCCESS);
 }

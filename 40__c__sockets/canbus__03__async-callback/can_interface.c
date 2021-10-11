@@ -9,24 +9,23 @@
 
 #define CANIF__DEBUG 1
 
-
 /*
    private interface
 */
 
-# if defined CANIF__DEBUG
+#if defined CANIF__DEBUG
 
-static void canif__print(const char* func, const struct can_frame* frame)
+static void canif__print(const char *func, const struct can_frame *frame)
 {
-	fprintf(stdout, "CAN_FRAME DEBUG %s() - id: %x, dlc: %d, data: ", func, frame->can_id, frame->can_dlc);
-	for (int idx=0; idx< frame->can_dlc; idx++) {
+	fprintf(stdout, "CAN_FRAME DEBUG %s() - id: %x, dlc: %d, data: ", func,
+		frame->can_id, frame->can_dlc);
+	for (int idx = 0; idx < frame->can_dlc; idx++) {
 		fprintf(stdout, "%x ", frame->data[idx]);
 	}
 	fprintf(stdout, "\n");
 }
 
-# endif
-
+#endif
 
 /*
   "private"
@@ -34,7 +33,6 @@ static void canif__print(const char* func, const struct can_frame* frame)
 static int sockfd;
 static struct sockaddr_can addr;
 static struct ifreq ifr;
-
 
 void canif__listener()
 {
@@ -49,22 +47,25 @@ void canif__listener()
 			return;
 		}
 
-# if defined CANIF__DEBUG
+#if defined CANIF__DEBUG
 		canif__print(__func__, &frame);
-# endif
+#endif
 
 		if ((CANIF_ID | CANIF_MGMT) == frame.can_id) {
 			/* management channel */
-# if defined CANIF__DEBUG
-			fprintf(stdout, "DEBUG: triggering socket signalling - %x\n", frame.can_id);
-# endif
+#if defined CANIF__DEBUG
+			fprintf(stdout,
+				"DEBUG: triggering socket signalling - %x\n",
+				frame.can_id);
+#endif
 			if (CANIF_MGMT_TERM == frame.data[0]) {
 				break;
 			}
 
 		} else if ((CANIF_ID | CANIF_COM) == frame.can_id) {
 			/* communication channel */
-			ret = canif__on_receive(frame.can_id, frame.can_dlc, frame.data);
+			ret = canif__on_receive(frame.can_id, frame.can_dlc,
+						frame.data);
 			if (0 > ret) {
 				fprintf(stderr, "Error in %s()", __func__);
 				return;
@@ -77,7 +78,6 @@ void canif__listener()
 
 	} while (1);
 }
-
 
 /*
   "public" interface
@@ -92,14 +92,14 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	}
 
 	strncpy(ifr.ifr_name, ifname, ifname_size);
-	ifr.ifr_name[ifname_size-1] = '\0';
+	ifr.ifr_name[ifname_size - 1] = '\0';
 	if (0 > ioctl(sockfd, SIOCGIFINDEX, &ifr)) {
 		perror("Error in ioctl");
 		return -1;
 	}
 
 	memset(&addr, 0, sizeof(addr));
-	addr.can_family  = AF_CAN;
+	addr.can_family = AF_CAN;
 	addr.can_ifindex = ifr.ifr_ifindex;
 	fprintf(stdout, "%s at index %d\n", ifname, ifr.ifr_ifindex);
 	if (-1 == bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
@@ -122,9 +122,9 @@ int canif__startup(const char *ifname, size_t ifname_size)
 
 int canif__shutdown()
 {
-# if defined CANIF__DEBUG
+#if defined CANIF__DEBUG
 //	sleep(30);
-# endif
+#endif
 
 	fprintf(stdout, "CANIF - shutting down..\n");
 	kill(pid_listener, SIGTERM);
@@ -140,9 +140,9 @@ int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[])
 	frame.can_dlc = *can_dlc;
 	memcpy(frame.data, data, *can_dlc);
 
-# if defined CANIF__DEBUG
+#if defined CANIF__DEBUG
 	canif__print(__func__, &frame);
-# endif
+#endif
 
 	nbytes = write(sockfd, &frame, sizeof(struct can_frame));
 	if (0 > nbytes) {
@@ -151,8 +151,8 @@ int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[])
 	return nbytes;
 }
 
-void canif__register_recv(int (*on_receive)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]))
+void canif__register_recv(int (*on_receive)(uint32_t can_id, uint8_t can_dlc,
+					    uint8_t data[]))
 {
 	canif__on_receive = on_receive;
 }
-

@@ -26,7 +26,6 @@
 #include <time.h> /* time(), ctime() */
 #include <errno.h>
 
-
 /*
   constants
 */
@@ -46,8 +45,8 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
    NB: if you are writing a header file that must work when included
    in ISO C programs, write __typeof__ instead of typeof
 */
-#define max(a,b) (a > b ? a : b)
-#define min(a,b) (a < b ? a : b)
+#define max(a, b) (a > b ? a : b)
+#define min(a, b) (a < b ? a : b)
 
 /*
    we need the newer CMSG_LEN() and CMSG_SPACE() macros, but few
@@ -57,13 +56,12 @@ typedef void Sigfunc(int); /* convenience: for signal handlers */
    (macros taken from stevens 1996)
 */
 #ifndef CMSG_LEN
-# define CMSG_LEN(size)  (sizeof(struct cmsghdr) + (size))
+#define CMSG_LEN(size) (sizeof(struct cmsghdr) + (size))
 #endif
 
 #ifndef CMSG_SPACE
-# define CMSG_SPACE(size) (sizeof(struct cmsghdr) + (size))
+#define CMSG_SPACE(size) (sizeof(struct cmsghdr) + (size))
 #endif
-
 
 /*
   forwards
@@ -74,25 +72,24 @@ void err_sys(const char *, ...);
 void err_quit(const char *, ...);
 
 // commons
-void* lothars__malloc(size_t);
+void *lothars__malloc(size_t);
 void lothars__dup2(int, int);
 int lothars__select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 
 // socket
-Sigfunc* lothars__signal(int, Sigfunc*);
+Sigfunc *lothars__signal(int, Sigfunc *);
 ssize_t lothars__readline(int, void *, size_t);
 pid_t lothars__fork();
 void lothars__socketpair(int, int, int, int *);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 void lothars__listen(int, int);
-int lothars__tcp_listen(const char*, const char*, socklen_t*);
+int lothars__tcp_listen(const char *, const char *, socklen_t *);
 int lothars__accept(int, struct sockaddr *, socklen_t *);
-ssize_t lothars__read_fd(int, void*, size_t, int *);
-ssize_t lothars__write_fd(int, void*, size_t, int);
+ssize_t lothars__read_fd(int, void *, size_t, int *);
+ssize_t lothars__write_fd(int, void *, size_t, int);
 ssize_t lothars__read(int, void *, size_t);
 void lothars__write(int, void *, size_t);
 void lothars__close(int *);
-
 
 /*
   internal helpers
@@ -106,24 +103,25 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 // used "private" (.c file static) variables for the limited readline implementation
 static int read_cnt;
@@ -134,8 +132,12 @@ static ssize_t readline_fd_doit(int fd, char *ptr)
 {
 	if (0 >= read_cnt) {
 	again:
-		if (0 > (read_cnt = read(fd, read_buf, sizeof(read_buf)))) { // use read() to construct a readline() with size limits
-			if (errno == EINTR) goto again; // only in case of interrrupted, try again
+		if (0 >
+		    (read_cnt = read(
+			     fd, read_buf,
+			     sizeof(read_buf)))) { // use read() to construct a readline() with size limits
+			if (errno == EINTR)
+				goto again; // only in case of interrrupted, try again
 			return -1; // else return as error code
 		} else if (read_cnt == 0) {
 			return 0;
@@ -147,7 +149,6 @@ static ssize_t readline_fd_doit(int fd, char *ptr)
 	*ptr = *read_ptr++;
 	return 1;
 }
-
 
 /*
   a pimped readline() version, reading from an filedescriptor (fd),
@@ -161,7 +162,9 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 
 	ptr = vptr;
 	for (cnt = 1; cnt < maxlen; ++cnt) {
-		if (1 == (rc = readline_fd_doit(fd, &chr))) { // main approach in readline_fd_doit
+		if (1 ==
+		    (rc = readline_fd_doit(
+			     fd, &chr))) { // main approach in readline_fd_doit
 			*ptr++ = chr;
 			if (chr == '\n')
 				break; // newline is stored, like fgets()
@@ -171,7 +174,7 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 			return (cnt - 1); // EOF, n - 1 bytes were read
 
 		} else {
-			return -1;  // error, errno set by read()
+			return -1; // error, errno set by read()
 		}
 	}
 
@@ -179,14 +182,13 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 	return cnt;
 }
 
-
 ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 {
 	struct msghdr msg;
 	struct iovec iov[1];
 	ssize_t cnt;
 
-	union{
+	union {
 		struct cmsghdr cm;
 		char control[CMSG_SPACE(sizeof(int))];
 	} control_un;
@@ -206,22 +208,22 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 		return cnt;
 	}
 
-	if ( (NULL != (cmptr = CMSG_FIRSTHDR(&msg))) && (cmptr->cmsg_len == CMSG_LEN(sizeof(int)))) {
+	if ((NULL != (cmptr = CMSG_FIRSTHDR(&msg))) &&
+	    (cmptr->cmsg_len == CMSG_LEN(sizeof(int)))) {
 		if (cmptr->cmsg_level != SOL_SOCKET) {
 			err_quit("control level != SOL_SOCKET");
 		}
 		if (cmptr->cmsg_type != SCM_RIGHTS) {
 			err_quit("control type != SCM_RIGHTS");
 		}
-		*recvfd = *((int *) CMSG_DATA(cmptr));
+		*recvfd = *((int *)CMSG_DATA(cmptr));
 
 	} else {
-		*recvfd = -1;  // descriptor was not passed
+		*recvfd = -1; // descriptor was not passed
 	}
 
 	return cnt;
 }
-
 
 ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {
@@ -230,7 +232,7 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 
 	union {
 		struct cmsghdr cm;
-		char    control[CMSG_SPACE(sizeof(int))];
+		char control[CMSG_SPACE(sizeof(int))];
 	} control_un;
 	struct cmsghdr *cmptr;
 
@@ -241,7 +243,7 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	cmptr->cmsg_len = CMSG_LEN(sizeof(int));
 	cmptr->cmsg_level = SOL_SOCKET;
 	cmptr->cmsg_type = SCM_RIGHTS;
-	*((int *) CMSG_DATA(cmptr)) = sendfd;
+	*((int *)CMSG_DATA(cmptr)) = sendfd;
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -254,8 +256,6 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	return sendmsg(fd, &msg, 0);
 }
 
-
-
 /*
   helpers / wrappers
 
@@ -267,28 +267,26 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
   fatal error unrelated to system call Print message and terminate
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
-void* lothars__malloc(size_t size)
+void *lothars__malloc(size_t size)
 {
 	void *ptr = NULL;
 	if (NULL == (ptr = malloc(size))) {
@@ -296,7 +294,6 @@ void* lothars__malloc(size_t size)
 	}
 	return ptr;
 }
-
 
 /*
   NB: dup2 implicitely allocates memory!
@@ -308,30 +305,24 @@ void lothars__dup2(int fd1, int fd2)
 	}
 }
 
-
-int lothars__select(int nfds
-		    , fd_set *readfds
-		    , fd_set *writefds
-		    , fd_set *exceptfds
-		    , struct timeval *timeout)
+int lothars__select(int nfds, fd_set *readfds, fd_set *writefds,
+		    fd_set *exceptfds, struct timeval *timeout)
 {
-	int  res;
+	int res;
 	if (0 > (res = select(nfds, readfds, writefds, exceptfds, timeout))) {
 		err_sys("select error");
 	}
-	return res;  // can return 0 on timeout
+	return res; // can return 0 on timeout
 }
 
-
-Sigfunc* lothars__signal(int signo, Sigfunc *func) // for our signal() function
+Sigfunc *lothars__signal(int signo, Sigfunc *func) // for our signal() function
 {
 	Sigfunc *sigfunc = NULL;
-	if(SIG_ERR == (sigfunc = signal(signo, func))){
+	if (SIG_ERR == (sigfunc = signal(signo, func))) {
 		err_sys("signal error");
 	}
 	return sigfunc;
 }
-
 
 ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 {
@@ -342,8 +333,6 @@ ssize_t lothars__readline(int fd, void *ptr, size_t maxlen)
 	return bytes;
 }
 
-
-
 pid_t lothars__fork(void)
 {
 	pid_t pid;
@@ -353,7 +342,6 @@ pid_t lothars__fork(void)
 	return pid;
 }
 
-
 void lothars__socketpair(int family, int type, int protocol, int *fd)
 {
 	if (0 > socketpair(family, type, protocol, fd)) {
@@ -361,14 +349,13 @@ void lothars__socketpair(int family, int type, int protocol, int *fd)
 	}
 }
 
-
-void lothars__setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		err_sys("setsockopt error");
 	}
 }
-
 
 void lothars__listen(int fd, int backlog)
 {
@@ -376,7 +363,6 @@ void lothars__listen(int fd, int backlog)
 		err_sys("listen error");
 	}
 }
-
 
 /*
   tcp_listen() similar to W. Richard Stevens' implementation
@@ -388,7 +374,7 @@ void lothars__listen(int fd, int backlog)
 int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 {
 	int listenfd, eai;
-	const int  on = 1;
+	const int on = 1;
 	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -397,25 +383,32 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	hints.ai_socktype = SOCK_STREAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("tcp_listen error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("tcp_listen error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 
 	ressave = res;
 
 	do {
-		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		listenfd = socket(res->ai_family, res->ai_socktype,
+				  res->ai_protocol);
 		if (0 > listenfd) {
 			continue; // error, try next one
 		}
-		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+		lothars__setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on,
+				    sizeof(on));
 		// set socket no linger and reuse addresse to avoid zombie sockets lying around in Linux
 
-		if (0 == bind(listenfd, res->ai_addr, res->ai_addrlen)) { // try to bind to the client (tcp)
+		if (0 ==
+		    bind(listenfd, res->ai_addr,
+			 res->ai_addrlen)) { // try to bind to the client (tcp)
 			break; // success
 		}
 		lothars__close(&listenfd); // bind error, close and try next one
 
-	} while (NULL != (res = res->ai_next)); // iterate over all clients obtained in address info (ai)
+	} while (
+		NULL !=
+		(res = res->ai_next)); // iterate over all clients obtained in address info (ai)
 
 	if (NULL == res) { // errno from final socket() or bind()
 		err_sys("tcp_listen error for %s, %s", host, serv);
@@ -432,13 +425,14 @@ int lothars__tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
 	return listenfd; // returned bound fd
 }
 
-
 int lothars__accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
 	int res;
 again:
 	if (0 > (res = accept(fd, sa, salenptr))) {
-		if ((errno == EPROTO) || (errno == ECONNABORTED)) { // deal with some POSIX.1 errors...
+		if ((errno == EPROTO) ||
+		    (errno ==
+		     ECONNABORTED)) { // deal with some POSIX.1 errors...
 			goto again;
 		} else {
 			err_sys("accept error");
@@ -446,7 +440,6 @@ again:
 	}
 	return res;
 }
-
 
 ssize_t lothars__read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 {
@@ -457,10 +450,9 @@ ssize_t lothars__read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	return cnt;
 }
 
-
 ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 
 	if (0 > (bytes = write_fd(fd, ptr, nbytes, sendfd))) {
 		err_sys("write_fd error");
@@ -469,10 +461,9 @@ ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	return bytes;
 }
 
-
 ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 
 	if (-1 == (bytes = read(fd, ptr, nbytes))) {
 		err_sys("read error");
@@ -480,14 +471,12 @@ ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 	return bytes;
 }
 
-
 void lothars__write(int fd, void *ptr, size_t nbytes)
 {
 	if (nbytes != write(fd, ptr, nbytes)) {
 		err_sys("write error");
 	}
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -525,19 +514,16 @@ void lothars__close(int *fd)
 #endif /* _XOPEN_SOURCE */
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
-
-typedef struct{
-	pid_t child_pid;   // process ID
+typedef struct {
+	pid_t child_pid; // process ID
 	int32_t child_fd_pipe; // parent's stream pipe to / from child
-	int32_t child_status;  // 0 = ready
-	long child_count;  // number of connections handled
+	int32_t child_status; // 0 = ready
+	long child_count; // number of connections handled
 } Child_t;
-Child_t* child_ptr;
-
+Child_t *child_ptr;
 
 /*
   worker - routine
@@ -559,7 +545,9 @@ void worker_routine(int32_t fd_sock)
 		// read
 		if (0 == (n_read = lothars__readline(fd_sock, line, MAXLINE))) {
 			// nothing more to read -> exit
-			fprintf(stdout, "child %d: read '%s', n_read '%ld' - reading over, return\n", getpid(), line, n_read);
+			fprintf(stdout,
+				"child %d: read '%s', n_read '%ld' - reading over, return\n",
+				getpid(), line, n_read);
 			return;
 		}
 
@@ -580,7 +568,6 @@ void worker_routine(int32_t fd_sock)
 	}
 }
 
-
 /*
   worker - main function
 */
@@ -597,7 +584,8 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		// instead the child blocks in a call to read_fd(),
 		// waiting for the parent to pass it a connected
 		// socket descriptor to process
-		if (0 == (num = lothars__read_fd(STDERR_FILENO, &chr, 1, &fd_conn))) {
+		if (0 == (num = lothars__read_fd(STDERR_FILENO, &chr, 1,
+						 &fd_conn))) {
 			err_quit("read_fd() returned 0");
 		}
 
@@ -614,7 +602,6 @@ void worker_main(int32_t idx, int32_t fd_listen, int32_t addrlen)
 		lothars__write(STDERR_FILENO, "", 1);
 	}
 }
-
 
 /*
   child - constructor
@@ -678,7 +665,6 @@ pid_t worker_make(int32_t idx, int32_t fd_listen, int32_t addrlen)
 	return pid;
 }
 
-
 /*
   print user time and system time on shutting down
 */
@@ -698,16 +684,19 @@ void pr_cpu_time()
 	}
 
 	// calculate user time
-	user = (double) usage_parent.ru_utime.tv_sec + usage_parent.ru_utime.tv_usec / 1000000.0;
-	user += (double) usage_child.ru_utime.tv_sec + usage_child.ru_utime.tv_usec / 1000000.0;
+	user = (double)usage_parent.ru_utime.tv_sec +
+	       usage_parent.ru_utime.tv_usec / 1000000.0;
+	user += (double)usage_child.ru_utime.tv_sec +
+		usage_child.ru_utime.tv_usec / 1000000.0;
 
 	// calculate system time
-	sys = (double) usage_parent.ru_stime.tv_sec + usage_parent.ru_stime.tv_usec / 1000000.0;
-	sys += (double) usage_child.ru_stime.tv_sec + usage_child.ru_stime.tv_usec / 1000000.0;
+	sys = (double)usage_parent.ru_stime.tv_sec +
+	      usage_parent.ru_stime.tv_usec / 1000000.0;
+	sys += (double)usage_child.ru_stime.tv_sec +
+	       usage_child.ru_stime.tv_usec / 1000000.0;
 
 	fprintf(stdout, "\nuser time = %gs, sys time = %gs\n", user, sys);
 }
-
 
 /*
   int sig handler - action when server is shutdown by CTRL + c
@@ -722,22 +711,21 @@ void sig_int(int32_t signo)
 	exit(EXIT_SUCCESS);
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main
 
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int32_t fd_listen, n_avail, fd_max, n_sel, fd_conn, rc;
 	ssize_t num;
 	fd_set set_r, set_master;
 	socklen_t addrlen, clilen;
-	struct sockaddr* cliaddr = NULL;
-	char port[16]; memset(port, '\0', sizeof(port));
+	struct sockaddr *cliaddr = NULL;
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -781,7 +769,7 @@ int main(int argc, char** argv)
 	// +----------+
 	//
 	int32_t idx;
-	for (idx=0; idx<NWORKER; ++idx) {
+	for (idx = 0; idx < NWORKER; ++idx) {
 		worker_make(idx, fd_listen, addrlen); // only parent returns
 		FD_SET(child_ptr[idx].child_fd_pipe, &set_master);
 		fd_max = max(fd_max, child_ptr[idx].child_fd_pipe);
@@ -803,7 +791,7 @@ int main(int argc, char** argv)
 		}
 
 		// the select I/O multiplexing - tell the parent when we are ready
-		n_sel = lothars__select(fd_max+1, &set_r, NULL, NULL, NULL);
+		n_sel = lothars__select(fd_max + 1, &set_r, NULL, NULL, NULL);
 
 		// check for new connections
 		if (FD_ISSET(fd_listen, &set_r)) {
@@ -813,7 +801,7 @@ int main(int argc, char** argv)
 			fd_conn = lothars__accept(fd_listen, cliaddr, &clilen);
 
 			// get next available child index
-			for (idx=0; idx<NWORKER; ++idx) {
+			for (idx = 0; idx < NWORKER; ++idx) {
 				if (0 == child_ptr[idx].child_status) {
 					break; // available
 				}
@@ -831,7 +819,8 @@ int main(int argc, char** argv)
 			// we found the first available child, now we
 			// pass the connected socket to the child
 			// using write_fd()
-			num = lothars__write_fd(child_ptr[idx].child_fd_pipe, "", 1, fd_conn);
+			num = lothars__write_fd(child_ptr[idx].child_fd_pipe,
+						"", 1, fd_conn);
 
 			// we write one byte along with the
 			// descriptor, but the recipient does not look
@@ -851,7 +840,7 @@ int main(int argc, char** argv)
 		}
 
 		// check for newly-available children
-		for (idx=0; idx<NWORKER; ++idx) {
+		for (idx = 0; idx < NWORKER; ++idx) {
 			if (FD_ISSET(child_ptr[idx].child_fd_pipe, &set_r)) {
 				// we see that our child_main() writes
 				// a single byte back to the parent
@@ -860,8 +849,12 @@ int main(int argc, char** argv)
 				// that makes the parent's end of the
 				// stream pipe readable
 
-				if (0 == (num = lothars__read(child_ptr[idx].child_fd_pipe, &rc, 1))) {
-					err_quit("child %d terminated unexepctedly", idx);
+				if (0 == (num = lothars__read(
+						  child_ptr[idx].child_fd_pipe,
+						  &rc, 1))) {
+					err_quit(
+						"child %d terminated unexepctedly",
+						idx);
 				}
 				child_ptr[idx].child_status = 0;
 				++n_avail;
@@ -875,4 +868,3 @@ int main(int argc, char** argv)
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
-

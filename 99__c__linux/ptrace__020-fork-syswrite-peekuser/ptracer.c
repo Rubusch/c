@@ -57,73 +57,98 @@
 
 int main(int argc, char **argv)
 {
-  pid_t child;
-  long orig_eax, eax;
-  long register_arguments[3];
-  int status;
-  int insyscall = 0;
+	pid_t child;
+	long orig_eax, eax;
+	long register_arguments[3];
+	int status;
+	int insyscall = 0;
 
-  if (0 > (child = fork())) {
-    perror("fork() failed");
-  } else if (0 == child) {
-    /* tracee */
-    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("/bin/pwd", "pwd", NULL);
+	if (0 > (child = fork())) {
+		perror("fork() failed");
+	} else if (0 == child) {
+		/* tracee */
+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+		execl("/bin/pwd", "pwd", NULL);
 
-  } else {
-    /* tracer */
-    while (1) {
-
-      // check wether the child was stopped by ptrace or exited
-      wait(&status);
-      if (WIFEXITED(status))
-        break;
+	} else {
+		/* tracer */
+		while (1) {
+			// check wether the child was stopped by ptrace or exited
+			wait(&status);
+			if (WIFEXITED(status))
+				break;
 
 #if __x86_64__
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX, NULL);
+			orig_eax = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX,
+					  NULL);
 
-      // tracking the 'write' syscall
-      if (orig_eax == SYS_write) {
-        if (insyscall == 0) {
-          // syscall entry: PTRACE_PEEKUSER looks into the arguments of the child
-          insyscall = 1;
-          register_arguments[0] = ptrace(PTRACE_PEEKUSER, child, 8 * RBX, NULL);
-          register_arguments[1] = ptrace(PTRACE_PEEKUSER, child, 8 * RCX, NULL);
-          register_arguments[2] = ptrace(PTRACE_PEEKUSER, child, 8 * RDX, NULL);
-          fprintf(stderr, "parent: write called with 0x%08lx [rbx], 0x%08lx [rcx], 0x%08lx [rdx]\n"
-                  , register_arguments[0], register_arguments[1], register_arguments[2]);
-        } else {
-          // syscall exit
-          eax = ptrace(PTRACE_PEEKUSER, child, 8 * RAX, NULL);
-          fprintf(stderr, "parent: write returned with 0x%08lx [rax]\n", eax);
-          insyscall = 0;
-        }
-      }
+			// tracking the 'write' syscall
+			if (orig_eax == SYS_write) {
+				if (insyscall == 0) {
+					// syscall entry: PTRACE_PEEKUSER looks into the arguments of the child
+					insyscall = 1;
+					register_arguments[0] =
+						ptrace(PTRACE_PEEKUSER, child,
+						       8 * RBX, NULL);
+					register_arguments[1] =
+						ptrace(PTRACE_PEEKUSER, child,
+						       8 * RCX, NULL);
+					register_arguments[2] =
+						ptrace(PTRACE_PEEKUSER, child,
+						       8 * RDX, NULL);
+					fprintf(stderr,
+						"parent: write called with 0x%08lx [rbx], 0x%08lx [rcx], 0x%08lx [rdx]\n",
+						register_arguments[0],
+						register_arguments[1],
+						register_arguments[2]);
+				} else {
+					// syscall exit
+					eax = ptrace(PTRACE_PEEKUSER, child,
+						     8 * RAX, NULL);
+					fprintf(stderr,
+						"parent: write returned with 0x%08lx [rax]\n",
+						eax);
+					insyscall = 0;
+				}
+			}
 #else
-      orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_EAX, NULL);
+			orig_eax = ptrace(PTRACE_PEEKUSER, child, 4 * ORIG_EAX,
+					  NULL);
 
-      // tracking the 'write' syscall
-      if (orig_eax == SYS_write) {
-        if (insyscall == 0) {
-          // syscall entry: PTRACE_PEEKUSER looks into the arguments of the child
-          insyscall = 1;
-          register_arguments[0] = ptrace(PTRACE_PEEKUSER, child, 4 * EBX, NULL);
-          register_arguments[1] = ptrace(PTRACE_PEEKUSER, child, 4 * ECX, NULL);
-          register_arguments[2] = ptrace(PTRACE_PEEKUSER, child, 4 * EDX, NULL);
-          fprintf(stderr, "parent: write called with 0x%04lx [ebx], 0x%04lx [ecx], 0x%04lx [edx]\n"
-                  , register_arguments[0], register_arguments[1], register_arguments[2]);
-        } else {
-          // syscall exit
-          eax = ptrace(PTRACE_PEEKUSER, child, 4 * EAX, NULL);
-          fprintf(stderr, "parent: write returned with 0x%04lx [eax]\n", eax);
-          insyscall = 0;
-        }
-      }
+			// tracking the 'write' syscall
+			if (orig_eax == SYS_write) {
+				if (insyscall == 0) {
+					// syscall entry: PTRACE_PEEKUSER looks into the arguments of the child
+					insyscall = 1;
+					register_arguments[0] =
+						ptrace(PTRACE_PEEKUSER, child,
+						       4 * EBX, NULL);
+					register_arguments[1] =
+						ptrace(PTRACE_PEEKUSER, child,
+						       4 * ECX, NULL);
+					register_arguments[2] =
+						ptrace(PTRACE_PEEKUSER, child,
+						       4 * EDX, NULL);
+					fprintf(stderr,
+						"parent: write called with 0x%04lx [ebx], 0x%04lx [ecx], 0x%04lx [edx]\n",
+						register_arguments[0],
+						register_arguments[1],
+						register_arguments[2]);
+				} else {
+					// syscall exit
+					eax = ptrace(PTRACE_PEEKUSER, child,
+						     4 * EAX, NULL);
+					fprintf(stderr,
+						"parent: write returned with 0x%04lx [eax]\n",
+						eax);
+					insyscall = 0;
+				}
+			}
 #endif
 
-      // stop the child process whenever a syscall entry/exit was received
-      ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-    }
-  }
-  return 0;
+			// stop the child process whenever a syscall entry/exit was received
+			ptrace(PTRACE_SYSCALL, child, NULL, NULL);
+		}
+	}
+	return 0;
 }

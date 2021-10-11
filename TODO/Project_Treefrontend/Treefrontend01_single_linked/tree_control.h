@@ -21,9 +21,9 @@ int delete_tree(unsigned int *);
 // writing to file and printing tree
 int init_path(char *, const unsigned int, const unsigned int);
 int get_data_by_path(char *, const unsigned int, char *, const unsigned int,
-                     const unsigned int);
+		     const unsigned int);
 int get_paint_mask_per_row(unsigned int *, const unsigned int,
-                           const unsigned int, const unsigned int);
+			   const unsigned int, const unsigned int);
 int write_tree();
 
 // misc

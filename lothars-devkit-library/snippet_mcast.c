@@ -7,24 +7,23 @@
 */
 int mcast_get_if(int fd_sock)
 {
-	switch (lothars__socket_to_family(fd_sock)){
-	case AF_INET:
-	{
+	switch (lothars__socket_to_family(fd_sock)) {
+	case AF_INET: {
 		// TODO: similar to mcast_set_if()
 		return -1;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		uint32_t idx;
 		socklen_t len;
 		len = sizeof(idx);
 
-		if(getsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_IF, &idx, &len) < 0){
+		if (getsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_IF, &idx,
+			       &len) < 0) {
 			return -1;
 		}
-		return idx ;
+		return idx;
 	}
 #endif
 
@@ -33,7 +32,6 @@ int mcast_get_if(int fd_sock)
 		return -1;
 	}
 }
-
 
 int lothars__mcast_get_if(int fd_sock)
 {
@@ -44,31 +42,30 @@ int lothars__mcast_get_if(int fd_sock)
 	return rc;
 }
 
-
 /*
 */
 int mcast_get_loop(int fd_sock)
 {
 	switch (lothars__socket_to_family(fd_sock)) {
-	case AF_INET:
-	{
-		uint8_t  flag;
+	case AF_INET: {
+		uint8_t flag;
 		socklen_t len;
 
 		len = sizeof(flag);
-		if (0 > getsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP, &flag, &len)) {
+		if (0 > getsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP,
+				   &flag, &len)) {
 			return -1;
 		}
 		return flag;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		uint32_t  flag;
+	case AF_INET6: {
+		uint32_t flag;
 		socklen_t len;
 		len = sizeof(flag);
-		if (0 > getsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &flag, &len)) {
+		if (0 > getsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP,
+				   &flag, &len)) {
 			return -1;
 		}
 		return flag;
@@ -81,7 +78,6 @@ int mcast_get_loop(int fd_sock)
 	}
 }
 
-
 int lothars__mcast_get_loop(int fd_sock)
 {
 	int rc;
@@ -91,31 +87,30 @@ int lothars__mcast_get_loop(int fd_sock)
 	return rc;
 }
 
-
 /*
 */
 int mcast_get_ttl(int fd_sock)
 {
 	switch (lothars__socket_to_family(fd_sock)) {
-	case AF_INET:
-	{
-		uint8_t  ttl;
+	case AF_INET: {
+		uint8_t ttl;
 		socklen_t len;
 
 		len = sizeof(ttl);
-		if (0 > getsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, &len)) {
+		if (0 > getsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl,
+				   &len)) {
 			return -1;
 		}
 		return ttl;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		int hop;
 		socklen_t len;
 		len = sizeof(hop);
-		if (0 > getsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hop, &len)) {
+		if (0 > getsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS,
+				   &hop, &len)) {
 			return -1;
 		}
 		return hop;
@@ -128,7 +123,6 @@ int mcast_get_ttl(int fd_sock)
 	}
 }
 
-
 int lothars__mcast_get_ttl(int fd_sock)
 {
 	int rc;
@@ -138,14 +132,10 @@ int lothars__mcast_get_ttl(int fd_sock)
 	return rc;
 }
 
-
 /*
 */
-int mcast_join( int fd_sock
-                , const struct sockaddr *grp
-                , socklen_t grplen
-                , const char *ifname
-                , uint32_t ifindex)
+int mcast_join(int fd_sock, const struct sockaddr *grp, socklen_t grplen,
+	       const char *ifname, uint32_t ifindex)
 {
 #ifdef MCAST_JOIN_GROUP
 	struct group_req req;
@@ -166,15 +156,17 @@ int mcast_join( int fd_sock
 	}
 
 	memcpy(&req.gr_group, grp, grplen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_JOIN_GROUP, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_JOIN_GROUP, &req, sizeof(req));
 #else
-	switch(grp->sa_family){
-	case AF_INET:
-	{
-		struct ip_mreq  mreq;
-		struct ifreq  ifreq;
+	switch (grp->sa_family) {
+	case AF_INET: {
+		struct ip_mreq mreq;
+		struct ifreq ifreq;
 
-		memcpy(&mreq.imr_multiaddr, &((const struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((const struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
 
 		if (0 < ifindex) {
 			if (NULL == if_indextoname(ifindex, ifreq.ifr_name)) {
@@ -190,27 +182,33 @@ int mcast_join( int fd_sock
 				return -1;
 			}
 
-			memcpy(&mreq.imr_interface, &((struct sockaddr_in *) &ifreq.ifr_addr)->sin_addr, sizeof(struct in_addr));
+			memcpy(&mreq.imr_interface,
+			       &((struct sockaddr_in *)&ifreq.ifr_addr)
+					->sin_addr,
+			       sizeof(struct in_addr));
 		} else {
 			mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 		}
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq,
+				  sizeof(mreq));
 	}
 #ifdef IPV6
-#ifndef IPV6_JOIN_GROUP  // APIv0 compatibility
-#define IPV6_JOIN_GROUP  IPV6_ADD_MEMBERSHIP
+#ifndef IPV6_JOIN_GROUP // APIv0 compatibility
+#define IPV6_JOIN_GROUP IPV6_ADD_MEMBERSHIP
 #endif
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		struct ipv6_mreq mreq6;
 
-		memcpy(&mreq6.ipv6mr_multiaddr, &((const struct sockaddr_in6 *) grp)->sin6_addr, sizeof(struct in6_addr));
+		memcpy(&mreq6.ipv6mr_multiaddr,
+		       &((const struct sockaddr_in6 *)grp)->sin6_addr,
+		       sizeof(struct in6_addr));
 
 		if (0 < ifindex) {
 			mreq6.ipv6mr_interface = ifindex;
 		} else if (NULL != ifname) {
-			if (0 == (mreq6.ipv6mr_interface = if_nametoindex(ifname))) {
+			if (0 ==
+			    (mreq6.ipv6mr_interface = if_nametoindex(ifname))) {
 				errno = ENXIO; // i/f name not found
 				return -1;
 			}
@@ -218,7 +216,8 @@ int mcast_join( int fd_sock
 			mreq6.ipv6mr_interface = 0;
 		}
 
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq6, sizeof(mreq6));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_JOIN_GROUP,
+				  &mreq6, sizeof(mreq6));
 	}
 #endif
 
@@ -229,28 +228,20 @@ int mcast_join( int fd_sock
 #endif
 }
 
-
-void lothars__mcast_join( int fd_sock
-                  , const struct sockaddr *grp
-                  , socklen_t grplen
-                  , const char *ifname
-                  , uint32_t ifindex)
+void lothars__mcast_join(int fd_sock, const struct sockaddr *grp,
+			 socklen_t grplen, const char *ifname, uint32_t ifindex)
 {
 	if (0 > mcast_join(fd_sock, grp, grplen, ifname, ifindex)) {
 		err_sys("mcast_join error");
 	}
 }
 
-
 /*
 */
-int mcast_join_source_group( int fd_sock
-                             , const struct sockaddr *src
-                             , socklen_t srclen
-                             , const struct sockaddr *grp
-                             , socklen_t grplen
-                             , const char *ifname
-                             , uint32_t ifindex)
+int mcast_join_source_group(int fd_sock, const struct sockaddr *src,
+			    socklen_t srclen, const struct sockaddr *grp,
+			    socklen_t grplen, const char *ifname,
+			    uint32_t ifindex)
 {
 #ifdef MCAST_JOIN_SOURCE_GROUP
 	struct group_source_req req;
@@ -265,23 +256,28 @@ int mcast_join_source_group( int fd_sock
 		req.gsr_interface = 0;
 	}
 
-	if ((grplen > sizeof(req.gsr_group)) || (srclen > sizeof(req.gsr_source))) {
+	if ((grplen > sizeof(req.gsr_group)) ||
+	    (srclen > sizeof(req.gsr_source))) {
 		errno = EINVAL;
 		return -1;
 	}
 	memcpy(&req.gsr_group, grp, grplen);
 	memcpy(&req.gsr_source, src, srclen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_JOIN_SOURCE_GROUP, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_JOIN_SOURCE_GROUP, &req, sizeof(req));
 #else
 	switch (grp->sa_family) {
 #ifdef IP_ADD_SOURCE_MEMBERSHIP
-	case AF_INET:
-	{
+	case AF_INET: {
 		struct ip_mreq_source mreq;
-		struct ifreq   ifreq;
+		struct ifreq ifreq;
 
-		memcpy(&mreq.imr_multiaddr, &((struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
-		memcpy(&mreq.imr_sourceaddr, &((struct sockaddr_in *) src)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
+		memcpy(&mreq.imr_sourceaddr,
+		       &((struct sockaddr_in *)src)->sin_addr,
+		       sizeof(struct in_addr));
 
 		if (ifindex > 0) {
 			if (if_indextoname(ifindex, ifreq.ifr_name) == NULL) {
@@ -294,11 +290,15 @@ int mcast_join_source_group( int fd_sock
 		doioctl:
 			if (ioctl(fd_sock, SIOCGIFADDR, &ifreq) < 0)
 				return -1;
-			memcpy(&mreq.imr_interface, &((struct sockaddr_in *) &ifreq.ifr_addr)->sin_addr, sizeof(struct in_addr));
+			memcpy(&mreq.imr_interface,
+			       &((struct sockaddr_in *)&ifreq.ifr_addr)
+					->sin_addr,
+			       sizeof(struct in_addr));
 		} else
 			mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP,
+				  &mreq, sizeof(mreq));
 	}
 #endif
 
@@ -312,51 +312,52 @@ int mcast_join_source_group( int fd_sock
 #endif
 }
 
-
-void lothars__mcast_join_source_group( int fd_sock
-                               , const struct sockaddr *src
-                               , socklen_t srclen
-                               , const struct sockaddr *grp
-                               , socklen_t grplen
-                               , const char *ifname
-                               , uint32_t ifindex)
+void lothars__mcast_join_source_group(int fd_sock, const struct sockaddr *src,
+				      socklen_t srclen,
+				      const struct sockaddr *grp,
+				      socklen_t grplen, const char *ifname,
+				      uint32_t ifindex)
 {
-	if (0 > mcast_join_source_group(fd_sock, src, srclen, grp, grplen, ifname, ifindex)) {
+	if (0 > mcast_join_source_group(fd_sock, src, srclen, grp, grplen,
+					ifname, ifindex)) {
 		err_sys("mcast_join_source_group error");
 	}
 }
 
-
 /*
 */
-int mcast_block_source( int fd_sock
-                        , const struct sockaddr *src
-                        , socklen_t srclen
-                        , const struct sockaddr *grp
-                        , socklen_t grplen)
+int mcast_block_source(int fd_sock, const struct sockaddr *src,
+		       socklen_t srclen, const struct sockaddr *grp,
+		       socklen_t grplen)
 {
 #ifdef MCAST_BLOCK_SOURCE
 	struct group_source_req req;
 	req.gsr_interface = 0;
-	if ((grplen > sizeof(req.gsr_group)) || (srclen > sizeof(req.gsr_source))) {
+	if ((grplen > sizeof(req.gsr_group)) ||
+	    (srclen > sizeof(req.gsr_source))) {
 		errno = EINVAL;
 		return -1;
 	}
 	memcpy(&req.gsr_group, grp, grplen);
 	memcpy(&req.gsr_source, src, srclen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_BLOCK_SOURCE, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_BLOCK_SOURCE, &req, sizeof(req));
 #else
 	switch (grp->sa_family) {
 #ifdef IP_BLOCK_SOURCE
-	case AF_INET:
-	{
+	case AF_INET: {
 		struct ip_mreq_source mreq;
 
-		memcpy(&mreq.imr_multiaddr, &((struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
-		memcpy(&mreq.imr_sourceaddr, &((struct sockaddr_in *) src)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
+		memcpy(&mreq.imr_sourceaddr,
+		       &((struct sockaddr_in *)src)->sin_addr,
+		       sizeof(struct in_addr));
 		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_BLOCK_SOURCE, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_BLOCK_SOURCE, &mreq,
+				  sizeof(mreq));
 	}
 #endif
 
@@ -370,49 +371,49 @@ int mcast_block_source( int fd_sock
 #endif
 }
 
-
-void lothars__mcast_block_source( int fd_sock
-                          , const struct sockaddr *src
-                          , socklen_t srclen
-                          , const struct sockaddr *grp
-                          , socklen_t grplen)
+void lothars__mcast_block_source(int fd_sock, const struct sockaddr *src,
+				 socklen_t srclen, const struct sockaddr *grp,
+				 socklen_t grplen)
 {
 	if (0 > mcast_block_source(fd_sock, src, srclen, grp, grplen)) {
 		err_sys("mcast_block_source error");
 	}
 }
 
-
 /*
 */
-int mcast_unblock_source( int fd_sock
-                          , const struct sockaddr *src
-                          , socklen_t srclen
-                          , const struct sockaddr *grp
-                          , socklen_t grplen)
+int mcast_unblock_source(int fd_sock, const struct sockaddr *src,
+			 socklen_t srclen, const struct sockaddr *grp,
+			 socklen_t grplen)
 {
 #ifdef MCAST_UNBLOCK_SOURCE
 	struct group_source_req req;
 	req.gsr_interface = 0;
-	if ((grplen > sizeof(req.gsr_group)) || (srclen > sizeof(req.gsr_source))) {
+	if ((grplen > sizeof(req.gsr_group)) ||
+	    (srclen > sizeof(req.gsr_source))) {
 		errno = EINVAL;
 		return -1;
 	}
 	memcpy(&req.gsr_group, grp, grplen);
 	memcpy(&req.gsr_source, src, srclen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_UNBLOCK_SOURCE, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_UNBLOCK_SOURCE, &req, sizeof(req));
 #else
 	switch (grp->sa_family) {
 #ifdef IP_UNBLOCK_SOURCE
-	case AF_INET:
-	{
+	case AF_INET: {
 		struct ip_mreq_source mreq;
 
-		memcpy(&mreq.imr_multiaddr, &((struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
-		memcpy(&mreq.imr_sourceaddr, &((struct sockaddr_in *) src)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
+		memcpy(&mreq.imr_sourceaddr,
+		       &((struct sockaddr_in *)src)->sin_addr,
+		       sizeof(struct in_addr));
 		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_UNBLOCK_SOURCE, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_UNBLOCK_SOURCE, &mreq,
+				  sizeof(mreq));
 	}
 #endif
 
@@ -426,18 +427,14 @@ int mcast_unblock_source( int fd_sock
 #endif
 }
 
-
-void lothars__mcast_unblock_source( int fd_sock
-                            , const struct sockaddr *src
-                            , socklen_t srclen
-                            , const struct sockaddr *grp
-                            , socklen_t grplen)
+void lothars__mcast_unblock_source(int fd_sock, const struct sockaddr *src,
+				   socklen_t srclen, const struct sockaddr *grp,
+				   socklen_t grplen)
 {
 	if (0 > mcast_unblock_source(fd_sock, src, srclen, grp, grplen)) {
 		err_sys("mcast_unblock_source error");
 	}
 }
-
 
 /*
 */
@@ -451,16 +448,19 @@ int mcast_leave(int fd_sock, const struct sockaddr *grp, socklen_t grplen)
 		return -1;
 	}
 	memcpy(&req.gr_group, grp, grplen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_LEAVE_GROUP, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_LEAVE_GROUP, &req, sizeof(req));
 #else
 	switch (grp->sa_family) {
-	case AF_INET:
-	{
-		struct ip_mreq  mreq;
+	case AF_INET: {
+		struct ip_mreq mreq;
 
-		memcpy(&mreq.imr_multiaddr, &((const struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((const struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
 		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-		return setsockopt(fd_sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,
+				  &mreq, sizeof(mreq));
 	}
 
 #ifdef IPV6
@@ -468,13 +468,15 @@ int mcast_leave(int fd_sock, const struct sockaddr *grp, socklen_t grplen)
 #define IPV6_LEAVE_GROUP IPV6_DROP_MEMBERSHIP
 #endif
 
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		struct ipv6_mreq mreq6;
 
-		memcpy(&mreq6.ipv6mr_multiaddr, &((const struct sockaddr_in6 *) grp)->sin6_addr, sizeof(struct in6_addr));
+		memcpy(&mreq6.ipv6mr_multiaddr,
+		       &((const struct sockaddr_in6 *)grp)->sin6_addr,
+		       sizeof(struct in6_addr));
 		mreq6.ipv6mr_interface = 0;
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &mreq6, sizeof(mreq6));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_LEAVE_GROUP,
+				  &mreq6, sizeof(mreq6));
 	}
 #endif
 
@@ -485,46 +487,47 @@ int mcast_leave(int fd_sock, const struct sockaddr *grp, socklen_t grplen)
 #endif
 }
 
-
-void lothars__mcast_leave( int fd_sock
-                   , const struct sockaddr *grp
-                   , socklen_t grplen)
+void lothars__mcast_leave(int fd_sock, const struct sockaddr *grp,
+			  socklen_t grplen)
 {
 	if (0 > mcast_leave(fd_sock, grp, grplen)) {
 		err_sys("mcast_leave error");
 	}
 }
 
-
-
-int mcast_leave_source_group( int fd_sock
-                              , const struct sockaddr *src
-                              , socklen_t srclen
-                              , const struct sockaddr *grp
-                              , socklen_t grplen)
+int mcast_leave_source_group(int fd_sock, const struct sockaddr *src,
+			     socklen_t srclen, const struct sockaddr *grp,
+			     socklen_t grplen)
 {
 #ifdef MCAST_LEAVE_SOURCE_GROUP
 	struct group_source_req req;
 	req.gsr_interface = 0;
-	if ((grplen > sizeof(req.gsr_group)) || (srclen > sizeof(req.gsr_source))) {
+	if ((grplen > sizeof(req.gsr_group)) ||
+	    (srclen > sizeof(req.gsr_source))) {
 		errno = EINVAL;
 		return -1;
 	}
 	memcpy(&req.gsr_group, grp, grplen);
 	memcpy(&req.gsr_source, src, srclen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_LEAVE_SOURCE_GROUP, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_LEAVE_SOURCE_GROUP, &req, sizeof(req));
 #else
 	switch (grp->sa_family) {
 #ifdef IP_DROP_SOURCE_MEMBERSHIP
-	case AF_INET:
-	{
+	case AF_INET: {
 		struct ip_mreq_source mreq;
 
-		memcpy(&mreq.imr_multiaddr, &((struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
-		memcpy(&mreq.imr_sourceaddr, &((struct sockaddr_in *) src)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
+		memcpy(&mreq.imr_sourceaddr,
+		       &((struct sockaddr_in *)src)->sin_addr,
+		       sizeof(struct in_addr));
 		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP,
+				  IP_DROP_SOURCE_MEMBERSHIP, &mreq,
+				  sizeof(mreq));
 	}
 #endif
 
@@ -539,30 +542,24 @@ int mcast_leave_source_group( int fd_sock
 #endif
 }
 
-
-void lothars__mcast_leave_source_group( int fd_sock
-                                , const struct sockaddr *src
-                                , socklen_t srclen
-                                , const struct sockaddr *grp
-                                , socklen_t grplen)
+void lothars__mcast_leave_source_group(int fd_sock, const struct sockaddr *src,
+				       socklen_t srclen,
+				       const struct sockaddr *grp,
+				       socklen_t grplen)
 {
 	if (0 > mcast_leave_source_group(fd_sock, src, srclen, grp, grplen)) {
 		err_sys("mcast_leave_source_group error");
 	}
 }
 
-
 /*
 */
-int mcast_set_if( int fd_sock
-                  , const char *ifname
-                  , uint32_t ifindex)
+int mcast_set_if(int fd_sock, const char *ifname, uint32_t ifindex)
 {
-	switch(lothars__socket_to_family(fd_sock)){
-	case AF_INET:
-	{
-		struct in_addr  inaddr;
-		struct ifreq  ifreq;
+	switch (lothars__socket_to_family(fd_sock)) {
+	case AF_INET: {
+		struct in_addr inaddr;
+		struct ifreq ifreq;
 
 		if (0 < ifindex) {
 			if (NULL == if_indextoname(ifindex, ifreq.ifr_name)) {
@@ -577,17 +574,21 @@ int mcast_set_if( int fd_sock
 			if (0 > ioctl(fd_sock, SIOCGIFADDR, &ifreq)) {
 				return -1;
 			}
-			memcpy(&inaddr, &((struct sockaddr_in *) &ifreq.ifr_addr)->sin_addr, sizeof(struct in_addr));
+			memcpy(&inaddr,
+			       &((struct sockaddr_in *)&ifreq.ifr_addr)
+					->sin_addr,
+			       sizeof(struct in_addr));
 		} else {
-			inaddr.s_addr = htonl(INADDR_ANY); // remove prev. set default 
+			inaddr.s_addr =
+				htonl(INADDR_ANY); // remove prev. set default
 		}
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_IF, &inaddr, sizeof(struct in_addr));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_IF, &inaddr,
+				  sizeof(struct in_addr));
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		uint32_t idx;
 
 		if (0 == (idx = ifindex)) {
@@ -601,7 +602,8 @@ int mcast_set_if( int fd_sock
 				return -1;
 			}
 		}
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_IF, &idx, sizeof(idx));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_IF,
+				  &idx, sizeof(idx));
 	}
 #endif
 
@@ -611,38 +613,34 @@ int mcast_set_if( int fd_sock
 	}
 }
 
-
-void lothars__mcast_set_if( int fd_sock
-                    , const char *ifname
-                    , uint32_t ifindex)
+void lothars__mcast_set_if(int fd_sock, const char *ifname, uint32_t ifindex)
 {
 	if (0 > mcast_set_if(fd_sock, ifname, ifindex)) {
 		err_sys("mcast_set_if error");
 	}
 }
 
-
 /*
 */
 int mcast_set_loop(int fd_sock, int onoff)
 {
 	switch (lothars__socket_to_family(fd_sock)) {
-	case AF_INET:
-	{
+	case AF_INET: {
 		uint8_t flag;
 
 		flag = onoff;
 		// specify multicast loopback
-		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP, &flag, sizeof(flag));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP, &flag,
+				  sizeof(flag));
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		uint32_t flag;
 
 		flag = onoff;
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &flag, sizeof(flag));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP,
+				  &flag, sizeof(flag));
 	}
 #endif
 
@@ -652,37 +650,33 @@ int mcast_set_loop(int fd_sock, int onoff)
 	}
 }
 
-
-void lothars__mcast_set_loop( int fd_sock
-                      , int onoff)
+void lothars__mcast_set_loop(int fd_sock, int onoff)
 {
 	if (0 > mcast_set_loop(fd_sock, onoff)) {
 		err_sys("mcast_set_loop error");
 	}
 }
 
-
 /*
 */
-int mcast_set_ttl( int fd_sock
-                   , int val)
+int mcast_set_ttl(int fd_sock, int val)
 {
-	switch(lothars__socket_to_family(fd_sock)){
-	case AF_INET:
-	{
+	switch (lothars__socket_to_family(fd_sock)) {
+	case AF_INET: {
 		uint8_t ttl;
 
 		ttl = val;
-		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl,
+				  sizeof(ttl));
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		int hop;
 
 		hop = val;
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &hop, sizeof(hop));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS,
+				  &hop, sizeof(hop));
 	}
 #endif
 
@@ -692,9 +686,7 @@ int mcast_set_ttl( int fd_sock
 	}
 }
 
-
-void lothars__mcast_set_ttl( int fd_sock
-                     , int val)
+void lothars__mcast_set_ttl(int fd_sock, int val)
 {
 	if (0 > mcast_set_ttl(fd_sock, val)) {
 		err_sys("mcast_set_ttl error");

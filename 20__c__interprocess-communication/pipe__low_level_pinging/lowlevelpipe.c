@@ -24,12 +24,10 @@
 
 #define BUF_SIZE 64
 
-
 void childcode(int *pfd)
 {
 	char ME[] = "ITCHY:";
 	char buf[BUF_SIZE];
-
 
 	fprintf(stderr, "%s started\n", ME);
 
@@ -49,7 +47,6 @@ void childcode(int *pfd)
 	fprintf(stderr, "%s done!\n", ME);
 	exit(EXIT_SUCCESS);
 }
-
 
 void parentcode(int *pfd)
 {
@@ -72,7 +69,6 @@ void parentcode(int *pfd)
 	fprintf(stderr, "%s done!\n", ME);
 	exit(EXIT_SUCCESS);
 }
-
 
 int main(int argc, char **argv)
 {

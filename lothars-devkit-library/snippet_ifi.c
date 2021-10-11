@@ -6,36 +6,24 @@
 
 #include "snippet_ifi.h"
 
-
-struct ifi_info* get_ifi_info(int family, int doaliases)
+struct ifi_info *get_ifi_info(int family, int doaliases)
 {
-	struct ifi_info *ifi=NULL;
-	struct ifi_info *ifihead=NULL;
-	struct ifi_info **ifipnext=NULL;
+	struct ifi_info *ifi = NULL;
+	struct ifi_info *ifihead = NULL;
+	struct ifi_info **ifipnext = NULL;
 
-	int fd_sock
-		, len
-		, lastlen
-		, flags
-		, myflags
-		, idx = 0
-		, hlen = 0;
+	int fd_sock, len, lastlen, flags, myflags, idx = 0, hlen = 0;
 
-	char *ptr=NULL
-		, *buf=NULL
-		, lastname[IFNAMSIZ]
-		, *cptr=NULL
-		, *haddr=NULL
-		, *sdlname=NULL;
+	char *ptr = NULL, *buf = NULL, lastname[IFNAMSIZ], *cptr = NULL,
+	     *haddr = NULL, *sdlname = NULL;
 
 	struct ifconf ifc;
-	struct ifreq *ifr=NULL, ifrcopy;
-	struct sockaddr_in *sinptr=NULL;
-	struct sockaddr_in6 *sin6ptr=NULL;
+	struct ifreq *ifr = NULL, ifrcopy;
+	struct sockaddr_in *sinptr = NULL;
+	struct sockaddr_in6 *sin6ptr = NULL;
 
 	/* create an UDP socket for using with ioctl() */
 	fd_sock = lothars__socket(PF_INET, SOCK_DGRAM, 0);
-
 
 	/* figure out the size of ifc.ifc_buf i.e. ifc.ifc_len, and
 	 * allocate corresponding amount of memory via ioctl() call
@@ -67,14 +55,15 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		   are the same.
 		 */
 		//fprintf(stdout, "\t1.) and 3.) Issue SIOCGIFCONF request to ioctl\n");
-		if (0 > ioctl(fd_sock, SIOCGIFCONF, &ifc)) { // NB: direct call to ioctl()
+		if (0 > ioctl(fd_sock, SIOCGIFCONF,
+			      &ifc)) { // NB: direct call to ioctl()
 			if ((errno != EINVAL) || (lastlen != 0)) {
 				err_sys("ioctl error");
 			}
 		} else {
 			if (ifc.ifc_len == lastlen) {
 				//fprintf(stdout, "\t4.) Comparison of lengthes were equal - ok! ifc.ifc_len is now set, ifc.ifc_buf has the correct allocated size\n");
-				break;  // success, len has not changed
+				break; // success, len has not changed
 			}
 			//fprintf(stdout, "\t2.) Save the ioctl return value\n");
 			lastlen = ifc.ifc_len;
@@ -92,12 +81,12 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 	/* main loop */
 
-	for (ptr = buf; ptr < buf + ifc.ifc_len; ) {
-		ifr = (struct ifreq *) ptr; // update to the (next) ifreq instance
+	for (ptr = buf; ptr < buf + ifc.ifc_len;) {
+		ifr = (struct ifreq *)ptr; // update to the (next) ifreq instance
 
-		switch (ifr->ifr_addr.sa_family){
+		switch (ifr->ifr_addr.sa_family) {
 #ifdef IPV6
-                /*
+		/*
 		  guess we have ipv6, then we need the sockaddr_sa_len
 		  field, since the other addressing would be 16-byte
 		  for IPv4 addresses, but too small for 28-byte IPv6
@@ -109,7 +98,8 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 #endif
 		case PF_INET:
 		default:
-			len = sizeof(*ifr); // NB: on some UNIX and Darwin better use 'sockaddr.sa_len + IFNAMSIZ'
+			len = sizeof(
+				*ifr); // NB: on some UNIX and Darwin better use 'sockaddr.sa_len + IFNAMSIZ'
 			break;
 		}
 
@@ -120,7 +110,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 		myflags = 0;
 		if (NULL != (cptr = strchr(ifr->ifr_name, ':'))) {
-			*cptr = 0;  // replace colon with null
+			*cptr = 0; // replace colon with null
 		}
 
 		if (0 == strncmp(lastname, ifr->ifr_name, IFNAMSIZ)) {
@@ -153,14 +143,15 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		/* allocate and initialize ifi_info structure */
 		ifi = lothars__malloc(sizeof(*ifi));
 		*ifipnext = ifi; // prev points to this new one
-		ifipnext = &ifi->ifi_next; // pointer of pointer to next one goes here
+		ifipnext =
+			&ifi->ifi_next; // pointer of pointer to next one goes here
 
 		// pre-init in order to make free() working consistently
 		ifi->ifi_addr = NULL;
 		ifi->ifi_brdaddr = NULL;
 		ifi->ifi_dstaddr = NULL;
 
-		ifi->ifi_flags = flags;  // IFF_xxx values
+		ifi->ifi_flags = flags; // IFF_xxx values
 		ifi->ifi_myflags = myflags; // IFI_xxx values
 
 #if defined(SIOCGIFMTU)
@@ -171,7 +162,7 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 #endif
 
 		memcpy(ifi->ifi_name, ifr->ifr_name, IFI_NAME);
-		ifi->ifi_name[IFI_NAME-1] = '\0';
+		ifi->ifi_name[IFI_NAME - 1] = '\0';
 
 		// If the sockaddr_dl is from a different interface, ignore it
 		if (sdlname == NULL || strcmp(sdlname, ifr->ifr_name) != 0) {
@@ -189,13 +180,15 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 
 		switch (ifr->ifr_addr.sa_family) {
 		case PF_INET:
-			sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+			sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
 			/*
 			  copy the IP address that was returned from
 			  the original SIOCGIFCONF request
 			 */
-			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in));
-			memcpy(ifi->ifi_addr, sinptr, sizeof(struct sockaddr_in));
+			ifi->ifi_addr =
+				lothars__malloc(sizeof(struct sockaddr_in));
+			memcpy(ifi->ifi_addr, sinptr,
+			       sizeof(struct sockaddr_in));
 
 #ifdef SIOCGIFBRDADDR
 			/*
@@ -204,10 +197,14 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			  of SIOCGIFBRDADDR
 			*/
 			if (flags & IFF_BROADCAST) {
-				lothars__ioctl(fd_sock, SIOCGIFBRDADDR, &ifrcopy);
-				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_broadaddr;
-				ifi->ifi_brdaddr = lothars__malloc(sizeof(struct sockaddr_in));
-				memcpy(ifi->ifi_brdaddr, sinptr, sizeof(struct sockaddr_in));
+				lothars__ioctl(fd_sock, SIOCGIFBRDADDR,
+					       &ifrcopy);
+				sinptr = (struct sockaddr_in *)&ifrcopy
+						 .ifr_broadaddr;
+				ifi->ifi_brdaddr = lothars__malloc(
+					sizeof(struct sockaddr_in));
+				memcpy(ifi->ifi_brdaddr, sinptr,
+				       sizeof(struct sockaddr_in));
 			}
 #endif
 
@@ -218,10 +215,14 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			  adddress of the other end of the link
 			 */
 			if (flags & IFF_POINTOPOINT) {
-				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
-				sinptr = (struct sockaddr_in *) &ifrcopy.ifr_dstaddr;
-				ifi->ifi_dstaddr = lothars__malloc(sizeof(struct sockaddr_in));
-				memcpy(ifi->ifi_dstaddr, sinptr, sizeof(struct sockaddr_in));
+				lothars__ioctl(fd_sock, SIOCGIFDSTADDR,
+					       &ifrcopy);
+				sinptr = (struct sockaddr_in *)&ifrcopy
+						 .ifr_dstaddr;
+				ifi->ifi_dstaddr = lothars__malloc(
+					sizeof(struct sockaddr_in));
+				memcpy(ifi->ifi_dstaddr, sinptr,
+				       sizeof(struct sockaddr_in));
 			}
 #endif
 			break;
@@ -230,16 +231,22 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 			  similar to IPv4, but IPv6 does not support broadcasting, thus no SIOCGIFBRDADDR
 			*/
 		case PF_INET6:
-			sin6ptr = (struct sockaddr_in6 *) &ifr->ifr_addr;
-			ifi->ifi_addr = lothars__malloc(sizeof(struct sockaddr_in6));
-			memcpy(ifi->ifi_addr, sin6ptr, sizeof(struct sockaddr_in6));
+			sin6ptr = (struct sockaddr_in6 *)&ifr->ifr_addr;
+			ifi->ifi_addr =
+				lothars__malloc(sizeof(struct sockaddr_in6));
+			memcpy(ifi->ifi_addr, sin6ptr,
+			       sizeof(struct sockaddr_in6));
 
 #ifdef SIOCGIFDSTADDR
 			if (flags & IFF_POINTOPOINT) {
-				lothars__ioctl(fd_sock, SIOCGIFDSTADDR, &ifrcopy);
-				sin6ptr = (struct sockaddr_in6 *) &ifrcopy.ifr_dstaddr;
-				ifi->ifi_dstaddr = lothars__malloc(sizeof(struct sockaddr_in6));
-				memcpy(ifi->ifi_dstaddr, sin6ptr, sizeof(struct sockaddr_in6));
+				lothars__ioctl(fd_sock, SIOCGIFDSTADDR,
+					       &ifrcopy);
+				sin6ptr = (struct sockaddr_in6 *)&ifrcopy
+						  .ifr_dstaddr;
+				ifi->ifi_dstaddr = lothars__malloc(
+					sizeof(struct sockaddr_in6));
+				memcpy(ifi->ifi_dstaddr, sin6ptr,
+				       sizeof(struct sockaddr_in6));
 			}
 #endif
 			break;
@@ -249,26 +256,29 @@ struct ifi_info* get_ifi_info(int family, int doaliases)
 		}
 	}
 
-	free(buf); buf = NULL;
+	free(buf);
+	buf = NULL;
 	return ifihead; // pointer to first structure in linked list
 }
 
-
 void free_ifi_info(struct ifi_info *ifihead)
 {
-	struct ifi_info *ifi=NULL, *ifinext=NULL;
+	struct ifi_info *ifi = NULL, *ifinext = NULL;
 
 	for (ifi = ifihead; ifi != NULL; ifi = ifinext) {
 		if (NULL != ifi->ifi_addr) {
-			free(ifi->ifi_addr); ifi->ifi_addr = NULL;
+			free(ifi->ifi_addr);
+			ifi->ifi_addr = NULL;
 		}
 
 		if (NULL != ifi->ifi_brdaddr) {
-			free(ifi->ifi_brdaddr); ifi->ifi_brdaddr = NULL;
+			free(ifi->ifi_brdaddr);
+			ifi->ifi_brdaddr = NULL;
 		}
 
 		if (NULL != ifi->ifi_dstaddr) {
-			free(ifi->ifi_dstaddr); ifi->ifi_dstaddr = NULL;
+			free(ifi->ifi_dstaddr);
+			ifi->ifi_dstaddr = NULL;
 		}
 
 		ifinext = ifi->ifi_next; // can't fetch ifi_next after free()
@@ -276,10 +286,9 @@ void free_ifi_info(struct ifi_info *ifihead)
 	}
 }
 
-
-struct ifi_info* lothars__get_ifi_info(int family, int doaliases)
+struct ifi_info *lothars__get_ifi_info(int family, int doaliases)
 {
-	struct ifi_info *ifi=NULL;
+	struct ifi_info *ifi = NULL;
 
 	if (NULL == (ifi = get_ifi_info(family, doaliases))) {
 		err_quit("get_ifi_info error");

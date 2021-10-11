@@ -1,7 +1,6 @@
 #ifndef DEVKIT_SNIPPET_ROUTE
 #define DEVKIT_SNIPPET_ROUTE
 
-
 /*
   routing
 
@@ -12,8 +11,7 @@
   References:
   Unix Network Programming, Stevens (1996)
 */
-// TODO rework                                             
-
+// TODO rework
 
 /* includes */
 
@@ -28,7 +26,6 @@
 #include <linux/rtnetlink.h> /* RTAX_MAX */
 
 #include "lib_error.h"
-
 
 /* constants / macros */
 
@@ -48,13 +45,11 @@
 				 sizeof(u_long)))
 // */
 
-
 /* forwards */
 
 //void  lothars__get_rtaddrs(int, struct sockaddr *, struct sockaddr **);
 //char* lothars__net_rt_iflist(int, int, size_t *);
 //char* lothars__net_rt_dump(int, int, size_t *);
 //const char* lothars__sock_masktop(struct sockaddr *, socklen_t);
-
 
 #endif /* DEVKIT_SNIPPET_ROUTE */

@@ -15,12 +15,11 @@
 #define ME "SCRATCHY:"
 #define PID_DIGITS 8
 
-
 int main(int argc, char **argv)
 {
 	// todo send signal
 	pid_t pid = 0;
-	readnumber(( unsigned int * )&pid, PID_DIGITS,
+	readnumber((unsigned int *)&pid, PID_DIGITS,
 		   "enter a valid pid (up to 4 digits) to connect to");
 
 	unsigned int chosen = 0;

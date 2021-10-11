@@ -32,13 +32,11 @@ char user[USRNAME_SIZ];
 
 void handle_alarm(int);
 
-
 void handle_alarm(int sig)
 {
 	puts("Operation timed out. Exiting..\n");
 	exit(0);
 }
-
 
 int main(int argc, char **argv)
 {

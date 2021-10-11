@@ -19,10 +19,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-
 int main()
 {
-  printf("execute 'ls -rtl' via execlp\n");
-  execlp("ls", "-r", "-t", "-l", ( char * )0);
-  exit(0);
+	printf("execute 'ls -rtl' via execlp\n");
+	execlp("ls", "-r", "-t", "-l", (char *)0);
+	exit(0);
 }

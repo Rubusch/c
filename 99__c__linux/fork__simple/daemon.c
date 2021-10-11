@@ -62,45 +62,43 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-
 void start_daemon()
 {
-  chdir("/"); // senseless here, but ok
-  setsid();
+	chdir("/"); // senseless here, but ok
+	setsid();
 
-  close(STDIN_FILENO);
-  close(STDOUT_FILENO);
-  close(STDERR_FILENO);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 
-  open("/dev/null", O_RDWR);
-  dup(STDIN_FILENO);
-  dup(STDIN_FILENO);
+	open("/dev/null", O_RDWR);
+	dup(STDIN_FILENO);
+	dup(STDIN_FILENO);
 
-  while (1)
-    sleep(100);
+	while (1)
+		sleep(100);
 }
-
 
 int main(int argc, char **argv)
 {
-  pid_t pidChild = 0;
+	pid_t pidChild = 0;
 
-  if (0 > (pidChild = fork())) {
-    perror("fork() failed");
-    return EXIT_FAILURE;
-  }
+	if (0 > (pidChild = fork())) {
+		perror("fork() failed");
+		return EXIT_FAILURE;
+	}
 
-  if (pidChild == 0) {
-    start_daemon();
-  }
+	if (pidChild == 0) {
+		start_daemon();
+	}
 
-  // child never reaches here,
-  // this is parent code!
-  printf("child has PID %i\r\n", pidChild);
-  pid_t pidParent = getpid();
-  printf("Parent has (had) PID %i\r\n", pidParent);
+	// child never reaches here,
+	// this is parent code!
+	printf("child has PID %i\r\n", pidChild);
+	pid_t pidParent = getpid();
+	printf("Parent has (had) PID %i\r\n", pidParent);
 
-  // no error handling, if fork() fails
+	// no error handling, if fork() fails
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

@@ -271,17 +271,16 @@
 
 int main(void)
 {
-  int foo = 10;
-  int bar = 15;
-  fprintf(stderr, "foo + bar = %d + %d = ", foo, bar);
+	int foo = 10;
+	int bar = 15;
+	fprintf(stderr, "foo + bar = %d + %d = ", foo, bar);
 
-  __asm__ __volatile__("addl  %%ebx,%%eax"
-                       :"=a"(foo)
-                       :"a"(foo), "b"(bar)
-                       );
+	__asm__ __volatile__("addl  %%ebx,%%eax"
+			     : "=a"(foo)
+			     : "a"(foo), "b"(bar));
 
-  fprintf(stderr, "'%d'\n", foo);
-  fprintf(stderr, "READY.\n");
+	fprintf(stderr, "'%d'\n", foo);
+	fprintf(stderr, "READY.\n");
 
-  return 0;
+	return 0;
 }

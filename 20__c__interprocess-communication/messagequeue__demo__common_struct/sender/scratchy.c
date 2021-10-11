@@ -17,7 +17,6 @@
 #define ME "SCRATCHY:"
 #define MESSAGE "Scratchymessage"
 
-
 int main(int argc, char **argv)
 {
 	char message[] = MESSAGE;

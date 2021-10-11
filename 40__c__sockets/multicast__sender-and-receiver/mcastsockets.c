@@ -75,7 +75,6 @@
   manpages, e.g. on die.net
 */
 
-
 #define _GNU_SOURCE /* struct ip_mreq */
 
 #include <stdio.h> /* readline() */
@@ -88,10 +87,9 @@
 #include <netdb.h> /* freeadddrinfo(), getaddrinfo(), gai_strerror() */
 #include <stdarg.h> /* va_start(), va_end(),... */
 #include <arpa/inet.h> /* inet_ntop() */
-#include <sys/un.h>  /* struct sockaddr_un, close() */
+#include <sys/un.h> /* struct sockaddr_un, close() */
 #include <net/if.h> /* if_nametoindex() */
 #include <errno.h>
-
 
 /*
   constants
@@ -99,8 +97,7 @@
 
 // send one dataram every five seconds
 #define SENDRATE 5
-#define MAXLINE  4096 /* max text line length */
-
+#define MAXLINE 4096 /* max text line length */
 
 /*
   forwards
@@ -112,25 +109,28 @@ void err_quit(const char *, ...);
 
 // sock
 void lothars__bind(int, const struct sockaddr *, socklen_t);
-ssize_t lothars__recvfrom(int, void *, size_t, int, struct sockaddr *, socklen_t *);
-void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+ssize_t lothars__recvfrom(int, void *, size_t, int, struct sockaddr *,
+			  socklen_t *);
+void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *,
+		     socklen_t);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
 int lothars__socket(int, int, int);
 
 // demo / socket
 int lothars__family_to_level(int);
 int lothars__socket_to_family(int);
-int lothars__udp_client(const char*, const char*, struct sockaddr**, socklen_t*);
-char* lothars__sock_ntop(const struct sockaddr*, socklen_t);
+int lothars__udp_client(const char *, const char *, struct sockaddr **,
+			socklen_t *);
+char *lothars__sock_ntop(const struct sockaddr *, socklen_t);
 
 // unix
 pid_t lothars__fork();
-void* lothars__malloc(size_t);
+void *lothars__malloc(size_t);
 
 // mcast
-void lothars__mcast_join(int, const struct sockaddr *, socklen_t, const char *, uint32_t);
+void lothars__mcast_join(int, const struct sockaddr *, socklen_t, const char *,
+			 uint32_t);
 void lothars__mcast_set_loop(int, int);
-
 
 /*
   internal helpers
@@ -144,24 +144,25 @@ void lothars__mcast_set_loop(int, int);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -174,26 +175,24 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    fatal error unrelated to system call Print message and terminate
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /*
   The bind() function shall assign a local socket address address to a
@@ -217,27 +216,21 @@ void lothars__bind(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
 /*
   The recvfrom() function shall receive a message from a
   connection-mode or connectionless-mode socket. It is normally used
   with connectionless-mode sockets because it permits the application
   to retrieve the source address of received data.
 */
-ssize_t lothars__recvfrom(int fd
-		  , void *ptr
-		  , size_t nbytes
-		  , int flags
-		  , struct sockaddr *sa
-		  , socklen_t *salenptr)
+ssize_t lothars__recvfrom(int fd, void *ptr, size_t nbytes, int flags,
+			  struct sockaddr *sa, socklen_t *salenptr)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = recvfrom(fd, ptr, nbytes, flags, sa, salenptr))) {
 		err_sys("recvfrom error");
 	}
 	return res;
 }
-
 
 /*
   The sendto() function shall send a message through a connection-mode
@@ -245,30 +238,21 @@ ssize_t lothars__recvfrom(int fd
   the message shall be sent to the address specified by dest_addr. If
   the socket is connection-mode, dest_addr shall be ignored.
 */
-void lothars__sendto( int fd
-	      , const void *ptr
-	      , size_t nbytes
-	      , int flags
-	      , const struct sockaddr *sa
-	      , socklen_t salen)
+void lothars__sendto(int fd, const void *ptr, size_t nbytes, int flags,
+		     const struct sockaddr *sa, socklen_t salen)
 {
-	if ((ssize_t) nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
+	if ((ssize_t)nbytes != sendto(fd, ptr, nbytes, flags, sa, salen)) {
 		err_sys("sendto error");
 	}
 }
 
-
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		err_sys("setsockopt error");
 	}
 }
-
 
 /*
   The socket() function shall create an unbound socket in a
@@ -294,7 +278,6 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-
 /*
   demo snippet - family to level
 */
@@ -315,7 +298,6 @@ int lothars__family_to_level(int family)
 	}
 }
 
-
 /*
   demo snippets - lothars__socket_to_family
 */
@@ -325,34 +307,36 @@ int lothars__socket_to_family(int fd_sock)
 	socklen_t len;
 
 	len = sizeof(ss);
-	if (0 > getsockname(fd_sock, (struct sockaddr *) &ss, &len)) {
+	if (0 > getsockname(fd_sock, (struct sockaddr *)&ss, &len)) {
 		err_sys("%s() error", __func__);
 		return -1;
 	}
 	return ss.ss_family;
 }
 
-
 /*
 */
-int lothars__udp_client(const char *host, const char *serv, struct sockaddr **saptr, socklen_t *lenp)
+int lothars__udp_client(const char *host, const char *serv,
+			struct sockaddr **saptr, socklen_t *lenp)
 {
 	int fd_sock, eai;
-	struct addrinfo hints, *res=NULL, *ressave=NULL;
+	struct addrinfo hints, *res = NULL, *ressave = NULL;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
 
 	if (0 != (eai = getaddrinfo(host, serv, &hints, &res))) {
-		err_quit("udp_client error for %s, %s: %s", host, serv, gai_strerror(eai));
+		err_quit("udp_client error for %s, %s: %s", host, serv,
+			 gai_strerror(eai));
 	}
 	ressave = res;
 
 	do {
-		fd_sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		fd_sock = socket(res->ai_family, res->ai_socktype,
+				 res->ai_protocol);
 		if (fd_sock >= 0)
-			break;  // success
+			break; // success
 	} while (NULL != (res = res->ai_next));
 
 	if (res == NULL) { // errno set from final socket()
@@ -368,39 +352,40 @@ int lothars__udp_client(const char *host, const char *serv, struct sockaddr **sa
 	return fd_sock;
 }
 
-
 /*
   sock_ntop
 */
-char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
+char *sock_ntop(const struct sockaddr *sa, socklen_t salen)
 {
 	char portstr[8];
-	static char str[128];  // Unix domain is largest
+	static char str[128]; // Unix domain is largest
 
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-		if (NULL == inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
+		if (NULL ==
+		    inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
 			return NULL;
 		}
 		if (0 != ntohs(sin->sin_port)) {
-			snprintf(portstr, sizeof(portstr), ":%d", ntohs(sin->sin_port));
+			snprintf(portstr, sizeof(portstr), ":%d",
+				 ntohs(sin->sin_port));
 			strcat(str, portstr);
 		}
 		return str;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
 		str[0] = '[';
-		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str + 1, sizeof(str) - 1)) {
+		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str + 1,
+				      sizeof(str) - 1)) {
 			return NULL;
 		}
 		if (0 != ntohs(sin6->sin6_port)) {
-			snprintf(portstr, sizeof(portstr), "]:%d", ntohs(sin6->sin6_port));
+			snprintf(portstr, sizeof(portstr), "]:%d",
+				 ntohs(sin6->sin6_port));
 			strcat(str, portstr);
 			return str;
 		}
@@ -409,9 +394,8 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 #endif
 
 #ifdef AF_UNIX
-	case AF_UNIX:
-	{
-		struct sockaddr_un *unp = (struct sockaddr_un *) sa;
+	case AF_UNIX: {
+		struct sockaddr_un *unp = (struct sockaddr_un *)sa;
 
 		/*
 		   OK to have no pathname bound to the socket: happens on
@@ -427,14 +411,15 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 #endif
 
 	default:
-		snprintf(str, sizeof(str), "sock_ntop: unknown AF_xxx: %d, len %d", sa->sa_family, salen);
-		return(str);
+		snprintf(str, sizeof(str),
+			 "sock_ntop: unknown AF_xxx: %d, len %d", sa->sa_family,
+			 salen);
+		return (str);
 	}
 	return NULL;
 }
 
-
-char* lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
+char *lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = sock_ntop(sa, salen))) {
@@ -442,7 +427,6 @@ char* lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
 	}
 	return ptr;
 }
-
 
 /*
   The fork() function shall create a new process.
@@ -456,8 +440,7 @@ pid_t lothars__fork(void)
 	return pid;
 }
 
-
-void* lothars__malloc(size_t size)
+void *lothars__malloc(size_t size)
 {
 	void *ptr;
 	if (NULL == (ptr = malloc(size))) {
@@ -466,16 +449,12 @@ void* lothars__malloc(size_t size)
 	return ptr;
 }
 
-
 /*
   mcast
 */
 
-int mcast_join( int fd_sock
-                , const struct sockaddr *grp
-                , socklen_t grplen
-                , const char *ifname
-                , uint32_t ifindex)
+int mcast_join(int fd_sock, const struct sockaddr *grp, socklen_t grplen,
+	       const char *ifname, uint32_t ifindex)
 {
 #ifdef MCAST_JOIN_GROUP
 	struct group_req req;
@@ -496,15 +475,17 @@ int mcast_join( int fd_sock
 	}
 
 	memcpy(&req.gr_group, grp, grplen);
-	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family), MCAST_JOIN_GROUP, &req, sizeof(req));
+	return setsockopt(fd_sock, lothars__family_to_level(grp->sa_family),
+			  MCAST_JOIN_GROUP, &req, sizeof(req));
 #else
-	switch(grp->sa_family){
-	case AF_INET:
-	{
-		struct ip_mreq  mreq;
-		struct ifreq  ifreq;
+	switch (grp->sa_family) {
+	case AF_INET: {
+		struct ip_mreq mreq;
+		struct ifreq ifreq;
 
-		memcpy(&mreq.imr_multiaddr, &((const struct sockaddr_in *) grp)->sin_addr, sizeof(struct in_addr));
+		memcpy(&mreq.imr_multiaddr,
+		       &((const struct sockaddr_in *)grp)->sin_addr,
+		       sizeof(struct in_addr));
 
 		if (0 < ifindex) {
 			if (NULL == if_indextoname(ifindex, ifreq.ifr_name)) {
@@ -520,27 +501,33 @@ int mcast_join( int fd_sock
 				return -1;
 			}
 
-			memcpy(&mreq.imr_interface, &((struct sockaddr_in *) &ifreq.ifr_addr)->sin_addr, sizeof(struct in_addr));
+			memcpy(&mreq.imr_interface,
+			       &((struct sockaddr_in *)&ifreq.ifr_addr)
+					->sin_addr,
+			       sizeof(struct in_addr));
 		} else {
 			mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 		}
 
-		return setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq,
+				  sizeof(mreq));
 	}
 #ifdef IPV6
-#ifndef IPV6_JOIN_GROUP  // APIv0 compatibility
-#define IPV6_JOIN_GROUP  IPV6_ADD_MEMBERSHIP
+#ifndef IPV6_JOIN_GROUP // APIv0 compatibility
+#define IPV6_JOIN_GROUP IPV6_ADD_MEMBERSHIP
 #endif
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		struct ipv6_mreq mreq6;
 
-		memcpy(&mreq6.ipv6mr_multiaddr, &((const struct sockaddr_in6 *) grp)->sin6_addr, sizeof(struct in6_addr));
+		memcpy(&mreq6.ipv6mr_multiaddr,
+		       &((const struct sockaddr_in6 *)grp)->sin6_addr,
+		       sizeof(struct in6_addr));
 
 		if (0 < ifindex) {
 			mreq6.ipv6mr_interface = ifindex;
 		} else if (NULL != ifname) {
-			if (0 == (mreq6.ipv6mr_interface = if_nametoindex(ifname))) {
+			if (0 ==
+			    (mreq6.ipv6mr_interface = if_nametoindex(ifname))) {
 				errno = ENXIO; // i/f name not found
 				return -1;
 			}
@@ -548,7 +535,8 @@ int mcast_join( int fd_sock
 			mreq6.ipv6mr_interface = 0;
 		}
 
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq6, sizeof(mreq6));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_JOIN_GROUP,
+				  &mreq6, sizeof(mreq6));
 	}
 #endif
 
@@ -559,40 +547,35 @@ int mcast_join( int fd_sock
 #endif
 }
 
-
-void lothars__mcast_join( int fd_sock
-                  , const struct sockaddr *grp
-                  , socklen_t grplen
-                  , const char *ifname
-                  , uint32_t ifindex)
+void lothars__mcast_join(int fd_sock, const struct sockaddr *grp,
+			 socklen_t grplen, const char *ifname, uint32_t ifindex)
 {
 	if (0 > mcast_join(fd_sock, grp, grplen, ifname, ifindex)) {
 		err_sys("mcast_join error");
 	}
 }
 
-
 /*
 */
 int mcast_set_loop(int fd_sock, int onoff)
 {
 	switch (lothars__socket_to_family(fd_sock)) {
-	case AF_INET:
-	{
+	case AF_INET: {
 		uint8_t flag;
 
 		flag = onoff;
 		// specify multicast loopback
-		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP, &flag, sizeof(flag));
+		return setsockopt(fd_sock, IPPROTO_IP, IP_MULTICAST_LOOP, &flag,
+				  sizeof(flag));
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
+	case AF_INET6: {
 		uint32_t flag;
 
 		flag = onoff;
-		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &flag, sizeof(flag));
+		return setsockopt(fd_sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP,
+				  &flag, sizeof(flag));
 	}
 #endif
 
@@ -602,15 +585,12 @@ int mcast_set_loop(int fd_sock, int onoff)
 	}
 }
 
-
-void lothars__mcast_set_loop( int fd_sock
-                      , int onoff)
+void lothars__mcast_set_loop(int fd_sock, int onoff)
 {
 	if (0 > mcast_set_loop(fd_sock, onoff)) {
 		err_sys("mcast_set_loop error");
 	}
 }
-
 
 /********************************************************************************************/
 // worker implementation
@@ -618,7 +598,7 @@ void lothars__mcast_set_loop( int fd_sock
 /*
   send
 */
-void send_all(int fd_send, struct sockaddr* sadest, socklen_t salen)
+void send_all(int fd_send, struct sockaddr *sadest, socklen_t salen)
 {
 	char line[MAXLINE];
 	struct utsname name;
@@ -635,7 +615,6 @@ void send_all(int fd_send, struct sockaddr* sadest, socklen_t salen)
 	}
 }
 
-
 /*
   receive
 */
@@ -650,17 +629,17 @@ void recv_all(int fd_recv, socklen_t salen)
 
 	while (1) {
 		len = salen;
-		idx = lothars__recvfrom(fd_recv, line, MAXLINE, 0, safrom, &len);
+		idx = lothars__recvfrom(fd_recv, line, MAXLINE, 0, safrom,
+					&len);
 
 		// '\0' termination
 		line[idx] = '\0';
-		fprintf(stdout, "from %s: %s", lothars__sock_ntop(safrom, len), line);
+		fprintf(stdout, "from %s: %s", lothars__sock_ntop(safrom, len),
+			line);
 	}
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main
@@ -671,11 +650,15 @@ int main(int argc, char *argv[])
 	const int on = 1;
 	socklen_t salen;
 	struct sockaddr *sa_send, *sa_recv;
-	char hostip[16]; memset(hostip, '\0', sizeof(hostip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char hostip[16];
+	memset(hostip, '\0', sizeof(hostip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (3 != argc) {
-		fprintf(stderr, "usage: %s <multicastip> <port>\ne.g.\n$> %s 239.255.1.2 8080\n", argv[0], argv[0]);
+		fprintf(stderr,
+			"usage: %s <multicastip> <port>\ne.g.\n$> %s 239.255.1.2 8080\n",
+			argv[0], argv[0]);
 		exit(EXIT_FAILURE);
 	}
 	strncpy(hostip, argv[1], sizeof(hostip));
@@ -684,7 +667,7 @@ int main(int argc, char *argv[])
 	strncpy(port, argv[2], sizeof(port));
 	fprintf(stdout, "port: '%s'\n", port);
 
-	fd_send = lothars__udp_client(hostip, port, (void*) &sa_send, &salen);
+	fd_send = lothars__udp_client(hostip, port, (void *)&sa_send, &salen);
 
 	fd_recv = lothars__socket(sa_send->sa_family, SOCK_DGRAM, 0);
 
@@ -700,7 +683,6 @@ int main(int argc, char *argv[])
 
 	// multicast: set loop
 	lothars__mcast_set_loop(fd_send, 0);
-
 
 	// split into sender and receiver
 	if (0 == lothars__fork()) {

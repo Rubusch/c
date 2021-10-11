@@ -14,9 +14,9 @@
 #define DATASIZ 64
 
 typedef struct element {
-  struct element *next;
-  struct element *prev;
-  char *data;
+	struct element *next;
+	struct element *prev;
+	char *data;
 } element_t;
 
 // external usage interface level

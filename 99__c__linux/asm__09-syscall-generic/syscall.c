@@ -31,33 +31,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-long system_caller(long syscall_number, long rdi, long rsi, long rdx, long r10, long r8, long r9)
+long system_caller(long syscall_number, long rdi, long rsi, long rdx, long r10,
+		   long r8, long r9)
 {
-  long val;
+	long val;
 
-  // convert params to 'register long' register values in asm
-  register long r10_ __asm__ ("r10") = r10;
-  register long r8_ __asm__ ("r8") = r8;
-  register long r9_ __asm__ ("r9") = r9;
+	// convert params to 'register long' register values in asm
+	register long r10_ __asm__("r10") = r10;
+	register long r8_ __asm__("r8") = r8;
+	register long r9_ __asm__("r9") = r9;
 
-  __asm__ volatile ("syscall"
-                    : "=a" (val)
-                    : "a" (syscall_number), "D" (rdi), "S" (rsi), "d" (rdx), "r" (r10_), "r" (r8_), "r" (r9_)
-                    : "rcx", "r11", "cc", "memory" );
+	__asm__ volatile("syscall"
+			 : "=a"(val)
+			 : "a"(syscall_number), "D"(rdi), "S"(rsi), "d"(rdx),
+			   "r"(r10_), "r"(r8_), "r"(r9_)
+			 : "rcx", "r11", "cc", "memory");
 
-    return val;
+	return val;
 }
-
-
 
 int main(int argc, char **argv)
 {
-  static const char msg[] = "Ipsum Lorum" "\n"; // to be sent via rsi
+	static const char msg[] = "Ipsum Lorum"
+				  "\n"; // to be sent via rsi
 
-  // example: syscall "write", standard output,...
-  // NOTE: SYS_write == 1, equally use '1' instead
-  system_caller(SYS_write, 1, (long)msg, sizeof(msg), 0, 0, 0 );
+	// example: syscall "write", standard output,...
+	// NOTE: SYS_write == 1, equally use '1' instead
+	system_caller(SYS_write, 1, (long)msg, sizeof(msg), 0, 0, 0);
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

@@ -15,14 +15,12 @@
 extern char *strcpy(char *, const char *);
 extern int strcmp(const char *, const char *);
 
-
 int string_cmp(char *str1, char *str2, int *pResult)
 {
-  // modifications of strcmp can be tested here!
-  *pResult = strcmp(str1, str2);
-  return 0;
+	// modifications of strcmp can be tested here!
+	*pResult = strcmp(str1, str2);
+	return 0;
 }
-
 
 int main(int argc, char **argv)
 {
@@ -37,14 +35,13 @@ int main(int argc, char **argv)
 		goto fail;
 	strcpy(pText02, TEXT02);
 
-
 	// strcmp output
 	printf("do string_cmp()\n");
 	int iResult = 0;
 	if (-1 == string_cmp(pText01, pText02, &iResult))
 		goto fail;
-	printf("strcmp: \"%s\" and \"%s\", \nresult: \'%d\' - ", pText01, pText02,
-	       iResult);
+	printf("strcmp: \"%s\" and \"%s\", \nresult: \'%d\' - ", pText01,
+	       pText02, iResult);
 
 	// print result
 	if (iResult < 0) {
@@ -54,7 +51,6 @@ int main(int argc, char **argv)
 	} else {
 		printf("Equal!\n");
 	}
-
 
 	if (pText01 != NULL)
 		free(pText01);
@@ -66,9 +62,11 @@ int main(int argc, char **argv)
 	return EXIT_SUCCESS;
 
 fail:
-	if (pText01) free(pText01);
+	if (pText01)
+		free(pText01);
 	pText01 = NULL;
-	if (pText02) free(pText02);
+	if (pText02)
+		free(pText02);
 	pText02 = NULL;
 
 	return EXIT_FAILURE;

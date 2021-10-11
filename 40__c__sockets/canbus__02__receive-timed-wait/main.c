@@ -37,7 +37,6 @@
 
 #include "can_interface.h"
 
-
 typedef struct api_frame_s {
 	uint32_t frame_id;
 	uint8_t frame_dlc;
@@ -46,10 +45,8 @@ typedef struct api_frame_s {
 				       * size as number of used
 				       * bytes! */
 } api_frame_t;
-typedef struct api_frame_s* api_frame_p;
+typedef struct api_frame_s *api_frame_p;
 static api_frame_t api_frame;
-
-
 
 void api__prepare_msg(api_frame_p pf)
 {
@@ -65,8 +62,7 @@ void api__prepare_msg(api_frame_p pf)
 	pf->data[1] = 0x22;
 }
 
-int
-main(void)
+int main(void)
 {
 	int ret = -1;
 	char if_name[] = "can0";
@@ -79,7 +75,8 @@ main(void)
 
 	// listen
 	do {
-		ret = canif__recv(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data, 10000);
+		ret = canif__recv(&api_frame.frame_id, &api_frame.frame_dlc,
+				  api_frame.data, 10000);
 		if (0 > ret) {
 			fprintf(stderr, "canif__recv() failed\n");
 			goto err;
@@ -89,7 +86,8 @@ main(void)
 	} while (0 == ret);
 
 	// send (similar "client")
-	if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+	if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+			    api_frame.data)) {
 		goto err;
 	}
 

@@ -1,6 +1,5 @@
 /* fo.h */
 
-
 #ifndef FILEOPERATIONS
 #define FILEOPERATIONS
 
@@ -47,7 +46,7 @@ int rename_file(const char *, const char *);
 // copying
 int copy_characterwise_unbuffered(const char *, const char *);
 int copy_characterwise_buffered(const char *, const char *,
-                                const unsigned long int);
+				const unsigned long int);
 
 // temporary files
 unsigned int number_of_tempfiles();
@@ -64,9 +63,9 @@ int get_bufsize();
 // reading out of a file stream
 int read_without_eof(FILE *, char *, const unsigned int);
 int read_nth_line(FILE *, char *, const unsigned long int,
-                  const unsigned long int);
+		  const unsigned long int);
 int read_lines(FILE *, char *, const unsigned long int, const unsigned long int,
-               const unsigned long int);
+	       const unsigned long int);
 int read_lines_with_pattern(FILE *, char *, const unsigned long int, char *);
 
 // reallocation

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #include <termios.h> /* tcsetattr() */
-#include <unistd.h>  /* tcsetattr() */
+#include <unistd.h> /* tcsetattr() */
 
 static struct termios new_io;
 static struct termios old_io;
@@ -17,49 +17,48 @@ static struct termios old_io;
 
 int cbreak(int fd)
 {
-  // save terminal
-  if (-1 == (tcgetattr(fd, &old_io))) {
-    return -1;
-  }
-  new_io = old_io;
+	// save terminal
+	if (-1 == (tcgetattr(fd, &old_io))) {
+		return -1;
+	}
+	new_io = old_io;
 
-  // define cbreak mode
-  new_io.c_lflag = new_io.c_lflag & ~(ECHO | ICANON);
-  new_io.c_cc[VMIN] = 1;
-  new_io.c_cc[VTIME] = 0;
+	// define cbreak mode
+	new_io.c_lflag = new_io.c_lflag & ~(ECHO | ICANON);
+	new_io.c_cc[VMIN] = 1;
+	new_io.c_cc[VTIME] = 0;
 
-  // set cbreak mode
-  if (-1 == (tcsetattr(fd, TCSAFLUSH, &new_io))) {
-    return -1;
-  }
-  return 1;
+	// set cbreak mode
+	if (-1 == (tcsetattr(fd, TCSAFLUSH, &new_io))) {
+		return -1;
+	}
+	return 1;
 }
 
 int getch(void)
 {
-  int c;
-  if (-1 == cbreak(STDIN_FILENO)) {
-    printf("cbreak function failed\n");
-    exit(EXIT_FAILURE);
-  }
-  c = getchar();
+	int c;
+	if (-1 == cbreak(STDIN_FILENO)) {
+		printf("cbreak function failed\n");
+		exit(EXIT_FAILURE);
+	}
+	c = getchar();
 
-  // reset (very) old terminal mode
-  tcsetattr(STDIN_FILENO, TCSANOW, &old_io);
-  return c;
+	// reset (very) old terminal mode
+	tcsetattr(STDIN_FILENO, TCSANOW, &old_io);
+	return c;
 }
-
 
 /* Demo */
 int main(int argc, char **argv)
 {
-  int sz;
-  printf("Enter \'q\' to terminate the prg.\n");
+	int sz;
+	printf("Enter \'q\' to terminate the prg.\n");
 
-  while ((sz = getch()) != 'q') {
-    // do some print out of the read characters
-    puts(( char * )&sz);
-  }
+	while ((sz = getch()) != 'q') {
+		// do some print out of the read characters
+		puts((char *)&sz);
+	}
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

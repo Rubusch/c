@@ -11,7 +11,6 @@
 #define CHILD_TXT "\tchild - "
 //#define IDENTIFIER_SIZE 20
 
-
 /* technical */
 #define TRAP_INST 0xCC
 #define TRAP_LEN 1
@@ -28,15 +27,13 @@
 #error ARCHITECTURE NOT SUPPORTED
 #endif
 
-
 /* utils */
 typedef void *tracee_addr_t;
 
 typedef struct breakpoint {
-  tracee_addr_t code_addr;
-  long code_backup;
+	tracee_addr_t code_addr;
+	long code_backup;
 } breakpoint_t;
-
 
 /* declarations */
 struct breakpoint_t;

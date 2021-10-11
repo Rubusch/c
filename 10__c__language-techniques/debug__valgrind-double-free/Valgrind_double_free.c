@@ -23,22 +23,22 @@
 
 int main(int argc, char **argv)
 {
-  // set up dyn var and init with text
-  char *pText = NULL;
-  if ((pText = ( char * )malloc((strlen(TEXT) + 1) * sizeof(char))) == NULL)
-    return EXIT_FAILURE;
-  strcpy(pText, TEXT);
+	// set up dyn var and init with text
+	char *pText = NULL;
+	if ((pText = (char *)malloc((strlen(TEXT) + 1) * sizeof(char))) == NULL)
+		return EXIT_FAILURE;
+	strcpy(pText, TEXT);
 
-  // show
-  printf("My text is \"%s\"\n", pText);
+	// show
+	printf("My text is \"%s\"\n", pText);
 
-  printf("First free()\n");
-  free(pText);
+	printf("First free()\n");
+	free(pText);
 
-  printf("Second free() - Ouch!!!\n\n");
-  free(pText);
+	printf("Second free() - Ouch!!!\n\n");
+	free(pText);
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 /*

@@ -241,24 +241,23 @@
 
 int main()
 {
-  sleep(3);
+	sleep(3);
 
-  {
-    __asm__ __volatile__ (
-                          "   jmp .forward;"
-                          ".backward: popq %%rsi;"
-                          "   movq $1, %%rax;"
-                          "   movq $2, %%rdi;"
-                          "   movq $18, %%rdx;"
-                          "   syscall;"
-                          "   int3;" // NOTE: w/o this SIGTRAP, the asm code falls through, and loops forever
-                          ".forward: call .backward;"
-                          "   .string \"Hello XXX World\\n\\0\";"
-                          :
-                          :
-                          : "memory"
-                          );
-  }
+	{
+		__asm__ __volatile__(
+			"   jmp .forward;"
+			".backward: popq %%rsi;"
+			"   movq $1, %%rax;"
+			"   movq $2, %%rdi;"
+			"   movq $18, %%rdx;"
+			"   syscall;"
+			"   int3;" // NOTE: w/o this SIGTRAP, the asm code falls through, and loops forever
+			".forward: call .backward;"
+			"   .string \"Hello XXX World\\n\\0\";"
+			:
+			:
+			: "memory");
+	}
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

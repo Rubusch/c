@@ -21,14 +21,12 @@
 #include <unistd.h> // read(), write()
 #include <limits.h> // SSIZE_MAX
 
-
 /*
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 #define BUFSIZE 1024
-
 
 /*
   forwards
@@ -52,7 +50,6 @@ void lothars__writen(int, void *, size_t);
 // unix
 void lothars__close(int *);
 
-
 /*
   internal helpers
 */
@@ -65,23 +62,24 @@ void lothars__close(int *);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap);
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -94,7 +92,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
@@ -106,13 +104,12 @@ void err_sys(const char *fmt, ...)
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 {
@@ -121,18 +118,13 @@ void lothars__connect(int fd, const struct sockaddr *sa, socklen_t salen)
 	}
 }
 
-
-void lothars__setsockopt(int fd
-			 , int level
-			 , int optname
-			 , const void *optval
-			 , socklen_t optlen)
+void lothars__setsockopt(int fd, int level, int optname, const void *optval,
+			 socklen_t optlen)
 {
 	if (0 > setsockopt(fd, level, optname, optval, optlen)) {
 		err_sys("setsockopt error");
 	}
 }
-
 
 int lothars__socket(int family, int type, int protocol)
 {
@@ -142,7 +134,6 @@ int lothars__socket(int family, int type, int protocol)
 	}
 	return res;
 }
-
 
 void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
@@ -154,7 +145,6 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 	}
 }
 
-
 /*
   readn
 
@@ -164,14 +154,14 @@ ssize_t readn(int fd, void *vptr, size_t num)
 {
 	size_t nleft;
 	ssize_t nread;
-	char *ptr=NULL;
+	char *ptr = NULL;
 
 	ptr = vptr;
 	nleft = num;
 	while (nleft > 0) {
-		if ( (nread = read(fd, ptr, nleft)) < 0) {
+		if ((nread = read(fd, ptr, nleft)) < 0) {
 			if (errno == EINTR) {
-				nread = 0;  // and call read() again
+				nread = 0; // and call read() again
 			} else {
 				return -1;
 			}
@@ -179,21 +169,19 @@ ssize_t readn(int fd, void *vptr, size_t num)
 			break; // EOF
 		}
 		nleft -= nread;
-		ptr   += nread;
+		ptr += nread;
 	}
-	return (num - nleft);  // return >= 0
+	return (num - nleft); // return >= 0
 }
-
 
 ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = readn(fd, ptr, nbytes))) {
 		err_sys("readn error");
 	}
 	return res;
 }
-
 
 /*
   writen
@@ -225,14 +213,12 @@ ssize_t writen(int fd, const void *vptr, size_t num)
 	return num;
 }
 
-
 void lothars__writen(int fd, void *ptr, size_t nbytes)
 {
 	if (writen(fd, ptr, nbytes) != nbytes) {
 		err_sys("writen error");
 	}
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -268,44 +254,42 @@ void lothars__close(int *fd)
 	sync();
 }
 
-
 /********************************************************************************************/
 // worker implementation
 
-
 void work_client(int fd_sock)
 {
-        ssize_t num;
+	ssize_t num;
 	const int buflen = strlen("ping") + 1;
-        char buf[buflen];
+	char buf[buflen];
 
 	// send "ping"
 	memset(buf, '\0', buflen);
-        strcpy( buf, "ping" );
-        num = strlen(buf) + 1; // will wait untill buffer fills up to buflen
-        lothars__writen(fd_sock, buf, num);
-        fprintf(stdout, "client sent \'%s' with size \'%ld\'\n", buf, num);
+	strcpy(buf, "ping");
+	num = strlen(buf) + 1; // will wait untill buffer fills up to buflen
+	lothars__writen(fd_sock, buf, num);
+	fprintf(stdout, "client sent \'%s' with size \'%ld\'\n", buf, num);
 
-        // receive "ping"
+	// receive "ping"
 	memset(buf, '\0', buflen);
-        lothars__readn(fd_sock, buf, sizeof("ping"));
-        fprintf(stderr, "server said '%s'\n", buf);
+	lothars__readn(fd_sock, buf, sizeof("ping"));
+	fprintf(stderr, "server said '%s'\n", buf);
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main()
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	int fd_sock;
 	struct linger ling;
 	struct sockaddr_in servaddr; // addr obj for server
-	char serverip[16]; memset(serverip, '\0', sizeof(serverip));
-	char port[16]; memset(port, '\0', sizeof(port));
+	char serverip[16];
+	memset(serverip, '\0', sizeof(serverip));
+	char port[16];
+	memset(port, '\0', sizeof(port));
 
 	if (3 != argc) {
 		fprintf(stderr, "usage: %s <serverip> <port>\n", argv[0]);
@@ -325,7 +309,8 @@ int main(int argc, char* argv[])
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(atoi(port));
 	lothars__inet_pton(AF_INET, serverip, &servaddr.sin_addr);
-	lothars__connect(fd_sock, (struct sockaddr*) &servaddr, sizeof(servaddr));
+	lothars__connect(fd_sock, (struct sockaddr *)&servaddr,
+			 sizeof(servaddr));
 
 	// control
 	work_client(fd_sock);
@@ -333,7 +318,8 @@ int main(int argc, char* argv[])
 	// set SO_LINGER, don't keep socket alife untill TCP times out
 	ling.l_onoff = 1;
 	ling.l_linger = 0;
-	lothars__setsockopt(fd_sock, SOL_SOCKET, SO_LINGER, &ling, sizeof(ling));
+	lothars__setsockopt(fd_sock, SOL_SOCKET, SO_LINGER, &ling,
+			    sizeof(ling));
 
 	// close
 	lothars__close(&fd_sock);

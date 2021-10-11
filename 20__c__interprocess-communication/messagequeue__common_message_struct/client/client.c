@@ -5,15 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ipc.h>   // ftok(), msgget(), msgsnd()
-#include <sys/msg.h>   // msgget(), msgsnd(), msgctl()
+#include <sys/ipc.h> // ftok(), msgget(), msgsnd()
+#include <sys/msg.h> // msgget(), msgsnd(), msgctl()
 #include <sys/types.h> // ftok(), msgget(), msgsnd()
-#include <unistd.h>    // sleep()
+#include <unistd.h> // sleep()
 
 #include "../mq_message.h"
 #define TEXT "Viva!"
 typedef enum error_code_e { ERRCODE_SUCCESS, ERRCODE_FAILURE } error_code_t;
-
 
 static error_code_t mq_init(int *mq_id, char seed)
 {
@@ -40,7 +39,8 @@ static error_code_t mq_init(int *mq_id, char seed)
 	buf.msg_qbytes = MQ_MAXSIZE;
 	if (0 > msgctl(*mq_id, IPC_SET, &buf)) {
 		perror("msgctl() failed, try the following on a shell:");
-		fprintf(stderr, "\t\tsudo sh -c \"echo %d > /proc/sys/kernel/msgmnb\"\n",
+		fprintf(stderr,
+			"\t\tsudo sh -c \"echo %d > /proc/sys/kernel/msgmnb\"\n",
 			MQ_MAXSIZE);
 	}
 
@@ -55,18 +55,19 @@ static error_code_t mq_init(int *mq_id, char seed)
 		perror("msgctl(), IPC_STAT failed");
 		return;
 	}
-	fprintf(stderr, "\tmsg_qnum\t= %d, Current number of messages in queue\n",
-		(( int )mq_stat.msg_qnum));
+	fprintf(stderr,
+		"\tmsg_qnum\t= %d, Current number of messages in queue\n",
+		((int)mq_stat.msg_qnum));
 	fprintf(stderr,
 		"\tmsg_qbytes\t= %d, Maximum number of bytes allowed in queue\n",
-		(( int )mq_stat.msg_qbytes));
+		((int)mq_stat.msg_qbytes));
 	fprintf(stderr, "\tsizeof( struct mq_message_s )\t= %ld\n",
-		( long )sizeof(struct mq_message_s));
+		(long)sizeof(struct mq_message_s));
 	fprintf(stderr, "\t-> maximum number of messages possible: %d\n",
-		( int )((( int )mq_stat.msg_qbytes) / sizeof(struct mq_message_s)));
+		(int)(((int)mq_stat.msg_qbytes) / sizeof(struct mq_message_s)));
 	puts("");
 	puts("IPC_INFO");
-	if (0 > msgctl(*mq_id, IPC_INFO, ( struct msqid_ds * )&mq_info)) {
+	if (0 > msgctl(*mq_id, IPC_INFO, (struct msqid_ds *)&mq_info)) {
 		perror("msgctl(), IPC_INFO failed");
 		return;
 	}
@@ -86,9 +87,8 @@ static error_code_t mq_init(int *mq_id, char seed)
 	return ERRCODE_SUCCESS;
 }
 
-
 static error_code_t mq_send(const int mq_id, struct mq_message_s *mq_message,
-                             const int mtype, const int blocking)
+			    const int mtype, const int blocking)
 {
 	if ((mtype != 1) && (mtype != 3)) {
 		perror("mtype is neither 1, nor 3, sending message to external program "
@@ -104,10 +104,9 @@ static error_code_t mq_send(const int mq_id, struct mq_message_s *mq_message,
 	return ERRCODE_SUCCESS;
 }
 
-
 static error_code_t mq_retrieve(const int mq_id,
-                                 struct mq_message_s *mq_message,
-                                 const int mtype, const int blocking)
+				struct mq_message_s *mq_message,
+				const int mtype, const int blocking)
 {
 	if (!mq_message)
 		return ERRCODE_FAILURE;
@@ -121,13 +120,13 @@ static error_code_t mq_retrieve(const int mq_id,
 
 	memset(mq_message->content, '\0', MQ_MESSAGESIZ);
 
-	if (0 > msgrcv(mq_id, mq_message, sizeof(*mq_message), mtype, blocking)) {
+	if (0 >
+	    msgrcv(mq_id, mq_message, sizeof(*mq_message), mtype, blocking)) {
 		return ERRCODE_FAILURE;
 	}
 
 	return ERRCODE_SUCCESS;
 }
-
 
 // mtype:
 // 1 - client -> server
@@ -161,7 +160,8 @@ int main(int argc, char **argv)
 		// send hello
 		fprintf(stderr, "send \"%s\"\n", mq_message.content);
 		mq_message.mtype = 1;
-		if (ERRCODE_SUCCESS != mq_send(mq_id, &mq_message, mq_message.mtype, 0)) {
+		if (ERRCODE_SUCCESS !=
+		    mq_send(mq_id, &mq_message, mq_message.mtype, 0)) {
 			perror("mq_send() failed");
 		}
 		sleep(1);
@@ -172,7 +172,8 @@ int main(int argc, char **argv)
 		fprintf(stderr, "cleared \"%s\"\n", mq_message.content);
 		mq_retrieve(mq_id, &mq_message, mq_message.mtype, 0);
 		fprintf(stderr, "received \"%s\"\n",
-			((strlen(mq_message.content) > 0) ? mq_message.content : "nothing"));
+			((strlen(mq_message.content) > 0) ? mq_message.content :
+							    "nothing"));
 
 	} while (3 > idx);
 

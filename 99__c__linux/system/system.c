@@ -10,13 +10,12 @@ win console
 #include <stdlib.h>
 #include <string.h>
 
-
 int main()
 {
-  system("ls -l");
+	system("ls -l");
 
-  // won't be executed until system() is done
-  puts("done");
+	// won't be executed until system() is done
+	puts("done");
 
-  exit(0);
+	exit(0);
 }

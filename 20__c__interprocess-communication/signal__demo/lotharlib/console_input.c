@@ -5,7 +5,6 @@
 
 #include "console_input.h"
 
-
 int isnumber(const char *szNum, const unsigned int szNum_size)
 {
 	char arr[szNum_size];
@@ -26,7 +25,6 @@ int isnumber(const char *szNum, const unsigned int szNum_size)
 	}
 	return 1;
 }
-
 
 void readstring(char *cTxt, const unsigned int txtSize, const char *comment)
 {
@@ -65,7 +63,6 @@ void readstring(char *cTxt, const unsigned int txtSize, const char *comment)
 	} while (0 == strlen(cTxt));
 }
 
-
 void readdigit(unsigned int *iVal, const char *comment)
 {
 	char cChr[3];
@@ -103,9 +100,8 @@ void readdigit(unsigned int *iVal, const char *comment)
 	*iVal = atoi(cChr);
 }
 
-
 void readnumber(unsigned int *iVal, const unsigned int digits,
-                const char *comment)
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -144,9 +140,8 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 	*iVal = atoi(cTxt);
 }
 
-
 void readlongnumber(unsigned long int *iVal, const unsigned int digits,
-                    const char *comment)
+		    const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");

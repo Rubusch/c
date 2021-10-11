@@ -9,8 +9,8 @@
 #define MAX_LENGTH 16
 
 struct queue_item {
-  struct queue_item *next;
-  char content[MAX_LENGTH];
+	struct queue_item *next;
+	char content[MAX_LENGTH];
 };
 typedef struct queue_item item;
 static item *first = NULL;

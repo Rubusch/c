@@ -7,38 +7,47 @@
 
 #include "test.h"
 
-
 // test definitions
 
-TEST__BEGIN() {
-// TODO
-} TEST__END
+TEST__BEGIN()
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(readdigit) {
-// TODO
-} TEST__END
+TEST__BEGIN(readdigit)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(isnumber) {
-// TODO
-} TEST__END
+TEST__BEGIN(isnumber)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(readnumber) {
-// TODO
-} TEST__END
+TEST__BEGIN(readnumber)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(readlongnumber) {
-// TODO
-} TEST__END
+TEST__BEGIN(readlongnumber)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(readstring) {
-// TODO
-} TEST__END
-
-
+TEST__BEGIN(readstring)
+{
+	// TODO
+}
+TEST__END
 
 /*
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	test__readdigit();
 	test__isnumber();

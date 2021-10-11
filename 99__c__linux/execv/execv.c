@@ -18,10 +18,9 @@
 
 #include <unistd.h>
 
-
 int main()
 {
-  char *flags[] = {"-r", "-t", "-l", ( char * )0};
-  execv("/bin/ls", flags);
-  exit(0);
+	char *flags[] = { "-r", "-t", "-l", (char *)0 };
+	execv("/bin/ls", flags);
+	exit(0);
 }

@@ -21,7 +21,8 @@
  */
 
 #include <stdio.h>
-int main(int argc __attribute__((unused)), char *argv[]) /* apply to function arguments */
+int main(int argc __attribute__((unused)),
+	 char *argv[]) /* apply to function arguments */
 {
 	int idx __attribute__((unused)); /* apply to variable declarations */
 

@@ -51,7 +51,6 @@ allocation! a "free(ptr)" has to lead to an error!
 #include <stdlib.h>
 #include <string.h>
 
-
 /*
   function to init the pointer
   
@@ -59,38 +58,37 @@ allocation! a "free(ptr)" has to lead to an error!
 //*/
 int func(char *ptr, int size)
 {
-  // initializing a string with "strncpy()"
-  // TODO
+	// initializing a string with "strncpy()"
+	// TODO
 
-  // everything ok, return 0
-  return 0;
+	// everything ok, return 0
+	return 0;
 }
-
 
 int main()
 {
-  // allways init variables!
-  char *ptr;   // TODO
-  int ptr_siz; // TODO
+	// allways init variables!
+	char *ptr; // TODO
+	int ptr_siz; // TODO
 
-  // allocate some memory
-  // TODO
+	// allocate some memory
+	// TODO
 
-  // init the pointer in another function
-  // TODO
+	// init the pointer in another function
+	// TODO
 
-  // the result
-  printf("pointer was \"%s\"\n", ptr);
+	// the result
+	printf("pointer was \"%s\"\n", ptr);
 
-  // free the allocated memory
-  // TODO
+	// free the allocated memory
+	// TODO
 
-  /*
+	/*
     the stdlib defines the exit() function, which calls the _exit()
     function to help the operating system to do the clean up (ideally!).
 
     the two macros: EXIT_SUCCESS and EXIT_FAILURE are defined for that
     purpose
   //*/
-  // TODO
+	// TODO
 }

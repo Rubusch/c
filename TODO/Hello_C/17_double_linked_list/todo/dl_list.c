@@ -15,7 +15,6 @@
 
 // TODO
 
-
 // internal usage
 static element_t *find(const char *, const unsigned int);
 static int append(element_t *);
@@ -27,16 +26,14 @@ static int init(element_t *, const char *, const unsigned int);
 static element_t *first = NULL;
 static element_t *last = NULL;
 
-
 /*
   removes the whole list
 //*/
 int removeall()
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /*
   appends an element to the end of the list
@@ -45,10 +42,9 @@ int removeall()
 //*/
 int appendelement(const char *data, const unsigned int data_size)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /*
   inserts an element after a given element (prev_data)
@@ -58,12 +54,11 @@ int appendelement(const char *data, const unsigned int data_size)
     data_size       size of data
 //*/
 int insertelement(const char *prev_data, const unsigned int prev_data_size,
-                  const char *data, const unsigned int data_size)
+		  const char *data, const unsigned int data_size)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /*
   removes an element in the list
@@ -74,10 +69,9 @@ int insertelement(const char *prev_data, const unsigned int prev_data_size,
 // FIXME: cut's of elements before!!!
 int removeelement(const char *data, const unsigned int data_size)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /* ******************************************************************************
 
@@ -86,16 +80,14 @@ int removeelement(const char *data, const unsigned int data_size)
 //
 ******************************************************************************/
 
-
 /*
   prints the content of the whole list
 //*/
 int printlist()
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /*
   find an element by its data
@@ -107,10 +99,9 @@ int printlist()
 //*/
 static element_t *find(const char *data, const unsigned int data_size)
 {
-  // TODO
-  return NULL;
+	// TODO
+	return NULL;
 }
-
 
 /*
   appends an element to the list
@@ -118,10 +109,9 @@ static element_t *find(const char *data, const unsigned int data_size)
 //*/
 static int append(element_t *tmp)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /*
   removes and frees the space of an element
@@ -129,10 +119,9 @@ static int append(element_t *tmp)
 //*/
 static int discard(element_t **tmp)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }
-
 
 /*
   allocates space for a new element
@@ -141,13 +130,12 @@ static int discard(element_t **tmp)
 //*/
 static element_t *getnew()
 {
-  element_t *tmp = NULL;
+	element_t *tmp = NULL;
 
-  // TODO
+	// TODO
 
-  return tmp;
+	return tmp;
 }
-
 
 /*
   init the value of an element
@@ -157,6 +145,6 @@ static element_t *getnew()
 //*/
 static int init(element_t *tmp, const char *data, const unsigned int data_size)
 {
-  // TODO
-  return 0;
+	// TODO
+	return 0;
 }

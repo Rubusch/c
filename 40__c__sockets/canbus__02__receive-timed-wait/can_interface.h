@@ -14,7 +14,6 @@
 #ifndef CAN_INTERFACE_H_
 #define CAN_INTERFACE_H_
 
-
 #define _GNU_SOURCE /* struct ifreq */
 
 #include <stdio.h>
@@ -32,9 +31,7 @@
 
 #include <linux/can.h>
 
-
 #define CANIF__DEBUG 1
-
 
 /**
    start the interface socket, bind it to the name and unique
@@ -48,12 +45,12 @@ int canif__shutdown();
 
 /**
  */
-int canif__send(const uint32_t *can_id, const uint8_t* can_dlc, uint8_t data[]);
+int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[]);
 
 /**
    fetches asynchronously from the queue, returns nbytes or 0 in case the queue was empty
  */
-int canif__recv(uint32_t *can_id, uint8_t* can_dlc, uint8_t data[], long timeout);
-
+int canif__recv(uint32_t *can_id, uint8_t *can_dlc, uint8_t data[],
+		long timeout);
 
 #endif /* CAN_INTERFACE_H_ */

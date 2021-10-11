@@ -135,19 +135,19 @@
 
 int main()
 {
-  static char msg[] = "Hello World!\n";
-  int msg_size = sizeof(msg);
+	static char msg[] = "Hello World!\n";
+	int msg_size = sizeof(msg);
 
-  sleep(1); // setup for ptrace
+	sleep(1); // setup for ptrace
 
-  // initializing the assembler
-  register int    syscall_no  asm("rax") = SYS_write; /* syscall number */
-  register int    arg1        asm("rdi") = STDERR;    /* destination: the std stream */
-  register char*  arg2        asm("rsi") = msg;       /* source, the message */
-  register int    arg3        asm("rdx") = msg_size;  /* size of source */
+	// initializing the assembler
+	register int syscall_no asm("rax") = SYS_write; /* syscall number */
+	register int arg1 asm("rdi") = STDERR; /* destination: the std stream */
+	register char *arg2 asm("rsi") = msg; /* source, the message */
+	register int arg3 asm("rdx") = msg_size; /* size of source */
 
-  // execute assembly
-  asm("syscall");
+	// execute assembly
+	asm("syscall");
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

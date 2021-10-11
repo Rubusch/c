@@ -25,7 +25,6 @@ typedef struct msgbuf {
 	char msg_text[MSG_SIZ];
 } msgbuf;
 
-
 int main(int argc, char **argv)
 {
 	int mq_id = 0;

@@ -42,9 +42,7 @@
 
 #include <mcheck.h> // debugging
 
-
-int
-main(void)
+int main(void)
 {
 	int sockfd;
 	int nbytes;
@@ -68,16 +66,17 @@ main(void)
 			break;
 		}
 
-		addr.can_family  = AF_CAN;
+		addr.can_family = AF_CAN;
 		addr.can_ifindex = ifr.ifr_ifindex;
 		printf("%s at index %d\n", ifname, ifr.ifr_ifindex);
 
-		if (-1 == bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
+		if (-1 ==
+		    bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
 			perror("Error in binding socket to address");
 			break;
 		}
 
-		frame.can_id  = 0x123;
+		frame.can_id = 0x123;
 		frame.can_dlc = 2;
 		frame.data[0] = 0x11;
 		frame.data[1] = 0x22;

@@ -18,7 +18,6 @@
 #define ME "SCRATCHY:"
 #define MESSAGE "Scratchymessage"
 
-
 int main(int argc, char **argv)
 {
 	int sd_client = -1;
@@ -39,11 +38,13 @@ int main(int argc, char **argv)
 		fprintf(stderr, "%s set up server address\n", ME);
 		memset(&adr_server, 0, sizeof(adr_server));
 		adr_server.sun_family = AF_UNIX;
-		strncpy(adr_server.sun_path, SERVER_PATH, 1 + strlen(SERVER_PATH));
+		strncpy(adr_server.sun_path, SERVER_PATH,
+			1 + strlen(SERVER_PATH));
 
 		// connect to server
 		fprintf(stderr, "%s connect to the server\n", ME);
-		if (0 > connect(sd_client, ( struct sockaddr * )&adr_server, sizeof(adr_server))) {
+		if (0 > connect(sd_client, (struct sockaddr *)&adr_server,
+				sizeof(adr_server))) {
 			perror("connect failed");
 			break;
 		}

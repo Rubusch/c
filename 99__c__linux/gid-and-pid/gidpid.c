@@ -50,62 +50,64 @@ extern int setpgrp();
 #define PARENT_TXT "parent - "
 #define IDENTIFIER_SIZE 10
 
-
 int main()
 {
-  pid_t pid = 0, pgid = 12345, pidParent = getpid();
-  char *identifier = NULL;
-  if (NULL == (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
-    perror("malloc() failed");
-    exit(1);
-  }
-  memset(identifier, '\0', IDENTIFIER_SIZE);
+	pid_t pid = 0, pgid = 12345, pidParent = getpid();
+	char *identifier = NULL;
+	if (NULL ==
+	    (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
+		perror("malloc() failed");
+		exit(1);
+	}
+	memset(identifier, '\0', IDENTIFIER_SIZE);
 
 #ifdef __gnu_linux__
-  // requires root access! Generally fails (exec() before?)!?
-  // pid - the process to set, if 0, the current process
-  // gpid - the new process group id, if 0, the process group id of pid is used
-  printf("%s%s = setgpid(pid = %i, gpid = %i);\r\n", identifier,
-         (setpgid(pidParent, pgid) ? "failed" : "succeeded"), pidParent, pgid);
+	// requires root access! Generally fails (exec() before?)!?
+	// pid - the process to set, if 0, the current process
+	// gpid - the new process group id, if 0, the process group id of pid is used
+	printf("%s%s = setgpid(pid = %i, gpid = %i);\r\n", identifier,
+	       (setpgid(pidParent, pgid) ? "failed" : "succeeded"), pidParent,
+	       pgid);
 
 #endif
 
-  // fork()
-  printf("fork()\r\n");
-  if (0 > (pid = fork())) {
-    perror("fork() failed");
-    exit(1);
+	// fork()
+	printf("fork()\r\n");
+	if (0 > (pid = fork())) {
+		perror("fork() failed");
+		exit(1);
 
-  } else if (0 == pid) {
-    // child code
-    strncpy(identifier, CHILD_TXT, IDENTIFIER_SIZE);
-    printf("%schild pid %i, parent pid %i\r\n", identifier, getpid(),
-           pidParent);
-    sleep(3);
-    pgid = getpgid(getpid());
-    printf("%sgroup id %i\r\n", identifier, pgid);
+	} else if (0 == pid) {
+		// child code
+		strncpy(identifier, CHILD_TXT, IDENTIFIER_SIZE);
+		printf("%schild pid %i, parent pid %i\r\n", identifier,
+		       getpid(), pidParent);
+		sleep(3);
+		pgid = getpgid(getpid());
+		printf("%sgroup id %i\r\n", identifier, pgid);
 
-    printf("%sdone\r\n", identifier);
-    exit(0);
+		printf("%sdone\r\n", identifier);
+		exit(0);
 
-  } else if (0 < pid) {
-    // parent code
-    strncpy(identifier, PARENT_TXT, IDENTIFIER_SIZE);
-    printf("%schild pid %i, parent pid %i\r\n", identifier, pid, getpid());
+	} else if (0 < pid) {
+		// parent code
+		strncpy(identifier, PARENT_TXT, IDENTIFIER_SIZE);
+		printf("%schild pid %i, parent pid %i\r\n", identifier, pid,
+		       getpid());
 
-    if (0 > pgid) {
-      perror("setting process group id failed");
-      _exit(1); // only exit forked process
-    }
+		if (0 > pgid) {
+			perror("setting process group id failed");
+			_exit(1); // only exit forked process
+		}
 
-    int childExitState;
-    while (0 == wait(&childExitState))
-      ;
+		int childExitState;
+		while (0 == wait(&childExitState))
+			;
 
-    pgid = getpgid(getpid());
-    printf("%sgroup id %i\r\n", identifier, pgid);
+		pgid = getpgid(getpid());
+		printf("%sgroup id %i\r\n", identifier, pgid);
 
-    printf("%sdone\r\n", identifier);
-    exit(0);
-  }
+		printf("%sdone\r\n", identifier);
+		exit(0);
+	}
 }

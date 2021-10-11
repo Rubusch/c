@@ -62,21 +62,21 @@
 #include <signal.h>
 #include <string.h>
 
-
-static void sig_handler (int sig, siginfo_t *siginfo, void *context)
+static void sig_handler(int sig, siginfo_t *siginfo, void *context)
 {
-	fprintf(stdout, "%s() - signal: %d, pid: %ld, uid: %ld\n", __func__, sig, (long)siginfo->si_pid, (long)siginfo->si_uid);
+	fprintf(stdout, "%s() - signal: %d, pid: %ld, uid: %ld\n", __func__,
+		sig, (long)siginfo->si_pid, (long)siginfo->si_uid);
 	exit(EXIT_SUCCESS);
 }
 
-
 /*
 */
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	struct sigaction sa;
 
-	fprintf(stdout, "Now test the signal hander and send signal SIGTERM to the pid of this demo.\n");
+	fprintf(stdout,
+		"Now test the signal hander and send signal SIGTERM to the pid of this demo.\n");
 	memset(&sa, '\0', sizeof(sa));
 
 	// use sa-sigaction when the handler hat more than one parameters
@@ -87,14 +87,13 @@ int main (int argc, char *argv[])
 
 	// setup the siginfo signal handler for signal SIGTERM
 	if (0 > sigaction(SIGTERM, &sa, NULL)) {
-		perror ("sigaction failed");
+		perror("sigaction failed");
 		exit(EXIT_FAILURE);
 	}
 
-
 	fprintf(stdout, "waiting on signal..\n");
 	while (1) {
-		sleep (10);
+		sleep(10);
 	}
 
 	fprintf(stdout, "READY.\n");

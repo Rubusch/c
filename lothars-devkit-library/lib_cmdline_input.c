@@ -4,7 +4,6 @@
 
 #include "lib_cmdline_input.h"
 
-
 /*
   isdigit() checks for a digit (0 through 9).
 
@@ -38,7 +37,6 @@ int isnumber(const char *strnum, const unsigned int strnum_size)
 	}
 	return 1;
 }
-
 
 /*
   fgetc() reads the next character from stream and returns it as an
@@ -93,7 +91,6 @@ void readstring(char *str, const unsigned int strsize, const char *prompt)
 	} while (0 == strlen(str));
 }
 
-
 /*
   TODO   
 */
@@ -134,11 +131,11 @@ void readdigit(unsigned int *iVal, const char *comment)
 	*iVal = atoi(cChr);
 }
 
-
 /*
   TODO
 */
-void readnumber(unsigned int *iVal, const unsigned int digits, const char *comment)
+void readnumber(unsigned int *iVal, const unsigned int digits,
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -167,7 +164,8 @@ void readnumber(unsigned int *iVal, const unsigned int digits, const char *comme
 			if ((size - 1) > idx)
 				cTxt[idx] = c;
 			else if ((size - 1) == idx) {
-				fprintf(stdout, "input too long - will be reset\n");
+				fprintf(stdout,
+					"input too long - will be reset\n");
 				memset(cTxt, '\0', size);
 				// or cut here:
 				// cTxt[idx] = '\0';
@@ -177,11 +175,11 @@ void readnumber(unsigned int *iVal, const unsigned int digits, const char *comme
 	*iVal = atoi(cTxt);
 }
 
-
 /*
   TODO
 */
-void readlongnumber(unsigned long int *iVal, const unsigned int digits, const char *comment)
+void readlongnumber(unsigned long int *iVal, const unsigned int digits,
+		    const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -210,7 +208,8 @@ void readlongnumber(unsigned long int *iVal, const unsigned int digits, const ch
 			if ((size - 1) > idx)
 				cTxt[idx] = c;
 			else if ((size - 1) == idx) {
-				fprintf(stdout, "input too long - will be reset\n");
+				fprintf(stdout,
+					"input too long - will be reset\n");
 				memset(cTxt, '\0', size);
 				// or cut here:
 				// cTxt[idx] = '\0';

@@ -24,7 +24,6 @@
 
 #define ME "ITCHY:"
 
-
 int main(int argc, char **argv)
 {
 	fprintf(stderr, "%s starting\n", ME);

@@ -20,21 +20,20 @@ Valgrind/memcheck.
 #include <stdlib.h>
 #include <string.h>
 
-
 int main(int argc, char **argv)
 {
-  // init
-  printf("init pointer to 10 char's\n");
-  char *pText = NULL;
-  if ((pText = malloc(10 * sizeof(char))) == NULL)
-    return EXIT_FAILURE;
-  memset(pText, '6', 10);
+	// init
+	printf("init pointer to 10 char's\n");
+	char *pText = NULL;
+	if ((pText = malloc(10 * sizeof(char))) == NULL)
+		return EXIT_FAILURE;
+	memset(pText, '6', 10);
 
-  printf("assign \'7\' to pText, index \"10\" - Dangerous, \nonly 10 elements "
-         "allocated, last index is 9!\n\n");
-  pText[10] = '7'; // Jackpot!!!
+	printf("assign \'7\' to pText, index \"10\" - Dangerous, \nonly 10 elements "
+	       "allocated, last index is 9!\n\n");
+	pText[10] = '7'; // Jackpot!!!
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 /*

@@ -54,7 +54,6 @@ void readnumber(unsigned int *, const unsigned int, const char *);
 void readstring(char *, const unsigned int, const char *);
 void readdigit(unsigned int *, const char *);
 
-
 int main(int argc, char **argv)
 {
 	// in case generate shared memory to pointer area_addr
@@ -80,9 +79,12 @@ int main(int argc, char **argv)
 			pState = &attached_segments[nap + 1];
 			while (--pState != attached_segments) {
 				fprintf(stderr, "%6d", pState->shm_id);
-				fprintf(stderr, "%#11x", *(unsigned int*) pState->shm_addr);
+				fprintf(stderr, "%#11x",
+					*(unsigned int *)pState->shm_addr);
 				fprintf(stderr, " Read%s\n",
-					(pState->shm_flag & SHM_RDONLY) ? "-Only" : "/Write");
+					(pState->shm_flag & SHM_RDONLY) ?
+						"-Only" :
+						"/Write");
 			}
 			fprintf(stderr, "\n");
 
@@ -101,11 +103,15 @@ int main(int argc, char **argv)
 				// current state array
 				pState = &attached_segments[++nap];
 
-				readnumber(&pState->shm_id, ID_DIGITS,
-					   "enter shm_id of segment to attach:");
-				readstring(pState->shm_addr, ADDR_DIGITS, "enter shm_addr");
-				fprintf(stderr, "meaningful shm_flag vlaues are:\n");
-				fprintf(stderr, "1\tSHM_RDONLY (%d)\n", SHM_RDONLY);
+				readnumber(
+					&pState->shm_id, ID_DIGITS,
+					"enter shm_id of segment to attach:");
+				readstring(pState->shm_addr, ADDR_DIGITS,
+					   "enter shm_addr");
+				fprintf(stderr,
+					"meaningful shm_flag vlaues are:\n");
+				fprintf(stderr, "1\tSHM_RDONLY (%d)\n",
+					SHM_RDONLY);
 				fprintf(stderr, "2\tSHM_RND (%d)\n", SHM_RND);
 				unsigned int select = 0;
 				unsigned int askagain = 0;
@@ -129,18 +135,24 @@ int main(int argc, char **argv)
 						break;
 					}
 				} while (askagain);
-				fprintf(stderr, "now attach the segment - shmat(%d, %#x, %#o)\n",
-					pState->shm_id, *(unsigned int*) pState->shm_addr,
+				fprintf(stderr,
+					"now attach the segment - shmat(%d, %#x, %#o)\n",
+					pState->shm_id,
+					*(unsigned int *)pState->shm_addr,
 					pState->shm_flag);
 
-				if (0 > *(int8_t*)(pState->shm_addr = shmat(pState->shm_id, pState->shm_addr,
-								  pState->shm_flag))) {
+				if (0 >
+				    *(int8_t *)(pState->shm_addr = shmat(
+							pState->shm_id,
+							pState->shm_addr,
+							pState->shm_flag))) {
 					perror("shmat() failed");
 					--nap; // decrement, because already incremented above, for new
 					// pointer element!
 				} else {
-					fprintf(stderr, "shmat returned %#8.8x\n",
-						*(int8_t*)pState->shm_addr);
+					fprintf(stderr,
+						"shmat returned %#8.8x\n",
+						*(int8_t *)pState->shm_addr);
 				}
 				break;
 
@@ -150,14 +162,21 @@ int main(int argc, char **argv)
 				  get the address, make the call, report the results and make the
 				  internal state match
 				//*/
-				readstring(area_addr, ADDR_DIGITS, "enter detach shm_addr");
+				readstring(area_addr, ADDR_DIGITS,
+					   "enter detach shm_addr");
 				if (-1 == (area_id = shmdt(area_addr))) {
 					perror("shmdt failed");
 				} else {
-					fprintf(stderr, "shmdt returned %d\n", area_id);
-					for (pState = attached_segments, area_id = nap; --area_id; ++pState) {
-						if (0 != (pState->shm_addr = area_addr))
-							*pState = attached_segments[--nap];
+					fprintf(stderr, "shmdt returned %d\n",
+						area_id);
+					for (pState = attached_segments,
+					    area_id = nap;
+					     --area_id; ++pState) {
+						if (0 != (pState->shm_addr =
+								  area_addr))
+							*pState =
+								attached_segments
+									[--nap];
 					}
 				}
 				break;
@@ -166,18 +185,22 @@ int main(int argc, char **argv)
 				if (nap == 0)
 					break;
 
-				readstring(area_addr, ADDR_DIGITS,
-					   "enter address of an attached segment");
+				readstring(
+					area_addr, ADDR_DIGITS,
+					"enter address of an attached segment");
 				if (good_addr(area_addr))
-					fprintf(stderr, "string @ %#x is '%s'\n", *(int8_t*)area_addr,
+					fprintf(stderr,
+						"string @ %#x is '%s'\n",
+						*(int8_t *)area_addr,
 						area_addr);
 				break;
 
 			case 4:
 				if (nap == 0)
 					break;
-				readstring(area_addr, ADDR_DIGITS,
-					   "enter address of an attached segment");
+				readstring(
+					area_addr, ADDR_DIGITS,
+					"enter address of an attached segment");
 
 				/*
 				  set up SIGSEGV signal handler to trap attempts to write into a
@@ -186,7 +209,8 @@ int main(int argc, char **argv)
 				savefunc = signal(SIGSEGV, signalhandler);
 
 				if (setjmp(segvbuf)) {
-					fprintf(stderr, "SIGSEGV signal caught: write aborted\n");
+					fprintf(stderr,
+						"SIGSEGV signal caught: write aborted\n");
 					fflush(stdin);
 					signal(SIGSEGV, savefunc);
 				} else {
@@ -197,7 +221,9 @@ int main(int argc, char **argv)
 							"enter one line to e copied to the shared segment attached");
 						// TODO: check
 						if (NULL ==
-						    strncpy(pState->shm_addr, ( char * )-1, sizeof(char *))) {
+						    strncpy(pState->shm_addr,
+							    (char *)-1,
+							    sizeof(char *))) {
 							perror("strncpy to shared memory failed");
 							break;
 						}
@@ -213,7 +239,6 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-
 static int ask()
 {
 	unsigned int response = 0;
@@ -225,11 +250,11 @@ static int ask()
 		fprintf(stderr, "2\tshmdt\n");
 		fprintf(stderr, "3\tread from segment\n");
 		fprintf(stderr, "4\twrite to segment\n");
-		readdigit(&response, "enter the number corresponding to your choice");
+		readdigit(&response,
+			  "enter the number corresponding to your choice");
 	} while ((0 > response) || (4 < response));
 	return response;
 }
-
 
 static void signalhandler(int dummy)
 {
@@ -237,16 +262,15 @@ static void signalhandler(int dummy)
 	// unreached
 }
 
-
 static int good_addr(char *address)
 {
 	register struct state *pState = NULL;
-	for (pState = attached_segments; pState != &attached_segments[nap]; ++pState)
+	for (pState = attached_segments; pState != &attached_segments[nap];
+	     ++pState)
 		if (0 == strncmp(pState->shm_addr, address, ADDR_DIGITS))
 			return 1;
 	return 0;
 }
-
 
 // TOOLS
 int isnumber(const char *szNum, const unsigned int szNum_size)
@@ -270,9 +294,8 @@ int isnumber(const char *szNum, const unsigned int szNum_size)
 	return 1;
 }
 
-
 void readnumber(unsigned int *iVal, const unsigned int digits,
-                const char *comment)
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -311,7 +334,6 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 	*iVal = atoi(cTxt);
 }
 
-
 void readstring(char *cTxt, const unsigned int txtSize, const char *comment)
 {
 	if (NULL == comment) {
@@ -348,7 +370,6 @@ void readstring(char *cTxt, const unsigned int txtSize, const char *comment)
 
 	} while (0 == strlen(cTxt));
 }
-
 
 void readdigit(unsigned int *iVal, const char *comment)
 {

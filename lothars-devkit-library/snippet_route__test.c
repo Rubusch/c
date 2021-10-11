@@ -1,4 +1,4 @@
-// TODO this does not test anything, since the route.h lib is BSD only (currently)                    
+// TODO this does not test anything, since the route.h lib is BSD only (currently)
 
 #include "snippet_route.h"
 
@@ -8,8 +8,6 @@
 #include <assert.h>
 
 #include "test.h"
-
-
 
 // test definitions
 
@@ -33,15 +31,16 @@ TEST__BEGIN(lothars__sock_masktop) {
 
 /*
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-/*
+	/*
 	test__lothars__get_rtaddrs();
 	test__lothars__net_rt_iflist();
 	test__lothars__net_rt_dump();
 	test__lothars__sock_masktop();
 // */
-	fprintf(stdout, "TODO: needs to be ported to Linux if the functions are needed anyway\n");
+	fprintf(stdout,
+		"TODO: needs to be ported to Linux if the functions are needed anyway\n");
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS);
 }

@@ -21,7 +21,6 @@ void catch_int(int sig)
 	fflush(stdout);
 }
 
-
 int main(int argc, char **argv)
 {
 	// set the INT (CTRL+C) signal handler to catch_int

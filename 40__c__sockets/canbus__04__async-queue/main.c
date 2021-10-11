@@ -88,7 +88,6 @@
 
 #include "can_interface.h"
 
-
 typedef struct api_frame_s {
 	uint32_t frame_id;
 	uint8_t frame_dlc;
@@ -97,7 +96,7 @@ typedef struct api_frame_s {
 				       * size as number of used
 				       * bytes! */
 } api_frame_t;
-typedef struct api_frame_s* api_frame_p;
+typedef struct api_frame_s *api_frame_p;
 static api_frame_t api_frame;
 
 void api__prepare_msg(api_frame_p pf)
@@ -114,7 +113,7 @@ void api__prepare_msg(api_frame_p pf)
 	pf->data[1] = 0x22;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	int ret = -1;
 	char if_name[CANIF_NAMESIZE];
@@ -123,8 +122,9 @@ int main(int argc, char* argv[])
 		strcpy(if_name, "can0");
 	} else {
 		int len = strlen(argv[1]);
-		if (CANIF_NAMESIZE <= len-1) {
-			fprintf(stderr, "usage:\n\t%s\nor\n\t%s <IF Name>\n", argv[0], argv[0]);
+		if (CANIF_NAMESIZE <= len - 1) {
+			fprintf(stderr, "usage:\n\t%s\nor\n\t%s <IF Name>\n",
+				argv[0], argv[0]);
 			exit(EXIT_FAILURE);
 		}
 		strncpy(if_name, argv[1], len);
@@ -141,22 +141,26 @@ int main(int argc, char* argv[])
 		api__prepare_msg(&api_frame);
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data)) {
+		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+				    api_frame.data)) {
 			break;
 		}
 
@@ -169,7 +173,7 @@ int main(int argc, char* argv[])
 			break;
 
 		fprintf(stdout, "RECV: ");
-		for (int idx=0; idx<api_frame.frame_dlc; idx++) {
+		for (int idx = 0; idx < api_frame.frame_dlc; idx++) {
 			fprintf(stdout, "%x", api_frame.data[idx]);
 		}
 		fprintf(stdout, ", (%d)\n", api_frame.frame_dlc);

@@ -71,78 +71,75 @@ READY.
   returns 0 in case of success and -1 in case of error
 //*/
 int get_more_space(char **str, unsigned int *str_size,
-                   const unsigned int how_much_more)
+		   const unsigned int how_much_more)
 {
-  char *tmp = NULL;
+	char *tmp = NULL;
 
-  // realloc() frees *str ???
-  if (NULL == (tmp = realloc(*str, (*str_size + how_much_more)))) {
-    // if the allocation failed, free the already reallocated memory
-    // TODO
+	// realloc() frees *str ???
+	if (NULL == (tmp = realloc(*str, (*str_size + how_much_more)))) {
+		// if the allocation failed, free the already reallocated memory
+		// TODO
 
-    // set the pointer to NULL again (rather style)
-    // TODO
+		// set the pointer to NULL again (rather style)
+		// TODO
 
-    // return error code
-    // TODO
-  }
+		// return error code
+		// TODO
+	}
 
-  // assign the new space to the passed pointer of a pointer
-  // (the first pointer is kept in the parent function, we
-  // change the target to where this 1. pointer points to
-  // and make it point to another 2. pointer
-  // TODO
+	// assign the new space to the passed pointer of a pointer
+	// (the first pointer is kept in the parent function, we
+	// change the target to where this 1. pointer points to
+	// and make it point to another 2. pointer
+	// TODO
 
-  // also we change the size to the new size - this is only the value,
-  // it will continue to be stored at the same address (so we passed
-  // a "pointer" (only one!)
-  // TODO
+	// also we change the size to the new size - this is only the value,
+	// it will continue to be stored at the same address (so we passed
+	// a "pointer" (only one!)
+	// TODO
 
-  return 0;
+	return 0;
 }
-
 
 /*
   allocates a char*, inits it and sets its size
 //*/
 int init_text(char **pResult, char *pText, unsigned int *pSize)
 {
-  // checks if pText and pSize are NULL -> bogus, return -1
-  if (pText == NULL)
-    return -1;
-  if (pSize == NULL)
-    return -1;
+	// checks if pText and pSize are NULL -> bogus, return -1
+	if (pText == NULL)
+		return -1;
+	if (pSize == NULL)
+		return -1;
 
-  // set the size to the size of pText
-  // TODO
+	// set the size to the size of pText
+	// TODO
 
-  // allocation
-  // TODO
+	// allocation
+	// TODO
 
-  // init pResult with the passed text
-  strncpy(*pResult, pText, *pSize);
+	// init pResult with the passed text
+	strncpy(*pResult, pText, *pSize);
 
-  return 0;
+	return 0;
 }
-
 
 /*
   initializes the values
 //*/
 int init_value(int **pResult, const int value)
 {
-  // allocate a single value
-  if (NULL == (*pResult = malloc(sizeof(**pResult)))) {
-    perror("allocation failed");
-    exit(EXIT_FAILURE);
-  }
+	// allocate a single value
+	if (NULL == (*pResult = malloc(sizeof(**pResult)))) {
+		perror("allocation failed");
+		exit(EXIT_FAILURE);
+	}
 
-  // init pResult
-  // TODO
+	// init pResult
+	// TODO
 
-  return 0;
+	return 0;
 }
-
 
 /*
   allocates memory and copies into a new char*, if it works out,
@@ -161,118 +158,116 @@ int init_value(int **pResult, const int value)
   NEW_SIZE = size of the new string inclusive '\0'
 //*/
 int trim_char(char **pStr, const unsigned int COPY_SIZE,
-              unsigned int *pOld_size, const unsigned int NEW_SIZE)
+	      unsigned int *pOld_size, const unsigned int NEW_SIZE)
 {
-  // check passed arguments for valid values
-  if (*pStr == NULL)
-    return -1;
-  if (COPY_SIZE > *pOld_size)
-    return -1;
-  if (COPY_SIZE > NEW_SIZE)
-    return -1;
+	// check passed arguments for valid values
+	if (*pStr == NULL)
+		return -1;
+	if (COPY_SIZE > *pOld_size)
+		return -1;
+	if (COPY_SIZE > NEW_SIZE)
+		return -1;
 
-  // define pNewStr
-  // TODO
+	// define pNewStr
+	// TODO
 
-  // allocation pNewStr
-  if (NULL == (pNewStr = calloc(NEW_SIZE, sizeof(*pNewStr)))) {
-    perror("allocation failed");
-    return -1;
-  }
+	// allocation pNewStr
+	if (NULL == (pNewStr = calloc(NEW_SIZE, sizeof(*pNewStr)))) {
+		perror("allocation failed");
+		return -1;
+	}
 
-  // initialization pNewStr - this also can fail (but generally not
-  // is that critical like an allocation, though here it will be proved
-  // if it worked ;-)
-  // TODO
-  {
-    // if this failed the allocated memory HAS TO BE FREED!!!!!
-    if (pNewStr != NULL) {
-      free(pNewStr);
-    }
-    return -1;
-  }
+	// initialization pNewStr - this also can fail (but generally not
+	// is that critical like an allocation, though here it will be proved
+	// if it worked ;-)
+	// TODO
+	{
+		// if this failed the allocated memory HAS TO BE FREED!!!!!
+		if (pNewStr != NULL) {
+			free(pNewStr);
+		}
+		return -1;
+	}
 
-  // check if this pointer is already used - this works ONLY if the pointer
-  // points to allocated memory. If it points to static memory this gives
-  // a Signal 11 (SIGSEGV, SIGnal SEGmentation Violation)
-  if (NULL != *pStr) {
-    free(*pStr);
-  }
+	// check if this pointer is already used - this works ONLY if the pointer
+	// points to allocated memory. If it points to static memory this gives
+	// a Signal 11 (SIGSEGV, SIGnal SEGmentation Violation)
+	if (NULL != *pStr) {
+		free(*pStr);
+	}
 
-  // set pStr to pNewStr
-  // TODO
+	// set pStr to pNewStr
+	// TODO
 
-  // check if '\0' is set
-  if ((*pStr)[NEW_SIZE - 1] != '\0') {
-    (*pStr)[NEW_SIZE - 1] = '\0';
-  }
+	// check if '\0' is set
+	if ((*pStr)[NEW_SIZE - 1] != '\0') {
+		(*pStr)[NEW_SIZE - 1] = '\0';
+	}
 
-  // new size is now the current size
-  // TODO
+	// new size is now the current size
+	// TODO
 
-  return 0;
+	return 0;
 }
-
 
 /*
   free the space in a subfunction
 //*/
 void freeAll(char **pText)
 {
-  // TODO
+	// TODO
 }
-
 
 int main(int argc, char **argv)
 {
-  printf("allocation demo\n");
+	printf("allocation demo\n");
 
-  char *pText = NULL;
-  unsigned int text_size = 0;
+	char *pText = NULL;
+	unsigned int text_size = 0;
 
-  // init text - the first number is the return value of the function
-  printf("%d: init text\n", init_text(&pText, "foo bar", &text_size));
-  printf("\t\"%s\",\t\tsize: %02d - strlen: %02d + 1\n", pText, text_size,
-         strlen(pText));
-  printf("\n");
+	// init text - the first number is the return value of the function
+	printf("%d: init text\n", init_text(&pText, "foo bar", &text_size));
+	printf("\t\"%s\",\t\tsize: %02d - strlen: %02d + 1\n", pText, text_size,
+	       strlen(pText));
+	printf("\n");
 
-  // realloc space and append text
-  unsigned int add_size = strlen(" blub ");
-  printf("%d: realloc some space\n",
-         get_more_space(&pText, &text_size, add_size));
-  pText = strncat(pText, " blub ", 1 + strlen(" blub "));
-  printf("\t\"%s\",\tsize: %02d - strlen: %02d + 1\n", pText, text_size,
-         strlen(pText));
-  printf("\n");
+	// realloc space and append text
+	unsigned int add_size = strlen(" blub ");
+	printf("%d: realloc some space\n",
+	       get_more_space(&pText, &text_size, add_size));
+	pText = strncat(pText, " blub ", 1 + strlen(" blub "));
+	printf("\t\"%s\",\tsize: %02d - strlen: %02d + 1\n", pText, text_size,
+	       strlen(pText));
+	printf("\n");
 
-  // trim text
-  unsigned int trim_size;
-  for (trim_size = strlen(pText);
-       (trim_size > 0) &&
-       ((pText[trim_size] == ' ') || (pText[trim_size] == '\0'));
-       --trim_size)
-    ;
+	// trim text
+	unsigned int trim_size;
+	for (trim_size = strlen(pText);
+	     (trim_size > 0) &&
+	     ((pText[trim_size] == ' ') || (pText[trim_size] == '\0'));
+	     --trim_size)
+		;
 
-  // correct counter (for loop counting prob)
-  ++trim_size;
+	// correct counter (for loop counting prob)
+	++trim_size;
 
-  // give one more due to '\0' in trim_size
-  printf("%d: trim text\n",
-         trim_char(&pText, trim_size + 1, &text_size, trim_size + 1));
-  printf("\t\"%s\",\t\tsize: %02d - strlen: %02d + 1\n", pText, text_size,
-         strlen(pText));
-  printf("\n");
+	// give one more due to '\0' in trim_size
+	printf("%d: trim text\n",
+	       trim_char(&pText, trim_size + 1, &text_size, trim_size + 1));
+	printf("\t\"%s\",\t\tsize: %02d - strlen: %02d + 1\n", pText, text_size,
+	       strlen(pText));
+	printf("\n");
 
-  // do something with malloc()
-  int *pVal = NULL;
-  printf("%d: use malloc\n", init_value(&pVal, 7));
-  printf("\tResult: %d\n", *pVal);
-  printf("\n");
+	// do something with malloc()
+	int *pVal = NULL;
+	printf("%d: use malloc\n", init_value(&pVal, 7));
+	printf("\tResult: %d\n", *pVal);
+	printf("\n");
 
-  puts("READY.");
+	puts("READY.");
 
-  // call free all
-  // TODO
+	// call free all
+	// TODO
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

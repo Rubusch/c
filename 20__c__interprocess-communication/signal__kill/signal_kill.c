@@ -15,7 +15,6 @@
 
 int kill(pid_t, int);
 
-
 int main(int argc, char **argv)
 {
 	// get own IP

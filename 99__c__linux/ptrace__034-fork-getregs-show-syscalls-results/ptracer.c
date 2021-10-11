@@ -59,80 +59,77 @@
 
 int main(int argc, char **argv)
 {
-  pid_t child;
+	pid_t child;
 
 #ifndef __x86_64__
-  fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
-  exit(EXIT_FAILURE);
+	fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
+	exit(EXIT_FAILURE);
 #endif
 
-  if (0 > (child = fork())) {
-    perror("fork() failed");
+	if (0 > (child = fork())) {
+		perror("fork() failed");
 
-  } else if (0 == child) {
-    /* child: tracee */
-    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("/bin/ls", "ls", NULL);
+	} else if (0 == child) {
+		/* child: tracee */
+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+		execl("/bin/ls", "ls", NULL);
 
-  } else {
-    /* parent: tracer */
-    waitpid(child, 0, 0);
-    ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
+	} else {
+		/* parent: tracer */
+		waitpid(child, 0, 0);
+		ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
 
-    while (1) {
-      // restart the stopped tracee
-      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
-        perror("ptrace: PTRACE_SYSCALL failed");
-        exit(EXIT_FAILURE);
-      }
+		while (1) {
+			// restart the stopped tracee
+			if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
+				perror("ptrace: PTRACE_SYSCALL failed");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > waitpid(child, 0, 0)) {
-        perror("waitpid: failed");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > waitpid(child, 0, 0)) {
+				perror("waitpid: failed");
+				exit(EXIT_FAILURE);
+			}
 
-      struct user_regs_struct regs;
-      if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
-        perror("ptrace: PTRACE_GETREGS failed");
-        exit(EXIT_FAILURE);
-      }
+			struct user_regs_struct regs;
+			if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
+				perror("ptrace: PTRACE_GETREGS failed");
+				exit(EXIT_FAILURE);
+			}
 
-      // rax will be overwritten with the return value of the syscall,
-      // thus orig_rax contains the initial rax value
-      long syscall = regs.orig_rax;
+			// rax will be overwritten with the return value of the syscall,
+			// thus orig_rax contains the initial rax value
+			long syscall = regs.orig_rax;
 
-      fprintf(stderr
-              , "syscall: '%lx(%016lx [rdi], %016lx [rsi], %016lx [rdx], %016lx [r10], %016lx [r8], %016lx [r9])'\n"
-              , syscall
-              , (long)regs.rdi
-              , (long)regs.rsi
-              , (long)regs.rdx
-              , (long)regs.r10
-              , (long)regs.r8
-              , (long)regs.r9);
+			fprintf(stderr,
+				"syscall: '%lx(%016lx [rdi], %016lx [rsi], %016lx [rdx], %016lx [r10], %016lx [r8], %016lx [r9])'\n",
+				syscall, (long)regs.rdi, (long)regs.rsi,
+				(long)regs.rdx, (long)regs.r10, (long)regs.r8,
+				(long)regs.r9);
 
-      // execute "syscall" and stop on exit, i.e. "run/execute" the current getregs state
-      if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
-        perror("ptrace: second PTRACE_SYSCALL failed");
-        exit(EXIT_FAILURE);
-      }
+			// execute "syscall" and stop on exit, i.e. "run/execute" the current getregs state
+			if (0 > ptrace(PTRACE_SYSCALL, child, 0, 0)) {
+				perror("ptrace: second PTRACE_SYSCALL failed");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > waitpid(child, 0, 0)) {
-        perror("waitpid: second waitpid failed");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > waitpid(child, 0, 0)) {
+				perror("waitpid: second waitpid failed");
+				exit(EXIT_FAILURE);
+			}
 
-      // get syscall results (copied from Christopher Wellons
-      if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
-        fputs(" = ?\n", stderr);
-        if (errno == ESRCH) { // ESRCH: No such process
-          exit(regs.rdi); // syscall was 'exit' or similar
-        }
-        perror("ptrace: final PTRACE_GETREGS failed");
-      }
+			// get syscall results (copied from Christopher Wellons
+			if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
+				fputs(" = ?\n", stderr);
+				if (errno == ESRCH) { // ESRCH: No such process
+					exit(regs.rdi); // syscall was 'exit' or similar
+				}
+				perror("ptrace: final PTRACE_GETREGS failed");
+			}
 
-      fprintf(stderr, " = '%016lx' [rax]\n\n", (long)regs.rax);
-    }
-  }
-  return 0;
+			fprintf(stderr, " = '%016lx' [rax]\n\n",
+				(long)regs.rax);
+		}
+	}
+	return 0;
 }

@@ -1,6 +1,5 @@
 #include "lib_inet.h"
 
-
 /*
   inet_ntop - convert IPv4 and IPv6 addresses from binary to text form
 
@@ -20,21 +19,21 @@
 
   Returns NULL in case of error.
 */
-const char* lothars__inet_ntop(int family, const void *addrptr, char *strptr, size_t len)
+const char *lothars__inet_ntop(int family, const void *addrptr, char *strptr,
+			       size_t len)
 {
 	const char *ptr = NULL;
 
-	if (NULL == strptr) {  // check for old code
+	if (NULL == strptr) { // check for old code
 		err_quit("NULL 3rd argument to inet_ntop");
 	}
 
 	if (NULL == (ptr = inet_ntop(family, addrptr, strptr, len))) {
-		err_sys("inet_ntop error");  // sets errno
+		err_sys("inet_ntop error"); // sets errno
 	}
 
 	return ptr;
 }
-
 
 /*
   inet_pton - convert IPv4 and IPv6 addresses from text to binary form
@@ -58,12 +57,13 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 {
 	int res;
 	if (0 > (res = inet_pton(family, strptr, addrptr))) {
-		err_sys("%s() error for %s (check the passed address family?)", __func__, strptr); // errno set
+		err_sys("%s() error for %s (check the passed address family?)",
+			__func__, strptr); // errno set
 	} else if (0 == res) {
-		err_quit("%s() error for %s (check the passed strptr)", __func__, strptr); // errno not set
+		err_quit("%s() error for %s (check the passed strptr)",
+			 __func__, strptr); // errno not set
 	}
 }
-
 
 /*
   DEPRECATED: use inet_pton()
@@ -95,14 +95,14 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 
   Return is phony for compatibility.
 */
-// TODO deprecated         
+// TODO deprecated
 int lothars__inet_aton(const char *cp, struct in_addr *inp)
 {
 	int res;
 	if (0 == (res = inet_aton(cp, inp))) {
 		err_sys("%s() invalid address", __func__);
 	}
-        /*
+	/*
 	  NB: in case of failure there's no close(fd_sock)
 	  when the program exits, resources are going to be freed by OS, anyway
 
@@ -111,7 +111,6 @@ int lothars__inet_aton(const char *cp, struct in_addr *inp)
 	*/
 	return res;
 }
-
 
 /*
   sock_ntop_host() - wrapper of inet_ntop() to return hostname.
@@ -125,25 +124,25 @@ int lothars__inet_aton(const char *cp, struct in_addr *inp)
 
   Returns the host/ip.
 */
-char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
+char *sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 {
-	static char str[128];  // Unix domain is largest
+	static char str[128]; // Unix domain is largest
 
-	switch (sa->sa_family){
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-		if (NULL == inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
+	switch (sa->sa_family) {
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
+		if (NULL ==
+		    inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
 			return NULL;
 		}
 		return str;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
-		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str, sizeof(str))) {
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
+		if (NULL ==
+		    inet_ntop(AF_INET6, &sin6->sin6_addr, str, sizeof(str))) {
 			return NULL;
 		}
 		return str;
@@ -151,9 +150,8 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 #endif
 
 #ifdef AF_UNIX
-	case AF_UNIX:
-	{
-		struct sockaddr_un *unp = (struct sockaddr_un *) sa;
+	case AF_UNIX: {
+		struct sockaddr_un *unp = (struct sockaddr_un *)sa;
 		/*
 		   OK to have no pathname bound to the socket: happens on
 		   every connect() unless client calls bind() first.
@@ -167,12 +165,14 @@ char* sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	}
 #endif
 	default:
-		snprintf(str, sizeof(str), "sock_ntop_host: unknown AF_xxx: %d, len %d", sa->sa_family, salen);
+		snprintf(str, sizeof(str),
+			 "sock_ntop_host: unknown AF_xxx: %d, len %d",
+			 sa->sa_family, salen);
 		return str;
 	}
 	return NULL;
 }
-char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
+char *lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = sock_ntop_host(sa, salen))) {
@@ -180,7 +180,6 @@ char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 	}
 	return ptr;
 }
-
 
 /*
   sock_ntop_host() - wrapper of inet_ntop() to return hostname and
@@ -195,35 +194,37 @@ char* lothars__sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 
   Returns the host/ip and appended port number.
 */
-char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
+char *sock_ntop(const struct sockaddr *sa, socklen_t salen)
 {
 	char portstr[8];
-	static char str[128];  // Unix domain is largest
+	static char str[128]; // Unix domain is largest
 
 	switch (sa->sa_family) {
-	case AF_INET:
-	{
-		struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-		if (NULL == inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
+	case AF_INET: {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
+		if (NULL ==
+		    inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str))) {
 			return NULL;
 		}
 		if (0 != ntohs(sin->sin_port)) {
-			snprintf(portstr, sizeof(portstr), ":%d", ntohs(sin->sin_port));
+			snprintf(portstr, sizeof(portstr), ":%d",
+				 ntohs(sin->sin_port));
 			strcat(str, portstr);
 		}
 		return str;
 	}
 
 #ifdef IPV6
-	case AF_INET6:
-	{
-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+	case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
 		str[0] = '[';
-		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str + 1, sizeof(str) - 1)) {
+		if (NULL == inet_ntop(AF_INET6, &sin6->sin6_addr, str + 1,
+				      sizeof(str) - 1)) {
 			return NULL;
 		}
 		if (0 != ntohs(sin6->sin6_port)) {
-			snprintf(portstr, sizeof(portstr), "]:%d", ntohs(sin6->sin6_port));
+			snprintf(portstr, sizeof(portstr), "]:%d",
+				 ntohs(sin6->sin6_port));
 			strcat(str, portstr);
 			return str;
 		}
@@ -232,9 +233,8 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 #endif
 
 #ifdef AF_UNIX
-	case AF_UNIX:
-	{
-		struct sockaddr_un *unp = (struct sockaddr_un *) sa;
+	case AF_UNIX: {
+		struct sockaddr_un *unp = (struct sockaddr_un *)sa;
 
 		/*
 		   OK to have no pathname bound to the socket: happens on
@@ -250,12 +250,14 @@ char* sock_ntop(const struct sockaddr *sa, socklen_t salen)
 #endif
 
 	default:
-		snprintf(str, sizeof(str), "sock_ntop: unknown AF_xxx: %d, len %d", sa->sa_family, salen);
+		snprintf(str, sizeof(str),
+			 "sock_ntop: unknown AF_xxx: %d, len %d", sa->sa_family,
+			 salen);
 		return str;
 	}
 	return NULL;
 }
-char* lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
+char *lothars__sock_ntop(const struct sockaddr *sa, socklen_t salen)
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = sock_ntop(sa, salen))) {

@@ -19,35 +19,34 @@
 
 void timer_handler(int signum)
 {
-  static int cnt = 0;
-  printf("timer expired %d times\n", ++cnt);
+	static int cnt = 0;
+	printf("timer expired %d times\n", ++cnt);
 }
-
 
 int main()
 {
-  struct sigaction sa;
-  struct itimerval timer;
+	struct sigaction sa;
+	struct itimerval timer;
 
-  memset(&sa, 0, sizeof(sa));
-  sa.sa_handler = &timer_handler;
-  sigaction(SIGVTALRM, &sa, NULL);
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = &timer_handler;
+	sigaction(SIGVTALRM, &sa, NULL);
 
-  // init
-  timer.it_value.tv_sec = 0;
+	// init
+	timer.it_value.tv_sec = 0;
 
-  // set to 250ms expiry time
-  timer.it_value.tv_usec = 250000;
-  timer.it_interval.tv_sec = 0;
+	// set to 250ms expiry time
+	timer.it_value.tv_usec = 250000;
+	timer.it_interval.tv_sec = 0;
 
-  // and every 250ms after that
-  timer.it_interval.tv_usec = 250000;
+	// and every 250ms after that
+	timer.it_interval.tv_usec = 250000;
 
-  setitimer(ITIMER_VIRTUAL, &timer, NULL);
+	setitimer(ITIMER_VIRTUAL, &timer, NULL);
 
-  // infinite!
-  while (1)
-    ;
+	// infinite!
+	while (1)
+		;
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

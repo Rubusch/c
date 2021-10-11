@@ -16,7 +16,8 @@ int main(int argc, char **argv)
 
 	// receives through pipe as argument
 	if (argc == 2) {
-		fprintf(stderr, "%s received commandline argument \"%s\"\n", ME, argv[1]);
+		fprintf(stderr, "%s received commandline argument \"%s\"\n", ME,
+			argv[1]);
 	} else {
 		fprintf(stderr, "%s I can't hear you!\n", ME);
 	}

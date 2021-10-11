@@ -1,6 +1,5 @@
 #include "lib_read_write.h"
 
-
 /*
   The read() function shall attempt to read nbyte bytes from the file
   associated with the open file descriptor, fildes, into the buffer
@@ -18,13 +17,12 @@
 */
 ssize_t lothars__read(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 	if (-1 == (bytes = read(fd, ptr, nbytes))) {
 		err_sys("read error");
 	}
 	return bytes;
 }
-
 
 /*
   readline_fd
@@ -63,7 +61,7 @@ static ssize_t readline_fd_read(int fd, char *ptr)
 				goto again;
 			}
 			return -1;
-		}else if (read_cnt == 0) {
+		} else if (read_cnt == 0) {
 			return 0;
 		}
 		read_ptr = read_buf;
@@ -86,12 +84,12 @@ ssize_t readline_fd(int fd, void *vptr, size_t maxlen)
 				break; // newline is stored, like fgets()
 			}
 
-		} else if(rc == 0) {
+		} else if (rc == 0) {
 			*ptr = 0;
 			return (cnt - 1); // EOF, n - 1 bytes were read
 
 		} else {
-			return -1;  // error, errno set by read()
+			return -1; // error, errno set by read()
 		}
 	}
 
@@ -106,9 +104,6 @@ ssize_t lothars__readline_fd(int fd, void *ptr, size_t maxlen)
 	}
 	return bytes;
 }
-
-
-
 
 /*
   The read() function shall attempt to read nbyte bytes from the file
@@ -130,14 +125,14 @@ ssize_t readn(int fd, void *vptr, size_t nbytes)
 {
 	size_t nleft;
 	ssize_t nread;
-	char *ptr=NULL;
+	char *ptr = NULL;
 
 	ptr = vptr;
 	nleft = nbytes;
 	while (nleft > 0) {
-		if ( (nread = read(fd, ptr, nleft)) < 0) {
+		if ((nread = read(fd, ptr, nleft)) < 0) {
 			if (errno == EINTR) {
-				nread = 0;  // and call read() again
+				nread = 0; // and call read() again
 			} else {
 				return -1;
 			}
@@ -145,20 +140,18 @@ ssize_t readn(int fd, void *vptr, size_t nbytes)
 			break; // EOF
 		}
 		nleft -= nread;
-		ptr   += nread;
+		ptr += nread;
 	}
-	return (nbytes - nleft);  // return >= 0
+	return (nbytes - nleft); // return >= 0
 }
 ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t  res;
+	ssize_t res;
 	if (0 > (res = readn(fd, ptr, nbytes))) {
 		err_sys("readn error");
 	}
 	return res;
 }
-
-
 
 /*
   The recvfrom() function shall receive a message from a
@@ -190,7 +183,7 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	struct iovec iov[1];
 	ssize_t cnt;
 
-//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, struct cmsghdr should be available under Linux
+	//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, struct cmsghdr should be available under Linux
 	union {
 		struct cmsghdr cm;
 		char control[CMSG_SPACE(sizeof(int))];
@@ -198,11 +191,11 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	struct cmsghdr *cmptr = NULL;
 	msg.msg_control = control_un.control;
 	msg.msg_controllen = sizeof(control_un.control);
-//#else // TODO rm, struct cmsghdr should be available under Linux
-//	int newfd;
-//	msg.msg_accrights = (caddr_t) &newfd;
-//	msg.msg_accrightslen = sizeof(int);
-//#endif
+	//#else // TODO rm, struct cmsghdr should be available under Linux
+	//	int newfd;
+	//	msg.msg_accrights = (caddr_t) &newfd;
+	//	msg.msg_accrightslen = sizeof(int);
+	//#endif
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -216,26 +209,27 @@ ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 		return cnt;
 	}
 
-//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, struct cmsghdr should be available under Linux
-	if ((NULL != (cmptr = CMSG_FIRSTHDR(&msg))) && (cmptr->cmsg_len == CMSG_LEN(sizeof(int)))) {
+	//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, struct cmsghdr should be available under Linux
+	if ((NULL != (cmptr = CMSG_FIRSTHDR(&msg))) &&
+	    (cmptr->cmsg_len == CMSG_LEN(sizeof(int)))) {
 		if (cmptr->cmsg_level != SOL_SOCKET) {
 			err_quit("control level != SOL_SOCKET");
 		}
 		if (cmptr->cmsg_type != SCM_RIGHTS) {
 			err_quit("control type != SCM_RIGHTS");
 		}
-		*recvfd = *((int *) CMSG_DATA(cmptr));
+		*recvfd = *((int *)CMSG_DATA(cmptr));
 
 	} else {
-		*recvfd = -1;  // descriptor was not passed
+		*recvfd = -1; // descriptor was not passed
 	}
-//#else // TODO rm, struct cmsghdr should be available under Linux
-//	if (msg.msg_accrightslen == sizeof(int)) {
-//		*recvfd = newfd;
-//	} else {
-//		*recvfd = -1;  // descriptor was not passed
-//	}
-//#endif
+	//#else // TODO rm, struct cmsghdr should be available under Linux
+	//	if (msg.msg_accrightslen == sizeof(int)) {
+	//		*recvfd = newfd;
+	//	} else {
+	//		*recvfd = -1;  // descriptor was not passed
+	//	}
+	//#endif
 
 	return cnt;
 }
@@ -247,7 +241,6 @@ ssize_t lothars__read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 	}
 	return cnt;
 }
-
 
 /*
   The write() function shall attempt to write nbyte bytes from the
@@ -266,7 +259,6 @@ void lothars__write(int fd, void *ptr, size_t nbytes)
 		err_sys("write error");
 	}
 }
-
 
 /*
   The write() function shall attempt to write nbyte bytes from the
@@ -312,7 +304,6 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 	}
 }
 
-
 /*
   The sendmsg() function shall send a message through a
   connection-mode or connectionless-mode socket. If the socket is
@@ -335,16 +326,16 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 
   Returns number of bytes written, or stops the program.
 */
-// TODO investigate HAVE_MSGHDR_MSG_CONTROL       
+// TODO investigate HAVE_MSGHDR_MSG_CONTROL
 ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {
 	struct msghdr msg;
 	struct iovec iov[1];
 
-//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, after verification  
-	union{
+	//#ifdef HAVE_MSGHDR_MSG_CONTROL // TODO rm, after verification
+	union {
 		struct cmsghdr cm;
-		char    control[CMSG_SPACE(sizeof(int))];
+		char control[CMSG_SPACE(sizeof(int))];
 	} control_un;
 	struct cmsghdr *cmptr;
 
@@ -355,11 +346,11 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 	cmptr->cmsg_len = CMSG_LEN(sizeof(int));
 	cmptr->cmsg_level = SOL_SOCKET;
 	cmptr->cmsg_type = SCM_RIGHTS;
-	*((int *) CMSG_DATA(cmptr)) = sendfd;
-//#else // TODO rm, after verification  
-//	msg.msg_accrights = (caddr_t) &sendfd;
-//	msg.msg_accrightslen = sizeof(int);
-//#endif
+	*((int *)CMSG_DATA(cmptr)) = sendfd;
+	//#else // TODO rm, after verification
+	//	msg.msg_accrights = (caddr_t) &sendfd;
+	//	msg.msg_accrightslen = sizeof(int);
+	//#endif
 
 	msg.msg_name = NULL;
 	msg.msg_namelen = 0;
@@ -373,7 +364,7 @@ ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 }
 ssize_t lothars__write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {
-	ssize_t  bytes;
+	ssize_t bytes;
 	if (0 > (bytes = write_fd(fd, ptr, nbytes, sendfd))) {
 		err_sys("write_fd error");
 	}

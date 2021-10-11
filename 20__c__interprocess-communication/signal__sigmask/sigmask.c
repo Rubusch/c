@@ -56,17 +56,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-
 // define the CTRL+C counter, initialize it with zero
 int ctrl_c_count = 0;
 #define CTRL_C_THRESHOLD 5
-
 
 // the signal handler for CTRL+C
 void catch_int(int sig)
 {
 	sigset_t mask_set; // used to set a signal masking set
-	sigset_t old_set;  // used to store the old mask set
+	sigset_t old_set; // used to store the old mask set
 
 	// re-set the signal handler again to catch_int, for next time -> Linux
 	signal(SIGINT, catch_int);
@@ -105,11 +103,10 @@ void catch_int(int sig)
 	//*/
 }
 
-
 void catch_suspend(int sig)
 {
 	sigset_t mask_set; // sig mask
-	sigset_t old_set;  // restore
+	sigset_t old_set; // restore
 
 	// re-set the signal handler again to catch_suspend, for next time
 	signal(SIGTSTP, catch_suspend);
@@ -119,7 +116,8 @@ void catch_suspend(int sig)
 	sigprocmask(SIG_SETMASK, &mask_set, &old_set);
 
 	// print the current CTRL+C counter
-	printf("\n\nso far, '%d' CTRL+C presses were counted\n\n", ctrl_c_count);
+	printf("\n\nso far, '%d' CTRL+C presses were counted\n\n",
+	       ctrl_c_count);
 	fflush(stdout);
 
 	/*
@@ -128,10 +126,10 @@ void catch_suspend(int sig)
 	//*/
 }
 
-
 int main(int argc, char **argv)
 {
-	fprintf(stderr, "End the program by %d times pressing CTRL+^C\n", CTRL_C_THRESHOLD); /* stderr, unbuffered! */
+	fprintf(stderr, "End the program by %d times pressing CTRL+^C\n",
+		CTRL_C_THRESHOLD); /* stderr, unbuffered! */
 
 	signal(SIGINT, catch_int);
 	signal(SIGTSTP, catch_suspend);

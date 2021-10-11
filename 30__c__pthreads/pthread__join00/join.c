@@ -40,23 +40,22 @@ unsigned int value;
 // pthread_self()
 void *thr_add(void *);
 
-
 /*
   main
 //*/
 int main()
 {
-  puts("POSIX threads: join demo");
-  puts("init..");
-  pthread_t tid_main = pthread_self(), tid_add = 0;
-  printf("\ttid_main set to %lu\n", ( unsigned long )tid_main);
-  printf("\ttid_add set to %d\n", ( int )tid_add);
-  value = 8;
-  printf("\tvalue set to %d\n", value);
-  puts("init done.\n");
+	puts("POSIX threads: join demo");
+	puts("init..");
+	pthread_t tid_main = pthread_self(), tid_add = 0;
+	printf("\ttid_main set to %lu\n", (unsigned long)tid_main);
+	printf("\ttid_add set to %d\n", (int)tid_add);
+	value = 8;
+	printf("\tvalue set to %d\n", value);
+	puts("init done.\n");
 
-  do {
-    /*
+	do {
+		/*
       1. set up the attributes
 
       pthread_create creates by default PTHREAD_CREATE_JOINABLE, also without
@@ -65,26 +64,25 @@ int main()
       Only when disabling the joining, it is necessary to set up the attributes
     to PTHREAD_CREATE_DETACHED.
     //*/
-    pthread_attr_t attr_add;
-    pthread_attr_init(&attr_add);
-    // try to uncomment this line!
-    //    pthread_attr_setdetachstate(&attr_add, PTHREAD_CREATE_DETACHED);
+		pthread_attr_t attr_add;
+		pthread_attr_init(&attr_add);
+		// try to uncomment this line!
+		//    pthread_attr_setdetachstate(&attr_add, PTHREAD_CREATE_DETACHED);
 
-
-    /*
+		/*
       2. create the thread
 
       created with *pthread_attr_t == NULL, this uses the default setting:
     PTHREAD_CRATE_JOINABLE
     //*/
-    puts("MAIN: create thread tid_add");
-    if (0 != pthread_create(&tid_add, &attr_add, thr_add, &tid_main)) {
-      perror("MAIN: pthread_create failed");
-      break;
-    }
+		puts("MAIN: create thread tid_add");
+		if (0 !=
+		    pthread_create(&tid_add, &attr_add, thr_add, &tid_main)) {
+			perror("MAIN: pthread_create failed");
+			break;
+		}
 
-
-    /*
+		/*
       3. It's the JOIN - EPMD rulez! =D
 
       join to tid_add! This means: make the calling thread [tid_main] wait
@@ -93,18 +91,17 @@ int main()
       Just to see what happens without JOIN, comment out the paragraph below by
     removing the "// * /"
     //*/
-    int return_status = 0;
-    if (0 > pthread_join(tid_add, ( void * )&return_status)) {
-      perror("MAIN: pthread_join failed");
-      pthread_exit(
-          ( void * )11); // just any return code, here: 11 - can also be NULL
-    }
-    printf("MAIN: joining to tid_add %s\n",
-           (return_status == 22) ? "succeeded" : "FAILED!!!\n");
-    //*/
+		int return_status = 0;
+		if (0 > pthread_join(tid_add, (void *)&return_status)) {
+			perror("MAIN: pthread_join failed");
+			pthread_exit((
+				void *)11); // just any return code, here: 11 - can also be NULL
+		}
+		printf("MAIN: joining to tid_add %s\n",
+		       (return_status == 22) ? "succeeded" : "FAILED!!!\n");
+		//*/
 
-
-    /*
+		/*
       4. operation in tid_main: divide
 
       the following code here is just executed in tid_main, tid_add already is
@@ -115,33 +112,30 @@ int main()
       joining is a form of blocking another thread and, thus a form of
     synchronization!
     //*/
-    printf("MAIN: %d / 2 ", value);
-    value /= 2;
-    printf("= %d\n", value);
+		printf("MAIN: %d / 2 ", value);
+		value /= 2;
+		printf("= %d\n", value);
 
-    // show end result
-    printf("MAIN: end result value = %d (should be 5)\n", value);
+		// show end result
+		printf("MAIN: end result value = %d (should be 5)\n", value);
 
-    // exit tid_main
-    puts(
-        "MAIN: detaching tid_main, to clean up the threads stack (just safer)");
-    pthread_detach(tid_main);
+		// exit tid_main
+		puts("MAIN: detaching tid_main, to clean up the threads stack (just safer)");
+		pthread_detach(tid_main);
 
-    puts("MAIN: READY.");
-    pthread_exit(&tid_main);
-  } while (0);
+		puts("MAIN: READY.");
+		pthread_exit(&tid_main);
+	} while (0);
 
-
-  /*
+	/*
     CAUTION: this code won't be executed if the thread creation worked!!!
     It is safe here to procede like this, since allocated memory should be
     freed in case the thread crashes (objects on the thread's stack are
     usually not destroyed as well, a SIGSEGV is the logical consequence!
   //*/
-  puts("\nREADY.");
-  exit(EXIT_SUCCESS);
+	puts("\nREADY.");
+	exit(EXIT_SUCCESS);
 }
-
 
 /*
   the adding thread:
@@ -152,14 +146,14 @@ int main()
 //*/
 void *thr_add(void *arg)
 {
-  puts("ADD: started");
+	puts("ADD: started");
 
-  // operation
-  printf("ADD: %d + 2 ", value);
-  value += 2;
-  printf("= %d\n", value);
+	// operation
+	printf("ADD: %d + 2 ", value);
+	value += 2;
+	printf("= %d\n", value);
 
-  // exit
-  puts("ADD: exited");
-  pthread_exit(( void * )22);
+	// exit
+	puts("ADD: exited");
+	pthread_exit((void *)22);
 }

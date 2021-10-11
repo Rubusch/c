@@ -12,13 +12,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-unsigned long sp(void) { __asm__("movl %esp,%eax"); }
-
+unsigned long sp(void)
+{
+	__asm__("movl %esp,%eax");
+}
 
 int main(void)
 {
-  printf("0x%lx\n", sp());
+	printf("0x%lx\n", sp());
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

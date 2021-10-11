@@ -41,35 +41,34 @@
 
 #include "test.h"
 
-
 /*
   main
 //*/
 int main()
 {
-  void *lib_handle;
-  double (*func)(int *);
+	void *lib_handle;
+	double (*func)(int *);
 
-  int val = 0;
-  char *error;
+	int val = 0;
+	char *error;
 
-  if (!(lib_handle = dlopen("/opt/lib/libplugin.so", RTLD_LAZY))) {
-    fprintf(stderr, "%s\n", dlerror());
-    exit(EXIT_FAILURE);
-  }
+	if (!(lib_handle = dlopen("/opt/lib/libplugin.so", RTLD_LAZY))) {
+		fprintf(stderr, "%s\n", dlerror());
+		exit(EXIT_FAILURE);
+	}
 
-  func = dlsym(lib_handle, "test");
+	func = dlsym(lib_handle, "test");
 
-  if (NULL != (error = dlerror())) {
-    fprintf(stderr, "%s\n", error);
-    exit(EXIT_FAILURE);
-  }
+	if (NULL != (error = dlerror())) {
+		fprintf(stderr, "%s\n", error);
+		exit(EXIT_FAILURE);
+	}
 
-  (*func)(&val);
+	(*func)(&val);
 
-  printf("value = %d\n", val);
+	printf("value = %d\n", val);
 
-  dlclose(lib_handle);
+	dlclose(lib_handle);
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

@@ -4,10 +4,8 @@
   common ping
 */
 
-
 #ifndef PING_INCLUDE_GUARD
 #define PING_INCLUDE_GUARD
-
 
 #define _XOPEN_SOURCE 600
 #define _GNU_SOURCE /* sync() */
@@ -31,8 +29,8 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #ifdef IPV6
-# include <netinet/ip6.h>
-# include <netinet/icmp6.h>
+#include <netinet/ip6.h>
+#include <netinet/icmp6.h>
 #endif
 
 #include <errno.h>
@@ -41,7 +39,7 @@
   constants
 */
 
-#define MAXLINE  4096 /* max text line length */
+#define MAXLINE 4096 /* max text line length */
 typedef void Sigfunc(int); /* give signal handlers a type instead of void* */
 
 // BUFSIZ is system defined! This is 'bufsizE' - try and check other sizes
@@ -61,7 +59,6 @@ int32_t n_sent;
 // our PID
 pid_t pid;
 
-
 /*
   forwards
 */
@@ -72,48 +69,47 @@ void err_quit(const char *, ...);
 
 // socket
 int lothars__socket(int, int, int);
-struct addrinfo* lothars__host_serv(const char*, const char*, int, int);
+struct addrinfo *lothars__host_serv(const char *, const char *, int, int);
 void lothars__setsockopt(int, int, int, const void *, socklen_t);
-void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+void lothars__sendto(int, const void *, size_t, int, const struct sockaddr *,
+		     socklen_t);
 
 // unix
-Sigfunc* lothars__signal_intr(int, Sigfunc*);
-void* lothars__malloc(size_t);
+Sigfunc *lothars__signal_intr(int, Sigfunc *);
+void *lothars__malloc(size_t);
 void lothars__gettimeofday(struct timeval *);
 
 // inet
-char* lothars__sock_ntop_host(const struct sockaddr*, socklen_t);
+char *lothars__sock_ntop_host(const struct sockaddr *, socklen_t);
 
 // snippet socket
-void tv_sub(struct timeval*, struct timeval*);
+void tv_sub(struct timeval *, struct timeval *);
 
 // internal
-void proc_v4(char*, ssize_t, struct msghdr*, struct timeval*);
+void proc_v4(char *, ssize_t, struct msghdr *, struct timeval *);
 void send_v4();
 
 void init_v6();
-void proc_v6(char*, ssize_t, struct msghdr*, struct timeval*);
+void proc_v6(char *, ssize_t, struct msghdr *, struct timeval *);
 void send_v6();
 
 void readloop();
 void sig_alrm(int32_t);
 
-uint16_t checksum(uint16_t*, int32_t);
-
+uint16_t checksum(uint16_t *, int32_t);
 
 /*
   The approach is to use an instance of "protocol" for IPv4 and
   IPv6. Protocol offers processing, sending and optional init.
 */
-struct protocol{
-	void (*fproc) (char*, ssize_t, struct msghdr*, struct timeval*);
-	void (*fsend) ();
-	void (*finit) ();
+struct protocol {
+	void (*fproc)(char *, ssize_t, struct msghdr *, struct timeval *);
+	void (*fsend)();
+	void (*finit)();
 	struct sockaddr *sa_send; // sockaddr{} for send, from getaddrinfo()
 	struct sockaddr *sa_recv; // sockaddr{} for receiving
 	socklen_t salen;
 	int32_t icmp_proto;
-} *proto;
-
+} * proto;
 
 #endif

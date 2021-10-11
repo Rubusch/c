@@ -7,42 +7,53 @@
 
 #include "test.h"
 
-
 // test definitions
 
-TEST__BEGIN(rtt_debug) {
-// TODO
-} TEST__END
+TEST__BEGIN(rtt_debug)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(rtt_init) {
-// TODO
-} TEST__END
+TEST__BEGIN(rtt_init)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(rtt_newpack) {
-// TODO
-} TEST__END
+TEST__BEGIN(rtt_newpack)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(rtt_start) {
-// TODO
-} TEST__END
+TEST__BEGIN(rtt_start)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(rtt_stop) {
-// TODO
-} TEST__END
+TEST__BEGIN(rtt_stop)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(rtt_timeout) {
-// TODO
-} TEST__END
+TEST__BEGIN(rtt_timeout)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(rtt_ts) {
-// TODO
-} TEST__END
-
-
+TEST__BEGIN(rtt_ts)
+{
+	// TODO
+}
+TEST__END
 
 /*
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	test__rtt_debug();
 	test__rtt_init();

@@ -66,86 +66,76 @@ the pointer
 #define INT_SIZE 10
 #define CHAR_SIZE 10
 
-
 int main()
 {
-  puts("addresses");
+	puts("addresses");
 
-  // definition of variables
-  int int_value = 0;
-  char char_value = 0;
-  int *int_pointer = NULL;
-  char *char_pointer = NULL;
+	// definition of variables
+	int int_value = 0;
+	char char_value = 0;
+	int *int_pointer = NULL;
+	char *char_pointer = NULL;
 
-  puts("allocation and init");
+	puts("allocation and init");
 
-  // alloc int_pointer
-  // TODO
+	// alloc int_pointer
+	// TODO
 
+	// init and clean the content of int_pointer
+	// 0 is a number
+	memset(int_pointer, 0, sizeof(*int_pointer) * INT_SIZE);
 
-  // init and clean the content of int_pointer
-  // 0 is a number
-  memset(int_pointer, 0, sizeof(*int_pointer) * INT_SIZE);
+	// alloc char_pointer
+	// TODO
 
+	// init and clean the content of char_pointer
+	// 1. init a string: better to initialize each element as "end of string" ==
+	// \0
+	// 2. \0 is a character:
+	//     single characters have ' e.g.: 'a', 'b', '1', '2', or '\n'
+	//     everything with a " is a string and has one more token, the '\0'
+	//     e.g.: "a" == {'a', '\0'} or "abc" == {'a', 'b', 'c', '\0'}
+	memset(char_pointer, '\0', CHAR_SIZE);
 
-  // alloc char_pointer
-  // TODO
+	puts("set values");
+	// set int_value to 7
+	int_value = 7;
 
+	// set char_value to 7 (as character token)
+	// TODO
 
-  // init and clean the content of char_pointer
-  // 1. init a string: better to initialize each element as "end of string" ==
-  // \0
-  // 2. \0 is a character:
-  //     single characters have ' e.g.: 'a', 'b', '1', '2', or '\n'
-  //     everything with a " is a string and has one more token, the '\0'
-  //     e.g.: "a" == {'a', '\0'} or "abc" == {'a', 'b', 'c', '\0'}
-  memset(char_pointer, '\0', CHAR_SIZE);
+	// set each element of the int array to 7
+	// TODO (you will need a for loop, name the index: idx!)
 
+	// set each element of the char array to 7
+	// TODO
 
-  puts("set values");
-  // set int_value to 7
-  int_value = 7;
+	// print out address of..
+	// ... values
+	puts("address of values:");
+	printf("\tchar_value\t- 0x%lx\n", (unsigned long)&char_value);
+	// TODO
+	puts("");
 
-  // set char_value to 7 (as character token)
-  // TODO
+	// ... content address of pointers
+	puts("address of pointers:");
+	// TODO
 
-  // set each element of the int array to 7
-  // TODO (you will need a for loop, name the index: idx!)
+	// ... content address of pointers
+	puts("address of content of pointers:");
+	// TODO
+	printf("\t*int_pointer\t- 0x%lx\n", (unsigned long)&*int_pointer);
+	puts("");
 
-  // set each element of the char array to 7
-  // TODO
+	// ... content of pointers
+	puts("content of pointers (the current element!)");
+	printf("\t*char_pointer\t- %c\n", *char_pointer);
+	printf("\t*int_pointer\t- %d\n", *int_pointer);
+	puts("");
 
+	// What is missing here?
+	// TODO
 
-  // print out address of..
-  // ... values
-  puts("address of values:");
-  printf("\tchar_value\t- 0x%lx\n", ( unsigned long )&char_value);
-  // TODO
-  puts("");
-
-
-  // ... content address of pointers
-  puts("address of pointers:");
-  // TODO
-
-
-  // ... content address of pointers
-  puts("address of content of pointers:");
-  // TODO
-  printf("\t*int_pointer\t- 0x%lx\n", ( unsigned long )&*int_pointer);
-  puts("");
-
-
-  // ... content of pointers
-  puts("content of pointers (the current element!)");
-  printf("\t*char_pointer\t- %c\n", *char_pointer);
-  printf("\t*int_pointer\t- %d\n", *int_pointer);
-  puts("");
-
-
-  // What is missing here?
-  // TODO
-
-  puts("READY.");
-  exit(EXIT_SUCCESS);
+	puts("READY.");
+	exit(EXIT_SUCCESS);
 }

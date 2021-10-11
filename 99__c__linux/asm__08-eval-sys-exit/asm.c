@@ -281,25 +281,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 int main(void)
 {
-  long rax=0; // return
-  long rdi=0; // syscall param registers
-  long rsi=0;
-  long rdx=0;
+	long rax = 0; // return
+	long rdi = 0; // syscall param registers
+	long rsi = 0;
+	long rdx = 0;
 
-  {
-    __asm__ volatile ( "movl $1,%%eax;\n"
-                       "xorl %%ebx,%%ebx;\n"
-                       "syscall"
-                       : "=a" (rax), "=D" (rdi), "=S" (rsi), "=d" (rdx)
-                       :
-                       : "memory" );
-  }
-  fprintf(stderr, "rdi: '0x%08lx', rsi: '0x%08lx', rdx: '0x%08lx' - return rax: '0x%08lx'\n", rdi, rsi, rdx, rax);
+	{
+		__asm__ volatile("movl $1,%%eax;\n"
+				 "xorl %%ebx,%%ebx;\n"
+				 "syscall"
+				 : "=a"(rax), "=D"(rdi), "=S"(rsi), "=d"(rdx)
+				 :
+				 : "memory");
+	}
+	fprintf(stderr,
+		"rdi: '0x%08lx', rsi: '0x%08lx', rdx: '0x%08lx' - return rax: '0x%08lx'\n",
+		rdi, rsi, rdx, rax);
 
-  puts("READY.");
+	puts("READY.");
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

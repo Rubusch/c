@@ -12,8 +12,6 @@
 
 #define DATASIZ 64
 
-
-
 typedef struct elements {
 	struct elements *next;
 	char data[DATASIZ];
@@ -87,10 +85,10 @@ static int elements__removeall()
 /* print all elements' data */
 static void elements__print()
 {
-	elements_t* elem = elements__first;
+	elements_t *elem = elements__first;
 
 	if (!elements__first) {
-		puts ("empty");
+		puts("empty");
 		return;
 	}
 

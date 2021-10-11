@@ -7,34 +7,41 @@
 
 #include "test.h"
 
-
 // test definitions
 
-TEST__BEGIN(lothars__inet_ntop) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__inet_ntop)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__inet_pton) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__inet_pton)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__inet_aton) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__inet_aton)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__sock_ntop) {
-// TODO
-} TEST__END
+TEST__BEGIN(lothars__sock_ntop)
+{
+	// TODO
+}
+TEST__END
 
-TEST__BEGIN(lothars__sock_ntop_host) {
-// TODO
-} TEST__END
-
-
+TEST__BEGIN(lothars__sock_ntop_host)
+{
+	// TODO
+}
+TEST__END
 
 /*
 */
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	test__lothars__inet_ntop();
 	test__lothars__inet_pton();

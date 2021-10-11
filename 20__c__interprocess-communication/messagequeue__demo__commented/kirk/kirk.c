@@ -23,7 +23,6 @@ typedef struct {
 	char msg_text[MSG_SIZ];
 } msgbuf;
 
-
 int main(int argc, char **argv)
 {
 	msgbuf msg_buf;
@@ -66,7 +65,7 @@ int main(int argc, char **argv)
 		printf("kirk: ");
 
 		fgets(msg_buf.msg_text, MSG_SIZ, stdin);
-		if (0 > msgsnd(mq_id, ( msgbuf * )&msg_buf, sizeof(msg_buf), 0)) {
+		if (0 > msgsnd(mq_id, (msgbuf *)&msg_buf, sizeof(msg_buf), 0)) {
 			perror("msgsnd failed");
 		}
 	}

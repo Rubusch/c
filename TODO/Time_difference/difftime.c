@@ -11,61 +11,60 @@
 
 double using_time()
 {
-  time_t start, stop;
+	time_t start, stop;
 
-  // start
-  start = time(NULL);
-  puts("using time: system time");
+	// start
+	start = time(NULL);
+	puts("using time: system time");
 
-  // counting
-  unsigned long cnt = 0;
-  while (cnt != NUMBER) {
-    printf("%ld ", cnt);
-    ++cnt;
-  }
+	// counting
+	unsigned long cnt = 0;
+	while (cnt != NUMBER) {
+		printf("%ld ", cnt);
+		++cnt;
+	}
 
-  // stop
-  stop = time(NULL);
+	// stop
+	stop = time(NULL);
 
-  // difference
-  return difftime(stop, start);
+	// difference
+	return difftime(stop, start);
 }
-
 
 double using_clock()
 {
-  clock_t start, stop;
+	clock_t start, stop;
 
-  // start
-  start = clock();
-  puts("using time: cpu clock time");
+	// start
+	start = clock();
+	puts("using time: cpu clock time");
 
-  // counting
-  unsigned long cnt = 0;
-  while (cnt != NUMBER) {
-    printf("%ld ", cnt);
-    ++cnt;
-  }
+	// counting
+	unsigned long cnt = 0;
+	while (cnt != NUMBER) {
+		printf("%ld ", cnt);
+		++cnt;
+	}
 
-  // stop
-  stop = clock();
+	// stop
+	stop = clock();
 
-  // difference
-  return ( unsigned long )(stop - start) / CLOCKS_PER_SEC;
+	// difference
+	return (unsigned long)(stop - start) / CLOCKS_PER_SEC;
 }
-
 
 int main()
 {
-  puts("time measuring");
+	puts("time measuring");
 
-  double difA = using_time();
-  double difB = using_clock();
+	double difA = using_time();
+	double difB = using_clock();
 
-  puts("\n\n\n");
-  fprintf(stderr, "system time: %.0f seconds to count to %d\n", difA, NUMBER);
-  fprintf(stderr, "cpu clock time: %.0f seconds to count to %d\n", difB,
-          NUMBER);
+	puts("\n\n\n");
+	fprintf(stderr, "system time: %.0f seconds to count to %d\n", difA,
+		NUMBER);
+	fprintf(stderr, "cpu clock time: %.0f seconds to count to %d\n", difB,
+		NUMBER);
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

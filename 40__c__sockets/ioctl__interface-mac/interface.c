@@ -3,7 +3,6 @@
   getting interface information
 */
 
-
 /* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
 
 #define _XOPEN_SOURCE 600 /* SIOCGIFFLAGS, SIOCGIFCONF,... */
@@ -13,8 +12,8 @@
 #include <stdlib.h>
 #include <string.h> /* memcpy() */
 
-#include <netinet/in.h>  // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
-#include <sys/un.h>  /* unix sockets, close() */
+#include <netinet/in.h> // !!! place this header before <linux/.. headers or struct sockaddr might be unknown !!!
+#include <sys/un.h> /* unix sockets, close() */
 #include <unistd.h> /* close() */
 #include <netdb.h> /* NI_NUMERICHOST,... */
 #if HAVE_STROPTS_H
@@ -35,13 +34,11 @@
 #include <linux/sockios.h> /* struct ifreq, SIOCGIFFLAGS, SIOCGIFCONF,... together with _XOPPEN_SOURCE delcaration */
 #include <errno.h>
 
-
 /*
   constants
 */
 
 #define MAXLINE 4096 /* max text line length */
-
 
 /*
   forwards
@@ -54,11 +51,10 @@ void err_quit(const char *, ...);
 // unix
 void lothars__close(int *);
 int lothars__ioctl(int, int, void *);
-void* lothars__malloc(size_t);
+void *lothars__malloc(size_t);
 
 // sock
 int lothars__socket(int, int, int);
-
 
 /*
   internal helpers
@@ -72,24 +68,25 @@ int lothars__socket(int, int, int);
 static void err_doit(int errnoflag, const char *fmt, va_list ap)
 {
 	int errno_save, n_len;
-	char buf[MAXLINE + 1]; memset(buf, '\0', sizeof(buf));
+	char buf[MAXLINE + 1];
+	memset(buf, '\0', sizeof(buf));
 
 	errno_save = errno; // value caller might want printed
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
 	n_len = strlen(buf);
 	if (errnoflag) {
-		snprintf(buf + n_len, MAXLINE - n_len, ": %s", strerror(errno_save));
+		snprintf(buf + n_len, MAXLINE - n_len, ": %s",
+			 strerror(errno_save));
 	}
 
 	strcat(buf, "\n");
 
-	fflush(stdout);  // in case stdout and stderr are the same
+	fflush(stdout); // in case stdout and stderr are the same
 	fputs(buf, stderr);
 	fflush(stderr);
 
 	return;
 }
-
 
 /*
   helpers / wrappers
@@ -102,26 +99,24 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 */
 void err_sys(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
 
-
 /*
    fatal error unrelated to system call Print message and terminate
 */
 void err_quit(const char *fmt, ...)
 {
-	va_list  ap;
+	va_list ap;
 	va_start(ap, fmt);
 	err_doit(0, fmt, ap);
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 
 /*
   The close() function shall deallocate the file descriptor indicated
@@ -157,18 +152,16 @@ void lothars__close(int *fd)
 	sync();
 }
 
-
 int lothars__ioctl(int fd, int request, void *arg)
 {
-	int  res;
+	int res;
 	if (-1 == (res = ioctl(fd, request, arg))) {
 		err_sys("ioctl error");
 	}
 	return res; // streamio of I_LIST returns value
 }
 
-
-void* lothars__malloc(size_t size)
+void *lothars__malloc(size_t size)
 {
 	void *ptr;
 	if (NULL == (ptr = malloc(size))) {
@@ -176,7 +169,6 @@ void* lothars__malloc(size_t size)
 	}
 	return ptr;
 }
-
 
 int lothars__socket(int family, int type, int protocol)
 {
@@ -186,8 +178,6 @@ int lothars__socket(int family, int type, int protocol)
 	}
 	return res;
 }
-
-
 
 /********************************************************************************************/
 // worker
@@ -205,14 +195,14 @@ void get_interfaces(int family)
 	/* show interfaces */
 
 	// get ifc.ifc_buf allocated by ifc.ifc_len amount of memory
-        ifc.ifc_len = 110 * sizeof(*ifr);
-	ifc.ifc_buf = lothars__malloc(ifc.ifc_len); // HACK: a mere guess, following R. Stevens
+	ifc.ifc_len = 110 * sizeof(*ifr);
+	ifc.ifc_buf = lothars__malloc(
+		ifc.ifc_len); // HACK: a mere guess, following R. Stevens
 
 	lothars__ioctl(fd_sock, SIOCGIFCONF, &ifc);
 	ifr = ifc.ifc_req;
 
-	for (idx=0, len=0; idx < ifc.ifc_len; ) {
-
+	for (idx = 0, len = 0; idx < ifc.ifc_len;) {
 		// on Linux
 		len = sizeof(*ifr);
 		// on some other unices there might be something possible like
@@ -235,13 +225,9 @@ void get_interfaces(int family)
 			switch (ifr_ifaddr.ifr_addr.sa_family) {
 			case AF_INET:
 			case AF_INET6:
-				getnameinfo(&ifr_ifaddr.ifr_addr
-					    , sizeof(ifr_ifaddr.ifr_addr)
-					    , host
-					    , sizeof(host)
-					    , 0
-					    , 0
-					    , NI_NUMERICHOST);
+				getnameinfo(&ifr_ifaddr.ifr_addr,
+					    sizeof(ifr_ifaddr.ifr_addr), host,
+					    sizeof(host), 0, 0, NI_NUMERICHOST);
 				break;
 			default:
 				strcpy(host, "unknown");
@@ -251,10 +237,9 @@ void get_interfaces(int family)
 		}
 		fprintf(stdout, "\t");
 
-
 		{
-                        /* obtain mac address */
-/*
+			/* obtain mac address */
+			/*
 // Unix: note - R. Stevens describes the following approach for unix (SUN, HP-UX,...)
 			struct sockaddr_in *sin;
 			struct arpreq arpreq;
@@ -266,8 +251,8 @@ void get_interfaces(int family)
 				parp = (uint8_t*) &arpreq.arp_ha.sa_data[0];
 				fprintf(stdout, " %x:%x:%x:%x:%x:%x", *parp, *(parp + 1), *(parp + 2), *(parp + 3), *(parp + 4), *(parp + 5));
 /*/
-// Linux: usage of SIOCGARP seems to be rather a Unix approach, where Linux uses SIOCGIFHWADDR
-//        (not all interfaces have a mac!)
+			// Linux: usage of SIOCGARP seems to be rather a Unix approach, where Linux uses SIOCGIFHWADDR
+			//        (not all interfaces have a mac!)
 			struct ifreq ifr_hwifaddr;
 			uint8_t *mac = NULL;
 
@@ -276,37 +261,37 @@ void get_interfaces(int family)
 			lothars__ioctl(fd_sock, SIOCGIFHWADDR, &ifr_hwifaddr);
 
 			if (ARPHRD_ETHER == ifr_hwifaddr.ifr_hwaddr.sa_family) {
-				mac = (uint8_t*) &ifr_hwifaddr.ifr_hwaddr.sa_data;
-				fprintf(stdout, "%x:%x:%x:%x:%x:%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-// */
+				mac = (uint8_t *)&ifr_hwifaddr.ifr_hwaddr
+					      .sa_data;
+				fprintf(stdout, "%x:%x:%x:%x:%x:%x", mac[0],
+					mac[1], mac[2], mac[3], mac[4], mac[5]);
+				// */
 			} else {
 				fprintf(stdout, "<unknown>");
 			}
-
 		}
 		fprintf(stdout, "\n");
 
 		// HACK: move the char-ized pointer to ifr by len bytes (i.e. obtain next element)
-		ifr = (struct ifreq*) (len + (char*)ifr);
+		ifr = (struct ifreq *)(len + (char *)ifr);
 
 		idx += len;
 	}
 
 	// cleanup
-	if (NULL != ifc.ifc_buf) free(ifc.ifc_buf);
+	if (NULL != ifc.ifc_buf)
+		free(ifc.ifc_buf);
 	ifc.ifc_buf = NULL;
 
 	lothars__close(&fd_sock);
 }
 
-
 /********************************************************************************************/
-
 
 /*
   main function to the UDP server (forked)
 */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int family;
 

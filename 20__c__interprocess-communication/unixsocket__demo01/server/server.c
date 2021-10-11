@@ -20,8 +20,8 @@
 char *strings[NUMBER_OF_STRINGS] = {
 	"this is the first string form the server.",
 	"this is the second string from the server.",
-	"this is the third string from the server."};
-
+	"this is the third string from the server."
+};
 
 int main(int argc, char **argv)
 {
@@ -40,8 +40,8 @@ int main(int argc, char **argv)
 	unlink(SERVER_PATH);
 
 	// bind server to the address
-	if (0 >
-	    bind(sd_listen, ( struct sockaddr * )&adr_server, sizeof(adr_server))) {
+	if (0 > bind(sd_listen, (struct sockaddr *)&adr_server,
+		     sizeof(adr_server))) {
 		perror("bind failed");
 		unlink(SERVER_PATH);
 		exit(EXIT_FAILURE);
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 	register int sd_client = 0;
 	struct sockaddr_un adr_client;
 	unsigned int len_addr_from = 0;
-	if (0 > (sd_client = accept(sd_listen, ( struct sockaddr * )&adr_client,
+	if (0 > (sd_client = accept(sd_listen, (struct sockaddr *)&adr_client,
 				    &len_addr_from))) {
 		perror("accept failed");
 		unlink(SERVER_PATH);
@@ -81,7 +81,8 @@ int main(int argc, char **argv)
 		bytes = 0;
 
 		// receive
-		if ((0 >= (bytes = recv(sd_client, strReceived, RECEIVED_SIZE, 0))) &&
+		if ((0 >= (bytes = recv(sd_client, strReceived, RECEIVED_SIZE,
+					0))) &&
 		    (bytes < RECEIVED_SIZE)) {
 			perror("recv failed");
 
@@ -91,7 +92,8 @@ int main(int argc, char **argv)
 
 			// send
 			printf("send \"%s\"\n", strings[idx]);
-			if (0 > send(sd_client, strings[idx], strlen(strings[idx]), 0)) {
+			if (0 > send(sd_client, strings[idx],
+				     strlen(strings[idx]), 0)) {
 				perror("send failed");
 				break;
 			} else {

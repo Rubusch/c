@@ -134,20 +134,19 @@
 
 int main()
 {
-  static char msg[] = "Hello World!\n";
-  int msg_size = sizeof(msg);
-  int res;
+	static char msg[] = "Hello World!\n";
+	int msg_size = sizeof(msg);
+	int res;
 
-  sleep(1); // setup for ptrace
+	sleep(1); // setup for ptrace
 
-  {
-    __asm__ __volatile__ (
-                          "syscall"
-                          : "=a" (res)
-                          : "a"(SYS_write), "D"(STDOUT), "S" (msg), "d" (msg_size)
-                          : "memory"
-                          );
-  }
+	{
+		__asm__ __volatile__("syscall"
+				     : "=a"(res)
+				     : "a"(SYS_write), "D"(STDOUT), "S"(msg),
+				       "d"(msg_size)
+				     : "memory");
+	}
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

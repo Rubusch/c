@@ -21,13 +21,13 @@ void readlongnumber(unsigned long *, const unsigned int, const char *);
 void readnumber(unsigned int *, const unsigned int, const char *);
 void readdigit(unsigned int *, const char *);
 
-
 int main(int argc, char **argv)
 {
 	// shm_key
 	key_t shm_key;
-	readlongnumber(( unsigned long * )&shm_key, KEY_SIZE,
-		       "enter a key for the shared memory with up to 7 digits:");
+	readlongnumber(
+		(unsigned long *)&shm_key, KEY_SIZE,
+		"enter a key for the shared memory with up to 7 digits:");
 
 	// size
 	unsigned int size;
@@ -39,7 +39,8 @@ int main(int argc, char **argv)
 		unsigned int tmp_flag = 0;
 		do {
 			tmp_flag = 0;
-			fprintf(stdout, "select one of the following flags to shmget():\n");
+			fprintf(stdout,
+				"select one of the following flags to shmget():\n");
 
 			puts("1\tIPC_CREAT");
 			puts("2\tIPC_EXCL");
@@ -55,7 +56,6 @@ int main(int argc, char **argv)
 		} while ((1 > tmp_flag) || (8 < tmp_flag));
 
 		switch (tmp_flag) {
-
 		case 1:
 			puts("IPC_CREAT");
 			shm_flag = IPC_CREAT;
@@ -103,7 +103,8 @@ int main(int argc, char **argv)
 	}
 
 	// shmget
-	fprintf(stderr, "shmget(%ld, %d, %#o)\n", ( long )shm_key, size, shm_flag);
+	fprintf(stderr, "shmget(%ld, %d, %#o)\n", (long)shm_key, size,
+		shm_flag);
 	int shm_id;
 	if (-1 == (shm_id = shmget(shm_key, size, shm_flag))) {
 		perror("shmget failed");
@@ -115,7 +116,6 @@ int main(int argc, char **argv)
 	puts("READY.");
 	exit(EXIT_SUCCESS);
 }
-
 
 int isnumber(const char *str, const unsigned int size)
 {
@@ -138,9 +138,8 @@ int isnumber(const char *str, const unsigned int size)
 	return 1;
 }
 
-
 void readlongnumber(unsigned long *iVal, const unsigned int digits,
-                    const char *comment)
+		    const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -179,9 +178,8 @@ void readlongnumber(unsigned long *iVal, const unsigned int digits,
 	*iVal = atol(cTxt);
 }
 
-
 void readnumber(unsigned int *iVal, const unsigned int digits,
-                const char *comment)
+		const char *comment)
 {
 	if (NULL == comment) {
 		perror("text is NULL");
@@ -219,7 +217,6 @@ void readnumber(unsigned int *iVal, const unsigned int digits,
 	} while (!isnumber(cTxt, (1 + strlen(cTxt))));
 	*iVal = atoi(cTxt);
 }
-
 
 void readdigit(unsigned int *iChr, const char *comment)
 {

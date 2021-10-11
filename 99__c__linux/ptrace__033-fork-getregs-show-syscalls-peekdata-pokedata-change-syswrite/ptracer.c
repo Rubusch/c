@@ -371,250 +371,276 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 const int long_size = sizeof(long);
-
 
 void get_data(pid_t child, long addr, char *str, int len)
 {
-  char *laddr;
-  int idx, jdx;
-  // data structure for reversing the string
-  union u {
-    long val;
-    char chars[long_size];
-  } data;
+	char *laddr;
+	int idx, jdx;
+	// data structure for reversing the string
+	union u {
+		long val;
+		char chars[long_size];
+	} data;
 
-  idx = 0;
-  jdx = len / long_size;
-  laddr = str;
-  while (idx < jdx) {
-    // get 'val' for data
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
+	idx = 0;
+	jdx = len / long_size;
+	laddr = str;
+	while (idx < jdx) {
+		// get 'val' for data
+		data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
 
-    // copy over to 'chars'
-    memcpy(laddr, data.chars, long_size);
+		// copy over to 'chars'
+		memcpy(laddr, data.chars, long_size);
 
-    // increment read index
-    ++idx;
+		// increment read index
+		++idx;
 
-    // increment write position - move pointer
-    laddr += long_size;
-  }
+		// increment write position - move pointer
+		laddr += long_size;
+	}
 
-  // copy over remaining characters to 'chars'
-  jdx = len % long_size;
-  if (jdx != 0) {
-    data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
-    memcpy(laddr, data.chars, jdx);
-  }
-  str[len] = '\0';
+	// copy over remaining characters to 'chars'
+	jdx = len % long_size;
+	if (jdx != 0) {
+		data.val = ptrace(PTRACE_PEEKDATA, child, addr + idx * 8, NULL);
+		memcpy(laddr, data.chars, jdx);
+	}
+	str[len] = '\0';
 }
-
 
 void reverse(char *str)
 {
-  int idx, jdx;
-  char temp;
-  // NOTE: keep '-2' as upper bound, due to '\0' and '\n'!!
-  for (idx = 0, jdx = strlen(str)-2; idx <= jdx; ++idx, --jdx) {
-    temp = str[idx];
-    str[idx] = str[jdx];
-    str[jdx] = temp;
-  }
+	int idx, jdx;
+	char temp;
+	// NOTE: keep '-2' as upper bound, due to '\0' and '\n'!!
+	for (idx = 0, jdx = strlen(str) - 2; idx <= jdx; ++idx, --jdx) {
+		temp = str[idx];
+		str[idx] = str[jdx];
+		str[jdx] = temp;
+	}
 }
-
 
 void put_data(pid_t child, long addr, char *str, int len)
 {
-  char *laddr;
-  int idx, jdx;
-  union u {
-    long val;
-    char chars[long_size];
-  } data;
+	char *laddr;
+	int idx, jdx;
+	union u {
+		long val;
+		char chars[long_size];
+	} data;
 
-  idx = 0;
-  jdx = len / long_size;
-  laddr = str;
-  while (idx < jdx) {
-    // copy 'chars'
-    memcpy(data.chars, laddr, long_size);
+	idx = 0;
+	jdx = len / long_size;
+	laddr = str;
+	while (idx < jdx) {
+		// copy 'chars'
+		memcpy(data.chars, laddr, long_size);
 
-    // write from 'val'
-    ptrace(PTRACE_POKEDATA, child, addr + idx * 8, data.val);
+		// write from 'val'
+		ptrace(PTRACE_POKEDATA, child, addr + idx * 8, data.val);
 
-    // next to read
-    ++idx;
+		// next to read
+		++idx;
 
-    // next to write
-    laddr += long_size;
-  }
+		// next to write
+		laddr += long_size;
+	}
 
-  // remaining characters...
-  jdx = len % long_size;
-  if (jdx != 0) {
-    // copy value to 'chars'
-    memcpy(data.chars, laddr, jdx);
+	// remaining characters...
+	jdx = len % long_size;
+	if (jdx != 0) {
+		// copy value to 'chars'
+		memcpy(data.chars, laddr, jdx);
 
-    //  print
-    ptrace(PTRACE_POKEDATA, child, addr + idx * 8, NULL);
-  }
+		//  print
+		ptrace(PTRACE_POKEDATA, child, addr + idx * 8, NULL);
+	}
 }
-
 
 int main(int argc, char **argv)
 {
-  pid_t child;
+	pid_t child;
 
 #ifndef __x86_64__
-  fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
-  exit(EXIT_FAILURE);
+	fprintf(stderror, "ABORTING! programmed for x86_64 only!!!\n");
+	exit(EXIT_FAILURE);
 #endif
 
-  if (0 > (child = fork())) {
-    perror("fork() failed");
+	if (0 > (child = fork())) {
+		perror("fork() failed");
 
-  } else if (0 == child) {
-    /* child: tracee */
-    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-    execl("/bin/pwd", "pwd", NULL);
+	} else if (0 == child) {
+		/* child: tracee */
+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+		execl("/bin/pwd", "pwd", NULL);
 
-  } else {
-    /* parent: tracer */
-    waitpid(child, 0, 0);
-    ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
+	} else {
+		/* parent: tracer */
+		waitpid(child, 0, 0);
+		ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
 
-    while (1) {
-      // restart the stopped tracee
-      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) { // PTRACE_SYSEMU ends in infinite loop here
-        perror("ptrace: PTRACE_SYSCALL failed");
-        exit(EXIT_FAILURE);
-      }
+		while (1) {
+			// restart the stopped tracee
+			if (0 >
+			    (ptrace(PTRACE_SYSCALL, child, 0,
+				    0))) { // PTRACE_SYSEMU ends in infinite loop here
+				perror("ptrace: PTRACE_SYSCALL failed");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > waitpid(child, 0, 0)) {
-        perror("waitpid: failed");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > waitpid(child, 0, 0)) {
+				perror("waitpid: failed");
+				exit(EXIT_FAILURE);
+			}
 
-      struct user_regs_struct regs;
-      if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
-        perror("ptrace: PTRACE_GETREGS failed");
-        exit(EXIT_FAILURE);
-      }
+			struct user_regs_struct regs;
+			if (0 > ptrace(PTRACE_GETREGS, child, 0, &regs)) {
+				perror("ptrace: PTRACE_GETREGS failed");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
-        perror("ptrace: process finished");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > (ptrace(PTRACE_SYSCALL, child, 0, 0))) {
+				perror("ptrace: process finished");
+				exit(EXIT_FAILURE);
+			}
 
-      if (0 > waitpid(child, 0, 0)) {
-        perror("waitpid: process finished");
-        exit(EXIT_FAILURE);
-      }
+			if (0 > waitpid(child, 0, 0)) {
+				perror("waitpid: process finished");
+				exit(EXIT_FAILURE);
+			}
 
-
-      switch(regs.orig_rax) {
+			switch (regs.orig_rax) {
 #ifdef SYS_munmap
-      case SYS_munmap:
-        fprintf(stderr, "SYSCALL: SYS_munmap, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_munmap:
+				fprintf(stderr,
+					"SYSCALL: SYS_munmap, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_arch_prctl
-      case SYS_arch_prctl:
-        fprintf(stderr, "SYSCALL: SYS_arch_prctl, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_arch_prctl:
+				fprintf(stderr,
+					"SYSCALL: SYS_arch_prctl, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_getcwd
-      case SYS_getcwd:
-        fprintf(stderr, "SYSCALL: SYS_getcwd, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_getcwd:
+				fprintf(stderr,
+					"SYSCALL: SYS_getcwd, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_mprotect
-      case SYS_mprotect:
-        fprintf(stderr, "SYSCALL: SYS_mprotect, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_mprotect:
+				fprintf(stderr,
+					"SYSCALL: SYS_mprotect, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_mmap
-      case SYS_mmap:
-        fprintf(stderr, "SYSCALL: SYS_mmap, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_mmap:
+				fprintf(stderr,
+					"SYSCALL: SYS_mmap, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_close
-      case SYS_close:
-        fprintf(stderr, "SYSCALL: SYS_close, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_close:
+				fprintf(stderr,
+					"SYSCALL: SYS_close, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_brk // change the location of the program break, which defines the end of the process's data segment
-      case SYS_brk:
-        fprintf(stderr, "SYSCALL: SYS_brk, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_brk:
+				fprintf(stderr, "SYSCALL: SYS_brk, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_openat
-      case SYS_openat:
-        fprintf(stderr, "SYSCALL: SYS_openat, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_openat:
+				fprintf(stderr,
+					"SYSCALL: SYS_openat, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_access
-      case SYS_access:
-        fprintf(stderr, "SYSCALL: SYS_access, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_access:
+				fprintf(stderr,
+					"SYSCALL: SYS_access, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_fstat
-      case SYS_fstat:
-        fprintf(stderr, "SYSCALL: SYS_fstat, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_fstat:
+				fprintf(stderr,
+					"SYSCALL: SYS_fstat, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_read
-      case SYS_read:
-        fprintf(stderr, "SYSCALL: SYS_read, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_read:
+				fprintf(stderr,
+					"SYSCALL: SYS_read, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_write
-      case SYS_write:
-        fprintf(stderr, "SYSCALL: SYS_write, '0x%04lx'\n", (long)regs.orig_rax);
+			case SYS_write:
+				fprintf(stderr,
+					"SYSCALL: SYS_write, '0x%04lx'\n",
+					(long)regs.orig_rax);
 
-        // allocation
-        char *str = (char*) calloc((regs.rdx + 1), sizeof(char));
-        char *str_cpy = (char*) calloc((regs.rdx + 1), sizeof(char));
+				// allocation
+				char *str = (char *)calloc((regs.rdx + 1),
+							   sizeof(char));
+				char *str_cpy = (char *)calloc((regs.rdx + 1),
+							       sizeof(char));
 
-        // get data
-        get_data(child, regs.rsi, str, regs.rdx);
-        memcpy( str_cpy, str, regs.rdx-1);
-        fprintf(stderr, "\t'%s'", str_cpy);
+				// get data
+				get_data(child, regs.rsi, str, regs.rdx);
+				memcpy(str_cpy, str, regs.rdx - 1);
+				fprintf(stderr, "\t'%s'", str_cpy);
 
-        // reverse
-        reverse(str);
-        memcpy( str_cpy, str, regs.rdx-1);
-        fprintf(stderr, " -> '%s'\n", str_cpy);
+				// reverse
+				reverse(str);
+				memcpy(str_cpy, str, regs.rdx - 1);
+				fprintf(stderr, " -> '%s'\n", str_cpy);
 
-        // print data
-        put_data(child, regs.rsi, str, regs.rdx);
+				// print data
+				put_data(child, regs.rsi, str, regs.rdx);
 
-        free(str);
-        free(str_cpy);
-        str = NULL;
-        str_cpy = NULL;
+				free(str);
+				free(str_cpy);
+				str = NULL;
+				str_cpy = NULL;
 
-        break;
+				break;
 #endif
 #ifdef SYS_open
-      case SYS_open:
-        fprintf(stderr, "SYSCALL: SYS_open, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_open:
+				fprintf(stderr,
+					"SYSCALL: SYS_open, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 #ifdef SYS_exit_group
-      case SYS_exit_group:
-        fprintf(stderr, "SYSCALL: SYS_exit_group, '0x%04lx'\n", (long)regs.orig_rax);
-        break;
+			case SYS_exit_group:
+				fprintf(stderr,
+					"SYSCALL: SYS_exit_group, '0x%04lx'\n",
+					(long)regs.orig_rax);
+				break;
 #endif
 
-      default:
-        fprintf(stderr, "SYSCALL: uncaught, '0x%04lx' XXXXXXX\n", (long)regs.orig_rax);
-      }
+			default:
+				fprintf(stderr,
+					"SYSCALL: uncaught, '0x%04lx' XXXXXXX\n",
+					(long)regs.orig_rax);
+			}
+		}
+	}
 
-    }
-  }
-
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

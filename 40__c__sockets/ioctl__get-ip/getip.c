@@ -12,14 +12,14 @@
 #include <string.h>
 
 #include <sys/ioctl.h>
-#include <netinet/in.h>  // !!! place this header always before <linux/.. headers, or struct sockaddr might be unknown !!!
+#include <netinet/in.h> // !!! place this header always before <linux/.. headers, or struct sockaddr might be unknown !!!
 #include <linux/if.h> /* struct ifreq */
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h> /* inet_ntoa() -> TODO replace by inet_ntop() */
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv)
+{
 	struct ifreq ifa;
 	struct sockaddr_in *i;
 	int fd;
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	i = (struct sockaddr_in*)&ifa.ifr_addr;
+	i = (struct sockaddr_in *)&ifa.ifr_addr;
 	puts(inet_ntoa(i->sin_addr));
 
 	exit(EXIT_SUCCESS);

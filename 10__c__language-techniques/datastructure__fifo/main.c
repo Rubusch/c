@@ -28,7 +28,6 @@
 #define _XOPEN_SOURCE 600
 #define _XOPEN_SOURCE_EXTENDED
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,7 +47,6 @@
 void output();
 void insert(int, char *);
 
-
 int main(int argc, char **argv)
 {
 	int round = 0;
@@ -59,15 +57,17 @@ int main(int argc, char **argv)
 	item_p item_a = NULL;
 	item_p item_b = NULL;
 	content_p content = NULL;
-	char msg[STR_SIZE]; memset(msg, '\0', STR_SIZE);
-	char str_idx[STR_IDX_SIZE]; memset(str_idx, '\0', STR_IDX_SIZE);
+	char msg[STR_SIZE];
+	memset(msg, '\0', STR_SIZE);
+	char str_idx[STR_IDX_SIZE];
+	memset(str_idx, '\0', STR_IDX_SIZE);
 	const char str_prefix[] = STR_PREFIX;
 
 	fprintf(stdout, "\nSingle Linked Fifo\n\n");
 
 	mtrace(); /* memory trace */
 
-	for (round=0; round < nrounds; round++) {
+	for (round = 0; round < nrounds; round++) {
 		res = 0;
 		cnt = 0;
 		item = NULL;
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 		content = NULL;
 		memset(msg, '\0', STR_SIZE);
 		memset(str_idx, '\0', STR_IDX_SIZE);
-//*
+		//*
 		fprintf(stdout, "TEST: 0 == fifo__size()");
 		res = fifo__size();
 		assert(0 == res);
@@ -92,20 +92,22 @@ int main(int argc, char **argv)
 		assert(NULL == item);
 		fprintf(stdout, " - OK\n");
 
-		fprintf(stdout, "TEST: fifo__push(content) - NULL != fifo__first()");
+		fprintf(stdout,
+			"TEST: fifo__push(content) - NULL != fifo__first()");
 		content = malloc(sizeof(*content));
 		if (NULL == content) {
 			perror("malloc() for content failed");
 			exit(EXIT_FAILURE);
 		}
-		content->len = strlen(str_prefix)+1;
+		content->len = strlen(str_prefix) + 1;
 		strncpy(content->msg, str_prefix, content->len);
 		fifo__push(content);
 		item_a = fifo__first();
 		assert(NULL != item_a);
 		fprintf(stdout, " - OK\n");
 
-		fprintf(stdout, "TEST: fifo__push(content) - NULL != fifo__last()");
+		fprintf(stdout,
+			"TEST: fifo__push(content) - NULL != fifo__last()");
 		item_b = fifo__last();
 		assert(NULL != item_b);
 		assert(item_a == item_b);
@@ -116,7 +118,8 @@ int main(int argc, char **argv)
 		assert(1 == res);
 		fprintf(stdout, " - OK\n");
 
-		fprintf(stdout, "TEST: '%s' == first->content->msg", str_prefix);
+		fprintf(stdout, "TEST: '%s' == first->content->msg",
+			str_prefix);
 		item_a = fifo__first();
 		assert(0 == strcmp(STR_PREFIX, item_a->content->msg));
 		fprintf(stdout, " - OK\n");
@@ -140,8 +143,8 @@ int main(int argc, char **argv)
 		res = fifo__size();
 		assert(0 == res);
 		fprintf(stdout, " - OK\n");
-// */
-//*
+		// */
+		//*
 		fprintf(stdout, "\nbulk tests preparation\n\n");
 		for (cnt = 0; cnt < NUMBER_OF_ELEMENTS; ++cnt) {
 			content = NULL;
@@ -155,8 +158,9 @@ int main(int argc, char **argv)
 			memset(content->msg, '\0', MESSAGE_LENGTH);
 			strcat(content->msg, str_prefix);
 			strcat(content->msg, str_idx);
-			content->len = strlen(content->msg)+1;
-			fprintf(stdout, "\telement #%i added: %s\n", cnt, content->msg);
+			content->len = strlen(content->msg) + 1;
+			fprintf(stdout, "\telement #%i added: %s\n", cnt,
+				content->msg);
 			fifo__push(content);
 		}
 
@@ -165,12 +169,12 @@ int main(int argc, char **argv)
 		assert(NUMBER_OF_ELEMENTS == res);
 		fprintf(stdout, " - OK\n");
 
-		fprintf(stdout, "TEST: %d == <iterated through all elements>", NUMBER_OF_ELEMENTS);
+		fprintf(stdout, "TEST: %d == <iterated through all elements>",
+			NUMBER_OF_ELEMENTS);
 		if (NULL != fifo__first()) {
 			cnt = 1;
-			for (item = fifo__first()
-				     ; item != fifo__last()
-				     ; item = fifo__next(item), cnt++)
+			for (item = fifo__first(); item != fifo__last();
+			     item = fifo__next(item), cnt++)
 				;
 		}
 		assert(res == cnt);
@@ -201,7 +205,8 @@ int main(int argc, char **argv)
 		}
 
 		while (fifo__size()) {
-			fprintf(stdout, "TEST: fifo__pop() - '%s'", fifo__first()->content->msg);
+			fprintf(stdout, "TEST: fifo__pop() - '%s'",
+				fifo__first()->content->msg);
 			content = fifo__pop();
 			free(content);
 			fprintf(stdout, " - OK\n");
@@ -221,7 +226,7 @@ int main(int argc, char **argv)
 		item = fifo__last();
 		assert(NULL == item);
 		fprintf(stdout, " - OK\n");
-// */
+		// */
 	}
 
 	muntrace(); /* memory trace */

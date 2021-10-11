@@ -101,7 +101,6 @@
   http://www.secretmango.com/jimb/Whitepapers/ptrace/ptrace.html
 */
 
-
 #define POSIX_C_SOURCE 200809L
 #define _XOPEN_SOURCE 700
 #define _GNU_SOURCE 1
@@ -121,108 +120,113 @@
 
 #define D_LINUX 1
 
-
 int main(int argc, char *argv[])
 
 {
-  int tracee_pid;
-  int pfd;
-  char buf[1024];
-  char *srchstr;
-  char *eptr;
-  unsigned int addr;
-  int goodaddr;
-  int goodread;
-  int srchlen;
+	int tracee_pid;
+	int pfd;
+	char buf[1024];
+	char *srchstr;
+	char *eptr;
+	unsigned int addr;
+	int goodaddr;
+	int goodread;
+	int srchlen;
 
-  if (argv[1] == NULL || argv[2] == NULL) {
-    fprintf(stderr, "Usage: %s <pid> <string>\n", argv[0]);
-    exit(EXIT_FAILURE);
-  }
-  fprintf(stderr, "DEBUG %s()[%d]:\targv[0]: '%s', argv[1]: '%s', argv[2]: '%s'\n"
-          , __func__, __LINE__, argv[0], argv[1], argv[2]);
+	if (argv[1] == NULL || argv[2] == NULL) {
+		fprintf(stderr, "Usage: %s <pid> <string>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	fprintf(stderr,
+		"DEBUG %s()[%d]:\targv[0]: '%s', argv[1]: '%s', argv[2]: '%s'\n",
+		__func__, __LINE__, argv[0], argv[1], argv[2]);
 
-  tracee_pid = strtoul(argv[1], &eptr, 10);
-  srchlen = sizeof(argv[2]);
-  srchstr = (char*) strdup(argv[2]); // note: strdup() is open source!!!
+	tracee_pid = strtoul(argv[1], &eptr, 10);
+	srchlen = sizeof(argv[2]);
+	srchstr = (char *)strdup(argv[2]); // note: strdup() is open source!!!
 
-  printf("readproc: Tracing PID %d for string '%s', len %d\n"
-         , tracee_pid, srchstr, srchlen);
+	printf("readproc: Tracing PID %d for string '%s', len %d\n", tracee_pid,
+	       srchstr, srchlen);
 
-  // In order to read /proc/PID/mem from this process, I have to have already
-  // stopped it via ptrace(). (This is not documented anywhere, by the
-  // way). Anyway, this will leave the process in a STOPPED state. We'll
-  // start it again in a minute...
-  if (0 != (ptrace(PTRACE_SEIZE, tracee_pid, NULL, NULL))) {
-    printf("procexa: Attached to process %d\n", tracee_pid);
-    free(srchstr);
-    exit(EXIT_FAILURE);
-  }
-  ptrace(PTRACE_INTERRUPT, tracee_pid, NULL, NULL);
+	// In order to read /proc/PID/mem from this process, I have to have already
+	// stopped it via ptrace(). (This is not documented anywhere, by the
+	// way). Anyway, this will leave the process in a STOPPED state. We'll
+	// start it again in a minute...
+	if (0 != (ptrace(PTRACE_SEIZE, tracee_pid, NULL, NULL))) {
+		printf("procexa: Attached to process %d\n", tracee_pid);
+		free(srchstr);
+		exit(EXIT_FAILURE);
+	}
+	ptrace(PTRACE_INTERRUPT, tracee_pid, NULL, NULL);
 
-  // Create the string and open the proc mem file. Note under Linux this
-  // file is /proc/PID/mem while under Solaris this is /proc/PID/as
-  // Also, even though we open this RD/WR, Linux will not allow us to write
-  // to it.
-  sprintf(buf, "/proc/%d/mem", tracee_pid);
-  printf("procexa:opening [%s]\n", buf);
-  if ((pfd = open(buf, O_RDWR)) <= 0) {
-    perror("Error opening /proc/PID/mem file");
-    free(srchstr);
-    exit(EXIT_FAILURE);
-  }
+	// Create the string and open the proc mem file. Note under Linux this
+	// file is /proc/PID/mem while under Solaris this is /proc/PID/as
+	// Also, even though we open this RD/WR, Linux will not allow us to write
+	// to it.
+	sprintf(buf, "/proc/%d/mem", tracee_pid);
+	printf("procexa:opening [%s]\n", buf);
+	if ((pfd = open(buf, O_RDWR)) <= 0) {
+		perror("Error opening /proc/PID/mem file");
+		free(srchstr);
+		exit(EXIT_FAILURE);
+	}
 
-  // Start at zero, lseek and try to read. increment by 1024 bytes. If
-  // lseek returns a good status, then the address range is mapped. It
-  // should be readable. Print out start and end of valid mapped address
-  // ranges.
-  goodaddr = 0;
-  goodread = 0;
-  for (addr = 0; addr < (unsigned int) 0xf0000000; addr += 1024) {  // note: address needs to be adjusted
-    if (lseek(pfd, addr, SEEK_SET) != addr) {
-      if (goodaddr == 1) {
-        fprintf(stderr, "Address: 0x%x RANGE END\n", addr);
-        goodaddr = 0;
-      }
-      continue;
-    } else {
-      if (goodaddr == 0) {
-        fprintf(stderr, "Address 0x%x RANGE START\n", addr);
-        goodaddr = 1;
-      }
-    }
+	// Start at zero, lseek and try to read. increment by 1024 bytes. If
+	// lseek returns a good status, then the address range is mapped. It
+	// should be readable. Print out start and end of valid mapped address
+	// ranges.
+	goodaddr = 0;
+	goodread = 0;
+	for (addr = 0; addr < (unsigned int)0xf0000000;
+	     addr += 1024) { // note: address needs to be adjusted
+		if (lseek(pfd, addr, SEEK_SET) != addr) {
+			if (goodaddr == 1) {
+				fprintf(stderr, "Address: 0x%x RANGE END\n",
+					addr);
+				goodaddr = 0;
+			}
+			continue;
+		} else {
+			if (goodaddr == 0) {
+				fprintf(stderr, "Address 0x%x RANGE START\n",
+					addr);
+				goodaddr = 1;
+			}
+		}
 
-    // Read a 1k buffer and search it for the supplied text string
-    if (read(pfd, buf, 1024) <= 0) {
-      if (goodread == 1) {
-        printf("READ address 0x%x RANGE END\n", addr);
-        goodread = 0;
-      }
-      continue;
-    } else {
-      if (goodread == 0) {
-        printf("READ address 0x%x RANGE START\n", addr);
-        goodread = 1;
-      }
-      int jdx;
-      for (jdx = 0; jdx < 1024; jdx++) {
-        if (memcmp(&buf[jdx], srchstr, srchlen) == 0) {
-          printf("*****Pattern found %x\n", addr + jdx);
-          buf[jdx] = 'A';
-        }
-      }
-    }
-  }
+		// Read a 1k buffer and search it for the supplied text string
+		if (read(pfd, buf, 1024) <= 0) {
+			if (goodread == 1) {
+				printf("READ address 0x%x RANGE END\n", addr);
+				goodread = 0;
+			}
+			continue;
+		} else {
+			if (goodread == 0) {
+				printf("READ address 0x%x RANGE START\n", addr);
+				goodread = 1;
+			}
+			int jdx;
+			for (jdx = 0; jdx < 1024; jdx++) {
+				if (memcmp(&buf[jdx], srchstr, srchlen) == 0) {
+					printf("*****Pattern found %x\n",
+					       addr + jdx);
+					buf[jdx] = 'A';
+				}
+			}
+		}
+	}
 
-  printf("Stopped at address %x, %s\n", addr, goodread ? "pattern was found" : "nothing was found");
+	printf("Stopped at address %x, %s\n", addr,
+	       goodread ? "pattern was found" : "nothing was found");
 
-  printf("press ENTER\n");
-  getchar();
+	printf("press ENTER\n");
+	getchar();
 
-  // let child continue, detach, free..
-  ptrace(PTRACE_CONT, tracee_pid, NULL, NULL);
-  ptrace(PTRACE_DETACH, tracee_pid, NULL, NULL);
-  free(srchstr);
+	// let child continue, detach, free..
+	ptrace(PTRACE_CONT, tracee_pid, NULL, NULL);
+	ptrace(PTRACE_DETACH, tracee_pid, NULL, NULL);
+	free(srchstr);
 
-  return 0;
+	return 0;
 }

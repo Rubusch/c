@@ -305,56 +305,59 @@
 
 // NOTE: syscalls on x86_64 take arguments in the following general purpose registers:
 // rdi, rsi, rdx, r10, r8, r9 (last three are not used here)
-#define my_syscall3(type, NAME, syscall_number, type1, rdi, type2, rsi, type3, rdx) \
-  type NAME(type1 rdi, type2 rsi, type3 rdx)                            \
-  {                                                                     \
-    long __res;                                                         \
-    register long r10 __asm__("r10") = 0;                               \
-    register long r8 __asm__("r8") = 0;                                 \
-    register long r9 __asm__("r9") = 0;                                 \
-    __asm__ volatile (  "syscall"                                       \
-                        : "=a" (__res)                                  \
-                        : "a" (syscall_number), "D" (rdi), "S" (rsi), "d" (rdx), "r" (r10), "r" (r8), "r" (r9) \
-                        );                                              \
-    return (type) __res;                                                \
-  }
+#define my_syscall3(type, NAME, syscall_number, type1, rdi, type2, rsi, type3, \
+		    rdx)                                                       \
+	type NAME(type1 rdi, type2 rsi, type3 rdx)                             \
+	{                                                                      \
+		long __res;                                                    \
+		register long r10 __asm__("r10") = 0;                          \
+		register long r8 __asm__("r8") = 0;                            \
+		register long r9 __asm__("r9") = 0;                            \
+		__asm__ volatile("syscall"                                     \
+				 : "=a"(__res)                                 \
+				 : "a"(syscall_number), "D"(rdi), "S"(rsi),    \
+				   "d"(rdx), "r"(r10), "r"(r8), "r"(r9));      \
+		return (type)__res;                                            \
+	}
 // */
 
 // define syscall function
-my_syscall3(ssize_t, plop, SYS_write, int, fildes, const char*, buf, size_t, nbyte)
+my_syscall3(ssize_t, plop, SYS_write, int, fildes, const char *, buf, size_t,
+	    nbyte)
 
-
-int main(void)
+	int main(void)
 {
-  int fd[2]; // fd[0]: read - fd[1]: write
-  pid_t pid;
+	int fd[2]; // fd[0]: read - fd[1]: write
+	pid_t pid;
 
-  pipe(fd);
-  pid = fork();
-  if (0 > pid) {
-    perror("fork failed");
+	pipe(fd);
+	pid = fork();
+	if (0 > pid) {
+		perror("fork failed");
 
-  } else if (0 < pid) {
-    /* parent */
-    close(fd[0]); // close reading end
+	} else if (0 < pid) {
+		/* parent */
+		close(fd[0]); // close reading end
 
-    static const char msg[] = "Volare, oh, oh - Cantare, oh, oh, oh, oh";
-    fprintf(stderr, "message: '%s'\n", msg);
-    // here we would write the pipe from parent to child, let's take our own system call in GAS
-    // originally: write(fd[1], msg, sizeof(msg));
-    plop(fd[1], msg, sizeof(msg));
-    wait(NULL); // wait for child to send something
-    close(fd[1]);
+		static const char msg[] =
+			"Volare, oh, oh - Cantare, oh, oh, oh, oh";
+		fprintf(stderr, "message: '%s'\n", msg);
+		// here we would write the pipe from parent to child, let's take our own system call in GAS
+		// originally: write(fd[1], msg, sizeof(msg));
+		plop(fd[1], msg, sizeof(msg));
+		wait(NULL); // wait for child to send something
+		close(fd[1]);
 
-  } else {
-    /* child */
-    char copy[BUFSIZ]; memset(copy, '\0', BUFSIZ);
-    close(fd[1]); // close writing end
-    read(fd[0], copy, BUFSIZ);
-    fprintf(stderr, "received: '%s'\n", copy);
-    close(fd[0]);
-    puts("READY.");
-  }
+	} else {
+		/* child */
+		char copy[BUFSIZ];
+		memset(copy, '\0', BUFSIZ);
+		close(fd[1]); // close writing end
+		read(fd[0], copy, BUFSIZ);
+		fprintf(stderr, "received: '%s'\n", copy);
+		close(fd[0]);
+		puts("READY.");
+	}
 
-  exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
