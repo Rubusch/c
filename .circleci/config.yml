@@ -132,8 +132,6 @@ jobs:
       - run: cd ./20__c__interprocess-communication/messagequeue__demo__common_struct/sender && make
       - run: cd ./20__c__interprocess-communication/sharedmemory__demo/itchy && make
       - run: cd ./20__c__interprocess-communication/sharedmemory__demo/scratchy && make
-      - run: cd ./20__c__interprocess-communication/signal__demo/itchy && make
-      - run: cd ./20__c__interprocess-communication/signal__demo/scratchy && make
       - run: cd ./20__c__interprocess-communication/unixsocket__demo02/unixclient && make
       - run: cd ./20__c__interprocess-communication/unixsocket__demo02/unixserver && make
       - run: cd ./20__c__interprocess-communication/pipe__fork_demo && make
@@ -147,8 +145,6 @@ jobs:
       - run: cd ./20__c__interprocess-communication/sharedmemory__shmget && make
       - run: cd ./20__c__interprocess-communication/sharedmemory__server_client/shmclient && make
       - run: cd ./20__c__interprocess-communication/sharedmemory__server_client/shmserver && make
-      - run: cd ./20__c__interprocess-communication/signal__signal_talking && make
-      - run: cd ./20__c__interprocess-communication/signal__trap && make
       - run: cd ./20__c__interprocess-communication/unixsocket__demo01/client && make
       - run: cd ./20__c__interprocess-communication/unixsocket__demo01/server && make
       - run: cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make
@@ -156,11 +152,15 @@ jobs:
       - run: cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe
       - run: cd ./20__c__interprocess-communication/signal__alarm && make
       - run: cd ./20__c__interprocess-communication/signal__sighandler && make
-      - run: cd ./20__c__interprocess-communication/signal__sighandler_siginfo01 && make
-      - run: cd ./20__c__interprocess-communication/signal__sighandler_siginfo02__backtrace && make
+      - run: cd ./20__c__interprocess-communication/signal__sigaction01 && make
+      - run: cd ./20__c__interprocess-communication/signal__sigaction02__backtrace && make
       - run: cd ./20__c__interprocess-communication/signal__kill && make
       - run: cd ./20__c__interprocess-communication/signal__sigmask && make
       - run: cd ./20__c__interprocess-communication/signal__syscall && make
+      - run: cd ./20__c__interprocess-communication/signal__signal_talking && make
+      - run: cd ./20__c__interprocess-communication/signal__trap && make
+      - run: cd ./20__c__interprocess-communication/signal__demo/itchy && make
+      - run: cd ./20__c__interprocess-communication/signal__demo/scratchy && make
       - run: cd ./20__c__interprocess-communication/messagequeue__common_message_struct/client && make
       - run: cd ./20__c__interprocess-communication/messagequeue__common_message_struct/server && make
       - run: cd ./20__c__interprocess-communication/sharedmemory__shm_attach_detach__TODO && make
