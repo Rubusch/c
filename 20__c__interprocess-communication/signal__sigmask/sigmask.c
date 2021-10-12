@@ -7,12 +7,11 @@
 
 
 
-  The program asks if the user really wants to end the prgs, counts the CTRL+C's
-  and ends on a SIGKILL.
+  The program asks if the user really wants to end the prgs, counts
+  the CTRL+C's and ends on a SIGKILL.
 
-
-  Demonstrates the use of signal masks to block further incoming signals and
-  avoid race conditions.
+  Demonstrates the use of signal masks to block further incoming
+  signals and avoid race conditions.
 
 
   How to set up a signal mask
