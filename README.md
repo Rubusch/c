@@ -32,4 +32,4 @@ damaging to your system.
 
 ## NOTE
 
-Tell me more about the naming of ``.exe`` on Linux. I understand.  
+``.exe`` is not used on Linux? I understand. Tell me more..  
