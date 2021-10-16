@@ -109,7 +109,7 @@ jobs:
       - run: cd ./10__c__language-techniques/macrolist/listdemo_macro_based && make && ./*.exe
 
   ## interactive and/or need fixes
-      - run: cd ./10__c__language-techniques/cunit__test01 && make
+      - run: cd ./10__c__language-techniques/testing__cunit01 && make
       - run: cd ./10__c__language-techniques/bintree__demo-TODO && make
       - run: cd ./10__c__language-techniques/bintree__single-linked-TODO && make
       - run: cd ./10__c__language-techniques/bitoperations-FIXME && make
