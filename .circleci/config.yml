@@ -39,6 +39,10 @@ jobs:
           command: 'apt-get update && apt-get install -y libc6-dev'
 
       - run:
+          name: Installing cunit
+          command: 'apt-get update && apt-get install -y libcunit1-ncurses-dev'
+
+      - run:
           name: Installing CLANG
           command: 'apt-get update && apt-get install -y clang clang-tools clang-format'
 
