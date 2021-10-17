@@ -65,11 +65,13 @@ void catch_int(int sig)
 	sigset_t mask_set; // used to set a signal masking set
 	sigset_t old_set; // used to store the old mask set
 
-	// re-set the signal handler again to catch_int, for next time -> Linux
+	// re-set the signal handler again to catch_int,
+	// for next time -> Linux
 	signal(SIGINT, catch_int);
 
-	// mask any further signals while we're inside the handler
-	// use sigaction() or the older sigvec() to have a saver program than this!
+	// mask any further signals while we're inside the handler use
+	// sigaction() or the older sigvec() to have a saver program
+	// than this!
 	sigfillset(&mask_set);
 	sigprocmask(SIG_SETMASK, &mask_set, &old_set);
 
