@@ -77,13 +77,13 @@ int main()
    if (CUE_SUCCESS != CU_initialize_registry())
       return CU_get_error();
 
+
    /* add a suite to the registry */
    pSuite = CU_add_suite("Suite_success", init_suite_success, clean_suite_success);
    if (NULL == pSuite) {
       CU_cleanup_registry();
       return CU_get_error();
    }
-
    /* add the tests to the suite */
    if ((NULL == CU_add_test(pSuite, "successful_test_1", test_success1)) ||
        (NULL == CU_add_test(pSuite, "successful_test_2", test_success2)) ||
@@ -92,6 +92,7 @@ int main()
       CU_cleanup_registry();
       return CU_get_error();
    }
+
 
    /* add a suite to the registry */
    pSuite = CU_add_suite("Suite_init_failure", init_suite_failure, NULL);
@@ -99,7 +100,6 @@ int main()
       CU_cleanup_registry();
       return CU_get_error();
    }
-
    /* add the tests to the suite */
    if ((NULL == CU_add_test(pSuite, "successful_test_1", test_success1)) ||
        (NULL == CU_add_test(pSuite, "successful_test_2", test_success2)) ||
@@ -109,13 +109,13 @@ int main()
       return CU_get_error();
    }
 
+
    /* add a suite to the registry */
    pSuite = CU_add_suite("Suite_clean_failure", NULL, clean_suite_failure);
    if (NULL == pSuite) {
       CU_cleanup_registry();
       return CU_get_error();
    }
-
    /* add the tests to the suite */
    if ((NULL == CU_add_test(pSuite, "successful_test_4", test_success1)) ||
        (NULL == CU_add_test(pSuite, "failed_test_2",     test_failure2)) ||
@@ -125,13 +125,13 @@ int main()
       return CU_get_error();
    }
 
+
    /* add a suite to the registry */
    pSuite = CU_add_suite("Suite_mixed", NULL, NULL);
    if (NULL == pSuite) {
       CU_cleanup_registry();
       return CU_get_error();
    }
-
    /* add the tests to the suite */
    if ((NULL == CU_add_test(pSuite, "successful_test_2", test_success2)) ||
        (NULL == CU_add_test(pSuite, "failed_test_4",     test_failure4)) ||
@@ -141,6 +141,7 @@ int main()
       CU_cleanup_registry();
       return CU_get_error();
    }
+
 
    /* Run all tests using the basic interface */
    CU_basic_set_mode(CU_BRM_VERBOSE);
