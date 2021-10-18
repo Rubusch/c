@@ -112,7 +112,7 @@ jobs:
       - run: cd ./10__c__language-techniques/testing__cunit01 && make
       - run: cd ./10__c__language-techniques/testing__cunit02 && make && ./*.exe
       - run: cd ./10__c__language-techniques/testing__cunit03 && make && ./*.exe
-      - run: cd ./10__c__language-techniques/testing__cunit04-socket && make && ./*.exe
+      - run: cd ./10__c__language-techniques/testing__cunit04-socket && make
       - run: cd ./10__c__language-techniques/bintree__demo-TODO && make
       - run: cd ./10__c__language-techniques/bintree__single-linked-TODO && make
       - run: cd ./10__c__language-techniques/bitoperations-FIXME && make
