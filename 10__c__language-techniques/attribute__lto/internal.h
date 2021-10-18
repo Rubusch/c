@@ -3,8 +3,6 @@
 
 // NB: the symbol used for the version can be chosen freely as
 // e.g. 'DEMO', or 'main.c', or...
-
-//*
 #if __GNUC__ >= 10
 #define IMPL_SYMVER(name, version)                                             \
 	__attribute__((__symver__("public_" #name "@@DEMO_" version)))
