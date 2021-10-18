@@ -40,28 +40,33 @@
 
 #include <linux/can.h>
 
-#include <mcheck.h> // debugging
+#ifdef TESTING
+#include "../test__canbus.h"
+#endif
 
 int main(void)
 {
-	int sockfd;
-	int nbytes;
+#ifdef TESTING
+	TESTING_SETUP /* enable testing: pass -DTESTING in Makefile */
+#endif
+	int sockfd = -1;
+	int nbytes = -1;
 	struct sockaddr_can addr;
 	struct can_frame frame;
 	struct ifreq ifr;
 	const char *ifname = "can0";
-
-	mtrace();
+	int ret = -1;
 
 	do {
 		sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-		if (-1 == sockfd) {
+		if (0 > sockfd) {
 			perror("Error while opening socket");
+			ret = sockfd;
 			break;
 		}
 
 		strcpy(ifr.ifr_name, ifname);
-		if (0 > ioctl(sockfd, SIOCGIFINDEX, &ifr)) {
+		if (0 > (ret = ioctl(sockfd, SIOCGIFINDEX, &ifr))) {
 			perror("Error in ioctl");
 			break;
 		}
@@ -70,8 +75,7 @@ int main(void)
 		addr.can_ifindex = ifr.ifr_ifindex;
 		printf("%s at index %d\n", ifname, ifr.ifr_ifindex);
 
-		if (-1 ==
-		    bind(sockfd, (struct sockaddr *)&addr, sizeof(addr))) {
+		if (0 > (ret = bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)))) {
 			perror("Error in binding socket to address");
 			break;
 		}
@@ -82,11 +86,17 @@ int main(void)
 		frame.data[1] = 0x22;
 
 		nbytes = write(sockfd, &frame, sizeof(struct can_frame));
+		if (0 > nbytes) {
+			ret = nbytes;
+			break;
+		}
 		printf("wrote %d bytes\n", nbytes);
 	} while (0);
 
 	close(sockfd);
 
-	muntrace();
+	if (0 > ret) {
+		exit(EXIT_FAILURE);
+	}
 	exit(EXIT_SUCCESS);
 }
