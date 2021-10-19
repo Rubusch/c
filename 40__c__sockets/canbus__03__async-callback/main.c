@@ -140,6 +140,7 @@ int on_receive(uint32_t can_id, uint8_t can_dlc, uint8_t data[])
 
 int main(int argc, char *argv[])
 {
+	int ret = -1;
 	char if_name[CANIF_NAMESIZE];
 	memset(if_name, '\0', CANIF_NAMESIZE);
 	if (1 == argc) {
@@ -160,7 +161,8 @@ int main(int argc, char *argv[])
 
 	do {
 		// startup
-		if (0 > canif__startup(if_name, sizeof(if_name))) {
+		ret = canif__startup(if_name, sizeof(if_name));
+		if (0 > ret) {
 			break;
 		}
 
@@ -168,33 +170,39 @@ int main(int argc, char *argv[])
 		api__prepare_msg(&api_frame);
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret =  canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret =  canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// print message
 		api__display_msg(&api_frame);
-
 	} while (0);
 
+
+	canif__shutdown();
+	if (ret >= 0)
+		goto done;
+	exit(EXIT_FAILURE);
+done:
+	fprintf(stderr, "READY.\n");
 	exit(EXIT_SUCCESS); /* cleans up remaining acquired memory */
 }
