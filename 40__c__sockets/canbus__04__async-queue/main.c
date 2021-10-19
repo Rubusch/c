@@ -135,36 +135,41 @@ int main(int argc, char *argv[])
 
 	do {
 		// startup
-		canif__startup(if_name, sizeof(if_name));
+		ret = canif__startup(if_name, sizeof(if_name));
+		if (ret < 0)
+			break;
 
 		// prepare dummy
 		api__prepare_msg(&api_frame);
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 		// send (similar "client")
-		if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-				    api_frame.data)) {
+		ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc, api_frame.data);
+		if (0 > ret) {
 			break;
 		}
 
 	} while (0);
+
+	if (ret < 0)
+		goto err;
 
 	// finally fetch all - separate thread
 	do {
@@ -179,10 +184,15 @@ int main(int argc, char *argv[])
 		fprintf(stdout, ", (%d)\n", api_frame.frame_dlc);
 
 	} while (ret == 0);
-	canif__shutdown();
 
+
+err:
 	muntrace();
-
+	canif__shutdown();
+	if (ret >= 0)
+		goto out;
+	exit(EXIT_FAILURE);
+out:
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS); /* cleans up remaining acquired memory */
 }
