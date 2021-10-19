@@ -67,7 +67,8 @@ int main(void)
 	int ret = -1;
 	char if_name[] = "can0";
 
-	if (0 > canif__startup(if_name, sizeof(if_name))) {
+	ret = canif__startup(if_name, sizeof(if_name));
+	if (0 > ret) {
 		goto err;
 	}
 
@@ -85,16 +86,21 @@ int main(void)
 		sleep(1);
 	} while (0 == ret);
 
-	// send (similar "client")
-	if (0 > canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
-			    api_frame.data)) {
+	// send returning the frame
+	ret = canif__send(&api_frame.frame_id, &api_frame.frame_dlc,
+			    api_frame.data);
+	if (0 > ret) {
 		goto err;
 	}
+
 
 err:
 	// cleanup
 	canif__shutdown();
-
+	if (0 == ret)
+		goto done;
+	exit(EXIT_FAILURE);
+done:
 	fprintf(stdout, "READY.\n");
 	exit(EXIT_SUCCESS); /* cleans up remaining acquired memory */
 }
