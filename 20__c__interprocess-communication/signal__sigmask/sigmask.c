@@ -67,7 +67,7 @@ void catch_int(int sig)
 
 	// re-set the signal handler again to catch_int,
 	// for next time -> Linux
-	signal(SIGINT, catch_int);
+	signal(SIGINT, catch_int); /* NB: signal() is deprecated, prefer sigaction() */
 
 	// mask any further signals while we're inside the handler use
 	// sigaction() or the older sigvec() to have a saver program
@@ -110,7 +110,7 @@ void catch_suspend(int sig)
 	sigset_t old_set; // restore
 
 	// re-set the signal handler again to catch_suspend, for next time
-	signal(SIGTSTP, catch_suspend);
+	signal(SIGTSTP, catch_suspend); /* NB: signal() is deprecated, prefer sigaction() */
 
 	// mask any further signals while we're inside the handler
 	sigfillset(&mask_set);
@@ -132,8 +132,8 @@ int main(int argc, char **argv)
 	fprintf(stderr, "End the program by %d times pressing CTRL+^C\n",
 		CTRL_C_THRESHOLD); /* stderr, unbuffered! */
 
-	signal(SIGINT, catch_int);
-	signal(SIGTSTP, catch_suspend);
+	signal(SIGINT, catch_int); /* NB: signal() is deprecated, prefer sigaction() */
+	signal(SIGTSTP, catch_suspend); /* NB: signal() is deprecated, prefer sigaction() */
 
 	while (1)
 		pause();

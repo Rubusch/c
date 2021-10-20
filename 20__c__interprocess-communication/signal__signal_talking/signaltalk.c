@@ -32,9 +32,9 @@ int main(int argc, char **argv)
 	} else if (pid == 0) {
 		// child code
 		puts("child");
-		signal(SIGHUP, sighup);
-		signal(SIGINT, sigint);
-		signal(SIGQUIT, sigquit);
+		signal(SIGHUP, sighup); /* NB: signal() is deprecated, prefer sigaction() */
+		signal(SIGINT, sigint); /* NB: signal() is deprecated, prefer sigaction() */
+		signal(SIGQUIT, sigquit); /* NB: signal() is deprecated, prefer sigaction() */
 		while (1)
 			;
 
@@ -60,13 +60,13 @@ int main(int argc, char **argv)
 
 void sighup()
 {
-	signal(SIGHUP, sighup);
+	signal(SIGHUP, sighup); /* NB: signal() is deprecated, prefer sigaction() */
 	puts("child - I have received a SIGHUP");
 }
 
 void sigint()
 {
-	signal(SIGINT, sigint);
+	signal(SIGINT, sigint); /* NB: signal() is deprecated, prefer sigaction() */
 	puts("child - I have received a SIGINT");
 }
 

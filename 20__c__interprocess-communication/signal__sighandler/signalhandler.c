@@ -21,14 +21,14 @@ int flag = 0;
 
 void sighandler()
 {
-	signal(SIGINT, sighandler);
+	signal(SIGINT, sighandler); /* NB: signal() is deprecated, prefer sigaction() */
 	flag = 0;
 }
 
 int main(int argc, char **argv)
 {
 	// ...
-	signal(SIGINT, sighandler);
+	signal(SIGINT, sighandler); /* NB: signal() is deprecated, prefer sigaction() */
 	// ...
 	flag = 1;
 	while (flag)

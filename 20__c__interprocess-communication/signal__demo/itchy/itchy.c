@@ -16,7 +16,7 @@
 void handle_alarm(int dummy)
 {
 	// to prevent signal resetting
-	signal(SIGALRM, handle_alarm);
+	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */
 	fprintf(stderr, "%s SIGALRM received - eh eh, that tickles!\n", ME);
 	fflush(stdout);
 }
@@ -24,7 +24,7 @@ void handle_alarm(int dummy)
 int main(int argc, char **argv)
 {
 	fprintf(stderr, "%s set up signalhandler\n", ME);
-	signal(SIGALRM, handle_alarm);
+	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */
 
 	while (1)
 		;

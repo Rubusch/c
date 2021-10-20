@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	// ...
 
 	// set a signal handler for ALARM signals
-	signal(SIGALRM, handle_alarm);
+	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */
 
 	// some text
 	puts("wait 30 secs - then alarm, prg ends");

@@ -16,8 +16,8 @@ void handler_quit(int);
 int main(int argc, char **argv)
 {
 	// 1. set up the signal handler to the signal
-	signal(SIGINT, handler_int);
-	signal(SIGQUIT, handler_quit);
+	signal(SIGINT, handler_int); /* NB: signal() is deprecated, prefer sigaction() */
+	signal(SIGQUIT, handler_quit); /* NB: signal() is deprecated, prefer sigaction() */
 
 	puts("CTRL-c disbled - use CTRL-\\ to quit");
 
@@ -31,7 +31,7 @@ void handler_int(int dummy)
 {
 	// 3. make sure that the next time the signal can be received
 	// (system resets the sighandler on some systems)
-	signal(SIGINT, handler_int);
+	signal(SIGINT, handler_int); /* NB: signal() is deprecated, prefer sigaction() */
 
 	puts("you have pressed CTRL-c");
 }

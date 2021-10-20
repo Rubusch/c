@@ -15,7 +15,7 @@
 
 void catch_int(int sig)
 {
-	signal(SIGINT, catch_int);
+	signal(SIGINT, catch_int); /* NB: signal() is deprecated, prefer sigaction() */
 	//  puts("Eh eh that tickles...\n");
 	printf("Eh eh that tickles...\n");
 	fflush(stdout);
@@ -24,7 +24,7 @@ void catch_int(int sig)
 int main(int argc, char **argv)
 {
 	// set the INT (CTRL+C) signal handler to catch_int
-	signal(SIGINT, catch_int);
+	signal(SIGINT, catch_int); /* NB: signal() is deprecated, prefer sigaction() */
 
 	// infinite loop
 	while (1)
