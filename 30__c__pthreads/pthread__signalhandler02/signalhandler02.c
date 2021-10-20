@@ -32,7 +32,7 @@ void ExitHandler(int);
 
 static pthread_t thr_one, thr_two, thr_main;
 
-// better: hanlde this states with conditional variables & mutexes!
+// better: handle this states with conditional variables & mutexes!
 int first_active = 1;
 int second_active = 1;
 
@@ -114,7 +114,7 @@ static void *second_thread()
 /*
   thread 3
 //*/
-void ExitHandler(int sig)
+void ExitHandler(int sig __attribute__((__unused__)) )
 {
 	pthread_t thr = pthread_self();
 	fprintf(stderr, "ExitHandler thread id: %lu\n", (unsigned long)thr);
