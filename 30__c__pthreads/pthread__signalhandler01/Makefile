@@ -20,4 +20,4 @@ all: $(TARGET)
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
-
+.PHONY: all clean
