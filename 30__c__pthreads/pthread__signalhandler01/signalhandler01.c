@@ -1,7 +1,7 @@
 // signalhandler01.c
 /*
   shows a multithreaded signalhandler
-//*/
+*/
 
 #include <stdint.h>
 #include <stdio.h>
@@ -21,9 +21,9 @@ int main()
 	sigset_t set;
 
 	/*
-     block all signals in main thread.  Any other threads that are
-     created after this will also block all signals
-  //*/
+	  block all signals in main thread.  Any other threads that
+	  are created after this will also block all signals
+	*/
 	sigfillset(&set);
 
 	// set the signalmask to "set"
@@ -33,11 +33,11 @@ int main()
 	}
 
 	/*
-     create a signal handler thread.  This thread will catch all
-     signals and decide what to do with them.  This will only
-     catch nondirected signals.  (I.e., if a thread causes a SIGFPE
-     then that thread will get that signal.
-  //*/
+	  create a signal handler thread.  This thread will catch all
+	  signals and decide what to do with them.  This will only
+	  catch nondirected signals.  (I.e., if a thread causes a
+	  SIGFPE then that thread will get that signal.
+	//*/
 	pthread_t thr;
 	pthread_attr_t attr_thr;
 	pthread_attr_init(&attr_thr);
@@ -48,13 +48,11 @@ int main()
 		perror("pthread create falied");
 		exit(EXIT_FAILURE);
 	}
-	//  thr_create(NULL, 0, signal_hand, 0, THR_NEW_LWP|THR_DAEMON|THR_DETACHED,
-	//  NULL); // TODO rm
 
 	while (1) {
 		/*
-      Do your normal processing here....
-    */
+		  Do your normal processing here....
+		*/
 		puts("send SIGINT");
 		puts("3");
 		sleep(1);
@@ -73,10 +71,11 @@ int main()
 
 /*
   signal handler as thread
-//*/
+*/
 void *signal_handler(void *arg)
 {
-	// for sigwait the signal needs to be blocked for other threads!!!!
+	// for sigwait the signal needs to be blocked for other
+	// threads!!!!
 	sigset_t waitset;
 	sigemptyset(&waitset);
 	sigaddset(&waitset, SIGINT);
