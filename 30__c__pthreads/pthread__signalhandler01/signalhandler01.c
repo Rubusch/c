@@ -90,7 +90,8 @@ void *signal_handler(void *arg)
 	while (1) {
 		switch (sigwait(&waitset, &sig)) {
 		case 0:
-			// here you would add whatever signal you needed to catch
+			// here you would add whatever signal you
+			// needed to catch
 			printf("Interrupted with signal %d, exiting...\n", sig);
 			exit(EXIT_SUCCESS);
 
