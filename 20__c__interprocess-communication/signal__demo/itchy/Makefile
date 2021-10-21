@@ -4,7 +4,12 @@ TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -Werror -std=c99 -pedantic
+## NB: -std=c99 and "struct sigaction won't compile,
+##    since "c99" implicitely invokes: __STRICT_ANSI__
+#CFLAGS = -g -Wall -Werror -Werror -std=c99 -pedantic
+
+## ..thus use -std=gnu99
+CFLAGS = -g -Wall -std=gnu99 -pedantic
 RM = rm -f
 
 %.c%.o:
@@ -14,11 +19,11 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
-.PHONY: $(TARGET) clean
+.PHONY: all $(TARGET) clean
 

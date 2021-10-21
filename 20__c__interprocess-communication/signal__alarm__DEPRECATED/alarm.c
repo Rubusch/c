@@ -17,25 +17,16 @@
       event loop of a windowing program directly
 */
 
-#define _XOPEN_SOURCE 600
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <signal.h> /* signal() */
+#include <unistd.h> /* alarm() */
 
-#include <signal.h>
-#include <unistd.h>
-
-#define USRNAME_SIZ 40
-
-char user[USRNAME_SIZ];
-
-void handle_alarm(int);
 
 void handle_alarm(int sig)
 {
 	puts("Operation timed out. Exiting..\n");
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)

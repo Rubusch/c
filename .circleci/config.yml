@@ -157,7 +157,9 @@ jobs:
       - run: cd ./20__c__interprocess-communication/messagequeue__demo__commented/kirk && make
       - run: cd ./20__c__interprocess-communication/messagequeue__demo__commented/spock && make
       - run: cd ./20__c__interprocess-communication/pipe__popen02 && make && ./*.exe
-      - run: cd ./20__c__interprocess-communication/signal__alarm && make
+      - run: cd ./20__c__interprocess-communication/signal__alarm__DEPRECATED && make
+      - run: cd ./20__c__interprocess-communication/signal__alarm__via_sa_handler && make
+      - run: cd ./20__c__interprocess-communication/signal__alarm__via_sa_sigaction && make
       - run: cd ./20__c__interprocess-communication/signal__sighandler && make
       - run: cd ./20__c__interprocess-communication/signal__sigaction01 && make
       - run: cd ./20__c__interprocess-communication/signal__sigaction02__backtrace && make

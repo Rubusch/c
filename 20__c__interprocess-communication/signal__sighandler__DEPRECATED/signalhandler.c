@@ -8,6 +8,8 @@
   or the program will continue
 */
 
+#define _XOPEN_SOURCE 600
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,24 +17,21 @@
 #include <signal.h>
 #include <unistd.h>
 
-int running = 0;
+int flag = 0;
 
 void sighandler()
 {
-	fprintf(stderr, "\n%s()\n", __func__);
-	running = 0;
+	signal(SIGINT, sighandler); /* NB: signal() is deprecated, prefer sigaction() */
+	flag = 0;
 }
 
 int main(int argc, char **argv)
 {
 	// ...
-	struct sigaction sa;
-	sa.sa_handler = sighandler;
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
+	signal(SIGINT, sighandler); /* NB: signal() is deprecated, prefer sigaction() */
 	// ...
-	running = 1;
-	while (running)
+	flag = 1;
+	while (flag)
 		pause();
 	// ...
 	exit(EXIT_SUCCESS);

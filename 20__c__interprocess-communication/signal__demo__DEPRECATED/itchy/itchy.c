@@ -14,19 +14,14 @@
 void handle_alarm(int dummy)
 {
 	// to prevent signal resetting
-//	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */  
+	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */
 	fprintf(stderr, "%s SIGALRM received - eh eh, that tickles!\n", ME);
 }
 
 int main(int argc, char **argv)
 {
 	fprintf(stderr, "%s set up signalhandler\n", ME);
-//	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */
-
-	struct sigaction sa __attribute__((unused));
-	sa.sa_handler = handle_alarm;
-	sa.sa_flags = 0;
-	sigaction(SIGALRM, &sa, NULL);
+	signal(SIGALRM, handle_alarm); /* NB: signal() is deprecated, prefer sigaction() */
 
 	while (1)
 		;

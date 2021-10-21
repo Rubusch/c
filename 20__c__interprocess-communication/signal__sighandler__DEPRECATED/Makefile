@@ -1,12 +1,10 @@
-## NB: this needs '-rdynamic' to be set to show the function names
-##
-SOURCE = sigaction.c
+SOURCE = signalhandler.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -rdynamic -Wall -Werror -std=gnu11 -pedantic
+CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 %.c%.o:
@@ -16,7 +14,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 
 clean:

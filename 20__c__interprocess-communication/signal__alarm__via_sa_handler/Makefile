@@ -1,7 +1,6 @@
-SOURCE = scratchy.c ../lotharlib/console_input.c
+SOURCE = alarm.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = scratchy.exe
-INC += -I../lotharlib/
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -14,16 +13,17 @@ CFLAGS = -g -Wall -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 %.c%.o:
-	$(CC) $(INC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) $<
 
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(INC) $(CFLAGS) -o $@ $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
+
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
-.PHONY: all $(TARGET) clean
+.PHONY: $(TARGET) clean
 
