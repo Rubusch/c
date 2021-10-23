@@ -155,21 +155,19 @@ int main (void)
 	signal_add(SIGALRM, control);
 	signal_add(SIGABRT, SIG_IGN); /* ignore */
 
+//*
 	setvbuf(stdout, NULL, _IONBF, 0); /* show the 'Action at signal 2' right away (no buffering of stdout) */
 	check_signal(SIGINT);
 	check_signal(SIGALRM);
 	check_signal(SIGABRT);
 	check_signal(SIGFPE);
 	setvbuf(stdout, NULL, _IOFBF, 0); /* show the 'Action at signal 2' right away (no buffering of stdout) */
-
-//	printf("\e[1;1H\e[2J"); /* clear screen */
-//	freopen("CON","w",stdout);
-
-
-//	fflush(stdout);
-	
 	fprintf(stdout, "CTRL-c to enter menu\n");
 /*/
+	check_signal(SIGINT);
+	check_signal(SIGALRM);
+	check_signal(SIGABRT);
+	check_signal(SIGFPE);
 	fprintf(stderr, "CTRL-c to enter menu\n");
 // */
 	running = true;
