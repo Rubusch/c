@@ -10,7 +10,7 @@ Code:
    // ...
 
 
-Declaring the loop counter (in this case i) inside the for loop is only 
+Declaring the loop counter (in this case i) inside the for loop is only
 allowed in C++ files unless you tell GCC to use the C99 standard.
 
 
@@ -18,6 +18,6 @@ Solution:
    // ...
    int cnt = 0;
    for(cnt=0; cnt < LENGTH_MAX; ++cnt){
-   // ... 
+   // ...
 
 
