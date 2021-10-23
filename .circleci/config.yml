@@ -170,7 +170,9 @@ jobs:
       - run: cd ./20__c__interprocess-communication/signal__sigaction02__backtrace && make
       - run: cd ./20__c__interprocess-communication/signal__sighandler && make
       - run: cd ./20__c__interprocess-communication/signal__sighandler__DEPRECATED && make
-      - run: cd ./20__c__interprocess-communication/signal__sigmask__DEPRECATED && make
+      - run: cd ./20__c__interprocess-communication/signal__signalizer && make
+      - run: cd ./20__c__interprocess-communication/signal__sigmask && make
+      - run: cd ./20__c__interprocess-communication/signal__sigmask__DEPRECATED && mak
       - run: cd ./20__c__interprocess-communication/signal__signal_talking__DEPRECATED && make
       - run: cd ./20__c__interprocess-communication/signal__syscall__DEPRECATED && make
       - run: cd ./20__c__interprocess-communication/signal__trap__DEPRECATED && make
