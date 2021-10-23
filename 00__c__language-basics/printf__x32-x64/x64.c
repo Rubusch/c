@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
 
 	printf("printf() as 'x': 0x%" PRIx64 "\n", t);
 
+	printf("printf() as 'x': 0x%08" PRIx64 "\n", t);
+
 	fprintf(stderr, "READY.\n");
 	exit(EXIT_SUCCESS);
 }
