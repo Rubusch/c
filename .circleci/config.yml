@@ -80,6 +80,7 @@ jobs:
       - run: cd ./00__c__language-basics/memfoo_functions && make && ./*.exe
       - run: cd ./00__c__language-basics/function-pointer__typedefed && make && ./*.exe
       - run: cd ./00__c__language-basics/compiler_configuration && make && ./*.exe
+      - run: cd ./00__c__language-basics/printf__x32-x64 && make && ./*.exe
 ## needs extended GNU resources
 ##      - run: cd ./00__c__language-basics/types && make && ./*.exe
       - run: cd ./00__c__language-basics/c11__alignof && make && ./*.exe
