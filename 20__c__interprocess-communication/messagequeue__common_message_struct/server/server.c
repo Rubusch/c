@@ -138,7 +138,6 @@ static error_code_t _mq_quit(int mq_id)
 
 void _catch_INT(int sig)
 {
-	signal(SIGINT, _catch_INT);
 	_mq_quit(*q_id);
 	free(q_id);
 	q_id = NULL;
@@ -160,10 +159,17 @@ int main(int argc, char **argv)
 		exit(ERRCODE_FAILURE);
 	}
 	q_id = malloc(sizeof(int));
+	if (!q_id) {
+		perror("malloc failed");
+		exit(EXIT_FAILURE);
+	}
 	*q_id = mq_id;
 
 	// singal handler
-	signal(SIGINT, _catch_INT);
+	struct sigaction sa;
+	sa.sa_handler = _catch_INT;
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
 
 	do {
 		memset(mq_message.content, '\0', MQ_MESSAGESIZ);
