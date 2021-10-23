@@ -61,13 +61,6 @@ void catch_int(int sig)
 	sigset_t mask_set; // used to set a signal masking set
 	sigset_t old_set; // used to store the old mask set
 
-	// re-set the signal handler again to catch_int,
-	// for next time -> Linux
-	struct sigaction sa;
-	sa.sa_handler = catch_int;
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
-
 	// mask any further signals while we're inside the handler use
 	// sigaction() or the older sigvec() to have a saver program
 	// than this!
@@ -108,13 +101,6 @@ void catch_suspend(int sig)
 {
 	sigset_t mask_set; // sig mask
 	sigset_t old_set; // restore
-
-	// re-set the signal handler again to catch_suspend,
-	// for next time
-	struct sigaction sa;
-	sa.sa_handler = catch_suspend;
-	sa.sa_flags = 0;
-	sigaction(SIGTSTP, &sa, NULL);
 
 	// mask any further signals while we're inside the handler
 	sigfillset(&mask_set);
