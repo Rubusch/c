@@ -1,0 +1,20 @@
+stdout
+
+REFERENCE:
+https://stackoverflow.com/questions/1716296/why-does-printf-not-flush-after-the-call-unless-a-newline-is-in-the-format-strin
+
+printf() flushes only when passing a '\n', options to get rid of
+buffering issues with stdout are as follows:
+
+- print to stderrinstead using fprintf (stderr is unbuffered by default):
+    fprintf(stderr, "I will be printed immediately");
+
+- flush stdout whenever you need it to using fflush:
+    printf("Buffered, will be flushed");
+    fflush(stdout); // Will now print everything in the stdout buffer
+
+- disable buffering on stdout by using setbuf:
+    setbuf(stdout, NULL);
+
+- or use the more flexible setvbuf:
+    setvbuf(stdout, NULL, _IONBF, 0);
