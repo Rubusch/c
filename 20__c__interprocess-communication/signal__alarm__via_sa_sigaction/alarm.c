@@ -3,7 +3,6 @@
   Signals are similar to interrupts but are thrown by the software.
   Interrupts always come from the hardware, btw softinterrupts come
   from the CPU (= hardware!)
-  -> signal() is deprecated, use sigaction() and struct sigaction
 
 
   struct sighandler_t
@@ -52,7 +51,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h> /* signal() */
+#include <signal.h> /* sigaction() */
 #include <unistd.h> /* alarm() */
 #include <string.h> /* memset() */
 
