@@ -21,3 +21,14 @@ $ grep "signal(" -HIrn . | grep -v "DEPRECATED" | awk -F: '{ print $1 }' |sort|u
 ./lothars-devkit-library/lib_unix.h
 ./lothars-devkit-library/lib_unix__test.c
 ./lothars-devkit-library/snippet_socket.c
+
+---
+integrate signalhandler example
+---
+basic example to quick copy
+	uint8_t *pSrc = mData;
+	uint8_t *pDst = frame->data;
+	while (pSrc != mData + CAN_MAX_DLEN)
+		*pDst++ = *pSrc++;
+
+
