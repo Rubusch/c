@@ -5,7 +5,8 @@
 ## @license: GPLv3
 
 SOURCE = endian.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -13,14 +14,14 @@ CFLAGS = -O -g -Wall -std=c99
 RM = rm -f
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	$(CC) -c $(CFLAGS) $<
 
-endian.exe: ${OBJECTS}
-	${CC} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS)
 
-all: endian.exe
+all: $(TARGET)
 
 clean:
-	${RM} endian.exe *~ *.o core
+	$(RM) $(TARGET) *~ *.o
 
-
+.PHONY: all clean
