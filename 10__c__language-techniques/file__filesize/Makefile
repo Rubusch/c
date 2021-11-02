@@ -3,7 +3,8 @@
 #
 
 SOURCE = filesize.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
+TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -11,12 +12,14 @@ CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	$(CC) $(CFLAGS) -c $<
 
-filesize.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-all: filesize.exe
+all: $(TARGET)
 
 clean:
-	-${RM} filesize.exe *~ *.o core
+	-$(RM) $(TARGET) *~ *.o
+
+.PHONY: all clean
