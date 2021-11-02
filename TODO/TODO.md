@@ -1,4 +1,8 @@
-fix TODOs
+# TODO
+
+some notes, missing examples, etc.
+
+## fix deprecated signal handler usages
 ./20__c__interprocess-communication/sharedmemory__shm_attach_detach__TODO/shm_attachdetach.c
 
 $ grep "signal(" -HIrn . | grep -v "DEPRECATED" | awk -F: '{ print $1 }' |sort|uniq
@@ -22,13 +26,6 @@ $ grep "signal(" -HIrn . | grep -v "DEPRECATED" | awk -F: '{ print $1 }' |sort|u
 ./lothars-devkit-library/lib_unix__test.c
 ./lothars-devkit-library/snippet_socket.c
 
----
-integrate signalhandler example
----
-basic example to quick copy
-	uint8_t *pSrc = mData;
-	uint8_t *pDst = frame->data;
-	while (pSrc != mData + CAN_MAX_DLEN)
-		*pDst++ = *pSrc++;
+## integrate signalhandler example
 
 
