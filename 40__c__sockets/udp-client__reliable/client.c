@@ -195,36 +195,22 @@ void err_quit(const char *fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-/*
-Sigfunc *lothars__signal(int signo, Sigfunc *func) // for our signal() function
+static struct sigaction sa;
+Sigfunc* lothars__signal(int signo, Sigfunc *func)
 {
-	Sigfunc *sigfunc = NULL;
-	if (SIG_ERR == (sigfunc = signal(signo, func))) {
-		err_sys("signal error");
+	// TODO improve - setup handler for initial
+	// TODO improve register yet another signal
+	sa.sa_handler = func;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
+
+	if (0 > sigaction(signo, &sa, NULL)) {
+		err_sys("sigaction error");
+		return SIG_ERR;
 	}
-	return sigfunc;
+
+	return sa.sa_handler;
 }
-/*/
-struct sigaction_t* lothars__signal(int signo, Sigfunc *func, struct sigaction_t *sa) // for our signal() function
-{
-	if (sa) {
-		
-		return sa;
-	}
-
-	sa->sa_handler = func;
-	sa->sa_flags = 0;
-
-
-	
-	Sigfunc *sigfunc = NULL;
-	if (SIG_ERR == (sigfunc = signal(signo, func))) {
-		err_sys("signal error");
-	}
-
-	return sa;
-}
-// */
 
 ssize_t lothars__recvmsg(int fd, struct msghdr *msg, int flags)
 {

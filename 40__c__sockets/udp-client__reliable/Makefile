@@ -4,7 +4,7 @@ TARGET = $(SOURCE:.c=.exe)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c11 -pedantic
+CFLAGS = -g -Wall -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 %.c%.o:
