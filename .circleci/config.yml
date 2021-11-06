@@ -91,44 +91,44 @@ jobs:
 
 
 ## 10: techniques
-      - run: cd ./10__c__language-techniques/attribute__lto && make && ./*.exe
-      - run: cd ./10__c__language-techniques/attribute__unused && make && ./*.exe
-      - run: cd ./10__c__language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
-      - run: cd ./10__c__language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe
-      - run: cd ./10__c__language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe
-      - run: cd ./10__c__language-techniques/endianness && make && ./*.exe
-      - run: cd ./10__c__language-techniques/file__operations && make && ./*.exe
-      - run: cd ./10__c__language-techniques/file__tempfile && make && ./*.exe
-      - run: cd ./10__c__language-techniques/stdout__fflush-printf-order && make && ./*.exe
-      - run: cd ./10__c__language-techniques/debug__mtrace && make && ./*.exe
-#      - run: cd ./10__c__language-techniques/debug__valgrind-double-free && make && ./*.exe ## has to fail
-      - run: cd ./10__c__language-techniques/debug__valgrind-invalid-pointer && make && ./*.exe
-#      - run: cd ./10__c__language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe
-      - run: cd ./10__c__language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe
-      - run: cd ./10__c__language-techniques/debug__valgrind-uninitialized && make && ./*.exe
-      - run: cd ./10__c__language-techniques/macrolist/listdemo && make && ./*.exe
-      - run: cd ./10__c__language-techniques/macrolist/listdemo_macro_based && make && ./*.exe
+      - run: cd ./10_language-techniques/attribute__lto && make && ./*.exe
+      - run: cd ./10_language-techniques/attribute__unused && make && ./*.exe
+      - run: cd ./10_language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
+      - run: cd ./10_language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe
+      - run: cd ./10_language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe
+      - run: cd ./10_language-techniques/endianness && make && ./*.exe
+      - run: cd ./10_language-techniques/file__operations && make && ./*.exe
+      - run: cd ./10_language-techniques/file__tempfile && make && ./*.exe
+      - run: cd ./10_language-techniques/stdout__fflush-printf-order && make && ./*.exe
+      - run: cd ./10_language-techniques/debug__mtrace && make && ./*.exe
+#      - run: cd ./10_language-techniques/debug__valgrind-double-free && make && ./*.exe ## has to fail
+      - run: cd ./10_language-techniques/debug__valgrind-invalid-pointer && make && ./*.exe
+#      - run: cd ./10_language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe
+      - run: cd ./10_language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe
+      - run: cd ./10_language-techniques/debug__valgrind-uninitialized && make && ./*.exe
+      - run: cd ./10_language-techniques/macrolist/listdemo && make && ./*.exe
+      - run: cd ./10_language-techniques/macrolist/listdemo_macro_based && make && ./*.exe
 
   ## interactive and/or need fixes
-      - run: cd ./10__c__language-techniques/testing__cunit01 && make
-      - run: cd ./10__c__language-techniques/testing__cunit02 && make && ./*.exe
-      - run: cd ./10__c__language-techniques/testing__cunit03 && make && ./*.exe
-      - run: cd ./10__c__language-techniques/testing__cunit04-socket && make
-      - run: cd ./10__c__language-techniques/bintree__demo-TODO && make
-      - run: cd ./10__c__language-techniques/bintree__single-linked-TODO && make
-      - run: cd ./10__c__language-techniques/bitoperations-FIXME && make
-      - run: cd ./10__c__language-techniques/input && make
-      - run: cd ./10__c__language-techniques/input__fgets-digit && make
-      - run: cd ./10__c__language-techniques/input__fgets-number && make
-      - run: cd ./10__c__language-techniques/input__fgetc-number && make
-      - run: cd ./10__c__language-techniques/input__fgetc-string && make
-      - run: cd ./10__c__language-techniques/input__choice && make
-      - run: cd ./10__c__language-techniques/file__filesize && make
-      - run: cd ./10__c__language-techniques/file__fseek-position && make
-      - run: cd ./10__c__language-techniques/stdin__fflush-undefined && make
-      - run: cd ./10__c__language-techniques/file__fsetpos && make
-      - run: cd ./10__c__language-techniques/file__move && make
-      - run: cd ./10__c__language-techniques/input__getch && make
+      - run: cd ./10_language-techniques/testing__cunit01 && make
+      - run: cd ./10_language-techniques/testing__cunit02 && make && ./*.exe
+      - run: cd ./10_language-techniques/testing__cunit03 && make && ./*.exe
+      - run: cd ./10_language-techniques/testing__cunit04-socket && make
+      - run: cd ./10_language-techniques/bintree__demo-TODO && make
+      - run: cd ./10_language-techniques/bintree__single-linked-TODO && make
+      - run: cd ./10_language-techniques/bitoperations-FIXME && make
+      - run: cd ./10_language-techniques/input && make
+      - run: cd ./10_language-techniques/input__fgets-digit && make
+      - run: cd ./10_language-techniques/input__fgets-number && make
+      - run: cd ./10_language-techniques/input__fgetc-number && make
+      - run: cd ./10_language-techniques/input__fgetc-string && make
+      - run: cd ./10_language-techniques/input__choice && make
+      - run: cd ./10_language-techniques/file__filesize && make
+      - run: cd ./10_language-techniques/file__fseek-position && make
+      - run: cd ./10_language-techniques/stdin__fflush-undefined && make
+      - run: cd ./10_language-techniques/file__fsetpos && make
+      - run: cd ./10_language-techniques/file__move && make
+      - run: cd ./10_language-techniques/input__getch && make
 
 ## 20: ipc
       - run: cd ./20__c__interprocess-communication/pipe__formatted_pinging/itchy && make
