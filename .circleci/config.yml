@@ -266,7 +266,7 @@ jobs:
       - run: cd 40_sockets/udp-server__echoserver && make
 
 ## 50: bootloader and low level C
-      - run: cd 50_bootloader/jmp__setjmp && make && ./*.exe
+      - run: cd 50_embedded/jmp__setjmp && make && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99__c__linux/ptrace__010-fork-show-all-instructions && make
