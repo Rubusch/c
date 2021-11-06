@@ -289,7 +289,7 @@ jobs:
 ## 60: algorithms
 ## (instead of a main, mostly a unittest based on cunit is implemented)
 ## references: Algorithms by Cormen/Leiserson/Rivest/Stein
-      - run: cd 60_algorithm/000_insertionsort && make basictest && ./*.exe
+      - run: cd 60_algorithm/000_insertionsort && make basictest.exe && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
