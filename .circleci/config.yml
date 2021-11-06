@@ -285,6 +285,11 @@ jobs:
       - run: cd 50_embedded/170__x86-gas__booting__nasm-print-string && make && ./*.exe
       - run: cd 50_embedded/jmp__setjmp && make && ./*.exe
 
+## 60: algorithms
+## (instead of a main, mostly a unittest based on cunit is implemented)
+## references: Algorithms by Cormen/Leiserson/Rivest/Stein
+      - run: cd 60_algorithm/000_insertionsort && make basictest && ./*.exe
+
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
       - run: cd 99_linux/ptrace__020-fork-syswrite-peekuser && make
