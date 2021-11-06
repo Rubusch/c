@@ -184,45 +184,45 @@ jobs:
       - run: cd ./20_interprocess-communication/unixsocket__demo01/server && make
 
 ## 30: pthreads
-      - run: cd 30__c__pthreads/pthread__join02 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__join02 && make && ./*.exe
       ## signalhandler02 seems to show different timings and, in case
       ## dies already by signal instead of run to the end -> true for build
-      - run: cd 30__c__pthreads/pthread__signalhandler02 && make
-      - run: cd 30__c__pthreads/pthread__stack-management && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__create && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__condition-var02 && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__condition-var00 && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__mutex01 && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__restaurant && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__signalhandler01 && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__hello_world && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__mutex00 && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__mutex02 && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__producer-consumer && make && ./*.exe ./source.txt ./destination.txt
-      - run: cd 30__c__pthreads/pthread__rwlock && make && ./*.exe
-      - run: cd 30__c__pthreads/pthread__condition-var01 && make && ./*.exe
-      - run: cd 30__c__pthreads/semaphore && make && ./*.exe
-      - run: cd 30__c__pthreads/semaphore__semctl && make
-#      - run: cd 30__c__pthreads/semaphore__semget && make
-      - run: cd 30__c__pthreads/semaphore__ipc-synchronization && make && ./*.exe
+      - run: cd 30_pthreads/pthread__signalhandler02 && make
+      - run: cd 30_pthreads/pthread__stack-management && make && ./*.exe
+      - run: cd 30_pthreads/pthread__create && make && ./*.exe
+      - run: cd 30_pthreads/pthread__condition-var02 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__condition-var00 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__mutex01 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__restaurant && make && ./*.exe
+      - run: cd 30_pthreads/pthread__signalhandler01 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__hello_world && make && ./*.exe
+      - run: cd 30_pthreads/pthread__mutex00 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__mutex02 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__producer-consumer && make && ./*.exe ./source.txt ./destination.txt
+      - run: cd 30_pthreads/pthread__rwlock && make && ./*.exe
+      - run: cd 30_pthreads/pthread__condition-var01 && make && ./*.exe
+      - run: cd 30_pthreads/semaphore && make && ./*.exe
+      - run: cd 30_pthreads/semaphore__semctl && make
+#      - run: cd 30_pthreads/semaphore__semget && make
+      - run: cd 30_pthreads/semaphore__ipc-synchronization && make && ./*.exe
 
   ## needs command line arguments
-      - run: cd 30__c__pthreads/pthread__passing-arguments01 && make
-      - run: cd 30__c__pthreads/pthread__passing-arguments02 && make
-      - run: cd 30__c__pthreads/pthread__passing-arguments03 && make
-      - run: cd 30__c__pthreads/pthread__six-threads && make
-      - run: cd 30__c__pthreads/pthread__deadlock && make
-      - run: cd 30__c__pthreads/pthread__manythreads && make
+      - run: cd 30_pthreads/pthread__passing-arguments01 && make
+      - run: cd 30_pthreads/pthread__passing-arguments02 && make
+      - run: cd 30_pthreads/pthread__passing-arguments03 && make
+      - run: cd 30_pthreads/pthread__six-threads && make
+      - run: cd 30_pthreads/pthread__deadlock && make
+      - run: cd 30_pthreads/pthread__manythreads && make
 
   ## server, thus waiting for connection
-      - run: cd 30__c__pthreads/pthread__socket-server && make
+      - run: cd 30_pthreads/pthread__socket-server && make
 
   ## thread cancellation, to be watched on top
-      - run: cd 30__c__pthreads/pthread__posix-cancellation && make
+      - run: cd 30_pthreads/pthread__posix-cancellation && make
 
   ## travis seems to have trouble with the following, thus just compiling
-      - run: cd 30__c__pthreads/pthread__join00 && make
-      - run: cd 30__c__pthreads/pthread__join01 && make && ./*.exe
+      - run: cd 30_pthreads/pthread__join00 && make
+      - run: cd 30_pthreads/pthread__join01 && make && ./*.exe
 
 ## 40: sockets and networking
       - run: cd 40__c__sockets/canbus__01 && make
