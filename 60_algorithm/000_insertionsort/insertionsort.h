@@ -9,15 +9,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-// insertion sort specific
-void insert(void *);
+//#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 
-void sort(void **);
-int compare(void *, void *);
+
+// insertion sort specific
+//void insert(int *);
+void sort(int *first, int size);
+int* is_greater(int *arg_a, int *arg_b);
 int swap(int *elem_a, int *elem_b);
-int isfirstelement(void *);
-int islastelement(void *);
-void *getnextelement(void *);
-void *getprevelement(void *);
+//int isfirstelement(void *);
+//int islastelement(void *);
+//void *getnextelement(void *);
+//void *getprevelement(void *);
 
 #endif

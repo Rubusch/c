@@ -8,17 +8,16 @@ another key, e.g. birth dates sorted another time by that second key, remains
 the same alphabetic order).
 //*/
 
-// for the element type
-#include "main.h"
+// for the element type  
+//#include "main.h"  
 
 // header
 #include "insertionsort.h"
 
-/*
-  insertion sort function
-//*/
-void insert(void *tmp)
+void insert(int* where, int *key)
 {
+
+/*
 	void *prev = getprevelement(tmp);
 	while (NULL != prev) {
 		if (compare(prev, tmp)) { // sorting order
@@ -28,50 +27,33 @@ void insert(void *tmp)
 		}
 		prev = getprevelement(tmp);
 	}
+// */
 }
 
-/*
-  sorting
-//*/
-void sort(void **first)
+void sort(int *first, int size)
 {
-	void *iterator = *first;
-	void *tmp = NULL;
+	int idx=0, jdx=0;
+	int *arr = first;
+	int key;
 
-	// check if first is only one element
-	if (isfirstelement(*first) && islastelement(*first)) {
-		return;
+	for(jdx=1; jdx < size; jdx++) {
+		key = arr[jdx];
+		idx = jdx -1;
+		// compare the current element key to its predecessor arr[idx]
+		while (idx >= 0 && (&arr[idx] == is_greater(&arr[idx], &key)) ) {
+			arr[idx+1] = arr[idx];
+			idx = idx -1;
+		}
+		arr[idx+1] = key;
 	}
-
-	while (NULL != iterator) {
-		tmp = iterator;
-		insert(tmp);
-		iterator = getnextelement(iterator);
-	}
-
-	// resetting first
-
-	while (!isfirstelement(tmp)) {
-		tmp = getprevelement(tmp);
-	}
-	*first = tmp;
 }
 
-/*
-  comparator
-//*/
-int compare(void *arg_a, void *arg_b)
+int* is_greater(int *arg_a, int *arg_b)
 {
-	element_t *elem_a = (element_t *)arg_a;
-	element_t *elem_b = (element_t *)arg_b;
-
-	unsigned int a = elem_a->data;
-	unsigned int b = elem_b->data;
-
-	if (a > b)
-		return 1;
+	if (*arg_a == max(*arg_a, *arg_b))
+		return arg_a;
 	else
-		return 0;
+		return arg_b;
 }
 
 int swap(int *elem_a, int *elem_b)
@@ -88,53 +70,51 @@ int swap(int *elem_a, int *elem_b)
 	return 0;
 }
 
-/*
-  is first element?
-//*/
 int isfirstelement(void *arg)
 {
+/*
 	element_t *tmp = (element_t *)arg;
 
 	if (NULL == tmp->prev)
 		return 1;
 	else
+// */
 		return 0;
 }
 
-/*
-  is last element
-//*/
 int islastelement(void *arg)
 {
+/*
 	element_t *tmp = (element_t *)arg;
 
 	if (NULL == tmp->next)
 		return 1;
 	else
+// */
 		return 0;
 }
 
-/*
-  next one
-//*/
 void *getnextelement(void *arg)
 {
+/*
 	if (arg == NULL)
 		return NULL;
 	element_t *tmp = (element_t *)arg;
 
 	return tmp->next;
+// */
+	return NULL;
 }
 
-/*
-  previous one
-//*/
 void *getprevelement(void *arg)
 {
+/*
 	if (arg == NULL)
 		return NULL;
 
 	element_t *tmp = (element_t *)arg;
 
 	return tmp->prev;
+// */
+	return NULL;
 }
