@@ -10,8 +10,6 @@
 #  define FALSE 0
 # endif
 
-#include "stdlib.h"
-#include "stdio.h"
 #include "time.h"
 
 #include "CUnit/Basic.h"
