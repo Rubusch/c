@@ -276,14 +276,14 @@ jobs:
       #- run: cd 50_embedded/053__x86-64-nasm__hello-world-macros-struc && make && ./*.exe
       #- run: cd 50_embedded/060__x86-64-nasm__hello-world && make && ./*.exe
       #- run: cd 50_embedded/070__x86-64-nasm__hello-world-fpu && make && ./*.exe
-      - run: cd 50_embedded/100__x86-gas__booting__16bit-real-mode && make && ./*.exe
-      - run: cd 50_embedded/110__x86-gas__booting__start-by-init && make && ./*.exe
-      - run: cd 50_embedded/120__x86-gas__booting__jump-to-init && make && ./*.exe
-      - run: cd 50_embedded/130__x86-gas__booting__reboot-by-reset && make && ./*.exe
-      - run: cd 50_embedded/140__x86-gas__booting__print-letter && make && ./*.exe
-      - run: cd 50_embedded/150__x86-gas__booting__print-string && make && ./*.exe
-      - run: cd 50_embedded/160__x86-gas__booting__print-string-loop && make && ./*.exe
-      - run: cd 50_embedded/170__x86-gas__booting__nasm-print-string && make && ./*.exe
+      #- run: cd 50_embedded/100__x86-gas__booting__16bit-real-mode && make && ./*.exe
+      #- run: cd 50_embedded/110__x86-gas__booting__start-by-init && make && ./*.exe
+      #- run: cd 50_embedded/120__x86-gas__booting__jump-to-init && make && ./*.exe
+      #- run: cd 50_embedded/130__x86-gas__booting__reboot-by-reset && make && ./*.exe
+      #- run: cd 50_embedded/140__x86-gas__booting__print-letter && make && ./*.exe
+      #- run: cd 50_embedded/150__x86-gas__booting__print-string && make && ./*.exe
+      #- run: cd 50_embedded/160__x86-gas__booting__print-string-loop && make && ./*.exe
+      #- run: cd 50_embedded/170__x86-gas__booting__nasm-print-string && make && ./*.exe
       - run: cd 50_embedded/jmp__setjmp && make && ./*.exe
 
 ## 60: algorithms
