@@ -1,14 +1,12 @@
-// insertionsort.c
 /*
-  Insertion sort is in-place (doesn't need further ressources proportional to
-the amount of elements to sort).
+  Insertion sort is in-place (doesn't need further ressources
+  proportional to the amount of elements to sort).
 
-  Insertion sort can be stable (an alphabetic order of elements, equal by
-another key, e.g. birth dates sorted another time by that second key, remains
-the same alphabetic order).
-//*/
+  Insertion sort can be stable (an alphabetic order of elements, equal
+  by another key, e.g. birth dates sorted another time by that second
+  key, remains the same alphabetic order).
+ */
 
-// header
 #include "insertionsort.h"
 
 void sort(int *first, int size)
