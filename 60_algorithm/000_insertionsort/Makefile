@@ -26,4 +26,4 @@ $(TARGET_BASIC_TEST): $(OBJECTS)
 .PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET_TEST) $(TARGET_BASIC_TEST) *.xml *~
+	$(RM) $(OBJECTS) $(TARGET_TEST) $(TARGET_BASIC_TEST) ./unittest/*.xml *.xml ./unittest/*~ *~
