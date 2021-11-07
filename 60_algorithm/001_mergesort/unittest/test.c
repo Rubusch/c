@@ -3,6 +3,10 @@
  */
 #include "test.h"
 
+int compare(const void* left, const void* right)
+{
+	return (int) *(int*) left - *(int*) right;
+}
 void test_sort(void)
 {
 	const int ARR_SIZE = 50;
@@ -10,7 +14,7 @@ void test_sort(void)
 	int arr_orig[ARR_SIZE];
 	int upper = ARR_SIZE;
 	int lower = 0;
-	int idx, jdx;
+	int idx;
 
 	srand(time(0));
 	for (idx=0; idx<ARR_SIZE; idx++) {
@@ -26,19 +30,9 @@ void test_sort(void)
 
 	sort(arr, ARR_SIZE);
 
+	qsort(arr_orig, ARR_SIZE, sizeof(int), compare);
 	for (idx=1; idx<ARR_SIZE; idx++) {
-		CU_ASSERT(arr[idx-1] <= arr[idx]);
-		for (jdx=0; jdx<ARR_SIZE; jdx++) {
-			if (arr[idx] == arr_orig[jdx]) {
-				arr_orig[jdx] = upper+1; // mark "found" by setting an impossible value
-				break;
-			}
-		}
-		if (jdx == ARR_SIZE){
-			CU_ASSERT(FALSE); // overrun, the element was
-					  // not in arr_orig, or not
-					  // that much of that element
-		}
+		CU_ASSERT(arr[idx] == arr_orig[idx]);
 	}
 //*     // DEBUG
 	for (idx=0; idx<ARR_SIZE; idx++)
