@@ -1,24 +1,11 @@
 /*
-  Mergesort (recursive)
-
-  1. Find the middle point to divide the array into two halves:
-             middle q = p + (size - p) / 2
-
-  2. Call mergeSort for first half:
-             Call sort(arr, p, q)
-
-  3. Call mergeSort for second half:
-             Call sort(arr, q + 1, size)
-
-  4. Merge the two halves sorted in step 2 and 3:
-             Call merge(arr, p, q, size)
+  find maximum crossing subarray
 
   REFERENCES
   - Algorigthms [Cormen, Leiserson, Rivest, Stein]
-  - https://www.geeksforgeeks.org/merge-sort/
  */
-#ifndef MERGESORT
-#define MERGESORT
+#ifndef FIND_MAXIMUM_CROSSING
+#define FIND_MAXIMUM_CROSSING
 
 
 #include <stdio.h>
