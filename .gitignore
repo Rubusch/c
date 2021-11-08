@@ -13,3 +13,6 @@ callgrind.*
 ## executables
 *.exe
 *.log
+
+## cunit intermediates
+*.xml
