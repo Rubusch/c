@@ -20,9 +20,8 @@
   *ptr;   // the content of the first pointer, the address of the char value
           // (unsigned long int)
   **ptr;  // the content of the second pointer: a char value (8 bit)
-//*/
+ */
 
-// given inits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

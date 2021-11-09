@@ -14,7 +14,7 @@
   {number of all emlements} == {number of elements in array A} x {number of
   elements in B}
 
-  A pointer doesn't know if it points to an array of elements or, respectively,
+  a pointer doesn't know if it points to an array of elements or, respectively,
   to more elements of allocated memory. A pointer only knows that address it
   points to AND the size of the value that is stored there (=the type of the
   pointer).
