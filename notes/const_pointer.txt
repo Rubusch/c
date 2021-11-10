@@ -1,0 +1,64 @@
+const pointer
+
+
+
+REFERENCES
+
+https://www.geeksforgeeks.org/const-qualifier-in-c/
+https://stackoverflow.com/questions/15157113/position-of-const-keyword
+
+
+                                 | Declaration            | pointer value | pointing value
+                                 |                        | change:       | change:
+                                 |                        |               |
+                                 |                        | *ptr = 100;   | ptr = &var;
+    -----------------------------+------------------------+---------------+------------------
+    Pointer to variable          | int *ptr;              | yes           | yes
+                                 |                        |               |
+    Pointer to constant          | const int *ptr; // or  | no            | yes
+                                 | int const *ptr;        |               |
+                                 |                        |               |
+    Constant pointer to variable | int* const ptr;        | yes           | no
+                                 |                        |               |
+    Constant pointer to constant | const int* const ptr;  | no            | no
+
+
+
+
+EXAMLE
+
+What's the difference between the following three pointer declarations in C:
+
+I)	void * const myPointer1;
+II)	void const *myPointer2;
+		or const void *myPointer3;
+
+And which one is used to prevent:
+
+	myPointer = somethingElse;
+
+
+
+
+
+SOLUTION
+
+Read the rules from right to left:
+
+void * const myPointer1;
+myPointer1 is a const pointer to void.
+
+void const *myPointer2;
+myPointer2 is a pointer to a const void.
+
+const void *myPointer3;
+myPointer3 is a pointer to a void const.
+
+
+
+
+
+CONCLUSION
+
+myPointer1 is what you are looking for -- it's a const pointer, so its value cannot be modified
+myPointer2 and myPointer3 are the same thing
