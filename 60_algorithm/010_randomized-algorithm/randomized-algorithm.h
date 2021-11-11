@@ -4,8 +4,8 @@
   REFERENCES
   - Algorigthms [Cormen, Leiserson, Rivest, Stein]
  */
-#ifndef MATRIX_MULTIPLY
-#define MATRIX_MULTIPLY
+#ifndef RANDOMIZED_ALGORITHMS
+#define RANDOMIZED_ALGORITHMS
 
 
 #include <stdio.h>
