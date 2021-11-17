@@ -1,0 +1,80 @@
+value categories
+
+
+REFERENCES
+
+https://en.cppreference.com/w/c/language/value_category
+
+
+
+
+Lvalue, (locator/left) value
+
+Lvalues can be stored anywhere and can be writeable, also const values
+are Lvalues (non-writeable Lvalues).
+
+Lvalue expression is any expression with object type other than the
+type void, which potentially designates an object (the behavior is
+undefined if an lvalue does not actually designate an object when it
+is evaluated). In other words, lvalue expression evaluates to the
+object identity.
+
+Lvalues can be used in the following context:
+
+ - as the operand of the address-of operator (except if the lvalue
+   designates a bit field or was declared register).
+
+ - as the operand of the pre/post increment and decrement operators.
+
+ - as the left-hand operand of the member access (dot) operator.
+
+ - as the left-hand operand of the assignment and compound assignment
+   operators.
+
+
+
+The following expressions are lvalues:
+
+ - identifiers, including function named parameters, provided they
+   were declared as designating objects (not functions or enumeration
+   constants)
+ - string literals (NB: std::string in C++ is NOT a literal type)
+ - (C99) compound literals
+ - parenthesized expression if the unparenthesized expression is an
+   lvalue
+ - the result of a member access (dot) operator if its left-hand
+   argument is lvalue
+ - the result of a member access through pointer -> operator
+ - the result of the indirection (unary *) operator applied to a
+   pointer to object
+ - the result of the subscription operator ([])
+
+
+
+
+Rvalue, (register/right) values
+
+Non-lvalue object expressions are the expressions of object types that
+do not designate objects, but rather values that have no object
+identity or storage location. The address of a non-lvalue object
+expression cannot be taken.
+
+Rvalues are stored values (e.g. by compile time).
+
+The following expressions are Rvalues:
+ - integer, character, and floating constants
+ - all operators not specified to return lvalues, including
+ - any function call expression
+ - any cast expression (note that compound literals, which look
+   similar, are lvalues)
+ - member access operator (dot) applied to a non-lvalue
+   structure/union, f().x, (x,s1).a, (s1=s2).m
+ - all arithmetic, relational, logical, and bitwise operators
+ - increment and decrement operators (note: pre- forms are lvalues in
+   C++)
+ - assignment and compound assignment operators (note: they are
+   lvalues in C++)
+ - the conditional operator (note: may be lvalue in C++)
+ - the comma operator (note: may be lvalue in C++)
+ - the address-of operator, even it if is neutralized by being applied
+   to the result of the unary * operator
