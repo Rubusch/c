@@ -16,3 +16,8 @@ callgrind.*
 
 ## cunit intermediates
 *.xml
+
+## graphviz
+*.dot
+*.png
+
