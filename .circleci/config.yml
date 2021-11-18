@@ -296,6 +296,7 @@ jobs:
       - run: cd 60_algorithm/007_square-matrix-multiply && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/008_square-matrix-multiply-recursive_strassen-method && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/010_randomized-algorithm && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/020_heapsort && make && make basictest.exe && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
