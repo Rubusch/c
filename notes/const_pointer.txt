@@ -9,20 +9,21 @@ https://www.geeksforgeeks.org/const-qualifier-in-c/
 https://stackoverflow.com/questions/15157113/position-of-const-keyword
 
 
-                                 | Declaration            | pointer value | pointing value
-                                 |                        | change:       | change:
-                                 |                        |               |
-                                 |                        | *ptr = 100;   | ptr = &var;
-    -----------------------------+------------------------+---------------+------------------
-    Pointer to variable          | int *ptr;              | yes           | yes
-                                 |                        |               |
-    Pointer to constant          | const int *ptr; // or  | no            | yes
-                                 | int const *ptr;        |               |
-                                 |                        |               |
-    Constant pointer to variable | int* const ptr;        | yes           | no
-                                 |                        |               |
-    Constant pointer to constant | const int* const ptr;  | no            | no
-
+                    |                        | change        | change
+                    | Declaration            | pointer value | pointing value
+                    |                        |               |
+                    |                        | *ptr = 100;   | ptr = &var;
+--------------------+------------------------+---------------+------------------
+Pointer to variable | int *ptr;              | yes           | yes
+                    |                        |               |
+Pointer to constant | const int *ptr; // or  | no            | yes
+                    | int const *ptr;        |               |
+                    |                        |               |
+Constant pointer    | int* const ptr;        | yes           | no
+     to variable    |                        |               |
+                    |                        |               |
+Constant pointer    | const int* const ptr;  | no            | no
+     to constant    |                        |               |
 
 NB: when initializing an array by a "const int" size, in C99 this
 becomes a VLA (variable lenght array), in C11 and if the compiler
@@ -67,5 +68,5 @@ myPointer3 is a pointer to a void const.
 
 CONCLUSION
 
-myPointer1 is what you are looking for -- it's a const pointer, so its value cannot be modified
-myPointer2 and myPointer3 are the same thing
+myPointer1 is a const pointer, so its value cannot be modified.
+myPointer2 and myPointer3 are the same thing and not helpful here.
