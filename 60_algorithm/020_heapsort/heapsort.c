@@ -107,9 +107,7 @@ void heapsort(int arr[], int size)
 	for (idx = size - 1; idx > 0; idx--) {
 		swap(&arr[0], &arr[idx]);
 		size = size -1;
-
-//		heapify(arr, size, idx);
-		heapify(arr, idx, 0); // improvement TODO   
+		heapify(arr, idx, 0);
 	}
 }
 
