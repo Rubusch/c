@@ -15,6 +15,7 @@
 
   REFERENCES
   - https://www.geeksforgeeks.org/heap-sort/
+  - https://en.wikipedia.org/wiki/Heapsort
   - Algorigthms [Cormen, Leiserson, Rivest, Stein]
  */
 #ifndef HEAPSORT
@@ -30,5 +31,9 @@ void swap(int *a, int *b);
 void heapify(int arr[], int size, int idx);
 void max_heap(int arr[], int size);
 void heapsort(int arr[], int size);
+void heap_insert(int **arr, int* size, int key);
+void heap_increase_key(int *arr, int idx, int key);
+int heap_extract_max(int **arr, int *size);
+int heap_maximum(int *arr, int size);
 
 #endif

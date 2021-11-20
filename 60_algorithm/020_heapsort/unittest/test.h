@@ -19,8 +19,8 @@
 #include "CUnit/CUCurses.h"
 
 
-// globals
-#define DEBUG 1
+// debugging print
+//#define DEBUG 1
 
 void print_data(int arr[], int size, int sort_size, int index);
 

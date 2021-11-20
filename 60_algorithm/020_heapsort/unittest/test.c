@@ -9,7 +9,7 @@
 #include "stdlib.h"
 
 
-/* // dotty usage
+/* // dotty representation
 void print_data(int arr[], int size, const char* filename)
 {
 	if (!filename)
@@ -36,7 +36,6 @@ void print_data(int arr[], int size, const char* filename)
 }
 // */
 
-
 void print_data(int arr[], int size, int sort_size, int index)
 {
 #ifdef DEBUG
@@ -46,7 +45,6 @@ void print_data(int arr[], int size, int sort_size, int index)
 	fprintf(stderr, "\n");
 #endif /* DEBUG */
 }
-
 
 void test_utilities_swap(void)
 {
@@ -247,8 +245,6 @@ void test_heapsort(void)
 
 	heapsort(arr, size);
 
-//	print_data(arr, size, "heapsort.dot");
-
 	CU_ASSERT(0 == arr[0]);
 	CU_ASSERT(1 == arr[1]);
 	CU_ASSERT(2 == arr[2]);
@@ -261,6 +257,122 @@ void test_heapsort(void)
 	CU_ASSERT(9 == arr[9]);
 }
 
+void test_insert(void)
+{
+	int* arr = NULL;
+	int size = 10;
+
+	arr = malloc(size * sizeof(*arr));
+	if (!arr) {
+		CU_ASSERT(FALSE);
+		return;
+	}
+
+	arr[0] = 1;
+	arr[1] = 9;
+	arr[2] = 2;
+	arr[3] = 8;
+	arr[4] = 3;
+	arr[5] = 7;
+	arr[6] = 4;
+	arr[7] = 6;
+	arr[8] = 5;
+	arr[9] = 0;
+
+	CU_ASSERT(1 == arr[0]);
+	CU_ASSERT(9 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(8 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(7 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(6 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
+	CU_ASSERT(10 == size);
+
+	heapsort(arr, size);
+
+	int key = 23;
+	heap_insert(&arr, &size, key);
+
+#ifdef DEBUG
+	fprintf(stderr, "%s(): %d", __func__, arr[0]);
+	for (int idx=1; idx < size; idx++) {
+		fprintf(stderr, ", %d", arr[idx]);
+	}
+	fprintf(stderr, " - size: %d\n", size);
+#endif /* DEBUG */
+
+	CU_ASSERT(0 == arr[0]);
+	CU_ASSERT(1 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(3 == arr[3]);
+	CU_ASSERT(4 == arr[4]);
+	CU_ASSERT(5 == arr[5]);
+	CU_ASSERT(6 == arr[6]);
+	CU_ASSERT(7 == arr[7]);
+	CU_ASSERT(8 == arr[8]);
+	CU_ASSERT(9 == arr[9]);
+	CU_ASSERT(23 == arr[10]);
+	CU_ASSERT(11 == size);
+
+	CU_ASSERT(23 == heap_maximum(arr, size));
+
+	free(arr);
+}
+
+void test_extract_max(void)
+{
+	int* arr = NULL;
+	int size = 10;
+
+	arr = malloc(size * sizeof(*arr));
+	if (!arr) {
+		CU_ASSERT(FALSE);
+		return;
+	}
+
+	arr[0] = 1;
+	arr[1] = 9;
+	arr[2] = 2;
+	arr[3] = 8;
+	arr[4] = 3;
+	arr[5] = 7;
+	arr[6] = 4;
+	arr[7] = 6;
+	arr[8] = 5;
+	arr[9] = 0;
+
+	CU_ASSERT(1 == arr[0]);
+	CU_ASSERT(9 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(8 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(7 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(6 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
+	CU_ASSERT(10 == size);
+
+	heapsort(arr, size);
+
+	int max_extracted = heap_extract_max(&arr, &size);
+
+#ifdef DEBUG
+	fprintf(stderr, "%s(): %d", __func__, arr[0]);
+	for (int idx=1; idx < size; idx++) {
+		fprintf(stderr, ", %d", arr[idx]);
+	}
+	fprintf(stderr, " - size: %d\n", size);
+#endif /* DEBUG */
+
+	CU_ASSERT(9 == size);
+	CU_ASSERT(9 == max_extracted);
+
+	free(arr);
+}
 
 int main()
 {
@@ -280,7 +392,6 @@ int main()
 
 	/* utilities */
 	TEST_start(pSuite, "swap", test_utilities_swap)
-/*		TEST_append(pSuite, "matrix combine", test_matrix_combine) //  */
 	TEST_end();
 
 	/* algorithm */
@@ -289,6 +400,8 @@ int main()
 	TEST_start(pSuite, "build max heapify", test_heapify)
 		TEST_append(pSuite, "build max heap", test_heap)
 		TEST_append(pSuite, "heapsort", test_heapsort)
+		TEST_append(pSuite, "max heap insert", test_insert)
+		TEST_append(pSuite, "heap extract max", test_extract_max)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
