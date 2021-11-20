@@ -9,6 +9,45 @@
 #include "stdlib.h"
 
 
+/* // dotty usage
+void print_data(int arr[], int size, const char* filename)
+{
+	if (!filename)
+		return;
+
+	FILE *fp = fopen(filename, "w");
+
+	fprintf(fp, "digraph %s\n", "arr");
+	fprintf(fp, "{\n");
+
+	if (1 == size) {
+		// just one node
+		fprintf(fp, "%d\n", arr[0]);
+	} else {
+		// print series
+		int idx;
+		for (idx = 1; idx < size; idx++) {
+			fprintf(fp, "%d -> %d;", arr[idx-1], arr[idx]);
+		}
+	}
+
+	fprintf(fp, "}\n");
+	fclose(fp);
+}
+// */
+
+
+void print_data(int arr[], int size, int sort_size, int index)
+{
+#ifdef DEBUG
+	fprintf(stderr, "%s(arr, size = %d, sort_size = %d, index = %d):\t %d", __func__, size, sort_size, index, arr[0]);
+	for (int idx=1; idx<size; idx++)
+		fprintf(stderr, ", %d", arr[idx]);
+	fprintf(stderr, "\n");
+#endif /* DEBUG */
+}
+
+
 void test_utilities_swap(void)
 {
 	int arr[] = { 1, 2, 3 };
@@ -28,21 +67,166 @@ void test_utilities_swap(void)
 	CU_ASSERT(arr[0] == 2);
 	CU_ASSERT(arr[1] == 3);
 	CU_ASSERT(arr[2] == 1);
-
-	print_structure(arr, sizeof(arr)/sizeof(int), "test.dot");
 }
 
-
+/*
+  performs heapsort, unrolled and manually
+ */
 void test_heapify(void)
 {
-	int arr[10] = { 1, 9, 2, 8, 3, 7, 4, 6, 5 };
+	int arr[10] = { 1, 9, 2, 8, 3, 7, 4, 6, 5, 0};
+	int size = sizeof(arr)/sizeof(int);
+	int index = size / 2 - 1;
+
+	CU_ASSERT(1 == arr[0]);
+	CU_ASSERT(9 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(8 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(7 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(6 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
+
+	// performing: build max heap (manually)
+	fprintf(stderr, "%s(): max heapify\n", __func__);
+	print_data(arr, size, size, 0);
+	heapify(arr, size, index);
+	print_data(arr, size, size, index);
+
+	index--;
+	heapify(arr, size, index);
+	print_data(arr, size, size, index);
+
+	index--;
+	heapify(arr, size, index);
+	print_data(arr, size, size, index);
+
+	index--;
+	heapify(arr, size, index);
+	print_data(arr, size, size, index);
+
+	index--;
+	heapify(arr, size, index);
+	print_data(arr, size, size, index);
+
+	CU_ASSERT(9 == arr[0]);
+	CU_ASSERT(8 == arr[1]);
+	CU_ASSERT(7 == arr[2]);
+	CU_ASSERT(6 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(2 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(1 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
+
+	// heapsort
+	fprintf(stderr, "%s(): heapsort\n", __func__);
+	int sort_size = size;
+	index = size -1;
+	swap(&arr[0], &arr[index]);
+
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	swap(&arr[0], &arr[index]);
+	sort_size--;
+	heapify(arr, index, 0);
+	index--;
+	print_data(arr, size, sort_size, index);
+
+	CU_ASSERT(0 == arr[0]);
+	CU_ASSERT(1 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(3 == arr[3]);
+	CU_ASSERT(4 == arr[4]);
+	CU_ASSERT(5 == arr[5]);
+	CU_ASSERT(6 == arr[6]);
+	CU_ASSERT(7 == arr[7]);
+	CU_ASSERT(8 == arr[8]);
+	CU_ASSERT(9 == arr[9]);
+}
+
+void test_heap(void)
+{
+	int arr[10] = { 1, 9, 2, 8, 3, 7, 4, 6, 5, 0};
 	int size = sizeof(arr)/sizeof(int);
 
-//	print_structure(arr, sizeof(arr)/sizeof(int), "heapify00.dot");
-	heapify(arr, size, 1);
-//	print_structure(arr, sizeof(arr)/sizeof(int), "heapify01.dot");
+	CU_ASSERT(1 == arr[0]);
+	CU_ASSERT(9 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(8 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(7 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(6 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
 
-	// TODO
+	max_heap(arr, size);
+
+	CU_ASSERT(9 == arr[0]);
+	CU_ASSERT(8 == arr[1]);
+	CU_ASSERT(7 == arr[2]);
+	CU_ASSERT(6 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(2 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(1 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
 }
 
 void test_heapsort(void)
@@ -50,9 +234,20 @@ void test_heapsort(void)
 	int arr[10] = { 1, 9, 2, 8, 3, 7, 4, 6, 5, 0 };
 	int size = sizeof(arr)/sizeof(int);
 
+	CU_ASSERT(1 == arr[0]);
+	CU_ASSERT(9 == arr[1]);
+	CU_ASSERT(2 == arr[2]);
+	CU_ASSERT(8 == arr[3]);
+	CU_ASSERT(3 == arr[4]);
+	CU_ASSERT(7 == arr[5]);
+	CU_ASSERT(4 == arr[6]);
+	CU_ASSERT(6 == arr[7]);
+	CU_ASSERT(5 == arr[8]);
+	CU_ASSERT(0 == arr[9]);
+
 	heapsort(arr, size);
 
-	print_structure(arr, size, "heapsort.dot");
+//	print_data(arr, size, "heapsort.dot");
 
 	CU_ASSERT(0 == arr[0]);
 	CU_ASSERT(1 == arr[1]);
@@ -91,7 +286,8 @@ int main()
 	/* algorithm */
 	pSuite = CU_add_suite("heapsort", init_suite_heapsort,
 			      clean_suite_heapsort);
-	TEST_start(pSuite, "heapify", test_heapify)
+	TEST_start(pSuite, "build max heapify", test_heapify)
+		TEST_append(pSuite, "build max heap", test_heap)
 		TEST_append(pSuite, "heapsort", test_heapsort)
 	TEST_end();
 

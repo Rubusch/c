@@ -14,29 +14,6 @@ void swap(int *a, int *b)
 }
 
 
-void print_structure(int arr[], int size, const char* filename)
-{
-	FILE *fp = fopen(filename, "w");
-
-	fprintf(fp, "digraph %s\n", "arr");
-	fprintf(fp, "{\n");
-
-	if (1 == size) {
-		// just one node
-		fprintf(fp, "%d\n", arr[0]);
-	} else {
-		// print series
-		int idx;
-		for (idx = 1; idx < size; idx++) {
-			fprintf(fp, "%d -> %d;", arr[idx-1], arr[idx]);
-		}
-	}
-
-	fprintf(fp, "}\n");
-	fclose(fp);
-}
-
-
 /*
   HEAPIFY(A, i)
 
@@ -103,11 +80,10 @@ void heapsort(int arr[], int size)
 {
 	max_heap(arr, size);
 
-	int idx;
-	for (idx = size - 1; idx > 0; idx--) {
+	for (int idx = size - 1; idx > 0; idx--) {
 		swap(&arr[0], &arr[idx]);
-		size = size -1;
-		heapify(arr, idx, 0);
+		size--;
+		heapify(arr, idx, 0); /* NB: usage of argument differs */
 	}
 }
 

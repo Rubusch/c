@@ -20,7 +20,9 @@
 
 
 // globals
-#define ARR_SIZE 32;
+#define DEBUG 1
+
+void print_data(int arr[], int size, int sort_size, int index);
 
 
 /*

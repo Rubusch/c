@@ -26,7 +26,6 @@
 #include <string.h>
 
 void swap(int *a, int *b);
-void print_structure(int arr[], int size, const char* filename);
 
 void heapify(int arr[], int size, int idx);
 void max_heap(int arr[], int size);
