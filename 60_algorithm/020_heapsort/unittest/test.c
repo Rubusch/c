@@ -401,7 +401,7 @@ int main()
 		TEST_append(pSuite, "build max heap", test_heap)
 		TEST_append(pSuite, "heapsort", test_heapsort)
 		TEST_append(pSuite, "max heap insert", test_insert)
-		TEST_append(pSuite, "heap extract max", test_extract_max)
+/*		TEST_append(pSuite, "heap extract max", test_extract_max) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
