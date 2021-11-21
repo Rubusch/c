@@ -262,7 +262,7 @@ void test_insert(void)
 	int* arr = NULL;
 	int size = 10;
 
-	arr = malloc(size * sizeof(*arr));
+	arr = malloc(size * sizeof(*arr);
 	if (!arr) {
 		CU_ASSERT(FALSE);
 		return;
@@ -327,7 +327,7 @@ void test_extract_max(void)
 	int* arr = NULL;
 	int size = 10;
 
-	arr = malloc(size * sizeof(*arr));
+	arr = malloc(size * sizeof(*arr);
 	if (!arr) {
 		CU_ASSERT(FALSE);
 		return;
@@ -371,7 +371,7 @@ void test_extract_max(void)
 	CU_ASSERT(9 == size);
 	CU_ASSERT(9 == max_extracted);
 
-	free(arr);
+//	free(arr);
 }
 
 int main()
