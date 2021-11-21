@@ -194,7 +194,7 @@ int heap_extract_max(int **arr, int *size)
 	int max = heap_maximum(*arr, *size);
 /*
 	// realloc: reduce used memory
-//	int *tmp = realloc(*arr, ((*size-1) * sizeof(**arr)));
+//	int *tmp = realloc(*arr, ((*size - 1) * sizeof(**arr)));
 	int *tmp = realloc(*arr, ((*size - 1) * sizeof(*tmp)));
 	if (!tmp) {
 		if (NULL != tmp) {
@@ -204,8 +204,8 @@ int heap_extract_max(int **arr, int *size)
 		return -1;
 	}
 	tmp[*size] = -1;
-//	*arr = tmp;
-
+	*arr = tmp;
+// */
 	(*size)--;
 
 	heapify(*arr, 1, *size-1);
