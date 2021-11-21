@@ -22,8 +22,6 @@
 // debugging print
 #define DEBUG 1
 
-// TODO   
-
 
 /*
   TEST helper macros

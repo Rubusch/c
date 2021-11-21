@@ -67,7 +67,6 @@ void test_quicksort(void)
 	CU_ASSERT(9 == arr[9]);
 }
 
-
 void test_randomized_quicksort(void)
 {
 	int arr[10] = { 1, 9, 2, 8, 3, 7, 4, 6, 5, 0};
@@ -141,7 +140,6 @@ void test_tail_recursive_quicksort(void)
 	CU_ASSERT(8 == arr[8]);
 	CU_ASSERT(9 == arr[9]);
 }
-
 
 int main()
 {
