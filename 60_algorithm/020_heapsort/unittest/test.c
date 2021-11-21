@@ -357,7 +357,7 @@ void test_extract_max(void)
 	CU_ASSERT(10 == size);
 
 	heapsort(arr, size);
-
+/*
 	int max_extracted = heap_extract_max(&arr, &size);
 
 #ifdef DEBUG
@@ -366,11 +366,11 @@ void test_extract_max(void)
 		fprintf(stderr, ", %d", arr[idx]);
 	}
 	fprintf(stderr, " - size: %d\n", size);
-#endif /* DEBUG */
+#endif // DEBUG
 
 	CU_ASSERT(9 == size);
 	CU_ASSERT(9 == max_extracted);
-
+// */
 	free(arr);
 }
 
@@ -401,7 +401,7 @@ int main()
 		TEST_append(pSuite, "build max heap", test_heap)
 		TEST_append(pSuite, "heapsort", test_heapsort)
 		TEST_append(pSuite, "max heap insert", test_insert)
-/*		TEST_append(pSuite, "heap extract max", test_extract_max) // */
+		TEST_append(pSuite, "heap extract max", test_extract_max)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
