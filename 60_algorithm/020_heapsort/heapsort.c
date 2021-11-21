@@ -204,7 +204,7 @@ int heap_extract_max(int **arr, int *size)
 		return -1;
 	}
 	tmp[*size] = -1;
-	*arr = tmp;
+//	*arr = tmp;
 
 	(*size)--;
 
