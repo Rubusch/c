@@ -357,7 +357,7 @@ void test_extract_max(void)
 	CU_ASSERT(10 == size);
 
 	heapsort(arr, size);
-/*
+
 	int max_extracted = heap_extract_max(&arr, &size);
 
 #ifdef DEBUG
@@ -368,9 +368,9 @@ void test_extract_max(void)
 	fprintf(stderr, " - size: %d\n", size);
 #endif // DEBUG
 
-	CU_ASSERT(9 == size);
-	CU_ASSERT(9 == max_extracted);
-// */
+//	CU_ASSERT(9 == size);
+//	CU_ASSERT(9 == max_extracted);
+
 	free(arr);
 }
 
