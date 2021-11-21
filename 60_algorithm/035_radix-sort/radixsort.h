@@ -1,6 +1,9 @@
 /*
   radixsort
 
+  Radixsort is put on top of countsort, the problem of ordering by
+  decimal digits is solved by a decimal ranking and executing a sort
+  algorithm (counting sort) on the ranking.
 
   Counting sort assumes that each of the n input elements is an
   integer in the range 0 to k, for some integer k. When k = O(n), the
