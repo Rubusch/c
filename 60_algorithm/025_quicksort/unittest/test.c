@@ -162,7 +162,7 @@ int main()
 	TEST_end();
 
 	/* algorithm */
-	pSuite = CU_add_suite("quickssort", init_suite_quicksort,
+	pSuite = CU_add_suite("quicksort", init_suite_quicksort,
 			      clean_suite_quicksort);
 	TEST_start(pSuite, "quicksort", test_quicksort)
  		TEST_append(pSuite, "randomized quicksort", test_randomized_quicksort)

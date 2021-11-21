@@ -254,7 +254,7 @@ int main()
 	pSuite = CU_add_suite("countingsort", init_suite_countingsort,
 			      clean_suite_countingsort);
 	TEST_start(pSuite, "countingsort", test_countingsort)
- 		TEST_append(pSuite, "countingsort", test_countingsort_multiples)
+ 		TEST_append(pSuite, "countingsort multiples", test_countingsort_multiples)
 	TEST_end();
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();
