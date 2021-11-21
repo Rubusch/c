@@ -366,10 +366,10 @@ void test_extract_max(void)
 		fprintf(stderr, ", %d", arr[idx]);
 	}
 	fprintf(stderr, " - size: %d\n", size);
-#endif // DEBUG
+#endif /* DEBUG */
 
-//	CU_ASSERT(9 == size);
-//	CU_ASSERT(9 == max_extracted);
+	CU_ASSERT(9 == size);
+	CU_ASSERT(9 == max_extracted);
 
 	free(arr);
 }
