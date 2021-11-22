@@ -301,7 +301,7 @@ jobs:
       - run: cd 60_algorithm/030_countingsort && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/035_radixsort && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/040_bucketsort && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/045_order_statistics && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/045_order-statistics && make && make basictest.exe && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
