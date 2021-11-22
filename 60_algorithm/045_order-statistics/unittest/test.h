@@ -46,8 +46,5 @@
 int init_suite_utilities(void) { return 0; }
 int clean_suite_utilities(void) { return 0; }
 
-int init_suite_statistics(void) { return 0; }
-int clean_suite_statistics(void) { return 0; }
-
 
 #endif
