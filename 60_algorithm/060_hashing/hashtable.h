@@ -23,7 +23,9 @@
   random access elements (if possible) to compute by formulae where a
   corresponding value lies.
 
-  the most simple example is as follows
+  a good hash function should avoid hash collisions
+
+  (the most simple example is as follows)
 
 
   REFERENCES
