@@ -1,26 +1,27 @@
 Dynamic Parameters (Argumentlist)
+
 Be aware of memory leaks!!! If the pointer is empty it's not pointing to NULL!
 
 Situation 1: int list
-int argumentList(int a, int b, ...) 
-{ 
-  int x=0; 
+int argumentList(int a, int b, ...)
+{
+  int x=0;
 
 // set pointer to the list
-  va_list arglist; 
+  va_list arglist;
 
 // set start argument
-  va_start(arglist, b); 
+  va_start(arglist, b);
 
   int idx=0;
   for (idx=0; idx<n; ++idx){
 // read out the list
-    x += va_arg(arglist, int); 
+    x += va_arg(arglist, int);
   }
 // close the list
-  va_end(arglist); 
-  return s; 
-}  
+  va_end(arglist);
+  return s;
+}
 
 
 
@@ -37,16 +38,11 @@ int argumentList(int blah, long blub, char* foo, ...)
 
 
 Situation 3: Wrapping sprinf()
-int mysprintf(char* text, ...) 
-{ 
-  va_list arglist; 
-  va_start(arglist, text); 
-  int n = vsprintf(text, arglist); 
-  va_end(text); 
-  return n; 
-}  
-
-
- 
- 
- 
+int mysprintf(char* text, ...)
+{
+  va_list arglist;
+  va_start(arglist, text);
+  int n = vsprintf(text, arglist);
+  va_end(text);
+  return n;
+}

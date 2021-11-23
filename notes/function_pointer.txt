@@ -1,29 +1,27 @@
 Function Pointers
 
 // define a new type for the function pointer array
-typedef int (*pFunc)(int, double); 
+typedef int (*pFunc)(int, double);
 
 // write the functions
-int Func1(int x, double y) 
-{ 
+int Func1(int x, double y)
+{
     printf("Func1 %i %i\n", x, y);
-    return 5; 
-} 
+    return 5;
+}
 
-int Func2(int x, double y) 
-{ 
+int Func2(int x, double y)
+{
     printf("Func2 %i %i\n", x, y);
-    return 7; 
-} 
+    return 7;
+}
 
 // generate the function pointer array
-int main() 
-{ 
-    pFunc Functions[2]; 
-    Functions[0] = &Func1; 
-    Functions[1] = &Func2; 
-    int Ret = Functions[0](5, 6.0); 
-    Ret = Functions[1](12, 18.0); 
-
-    return 0; 
+int main()
+{
+    pFunc Functions[2];
+    Functions[0] = &Func1;
+    Functions[1] = &Func2;
+    int Ret = Functions[0](5, 6.0);
+    Ret = Functions[1](12, 18.0);
 }

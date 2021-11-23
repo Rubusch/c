@@ -20,7 +20,7 @@ struct list_item{
 
 To connect a new list item the following is necessary:
    (*first)->next = malloc(sizeof(list_item));
-   
+
 But to test against NULL, this is one dereferenciation too much:
     if(first->next != NULL){
     // ...

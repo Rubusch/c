@@ -4,12 +4,13 @@ GNU C99 BOOTCAMP ON 'NIX
 
 This is NOT meant to be another C course, but rather as a quick
 reference guide to C, to extend or to reenter into C basics on
-preferably Linux. If things are unclear I hardly recommend to
-read the links and do the exercises. The best reference is always the
-standard and this imo is NOT just best effort. Enjoy.
+preferably Linux. If things are unclear I hardly recommend to read the
+links and do the exercises. The best reference is always the standard
+and this imo is NOT just best effort. Enjoy.
 
 
-Content: 
+Content:
+
 Basics
  - pointers
  - strings
@@ -17,11 +18,12 @@ Basics
  - preprocessor
  - IPC
  - threads (POSIX)
- - datastructures 
+ - datastructures
  - algorithms
  - sockets
  - tools
- 
+
+
 
 Pointers
 
@@ -34,14 +36,14 @@ destinguishes between ADDRESS and the VALUE. Given the following:
     int *ptr_a = NULL, *ptr_b = NULL;
 
 A variable has a address in memory and a value, by default its value
-is random (exceptional static variables or globals). 
-Therefore it should always be initialized, e.g. with 0 (style)!
+is random (exceptional static variables or globals). Therefore it
+should always be initialized, e.g. with 0 (style)!
 
 address:  &var
 value:    var
- 
-A pointer has an address of itself, an address to where it points to and
-the content stored to where it points to. By default it points to
+
+A pointer has an address of itself, an address to where it points to
+and the content stored to where it points to. By default it points to
 somewhere in memory, therefore it should always be initialized by NULL
 (style, too)!!
 
@@ -53,7 +55,8 @@ The destination of a pointer either needs to be allocated to be set or
 needs to be set to an already allocated memory. It also can be set to
 an address of a variable on the stack (=static memory - this is NOT
 meant by the code word 'static'!). The difference is that allocated
-variables have space on the heap and need always to be freed afterwards!
+variables have space on the heap and need always to be freed
+afterwards!
 
 The C compiler distinguishes strictly between address and value
 especially at parameter pass in functions (a wrongly passed address
@@ -66,7 +69,8 @@ warnings and usage of the gdb).
 Pointer of a pointer
 
 This is the same for a pointer of a pointer structure, e.g. a dynamic
-array of strings with variable length (I'll use an int** here, though):
+array of strings with variable length (I'll use an int** here,
+though):
 
 int **pptr
 
@@ -77,7 +81,7 @@ address of the second pointer:              *&pptr
 value refered by the second pointer:        **pptr
 
 The priority of the '&' is high, very high, it is higher than the
-brackets!!! 
+brackets!!!
 
 BTW: This is the reason why you have to typedef an address like this
 (char*) &variable and this doesn't work &((char) variable). The '&'
@@ -91,16 +95,17 @@ A sequence of Elements is called an array. An array can be generated
 in static memory (stack) or allocated in dynamic memory (heap). The
 size referes to the number of elements, the indexes start with 0. So
 the last element is size-1. The array identifier can also be used as
-pointer. 
+pointer.
 
 Only arrays on the stack can be counted by sizeof():
-number of elements = sizeof(arr) / sizeof(element);
-When it is passed to a function with no fixed size it has become a
-"normal" pointer. Since only char[] have a delimiter '\0' there is NO
-delimiter in other type of arrays.
+number of elements = sizeof(arr) / sizeof(element); When it is passed
+to a function with no fixed size it has become a "normal"
+pointer. Since only char[] have a delimiter '\0' there is NO delimiter
+in other type of arrays.
 
 
 Allocation
+
 A pointer needs to point to somewhere, either it gets initialized with
 the address of a variable already allocated/in the static memory
 (stack), or it needs to have allocated some space that can be
@@ -108,27 +113,20 @@ initialized with a value.
 
 
 
-Initialization
-TODO
-
-
-Typedef-ing
-TODO
-
-
 Pointer operations
+
 Incrementing or decrementing a pointer's address moves the pointer by
 the value of it's type in bits in the memory.
 
-char *ptr = NULL;
-// ptr initialized, in case allocated before!
-++ptr; // moves the pointer one "char" further
+    char *ptr = NULL;
+    // ptr initialized, in case allocated before!
+    ++ptr; // moves the pointer one "char" further
 
 Incrementing or decrementing a pointer's value increments or
 decrements the value pointed to at that address by one.
-int *ptr = NULL;
-// pointer initialized with a value, in case before allocated
---ptr; // now it has one less
+    int *ptr = NULL;
+    // pointer initialized with a value, in case before allocated
+    --ptr; // now it has one less
 
 
 
@@ -145,7 +143,7 @@ pass-by-value - means, passing only the content. The instance within
 the function is at a different address (debugging: control of the
 address of a variable before and after a pass to a function!). Changes
 within the function body to the value are gone when the function scope
-ends (= the function returns). 
+ends (= the function returns).
 
 Pass by value of a variable:
 passByValue(var);
@@ -157,7 +155,7 @@ Pass-by-reference - means passing directly the address of a variable
 (&var is also called a "reference" to var). Hence, the address of the
 variable before or the address pointed to by a pointer before,
 respectively, remains the same within the function scope. Changes to
-that variable will remain after the function returns. 
+that variable will remain after the function returns.
 
 Pass by reference of a variable:
 passByReference(&var);
@@ -186,19 +184,19 @@ Terms used:
 size
 	number of elements in an array
 
-len(th)     
+len(th)
 	number of characters in a zero terminated char[]
 
-type        
+type
         int, char, double, etc are types or a typedef-ed struct
 
 structure
 	well, a struct
 
-static memory  
+static memory
         memory on the STACK, not meant by the keyword "static"
 
-dynamic memory 
+dynamic memory
         memory on the HEAP, allocated space, need to be freed!!
 
 pass-by-value
@@ -238,7 +236,6 @@ code file
         contains definitions and ends in C with .c
 
 
-TODO
 Linux tools
  - vi
  - emacs
@@ -255,5 +252,3 @@ Kernel
  - modules
  - device drivers
  - tools
-
-

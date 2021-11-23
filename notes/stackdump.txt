@@ -1,4 +1,4 @@
-STACKDUMP 
+STACKDUMP
 
 
 Typical Stackdumps on Cygwin on an x86:
@@ -46,8 +46,10 @@ STATUS_ACCESS_VIOLATION at eip=004013B6
 	The error message and process id (???)
 
 
-Main Registers (x86 arch - can also be combined for bigger values, 
-each has 8bit for e.g. "eah" (high, left) and 8 bit for e.g. "eal" (low, right) 
+Main Registers (x86 arch - can also be combined for bigger values,
+each has 8bit for e.g. "eah" (high, left) and 8 bit for e.g. "eal"
+(low, right)
+
 -> 16 bit for e.g. "eax":
     eax=00000000 	- Accumulator Register  - *, /, +, -
     ebx=FFFFFFFF 	- Base Register		- primary storage (RAM)
@@ -55,28 +57,29 @@ each has 8bit for e.g. "eah" (high, left) and 8 bit for e.g. "eal" (low, right)
     edx=00003E48 	- Data Register		- 32bit (x86), *, /
 
 
-Pointer and Index Registers 
+Pointer and Index Registers
+
     [eip                 - Instruction Pointer   - not accessable! Commands]
 
     esi=006606C0 	- Source-Index		- used by the segment registers
     edi=0022CC45	- Destination-Index	- used by the segment registers
 
     ebp=0022CCA8 	- Base-Pointer		- Stackframe for e.g. local variables of a function, see stack trace
-    esp=0022CC30	- Stack-Pointer		- 
+    esp=0022CC30	- Stack-Pointer		- TODO
 
 
 Segment Registers (x86 arch):
     cs=001B             - Code-Segment          - commands; fetch address, used by eip (pointer and index registers)
-    ds=0023             - Data-Segment          - data; start address, used by esi and edi (pointer and index registers) as well as ebx 
+    ds=0023             - Data-Segment          - data; start address, used by esi and edi (pointer and index registers) as well as ebx
                                                   (Main Registers)
-    es=0023             - Extra-Segment         - copy address, compare address, search for address, 
+    es=0023             - Extra-Segment         - copy address, compare address, search for address,
                                                   used by esi and edi (pointer and index registers) as well as ebx (Main Registers)
     fs=003B             - ???                   - ???
     gs=0000             - ???                   - ???
     ss=0023             - Stack-Segment         - stack, used by ebp and esp (pointer and index registers)
 
 
-Stack trace:	
+Stack trace:
 Frame:		Function:	Args:
 xxxxxxxx	yyyyyyyy	(aaaaaaaa	bbbbbbbb	cccccccc	dddddddd)
 
@@ -84,7 +87,7 @@ xxxxxxxx	yyyyyyyy	(aaaaaaaa	bbbbbbbb	cccccccc	dddddddd)
 
 
 Stack trace
-	up to down, each line represents one "call" of the function (line) above, hence not 
+	up to down, each line represents one "call" of the function (line) above, hence not
 	directly a temporal order
 
 Frame / xxxxxxxx
@@ -93,7 +96,7 @@ Frame / xxxxxxxx
 Function / yyyyyyyy
 	the callback address of the function
 
-Args 
+Args
 	???
 
 aaaaaaaa 	- ???
