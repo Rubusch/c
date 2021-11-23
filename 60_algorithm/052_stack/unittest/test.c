@@ -194,7 +194,7 @@ void test_stack_search(void)
 	CU_ASSERT(ptr == head);
 
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop(head);
+		stack_pop();
 	}
 
 	CU_ASSERT(0 == stack_size());
@@ -222,7 +222,7 @@ void test_stack_maximum(void)
 	}
 
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop(head);
+		stack_pop();
 	}
 
 	CU_ASSERT(0 == stack_size());
@@ -250,7 +250,7 @@ void test_stack_minimum(void)
 	}
 
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop(head);
+		stack_pop();
 	}
 
 	CU_ASSERT(0 == stack_size());

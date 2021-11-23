@@ -1,5 +1,14 @@
 /*
-  stack - a LIFO container
+  STACK - a LIFO container
+
+   in ---. .---> out
+         | |
+         V |
+     +---------+
+     +---------+
+     +---------+
+     +---------+
+     +---------+
  */
 
 #include "stack.h"
@@ -26,8 +35,9 @@ int stack_pop()
 		return -1;
 	}
 
+	int data = ptr->data;
 	list_delete(ptr);
-	return ptr->data;
+	return data;
 }
 
 
