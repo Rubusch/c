@@ -23,12 +23,15 @@ typedef node_t* node_p;
 
 /*
   NB: NEVER INIT GLOBALS HERE!
+
   when setting first to NULL, the linker results in a double definition
 */
 node_p first;
 node_p head;
 int size;
 
+/* to be adjusted, further entries will be dropped */
+#define LIST_MAX_SIZE 10
 
 int list_empty();
 int list_size();

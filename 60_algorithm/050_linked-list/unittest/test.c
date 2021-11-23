@@ -23,15 +23,49 @@ void test_list_size(void)
 	CU_ASSERT(0 == list_size());
 
 	list_insert(0);
+
+	CU_ASSERT(1 == list_size());
+
 	list_insert(1);
+
+	CU_ASSERT(2 == list_size());
+
 	list_insert(2);
 
 	CU_ASSERT(3 == list_size());
 
-	list_delete(head);
-	list_delete(head);
-	list_delete(head);
+	list_insert(123);
 
+	CU_ASSERT(4 == list_size());
+
+	list_insert(88);
+
+	CU_ASSERT(5 == list_size());
+
+	list_insert(78);
+
+	CU_ASSERT(6 == list_size());
+
+	list_insert(1);
+
+	CU_ASSERT(7 == list_size());
+
+	list_insert(111);
+
+	CU_ASSERT(8 == list_size());
+
+	list_insert(123);
+
+	CU_ASSERT(9 == list_size());
+
+	list_insert(51);
+
+	CU_ASSERT(10 == list_size());
+
+	int size = list_size();
+	for (int idx = 0; idx < size; idx++) {
+		list_delete(head);
+	}
 	CU_ASSERT(0 == list_size());
 }
 
@@ -43,7 +77,8 @@ void test_list_successor(void)
 	list_insert(1);
 	list_insert(2);
 
-	CU_ASSERT(3 == list_size());
+	int size = list_size();
+	CU_ASSERT(3 == size);
 
 	if (!first) {
 		CU_ASSERT(FALSE);
@@ -52,9 +87,9 @@ void test_list_successor(void)
 	CU_ASSERT(first->next == list_successor(first));
 	CU_ASSERT(first->next->next == list_successor(first->next));
 
-	list_delete(head);
-	list_delete(head);
-	list_delete(head);
+	for (int idx = 0; idx < size; idx++) {
+		list_delete(head);
+	}
 
 	CU_ASSERT(0 == list_size());
 }
@@ -67,7 +102,8 @@ void test_list_predecessor(void)
 	list_insert(1);
 	list_insert(2);
 
-	CU_ASSERT(3 == list_size());
+	int size = list_size();
+	CU_ASSERT(3 == size);
 
 	if (!first) {
 		CU_ASSERT(FALSE);
@@ -77,9 +113,9 @@ void test_list_predecessor(void)
 	CU_ASSERT(first == list_predecessor(ptr));
 	CU_ASSERT(ptr == list_predecessor(ptr->next));
 
-	list_delete(head);
-	list_delete(head);
-	list_delete(head);
+	for (int idx = 0; idx < size; idx++) {
+		list_delete(head);
+	}
 
 	CU_ASSERT(0 == list_size());
 }
@@ -91,18 +127,29 @@ void test_list_insert(void)
 	list_insert(0);
 	list_insert(1);
 	list_insert(2);
+	list_insert(0);
+	list_insert(1);
+	list_insert(2);
+	list_insert(0);
+	list_insert(1);
+	list_insert(2);
+	list_insert(0);
 
-	CU_ASSERT(3 == list_size());
+	CU_ASSERT(LIST_MAX_SIZE == list_size());
+
+	list_insert(1);
+	list_insert(2);
+	CU_ASSERT(LIST_MAX_SIZE == list_size());
 
 	node_p ptr = first;
-
 	CU_ASSERT(0 == ptr->data);
 	CU_ASSERT(1 == ptr->next->data);
 	CU_ASSERT(2 == ptr->next->next->data);
 
-	list_delete(head);
-	list_delete(head);
-	list_delete(head);
+	int size = list_size();
+	for (int idx = 0; idx < size; idx++) {
+		list_delete(head);
+	}
 
 	CU_ASSERT(0 == list_size());
 }
@@ -132,14 +179,15 @@ void test_list_search(void)
 	list_insert(1);
 	list_insert(2);
 
-	CU_ASSERT(3 == list_size());
+	int size = list_size();
+	CU_ASSERT(3 == size);
 
 	node_p ptr = list_search(2);
 	CU_ASSERT(ptr == head);
 
-	list_delete(head);
-	list_delete(head);
-	list_delete(head);
+	for (int idx = 0; idx < size; idx++) {
+		list_delete(head);
+	}
 
 	CU_ASSERT(0 == list_size());
 }
@@ -155,7 +203,8 @@ void test_list_maximum(void)
 	list_insert(5);
 	list_insert(8);
 
-	CU_ASSERT(6 == list_size());
+	int size = list_size();
+	CU_ASSERT(6 == size);
 
 	node_p ptr = list_maximum();
 	if (!ptr) {
@@ -164,9 +213,11 @@ void test_list_maximum(void)
 		CU_ASSERT(8 == ptr->data);
 	}
 
-	for (int idx = 0; idx < list_size(); idx++) {
+	for (int idx = 0; idx < size; idx++) {
 		list_delete(head);
 	}
+
+	CU_ASSERT(0 == list_size());
 }
 
 void test_list_minimum(void)
@@ -180,7 +231,8 @@ void test_list_minimum(void)
 	list_insert(5);
 	list_insert(8);
 
-	CU_ASSERT(6 == list_size());
+	int size = list_size();
+	CU_ASSERT(6 == size);
 
 	node_p ptr = list_minimum();
 	if (!ptr) {
@@ -189,10 +241,11 @@ void test_list_minimum(void)
 		CU_ASSERT(0 == ptr->data);
 	}
 
-	for (int idx = 0; idx < list_size(); idx++) {
+	for (int idx = 0; idx < size; idx++) {
 		list_delete(head);
 	}
-// FIXME
+
+	CU_ASSERT(0 == list_size());
 }
 
 int main(void)

@@ -27,6 +27,10 @@ node_p list_predecessor(node_p ptr)
 
 void list_insert(int data)
 {
+	if (list_size() >= LIST_MAX_SIZE) {
+		fprintf(stderr, "%s(): list is full, dropped\n", __func__);
+		return;
+	}
 	node_p ptr = NULL;
 	ptr = malloc(sizeof(*ptr));
 	if (!ptr) {
