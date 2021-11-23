@@ -9,33 +9,6 @@
 #include "stdlib.h"
 
 
-/* // dotty representation
-void print_data(int arr[], int size, const char* filename)
-{
-	if (!filename)
-		return;
-
-	FILE *fp = fopen(filename, "w");
-
-	fprintf(fp, "digraph %s\n", "arr");
-	fprintf(fp, "{\n");
-
-	if (1 == size) {
-		// just one node
-		fprintf(fp, "%d\n", arr[0]);
-	} else {
-		// print series
-		int idx;
-		for (idx = 1; idx < size; idx++) {
-			fprintf(fp, "%d -> %d;", arr[idx-1], arr[idx]);
-		}
-	}
-
-	fprintf(fp, "}\n");
-	fclose(fp);
-}
-// */
-
 void print_data(int arr[], int size, int sort_size, int index)
 {
 #ifdef DEBUG
