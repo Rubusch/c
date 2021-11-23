@@ -58,6 +58,12 @@ void list_delete(node_p ptr)
 	if (!ptr)
 		return;
 
+	if (0 == size) {
+		first = NULL;
+		head = NULL;
+		return;
+	}
+
 	node_p predecessor_node = list_predecessor(ptr);
 	node_p successor_node = list_successor(ptr);
 
