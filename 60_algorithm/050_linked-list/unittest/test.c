@@ -9,6 +9,32 @@
 #include "time.h"
 
 
+void test_list_print(void)
+{
+	CU_ASSERT(0 == list_size());
+
+	list_insert(97);
+	list_insert(48);
+	list_insert(21);
+	list_insert(66);
+	list_insert(81);
+	list_insert(57);
+	list_insert(33);
+	list_insert(45);
+	list_insert(19);
+	list_insert(31);
+
+	CU_ASSERT(10 == list_size());
+	print_dot("list.dot");
+
+	int size = list_size();
+	for (int idx = 0; idx < size; idx++) {
+		list_delete(list_head());
+	}
+
+	CU_ASSERT(0 == list_size());
+}
+
 void test_list_empty(void)
 {
 	int res = FALSE;
@@ -64,7 +90,7 @@ void test_list_size(void)
 
 	int size = list_size();
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 	CU_ASSERT(0 == list_size());
 }
@@ -80,15 +106,15 @@ void test_list_successor(void)
 	int size = list_size();
 	CU_ASSERT(3 == size);
 
-	if (!first) {
+	if (!list_first()) {
 		CU_ASSERT(FALSE);
 		return;
 	}
-	CU_ASSERT(first->next == list_successor(first));
-	CU_ASSERT(first->next->next == list_successor(first->next));
+	CU_ASSERT(list_first()->next == list_successor(list_first()));
+	CU_ASSERT(list_first()->next->next == list_successor(list_first()->next));
 
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 
 	CU_ASSERT(0 == list_size());
@@ -105,16 +131,16 @@ void test_list_predecessor(void)
 	int size = list_size();
 	CU_ASSERT(3 == size);
 
-	if (!first) {
+	if (!list_first()) {
 		CU_ASSERT(FALSE);
 		return;
 	}
-	node_p ptr = first->next;
-	CU_ASSERT(first == list_predecessor(ptr));
+	node_p ptr = list_first()->next;
+	CU_ASSERT(list_first() == list_predecessor(ptr));
 	CU_ASSERT(ptr == list_predecessor(ptr->next));
 
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 
 	CU_ASSERT(0 == list_size());
@@ -141,14 +167,14 @@ void test_list_insert(void)
 	list_insert(2);
 	CU_ASSERT(LIST_MAX_SIZE == list_size());
 
-	node_p ptr = first;
+	node_p ptr = list_first();
 	CU_ASSERT(0 == ptr->data);
 	CU_ASSERT(1 == ptr->next->data);
 	CU_ASSERT(2 == ptr->next->next->data);
 
 	int size = list_size();
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 
 	CU_ASSERT(0 == list_size());
@@ -164,9 +190,9 @@ void test_list_delete(void)
 
 	CU_ASSERT(3 == list_size());
 
-	list_delete(head);
-	list_delete(first);
-	list_delete(head);
+	list_delete(list_head());
+	list_delete(list_first());
+	list_delete(list_head());
 
 	CU_ASSERT(0 == list_size());
 }
@@ -183,10 +209,10 @@ void test_list_search(void)
 	CU_ASSERT(3 == size);
 
 	node_p ptr = list_search(2);
-	CU_ASSERT(ptr == head);
+	CU_ASSERT(ptr == list_head());
 
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 
 	CU_ASSERT(0 == list_size());
@@ -214,7 +240,7 @@ void test_list_maximum(void)
 	}
 
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 
 	CU_ASSERT(0 == list_size());
@@ -242,7 +268,7 @@ void test_list_minimum(void)
 	}
 
 	for (int idx = 0; idx < size; idx++) {
-		list_delete(head);
+		list_delete(list_head());
 	}
 
 	CU_ASSERT(0 == list_size());
@@ -265,7 +291,8 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "empty", test_list_empty)
+	TEST_start(pSuite, "print", test_list_print)
+ 		TEST_append(pSuite, "empty", test_list_empty)
  		TEST_append(pSuite, "size", test_list_size)
  		TEST_append(pSuite, "successor", test_list_successor)
  		TEST_append(pSuite, "predecessor", test_list_predecessor)

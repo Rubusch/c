@@ -5,14 +5,54 @@
 #include "linkedlist.h"
 
 
+/*
+  dotty printer
+ */
+void print_dot(const char* filename)
+{
+	if (!filename)
+		return;
+
+	FILE *fp = fopen(filename, "w");
+	fprintf(fp, "graph %s\n", "arr");
+	fprintf(fp, "{\n");
+
+	node_p ptr = _list_first;
+	if (1 == list_size()) {
+		// just one node
+		fprintf(fp, "%d\n", ptr->data);
+	} else {
+		// print series
+		node_p ptr_last = _list_first;
+		for (ptr = list_successor(_list_first); ptr != NULL; ptr = list_successor(ptr)) {
+			fprintf(fp, "%d -- %d;\n", ptr_last->data, ptr->data);
+			ptr_last = ptr;
+		}
+	}
+
+	fprintf(fp, "}\n");
+	fclose(fp);
+}
+
+
+node_p list_first()
+{
+	return _list_first;
+}
+
+node_p list_head()
+{
+	return _list_head;
+}
+
 int list_empty()
 {
-	return (NULL == first);
+	return (NULL == _list_first);
 }
 
 int list_size()
 {
-	return size;
+	return _list_size;
 }
 
 node_p list_successor(node_p ptr)
@@ -42,15 +82,15 @@ void list_insert(int data)
 	ptr->data = data;
 
 	if (list_empty()) {
-		first = ptr;
-		head = first;
+		_list_first = ptr;
+		_list_head = _list_first;
 	} else {
-		head->next = ptr;
-		ptr->prev = head;
-		head = ptr;
+		_list_head->next = ptr;
+		ptr->prev = _list_head;
+		_list_head = ptr;
 	}
 
-	size++;
+	 _list_size++;
 }
 
 void list_delete(node_p ptr)
@@ -58,9 +98,9 @@ void list_delete(node_p ptr)
 	if (!ptr)
 		return;
 
-	if (0 == size) {
-		first = NULL;
-		head = NULL;
+	if (0 == list_size()) {
+		_list_first = NULL;
+		_list_head = NULL;
 		return;
 	}
 
@@ -71,18 +111,18 @@ void list_delete(node_p ptr)
 		predecessor_node->next = successor_node;
 	} else {
 		// we are first
-		first = successor_node;
+		_list_first = successor_node;
 	}
 
 	if (successor_node) {
 		successor_node->prev = predecessor_node;
 	} else {
 		// we are head
-		head = predecessor_node;
+		_list_head = predecessor_node;
 	}
 
 	free(ptr);
-	size--;
+	_list_size--;
 }
 
 node_p list_search(int data)
@@ -91,7 +131,7 @@ node_p list_search(int data)
 		return NULL;
 
 	node_p ptr = NULL;
-	for (ptr = first; NULL != ptr; ptr = list_successor(ptr)) {
+	for (ptr = _list_first; NULL != ptr; ptr = list_successor(ptr)) {
 		if (data == ptr->data) {
 			return ptr;
 		}
@@ -105,8 +145,8 @@ node_p list_maximum()
 		return NULL;
 
 	node_p ptr = NULL;
-	node_p ptr_max = first;
-	for (ptr = first; NULL != ptr; ptr = list_successor(ptr)) {
+	node_p ptr_max = _list_first;
+	for (ptr = _list_first; NULL != ptr; ptr = list_successor(ptr)) {
 		if (ptr_max->data < ptr->data) {
 			ptr_max = ptr;
 		}
@@ -121,8 +161,8 @@ node_p list_minimum()
 		return NULL;
 
 	node_p ptr = NULL;
-	node_p ptr_min = first;
-	for (ptr = first; NULL != ptr; ptr = list_successor(ptr)) {
+	node_p ptr_min = _list_first;
+	for (ptr = _list_first; NULL != ptr; ptr = list_successor(ptr)) {
 		if (ptr_min->data > ptr->data) {
 			ptr_min = ptr;
 		}

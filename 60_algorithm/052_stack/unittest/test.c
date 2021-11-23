@@ -9,6 +9,32 @@
 #include "time.h"
 
 
+void test_stack_print(void)
+{
+	CU_ASSERT(0 == stack_size());
+
+	stack_push(97);
+	stack_push(48);
+	stack_push(21);
+	stack_push(66);
+	stack_push(81);
+	stack_push(57);
+	stack_push(33);
+	stack_push(45);
+	stack_push(19);
+	stack_push(31);
+
+	CU_ASSERT(10 == stack_size());
+	print_dot("stack.dot");
+
+	int size = stack_size();
+	for (int idx = 0; idx < size; idx++) {
+		stack_pop();
+	}
+
+	CU_ASSERT(0 == stack_size());
+}
+
 void test_stack_empty(void)
 {
 	int res = FALSE;
@@ -80,12 +106,12 @@ void test_stack_successor(void)
 	int size = stack_size();
 	CU_ASSERT(3 == size);
 
-	if (!first) {
+	if (!stack_first()) {
 		CU_ASSERT(FALSE);
 		return;
 	}
-	CU_ASSERT(first->next == stack_successor(first));
-	CU_ASSERT(first->next->next == stack_successor(first->next));
+	CU_ASSERT(stack_first()->next == stack_successor(stack_first()));
+	CU_ASSERT(stack_first()->next->next == stack_successor(stack_first()->next));
 
 	for (int idx = 0; idx < size; idx++) {
 		stack_pop();
@@ -105,12 +131,12 @@ void test_stack_predecessor(void)
 	int size = stack_size();
 	CU_ASSERT(3 == size);
 
-	if (!first) {
+	if (!stack_first()) {
 		CU_ASSERT(FALSE);
 		return;
 	}
-	node_p ptr = first->next;
-	CU_ASSERT(first == stack_predecessor(ptr));
+	node_p ptr = stack_first()->next;
+	CU_ASSERT(stack_first() == stack_predecessor(ptr));
 	CU_ASSERT(ptr == stack_predecessor(ptr->next));
 
 	for (int idx = 0; idx < size; idx++) {
@@ -141,7 +167,7 @@ void test_stack_push(void)
 	stack_push(2);
 	CU_ASSERT(LIST_MAX_SIZE == stack_size());
 
-	node_p ptr = first;
+	node_p ptr = stack_first();
 	CU_ASSERT(0 == ptr->data);
 	CU_ASSERT(1 == ptr->next->data);
 	CU_ASSERT(2 == ptr->next->next->data);
@@ -191,7 +217,7 @@ void test_stack_search(void)
 	CU_ASSERT(3 == size);
 
 	node_p ptr = stack_search(2);
-	CU_ASSERT(ptr == head);
+	CU_ASSERT(ptr == stack_head());
 
 	for (int idx = 0; idx < size; idx++) {
 		stack_pop();
@@ -273,7 +299,8 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "empty", test_stack_empty)
+	TEST_start(pSuite, "print", test_stack_print)
+ 		TEST_append(pSuite, "empty", test_stack_empty)
  		TEST_append(pSuite, "size", test_stack_size)
  		TEST_append(pSuite, "successor", test_stack_successor)
  		TEST_append(pSuite, "predecessor", test_stack_predecessor)

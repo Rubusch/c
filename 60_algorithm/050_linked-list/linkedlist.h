@@ -26,13 +26,17 @@ typedef node_t* node_p;
 
   when setting first to NULL, the linker results in a double definition
 */
-node_p first;
-node_p head;
-int size;
+node_p _list_first;
+node_p _list_head;
+int _list_size;
 
 /* to be adjusted, further entries will be dropped */
 #define LIST_MAX_SIZE 10
 
+void print_dot(const char* filename);
+
+node_p list_first();
+node_p list_head();
 int list_empty();
 int list_size();
 node_p list_successor(node_p ptr);

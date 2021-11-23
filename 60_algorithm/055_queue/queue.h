@@ -17,6 +17,9 @@
 */
 #include "linkedlist.h"
 
+
+node_p queue_first();
+node_p queue_head();
 int queue_empty();
 int queue_size();
 node_p queue_successor(node_p ptr);

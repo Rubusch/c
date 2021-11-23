@@ -16,6 +16,8 @@
 #include "queue.h"
 
 
+node_p queue_first() { return list_first(); }
+node_p queue_head() { return list_head(); }
 int queue_empty() { return list_empty(); }
 int queue_size() { return list_size(); }
 node_p queue_successor(node_p ptr) { return list_successor(ptr); }
@@ -31,7 +33,7 @@ void queue_enqueue(int data)
 
 int queue_dequeue()
 {
-	node_p ptr = first;
+	node_p ptr = queue_first();
 	if (NULL == ptr) {
 		fprintf(stderr, "%s(): underflow\n", __func__);
 		return -1;

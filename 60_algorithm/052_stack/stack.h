@@ -17,6 +17,8 @@
 */
 #include "linkedlist.h"
 
+node_p stack_first();
+node_p stack_head();
 int stack_empty();
 int stack_size();
 node_p stack_successor(node_p ptr);

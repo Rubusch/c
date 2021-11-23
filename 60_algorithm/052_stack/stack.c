@@ -14,6 +14,8 @@
 #include "stack.h"
 
 
+node_p stack_first() { return list_first(); }
+node_p stack_head() { return list_head(); }
 int stack_empty() { return list_empty(); }
 int stack_size() { return list_size(); }
 node_p stack_successor(node_p ptr) { return list_successor(ptr); }
@@ -29,7 +31,7 @@ void stack_push(int data)
 
 int stack_pop()
 {
-	node_p ptr = head;
+	node_p ptr = list_head();
 	if (NULL == ptr) {
 		fprintf(stderr, "%s(): underflow\n", __func__);
 		return -1;
