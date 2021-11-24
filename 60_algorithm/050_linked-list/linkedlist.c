@@ -47,7 +47,7 @@ node_p list_head()
 
 int list_empty()
 {
-	return (NULL == _list_first);
+	return (0 >= list_size());
 }
 
 int list_size()
@@ -101,6 +101,7 @@ void list_delete(node_p ptr)
 	if (0 == list_size()) {
 		_list_first = NULL;
 		_list_head = NULL;
+		fprintf(stderr, "ptr != NULL, but the list is empty??!!!\n");
 		return;
 	}
 
