@@ -23,7 +23,7 @@ all: $(TARGET_TEST)
 $(TARGET_BASIC_TEST): $(OBJECTS)
 	$(CC) $(CFLAGS) -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(OBJECTS) $(LDFLAGS)
 
-.PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST)
-
 clean:
 	$(RM) $(OBJECTS) $(TARGET_TEST) $(TARGET_BASIC_TEST) *.dot *.png *.xml ./unittest/*.xml *~ ./unittest/*~
+
+.PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST)
