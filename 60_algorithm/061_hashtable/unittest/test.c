@@ -12,7 +12,7 @@
 
 void test_hash_key(void)
 {
-	char *key_a = malloc(sizeof(*key_a));
+	uint64_t *key_a = malloc(sizeof(*key_a));
 	if (!key_a) {
 		perror("allocation failed");
 		exit(EXIT_FAILURE);
@@ -20,14 +20,14 @@ void test_hash_key(void)
 
 	// reliably produces hashes
 	*key_a = 'L';
-	uint64_t hash_a = hash_key((const char*)key_a);
-	CU_ASSERT(hash_a = hash_key((const char*)key_a));
-	CU_ASSERT(hash_a = hash_key((const char*)key_a));
-	CU_ASSERT(hash_a = hash_key((const char*)key_a));
-	CU_ASSERT(hash_a = hash_key((const char*)key_a));
-	CU_ASSERT(hash_a = hash_key((const char*)key_a));
+	uint64_t hash_a = hash_key(key_a);
+	CU_ASSERT(hash_a = hash_key(key_a));
+	CU_ASSERT(hash_a = hash_key(key_a));
+	CU_ASSERT(hash_a = hash_key(key_a));
+	CU_ASSERT(hash_a = hash_key(key_a));
+	CU_ASSERT(hash_a = hash_key(key_a));
 
-	char *key_b = malloc(sizeof(*key_b));
+	uint64_t *key_b = malloc(sizeof(*key_b));
 	if (!key_a) {
 		perror("allocation failed");
 		exit(EXIT_FAILURE);
@@ -35,7 +35,7 @@ void test_hash_key(void)
 
 	// produces reproducible hashes
 	*key_b = 'L';
-	uint64_t hash_b = hash_key((const char*)key_a);
+	uint64_t hash_b = hash_key(key_a);
 	CU_ASSERT(hash_a = hash_b);
 
 	free(key_a);
@@ -55,9 +55,10 @@ void test_hash_size(void)
 	hash_destroy(table);
 }
 
-void test_hashing_insert(void)
+void test_hash_table(void)
 {
-	const char arr[] = { 'L', 'o', 't', 'H', 'A', 'r', 'R', 'i', 'T', 'a' };
+	// values: arr, keys: idx in arr
+	char arr[] = { 'L', 'o', 't', 'H', 'A', 'r', 'R', 'i', 'T', 'a' };
 	int size = sizeof(arr) / sizeof(*arr);
 	hash_t* table = NULL;
 
@@ -67,20 +68,21 @@ void test_hashing_insert(void)
 
 	// insert
 	CU_ASSERT(0 == hash_size(table));
-	for (int idx = 0; idx < size; idx++) {
-		hash_insert(table, (const char*) &arr[idx] /* key */, &idx /* value */);
+	for (uint64_t idx = 0; idx < size; idx++) {
+		hash_insert(table, &idx /* key */, &arr[idx] /* value */);
 	}
+
+	// size
 	CU_ASSERT(size == hash_size(table));
 
 	// search
-	const char key = 'R';
-	int *value = NULL;
-	value = (int*) hash_search(table, (const char*) &key);
+	const uint64_t key = 7;
+	char *value = NULL;
+	value = (char*) hash_search(table, &key);
 	if (!value) {
 		CU_ASSERT(FALSE);
 	} else {
-		fprintf(stderr, "XXX value == %d\n", *value);
-		CU_ASSERT(*value == 6);
+		CU_ASSERT(*value == arr[key]);
 	}
 
 	// destroy
@@ -107,7 +109,7 @@ int main(void)
 	/* utilities */
 	TEST_start(pSuite, "hashing", test_hash_key)
  		TEST_append(pSuite, "size", test_hash_size)
- 		TEST_append(pSuite, "insert", test_hashing_insert)
+ 		TEST_append(pSuite, "table", test_hash_table)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

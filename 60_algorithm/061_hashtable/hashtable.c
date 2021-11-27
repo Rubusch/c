@@ -26,7 +26,7 @@
 
 // Return 64-bit FNV-1a hash for key (NUL-terminated). See description:
 // https://en.wikipedia.org/wiki/Fowler–Noll–Vo_hash_function
-static uint64_t _hash_key(const char* key)
+static uint64_t _hash_key(const uint64_t* key)
 {
 	uint64_t hash = FNV_OFFSET;
 	const uint8_t *ptr = (uint8_t*)key;
@@ -38,7 +38,7 @@ static uint64_t _hash_key(const char* key)
 	}
 	return hash;
 }
-uint64_t hash_key(const char* key) /* provided for testing */
+uint64_t hash_key(const uint64_t* key) /* provided for testing */
 {
 	return _hash_key(key);
 }
@@ -88,13 +88,13 @@ int hash_destroy(hash_t* table)
 }
 
 
-void* hash_search(hash_t* table, const char* key)
+void* hash_search(hash_t* table, const uint64_t* key)
 {
 	uint64_t hash = _hash_key(key);
 	int index = (int)(hash & (uint64_t)(table->capacity - 1));
 
 #ifdef DEBUG
-	fprintf(stderr, "%s(): index %d, key '%c'",
+	fprintf(stderr, "%s(): index %d, key '%lld'",
 		__func__, index, *key);
 #endif
 
@@ -103,7 +103,7 @@ void* hash_search(hash_t* table, const char* key)
 		if (*key == *(table->entries[index].key)) {
 
 #ifdef DEBUG
-	fprintf(stderr, ", value %d\n", *(uint8_t*) table->entries[index].value);
+	fprintf(stderr, ", value %c\n", *(uint8_t*) table->entries[index].value);
 #endif
 			// key found, return value
 			return table->entries[index].value;
@@ -124,7 +124,7 @@ void* hash_search(hash_t* table, const char* key)
 }
 
 
-const char* hash_insert(hash_t* table, const char* key, void* value)
+const uint64_t* hash_insert(hash_t* table, const uint64_t* key, void* value)
 {
 	if (!value) {
 		return NULL;
@@ -136,7 +136,7 @@ const char* hash_insert(hash_t* table, const char* key, void* value)
 	int index = (int)(hash & (uint64_t)(table->capacity - 1));
 
 #ifdef DEBUG
-	fprintf(stderr, "%s(): index %d, key '%c', value %d\n",
+	fprintf(stderr, "%s(): index %d, key '%lld', value %c\n",
 		__func__, index, *key, *(uint8_t*) value);
 #endif
 	// find the key
@@ -154,14 +154,17 @@ const char* hash_insert(hash_t* table, const char* key, void* value)
 		}
 	}
 
-	key = strdup(key);
-	if (key == NULL) {
-		return NULL;
-	}
 	table->size++;
 
-	table->entries[index].key = (char*) key;
-	table->entries[index].value = value; // FIXME    
+	uint64_t *key_dup = malloc(sizeof(*key));
+	if (!key_dup) {
+		perror("allocation failed");
+		exit(EXIT_FAILURE);
+	}
+	*key_dup = *key; /* due to const, copy content to dup pointer memory */
+	table->entries[index].key = key_dup; /* assign dup pointer to const */
+
+	table->entries[index].value = value;
 
 	return key;
 }

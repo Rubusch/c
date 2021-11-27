@@ -18,8 +18,8 @@
 #include "CUnit/CUCurses.h"
 
 
-// debugging print
-#define DEBUG 1
+// debug printing
+//#define DEBUG 1
 
 
 /*

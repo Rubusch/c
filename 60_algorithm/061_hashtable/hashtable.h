@@ -16,11 +16,11 @@
 #include <string.h>
 #include <stdint.h>
 
-
-#define DEBUG 1
+// debug printing
+//#define DEBUG 1
 
 typedef struct {
-	const char* key;
+	const uint64_t* key;
 	void *value;
 } entry_t;
 
@@ -34,14 +34,14 @@ typedef struct {
 #define INITIAL_CAPACITY 32;
 
 // private in the actual implementation
-uint64_t hash_key(const char* key);
+uint64_t hash_key(const uint64_t* key);
 
 // public
 int hash_size(hash_t* table);
 hash_t* hash_create(void);
 int hash_destroy(hash_t* table);
-void* hash_search(hash_t* table, const char* key);
-const char* hash_insert(hash_t* table, const char* key, void* value);
+void* hash_search(hash_t* table, const uint64_t* key);
+const uint64_t* hash_insert(hash_t* table, const uint64_t* key, void* value);
 
 
 #endif /* HASHTABLE_H */
