@@ -1,7 +1,19 @@
 /*
   hashtable
 
-  // TODO
+  on base of an allocated memory with fixed size, similar to an array,
+  values are placed basically in a +/- random order
+
+  the hash function used by search guarantees direc O(1) access to the
+  specific element (given a random access memory with direct access by
+  address + offset i.e. index);
+
+  NB: collisions can be allowed, avoided,... depending also on the
+  hash function
+
+  performance then depends on the performance of the hash algorithm,
+  and/or the search function
+
 
   REFERENCES
   - (article) https://benhoyt.com/writings/hash-table-in-c/, Ben Hoyt
@@ -33,7 +45,7 @@ typedef struct {
 
 #define INITIAL_CAPACITY 32;
 
-// private in the actual implementation
+// private in the actual implementation (for testing)
 uint64_t hash_key(const uint64_t* key);
 
 // public

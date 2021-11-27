@@ -1,15 +1,5 @@
 /*
-  hashtable
-
-  on base of an allocated memory with fixed size, similar to an array,
-  values are placed basically in a +/- random order
-
-  the hash function used by search guarantees direc O(1) access to the
-  specific element (given a random access memory with direct access by
-  address + offset i.e. index)
-
-  performance then depends on the performance of the hash algorithm,
-  and/or the search function
+  hashtable implementation 
  */
 
 #include "hashtable.h"
@@ -103,7 +93,8 @@ void* hash_search(hash_t* table, const uint64_t* key)
 		if (*key == *(table->entries[index].key)) {
 
 #ifdef DEBUG
-	fprintf(stderr, ", value %c\n", *(uint8_t*) table->entries[index].value);
+			fprintf(stderr, ", value %c\n",
+				*(uint8_t*) table->entries[index].value);
 #endif
 			// key found, return value
 			return table->entries[index].value;
