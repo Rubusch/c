@@ -40,8 +40,8 @@
 		return CU_get_error(); \
 	}
 
-int init_suite_binarytree(void) { return 0; }
-int clean_suite_binarytree(void) { return 0; }
+int init_suite_binarysearchtree(void) { return 0; }
+int clean_suite_binarysearchtree(void) { return 0; }
 
 
 #endif

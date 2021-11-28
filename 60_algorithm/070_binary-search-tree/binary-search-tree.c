@@ -7,10 +7,50 @@
 #include <stdint.h>
 //#include <stdbool.h>
 
-static void _tree_failure(const char* msg);
+/* private */
+
+static void _tree_failure(const char* msg)
 {
 	perror(msg);
 	exit(EXIT_FAILURE);
+}
+
+/*
+  INORDER-TREE-WALK(x)
+
+  if x != NIL
+    INORDER-TREE-WALK(x.left)
+    print x.key
+    INORDER-TREE-WALK(x.right)
+ */
+static void _tree_inorder_walk(FILE *fp, node_p node)
+{
+	if (node) {
+		_tree_inorder_walk(fp, node->left);
+		if (node->parent) {
+			fprintf(fp, "%lld -- %lld;\n", node->parent->key, node->key);
+		} else {
+			fprintf(fp, "%lld;\n", node->key);
+		}
+		_tree_inorder_walk(fp, node->right);
+	}
+}
+
+
+/* public */
+
+void tree_print_dot(const char* filename, node_p node)
+{
+	if (!filename) return;
+	if (!node) return;
+	FILE *fp = fopen(filename, "w");
+	fprintf(fp, "graph %s\n", "tree");
+	fprintf(fp, "{\n");
+	if (node->left) _tree_inorder_walk(fp, node->left);
+	if (node->right) _tree_inorder_walk(fp, node->right);
+	if (!node->left && !node->right) fprintf(fp, "%lld;\n", node->key);
+	fprintf(fp, "}\n");
+	fclose(fp);
 }
 
 node_p tree_root(void)
@@ -18,12 +58,10 @@ node_p tree_root(void)
 	return _root;
 }
 
-void* tree_get_data(node_p)
+void* tree_get_data(node_p node)
 {
-	return node_p->data;
+	return node->data;
 }
-
-// TODO tree_inorder_walk    
 
 /*
   TREE-SEARCH
@@ -32,7 +70,8 @@ void* tree_get_data(node_p)
     return x
   if k < x.key
     return TREE-SEARCH(x.left, k)
-  else return TREE-SEARCH(x.right, k)
+  else
+    return TREE-SEARCH(x.right, k)
  */
 void* tree_search(node_p node, const uint64_t key)
 {
@@ -48,7 +87,8 @@ void* tree_search(node_p node, const uint64_t key)
   while x != NIL and k != x.key
     if k < x.key
       x = x.left
-    else x = x.right
+    else
+      x = x.right
   return x
  */
 void* tree_search_iterative(node_p node, const uint64_t key)
@@ -68,13 +108,13 @@ void* tree_search_iterative(node_p node, const uint64_t key)
     x = x.left
   return x
  */
-void* tree_minimum(node_p node)
+node_p tree_minimum(node_p node)
 {
 	node_p ptr = node;
 	while (NULL != (ptr = node->left)) {
 		node = ptr;
 	}
-	return tree_get_data(node);
+	return node;
 }
 
 /*
@@ -84,16 +124,37 @@ void* tree_minimum(node_p node)
     x = x.right
   return x
  */
-void* tree_maximum(node_p node)
+node_p tree_maximum(node_p node)
 {
 	node_p ptr = node;
 	while (NULL != (ptr = node->right)) {
 		node = ptr;
 	}
-	return tree_get_data(node);
+	return node;
 }
 
-// TODO tree_successor    
+/*
+  TREE-SUCCESSOR(x)
+
+  if x.right != NIL
+    return TREE-MINIMUM(x.right)
+  x = x.p
+  while y != NIL and x == y.right
+    x = y
+    y = y.p
+  return y
+ */
+// TODO verify           
+node_p tree_successor(node_p node)
+{
+	if (node->right) return tree_successor(node->right);
+	node_p parent = node->parent;
+	while ((parent != NULL) && (node == parent->right)) {
+		node = parent;
+		parent = parent->parent;
+	}
+	return parent;
+}
 
 /*
   TREE-INSERT(T, z)
@@ -116,31 +177,106 @@ void* tree_maximum(node_p node)
  */
 void tree_insert(uint64_t key, void* data)
 {
-	node_p y = NULL;
-	node_p x = tree_root();
-	while (x != NULL) {
-		y = x;
-		if (key < x->key)
-			x = x->left;
+	node_p parent = NULL;
+	node_p tmp = tree_root();
+	while (tmp != NULL) {
+		parent = tmp;
+		if (key < tmp->key)
+			tmp = tmp->left;
 		else
-			x = x->right;
+			tmp = tmp->right;
 	}
-	node_p z;
-	z = malloc(sizeof(*z));
-	if (!z) _tree_failure("allocation failed");
-	z->key = key;
-	z->data = data;
-	z->parent = y;
-	if (!y) _root = z; // tree was empty
-	else if (z->key < y->key) y->left = z;
-	else y->right = z;
+	node_p node = malloc(sizeof(*node));
+	if (!node) _tree_failure("allocation failed");
+	node->parent = parent;
+	node->key = key;
+	node->data = data;
+	node->left = NULL;
+	node->right = NULL;
+	if (!parent) {
+		_root = node; // tree was empty
+	} else if (node->key < parent->key) {
+		parent->left = node;
+	} else {
+		parent->right = node;
+	}
 }
 
-// TODO _tree_transplant    
-// TODO tree_delete    
-void tree_delete(uint64_t key)
+/*
+  TRANSPLANT(T, u, v)
+
+  if u.p == NIL
+    T.root = v
+  elseif u == u.p.left
+    u.p.left = v
+  else
+    u.p.right = v
+  if v != NIL
+    v.p = u.p
+ */
+static void _tree_transplant(node_p node, node_p new_subtree)
 {
-	// TODO free nodes
+	// replace (down)
+	if (!node->parent) {
+		_root = new_subtree;
+	} else if (node == node->parent->left) {
+		node->parent->left = new_subtree;
+	} else {
+		node->parent->right = new_subtree;
+	}
+
+	// set new parent (up)
+	if (new_subtree) {
+		new_subtree->parent = node->parent;
+	}
+}
+void tree_transplant(node_p node, node_p new_subtree)
+{
+	_tree_transplant(node, new_subtree);
+}
+
+/*
+  TREE-DELETE(T, z)
+
+  if z->left == NIL
+    TRANSPLANT(T, z, z.right)
+  elseif z.right == NIL
+    TRANSPLANT(T, z, z.left)
+  else
+    y = TREE-MINIMUM(z.right)
+    if y.p != z
+      TRANSPLANT(T, y, y.right)
+      y.right = z.right
+      y.right.p = y
+    TRANSPLANT(T, z, y)
+    y.left = z.left
+    y.left.p = y
+ */
+void* tree_delete(node_p node)
+{
+	if (!node->left) {
+		// left of destination location is NULL
+		_tree_transplant(node, node->right);
+	} else if (!node->right) {
+		// right of destination location is NULL
+		_tree_transplant(node, node->left);
+	} else {
+		// destination location has branches to reconnect
+		node_p tmp = tree_minimum(node->right);
+		if (tmp->parent != node) {
+			_tree_transplant(tmp, tmp->right);
+			tmp->right = node->right;
+			tmp->right->parent = tmp;
+		}
+		_tree_transplant(node, tmp);
+		tmp->left = node->left;
+		if (tmp->left) tmp->left->parent = tmp;
+	}
+
+	void* ptr = node->data;
+	if (!node->parent) _root = NULL;
+	free(node);
+	return ptr;
 }
 
 
