@@ -43,8 +43,8 @@ void* tree_search(node_p node, const uint64_t key);
 void* tree_search_iterative(node_p node, const uint64_t key);
 node_p tree_minimum(node_p node);
 node_p tree_maximum(node_p node);
-
 node_p tree_successor(node_p node);
+node_p tree_predecessor(node_p node);
 void tree_insert(uint64_t key, void* data);
 void* tree_delete(node_p node);
 

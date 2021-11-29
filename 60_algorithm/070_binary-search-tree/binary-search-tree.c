@@ -5,7 +5,6 @@
 #include "binary-search-tree.h"
 
 #include <stdint.h>
-//#include <stdbool.h>
 
 /* private */
 
@@ -23,34 +22,38 @@ static void _tree_failure(const char* msg)
     print x.key
     INORDER-TREE-WALK(x.right)
  */
-static void _tree_inorder_walk(FILE *fp, node_p node)
+#ifdef DEBUG
+static void _tree_inorder_walk(FILE *fp, node_p node, const char* label)
 {
 	if (node) {
-		_tree_inorder_walk(fp, node->left);
+		_tree_inorder_walk(fp, node->left, "L");
 		if (node->parent) {
-			fprintf(fp, "%lld -- %lld;\n", node->parent->key, node->key);
+			fprintf(fp, "%lld -- %lld [ label=\"%s\" ];\n",
+				node->parent->key, node->key, label);
 		} else {
 			fprintf(fp, "%lld;\n", node->key);
 		}
-		_tree_inorder_walk(fp, node->right);
+		_tree_inorder_walk(fp, node->right, "R");
 	}
 }
-
+#endif
 
 /* public */
 
 void tree_print_dot(const char* filename, node_p node)
 {
+#ifdef DEBUG
 	if (!filename) return;
 	if (!node) return;
 	FILE *fp = fopen(filename, "w");
 	fprintf(fp, "graph %s\n", "tree");
 	fprintf(fp, "{\n");
-	if (node->left) _tree_inorder_walk(fp, node->left);
-	if (node->right) _tree_inorder_walk(fp, node->right);
+	if (node->left) _tree_inorder_walk(fp, node->left, "L");
+	if (node->right) _tree_inorder_walk(fp, node->right, "R");
 	if (!node->left && !node->right) fprintf(fp, "%lld;\n", node->key);
 	fprintf(fp, "}\n");
 	fclose(fp);
+#endif
 }
 
 node_p tree_root(void)
@@ -144,10 +147,10 @@ node_p tree_maximum(node_p node)
     y = y.p
   return y
  */
-// TODO verify           
 node_p tree_successor(node_p node)
 {
-	if (node->right) return tree_successor(node->right);
+	if (node->right) return tree_minimum(node->right);
+
 	node_p parent = node->parent;
 	while ((parent != NULL) && (node == parent->right)) {
 		node = parent;
@@ -155,6 +158,30 @@ node_p tree_successor(node_p node)
 	}
 	return parent;
 }
+
+/*
+  TREE-PREDECESSOR(x)
+
+  if x.left != NIL
+    return TREE-MAXIMUM(x.left)
+  x = x.p
+  while y != NIL and x == y.left
+    x = y
+    y = y.p
+  return y
+ */
+node_p tree_predecessor(node_p node)
+{
+	if (node->left) return tree_maximum(node->left);
+
+	node_p parent = node->parent;
+	while ((parent != NULL) && (node == parent->left)) {
+		node = parent;
+		parent = parent->parent;
+	}
+	return parent;
+}
+
 
 /*
   TREE-INSERT(T, z)
@@ -254,6 +281,7 @@ void tree_transplant(node_p node, node_p new_subtree)
  */
 void* tree_delete(node_p node)
 {
+	if (!node) return NULL;
 	if (!node->left) {
 		// left of destination location is NULL
 		_tree_transplant(node, node->right);
@@ -274,7 +302,6 @@ void* tree_delete(node_p node)
 	}
 
 	void* ptr = node->data;
-	if (!node->parent) _root = NULL;
 	free(node);
 	return ptr;
 }
