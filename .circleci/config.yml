@@ -310,6 +310,7 @@ jobs:
       - run: cd 60_algorithm/060_hashing && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/061_hashtable && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/062_hashtable-extension_amortized-cost-analysis && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/070_binary-search-tree && make && make basictest.exe && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
