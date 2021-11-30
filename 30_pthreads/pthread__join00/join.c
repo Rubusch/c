@@ -1,30 +1,41 @@
 // join.c
 /*
 - pthread_attr_init()
-  sets up the pthread_attr_t object, to a default set of parameters, if not
-used, the same set already should be the default at thread creation. The most
-important is: PTHREAD_CREATE_JOINABLE is default!
+
+  sets up the pthread_attr_t object, to a default set of parameters,
+  if not used, the same set already should be the default at thread
+  creation. The most important is: PTHREAD_CREATE_JOINABLE is default!
+
 
 - pthread_create()
+
   creates a new thread
 
+
 - pthread_join()
-  The pthread_join() function blocks the calling thread until the specified
-thread terminates. Hence, a join means "join to the same used memory" (more or
-less), thus on pthread_exit() on one of the joined threads, the allocated memory
-is NOT freed.
+
+  The pthread_join() function blocks the calling thread until the
+  specified thread terminates. Hence, a join means "join to the same
+  used memory" (more or less), thus on pthread_exit() on one of the
+  joined threads, the allocated memory is NOT freed.
+
 
 - pthread_detach()
-  says explicitely that the thread will not be joined and, thus, has its own
-"detached" space of memory to maintain. On pthread_exit() the allocated heap
-space is freed automatically! But there is no "synchronization" with other
-threads, like on pthread_join(). [when the other thread is blocked, this is a
-"synchronized" way to access the resources, i.e. the memory.]
+
+  says explicitely that the thread will not be joined and, thus, has
+  its own "detached" space of memory to maintain. On pthread_exit()
+  the allocated heap space is freed automatically! But there is no
+  "synchronization" with other threads, like on pthread_join(). [when
+  the other thread is blocked, this is a "synchronized" way to access
+  the resources, i.e. the memory.]
+
 
 - pthread_exit()
-  terminates the thread - you MUST do a free in case the thread was "joinable"
-or "joined" and the thread allocated memory before (memory leak if not!). If you
-explicitely "detached" the thread before, the memory is automatically freed!
+
+  terminates the thread - you MUST do a free in case the thread was
+  "joinable" or "joined" and the thread allocated memory before
+  (memory leak if not!). If you explicitely "detached" the thread
+  before, the memory is automatically freed!
 //*/
 
 #include <stdio.h>
