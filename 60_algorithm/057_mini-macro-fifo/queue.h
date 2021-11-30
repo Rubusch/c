@@ -34,19 +34,19 @@
 									\
 	typedef NAME##__node_t* NAME##__node_p;				\
 									\
-	static NAME##__node_p _##NAME##__first;				\
-	static NAME##__node_p _##NAME##__head;				\
-	static int _##NAME##__size;					\
+	NAME##__node_p _##NAME##__first;				\
+	NAME##__node_p _##NAME##__head;					\
+	int _##NAME##__size;						\
 	static const int NAME##__MAX_SIZE = MAXSIZE;			\
 									\
-	NAME##__node_p NAME##__first();					\
-	NAME##__node_p NAME##__head();					\
-	int NAME##__empty();						\
-	int NAME##__size();						\
-	NAME##__node_p NAME##__successor(NAME##__node_p ptr);		\
-	NAME##__node_p NAME##__predecessor(NAME##__node_p ptr);		\
-	int NAME##__enqueue(DATATYPE data);				\
-	int NAME##__dequeue(DATATYPE *data);				\
+	static inline NAME##__node_p NAME##__first();			\
+	static inline NAME##__node_p NAME##__head();			\
+	static inline int NAME##__empty();				\
+	static inline int NAME##__size();				\
+	static inline NAME##__node_p NAME##__successor(NAME##__node_p ptr); \
+	static inline NAME##__node_p NAME##__predecessor(NAME##__node_p ptr); \
+	static inline int NAME##__enqueue(DATATYPE data);		\
+        static inline int NAME##__dequeue(DATATYPE *data);		\
 									\
 	NAME##__node_p NAME##__first()					\
 	{								\
@@ -108,7 +108,7 @@
 		return 0;						\
 	}								\
 									\
-	int NAME##__dequeue(DATATYPE *data)				\
+        static inline int NAME##__dequeue(DATATYPE *data)		\
 	{								\
 		NAME##__node_p ptr = NAME##__first();			\
 		if (NULL == ptr) {					\
