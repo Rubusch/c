@@ -1,0 +1,25 @@
+static
+
+REFERENCES
+https://en.cppreference.com/w/c/language/storage_duration
+
+
+
+static means "belongs only to the specific compilation unit"
+
+Static duration storage-class specifier with internal linkage at file
+scope and no linkage at block scope.
+
+Making a function static hides it from other translation units. In
+consequence the function may appear as "unnused" warning
+
+visibility
+
+
+Storage class  | Lifetime           | Visibility
+---------------+--------------------+--------------------------
+extern         | program execution  | external (whole program)
+static         | program execution  | internal (translation unit only)
+auto, register | function execution | (none)
+
+
