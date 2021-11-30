@@ -51,9 +51,13 @@ void test_tree_root(void)
 	red_black_insert(123, &value[0]);
 	node = tree_root();
 	CU_ASSERT(NULL != node);
+	CU_ASSERT(BLACK == node->color);
+	CU_ASSERT(RED == node->color);
+
+	tree_print_dot("root.dot", node);
 
 	// delete
-	red_black_delete(node);
+//	red_black_delete(node);
 	free(value);
 }
 
@@ -972,9 +976,9 @@ int main(void)
 
 	/* utilities */
 	TEST_start(pSuite, "tree root", test_tree_root)
- 		TEST_append(pSuite, "tree get data", test_tree_get_data)
+/* 		TEST_append(pSuite, "tree get data", test_tree_get_data)
  		TEST_append(pSuite, "tree print", test_tree_print)
-/* 		TEST_append(pSuite, "tree transplant", test_tree_transplant)
+ 		TEST_append(pSuite, "tree transplant", test_tree_transplant)
  		TEST_append(pSuite, "tree minimum", test_tree_minimum)
  		TEST_append(pSuite, "tree maximum", test_tree_maximum)
  		TEST_append(pSuite, "tree search", test_tree_search)

@@ -33,6 +33,10 @@ static void _tree_inorder_walk(FILE *fp, node_p node, const char* label)
 		} else {
 			fprintf(fp, "%lld;\n", node->key);
 		}
+		fprintf(fp, "%lld [style=filled, %s];\n",
+			node->key,
+			(node->color == RED) ? "fillcolor=red"
+			: "fontcolor=white, fillcolor=black");
 		_tree_inorder_walk(fp, node->right, "R");
 	}
 }
@@ -58,7 +62,7 @@ void tree_print_dot(const char* filename, node_p node)
 
 node_p tree_root(void)
 {
-	return _root;
+	return _tree_root;
 }
 
 void* tree_get_data(node_p node)
@@ -404,6 +408,11 @@ void red_black_right_rotate(node_p node)
 */
 static void _red_black_insert_fixup(node_p node)
 {
+	if (!node->parent) {
+		node->color = BLACK;
+		return;
+	}
+
 	while (node->parent->color == RED) {
 		if (node->parent == node->parent->parent->left) {
 			node_p node_y = node->parent->parent->right;
@@ -439,7 +448,7 @@ static void _red_black_insert_fixup(node_p node)
 			}
 		}
 	}
-	_root->color = BLACK;
+	_tree_root->color = BLACK;
 }
 void red_black_insert_fixup(node_p node)
 {
@@ -466,11 +475,19 @@ void red_black_insert_fixup(node_p node)
     y.right = z
   z.left = T.nil
   z.right = T.nil
-  z.color = RED
+OA  z.color = RED
   RB-INSERT-FIXUP(T, z)
 */
 void red_black_insert(uint64_t key, void* data)
 {
+	node_p node = malloc(sizeof(*node));
+	if (!node) _tree_failure("allocation failed");
+	node->color = RED;
+	node->key = key;
+	node->data = data;
+	node->left = NULL;
+	node->right = NULL;
+
 	node_p node_y = NULL;
 	node_p node_x = tree_root();
 	while (node_x) {
@@ -481,16 +498,9 @@ void red_black_insert(uint64_t key, void* data)
 			node_x = node_x->right;
 		}
 	}
-	node_p node = malloc(sizeof(*node));
-	if (!node) _tree_failure("allocation failed");
 	node->parent = node_y;
-	node->color = RED;
-	node->key = key;
-	node->data = data;
-	node->left = NULL;
-	node->right = NULL;
 	if (!node_y) {
-		_root = node;
+		_tree_root = node;
 	} else if (node->key < node_y->key) {
 		node_y->left = node;
 	} else {
@@ -534,56 +544,57 @@ void red_black_insert(uint64_t key, void* data)
 static void _red_black_delete_fixup(node_p node)
 {
 	while ((node != tree_root()) && (node->color == BLACK)) {
-	if (node == node->parent->left) {
-		node_p node_w = node->parent->right;
-		if (node_w->color == RED) {
-			node_w->color = BLACK;
-			node->parent->color = RED;
-			_red_black_left_rotate(node->parent);
-			node_w = node->parent->right;
-		}
-		if ((node_w->left->color == BLACK) && (node_w->right->color == BLACK)) {
-			node_w->color = RED;
-			node = node->parent;
-		} else {
-			if (node_w->right->color == BLACK) {
-				node_w->left->color = BLACK;
-				node_w->color = RED;
-				_red_black_right_rotate(node_w);
+		if (node == node->parent->left) {
+			node_p node_w = node->parent->right;
+			if (node_w->color == RED) {
+				node_w->color = BLACK;
+				node->parent->color = RED;
+				red_black_left_rotate(node->parent);
 				node_w = node->parent->right;
 			}
-			node_w->color = node->parent->color;
-			node->parent->color = BLACK;
-			node_w->right->color = BLACK;
-			_red_black_left_rotate(node->parent);
-			node = tree_root();
-		}
-	} else {
-		node_p node_w = node->parent->left;
-		if (node_w->color == RED) {
-			node_w->color = BLACK;
-			node->parent->color = RED;
-			_red_black_right_rotate(node->parent);
-			node_w = node->parent->left;
-		}
-		if ((node_w->right->color == BLACK) && (node_w->left->color == BLACK)) {
-			node_w->color = RED;
-			node = node->parent;
-		} else {
-			if (node_w->left->color == BLACK) {
-				node_w->right->color = BLACK;
+			if ((node_w->left->color == BLACK) && (node_w->right->color == BLACK)) {
 				node_w->color = RED;
-				_red_black_left_rotate(node_w);
+				node = node->parent;
+			} else {
+				if (node_w->right->color == BLACK) {
+					node_w->left->color = BLACK;
+					node_w->color = RED;
+					red_black_right_rotate(node_w);
+					node_w = node->parent->right;
+				}
+				node_w->color = node->parent->color;
+				node->parent->color = BLACK;
+				node_w->right->color = BLACK;
+				red_black_left_rotate(node->parent);
+				node = tree_root();
+			}
+		} else {
+			node_p node_w = node->parent->left;
+			if (node_w->color == RED) {
+				node_w->color = BLACK;
+				node->parent->color = RED;
+				red_black_right_rotate(node->parent);
 				node_w = node->parent->left;
 			}
-			node_w->color = node->parent->color;
-			node->parent->color = BLACK;
-			node_w->left->color = BLACK;
-			_red_black_right_rotate(node->parent);
-			node = tree_root();
+			if ((node_w->right->color == BLACK) && (node_w->left->color == BLACK)) {
+				node_w->color = RED;
+				node = node->parent;
+			} else {
+				if (node_w->left->color == BLACK) {
+					node_w->right->color = BLACK;
+					node_w->color = RED;
+					red_black_left_rotate(node_w);
+					node_w = node->parent->left;
+				}
+				node_w->color = node->parent->color;
+				node->parent->color = BLACK;
+				node_w->left->color = BLACK;
+				red_black_right_rotate(node->parent);
+				node = tree_root();
+			}
 		}
 	}
-        node->color = BLACK;
+	node->color = BLACK;
 }
 void red_black_delete_fixup(node_p node)
 {
@@ -604,7 +615,7 @@ void red_black_delete_fixup(node_p node)
 static void _red_black_transplant(node_p node, node_p new_subtree)
 {
 	if (!node->parent) {
-		_root = new_subtree;
+		_tree_root = new_subtree;
 	} else if (node == node->parent->left) {
 		node->parent->left = new_subtree;
 	} else {
@@ -668,7 +679,7 @@ void* red_black_delete(node_p node)
 			tmp->right = node->right;
 			tmp->right->parent = tmp;
 		}
-		_red_black_transplant(node, node_y);
+		_red_black_transplant(node, tmp);
 		tmp->left = node->left;
 		tmp->left->parent = tmp;
 		tmp->color = node->color;

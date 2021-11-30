@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <stdboo.h>
+#include <stdbool.h>
 
 // debug printing
 #define DEBUG 1
@@ -35,7 +35,7 @@ typedef struct node_s {
 } node_t;
 typedef struct node_s* node_p;
 
-node_p _root;
+node_p _tree_root;
 
 // public
 node_p tree_root(void);
@@ -55,7 +55,7 @@ void red_black_left_rotate(node_p node);
 void red_black_right_rotate(node_p node);
 void red_black_insert_fixup(node_p node);
 void red_black_insert(uint64_t key, void* data);
-void red_black_delete(node_p node);
+void* red_black_delete(node_p node);
 
 // private (access for testing interface)
 void red_black_insert_fixup(node_p node);
