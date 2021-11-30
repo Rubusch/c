@@ -77,10 +77,7 @@ int main(int argc, char **argv)
         /* SA_SIGINFO: tell sigaction() to use the sa_sigaction field,
 	 * not sa_handler */
 	saction.sa_flags = SA_SIGINFO;
-
 	sigaction(SIGALRM, &saction, NULL);
-
-
 	puts("wait 30 secs - then alarm, prg ends");
 
 	// issues a SIGALRM int 30 sec
