@@ -1,24 +1,32 @@
 // pthread_join.c
 /*
-  create a thread either "joinable" (synchronized) or "detachable" (independent)
+  create a thread either "joinable" (synchronized) or "detachable"
+  (independent)
 
   - better to do so, even if it won't be used later on
   - a "joinable" thread can be "detached" but not the other way round
 
+
   typical 4 step process to declare a thread in case of detach:
   1. declare a pthread attribute variable of the type pthread_attr_t
   2. initialize the attribute variable with pthread_attr_init()
-  3. set the attribute "detachestate" with pthread_attr_setdetachstate() to
-PTHREAD_CREATE_JOINABLE
+  3. set the attribute "detachestate" with
+     pthread_attr_setdetachstate() to PTHREAD_CREATE_JOINABLE
   4. when done, free library resources used by the attribute with
-pthread_attr_destroy()
+     pthread_attr_destroy()
 
 
-  pthread_join(thread_id, detachstate)           - joins a thread
-(synchronization) pthread_detach(thread_id, detachstate)         - detaches a
-thread (independance) pthread_attr_setdetachstate(attr, detachstate) - sets the
-status of a thread "detachable"/"joinable" pthread_attr_getdetachstate(attr,
-detachstate) - returns the detachstate of a thread, "detachable"/"joinable"
+  pthread_join(thread_id, detachstate)
+  - joins a thread (synchronization)
+
+  pthread_detach(thread_id, detachstate)
+  - detaches a thread (independance)
+
+  pthread_attr_setdetachstate(attr, detachstate)
+  - sets the status of a thread "detachable"/"joinable"
+
+  pthread_attr_getdetachstate(attr, detachstate)
+  - returns the detachstate of a thread, "detachable"/"joinable"
 //*/
 
 #include <stdio.h>
