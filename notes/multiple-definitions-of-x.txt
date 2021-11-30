@@ -1,0 +1,50 @@
+issue: Multiple definition of 'X'
+
+REFERENCES
+
+http://www.richelbilderbeek.nl/CppLinkErrorMultipleDefinition.htm
+https://www.geeksforgeeks.org/what-are-static-functions-in-c/
+
+
+
+
+
+Multiple definition of 'X' is a link error. Multiple definition of 'X'
+is caused when the linker encounters multiple definitions of the same
+(member) function.
+
+    #ifndef A_H
+    #define A_H
+
+    struct A
+    {
+      A();
+    };
+
+    #include <iostream>
+
+    A::A() { std::cout << "Hi\n"; }
+
+    #endif // A_H
+
+
+This header file contains both a declaration and definition of the
+constructor of class A.
+
+'Huh, but there is an #include guard!', you might think. Correct, this
+does prevent the compile error 'Redefinition of '. But the
+(non-inline) definition of the constructor of class A will be present
+in all translation units that #include this header file.
+
+This is an example of data (in this case a member function) with
+external linkage. Avoid data with external linkage at file scope.
+
+
+fix:
+ - put the declarations in header files, put the definitions in
+   implementation files
+
+alternatively
+ - avoid data with external linkage at file scope
+ - avoid non-inline function definitions in header files
+ - ensure the header file is used by exactly one unit
