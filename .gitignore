@@ -21,3 +21,5 @@ callgrind.*
 *.dot
 *.png
 
+## etags
+TAGS
