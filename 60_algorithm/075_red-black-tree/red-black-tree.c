@@ -25,22 +25,25 @@ static void _tree_failure(const char* msg)
 #ifdef DEBUG
 static void _tree_inorder_walk(FILE *fp, node_p node, const char* label)
 {
-	if (node) {
-		_tree_inorder_walk(fp, node->left, "L");
-		if (node->parent) {
-			fprintf(fp, "%lld -- %lld [ label=\"%s\" ];\n",
-				node->parent->key, node->key, label);
-		} else {
-			fprintf(fp, "%lld;\n", node->key);
-		}
-		fprintf(fp, "%lld [style=filled, %s];\n",
-			node->key,
-			(node->color == RED) ? "fillcolor=red"
-			: "fontcolor=white, fillcolor=black");
-		_tree_inorder_walk(fp, node->right, "R");
+	if (!node) {
+		return;
 	}
+
+	_tree_inorder_walk(fp, node->left, "L");
+	if (node->parent) {
+		fprintf(fp, "%lld -- %lld [ label=\"%s\" ];\n",
+			node->parent->key, node->key, label);
+	} else {
+		fprintf(fp, "%lld;\n", node->key);
+	}
+	fprintf(fp, "%lld [style=filled, %s];\n",
+		node->key,
+		(node->color == RED) ? "fillcolor=red"
+		: "fontcolor=white, fillcolor=black");
+	_tree_inorder_walk(fp, node->right, "R");
 }
 #endif
+
 
 /* public */
 
@@ -54,7 +57,13 @@ void tree_print_dot(const char* filename, node_p node)
 	fprintf(fp, "{\n");
 	if (node->left) _tree_inorder_walk(fp, node->left, "L");
 	if (node->right) _tree_inorder_walk(fp, node->right, "R");
-	if (!node->left && !node->right) fprintf(fp, "%lld;\n", node->key);
+	if (!node->left && !node->right) {
+		fprintf(fp, "%lld [style=filled, %s];\n",
+			node->key,
+			(node->color == RED)
+			? "fillcolor=red"
+			: "fontcolor=white, fillcolor=black");
+	}
 	fprintf(fp, "}\n");
 	fclose(fp);
 #endif
@@ -408,12 +417,7 @@ void red_black_right_rotate(node_p node)
 */
 static void _red_black_insert_fixup(node_p node)
 {
-	if (!node->parent) {
-		node->color = BLACK;
-		return;
-	}
-
-	while (node->parent->color == RED) {
+	while ((node->parent != NULL) && (node->parent->color == RED)) {
 		if (node->parent == node->parent->parent->left) {
 			node_p node_y = node->parent->parent->right;
 			if (node_y->color == RED) {
@@ -447,7 +451,7 @@ static void _red_black_insert_fixup(node_p node)
 				red_black_left_rotate(node->parent->parent); // also rotation exchanged?
 			}
 		}
-	}
+	} /* while */
 	_tree_root->color = BLACK;
 }
 void red_black_insert_fixup(node_p node)
@@ -475,7 +479,7 @@ void red_black_insert_fixup(node_p node)
     y.right = z
   z.left = T.nil
   z.right = T.nil
-OA  z.color = RED
+  z.color = RED
   RB-INSERT-FIXUP(T, z)
 */
 void red_black_insert(uint64_t key, void* data)
