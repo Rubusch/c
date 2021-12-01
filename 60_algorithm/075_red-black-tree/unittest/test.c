@@ -56,7 +56,7 @@ void test_tree_root(void)
 	tree_print_dot("root.dot", node);
 
 	// delete
-/*
+//*
 	red_black_delete(node);
 	free(value);
 /*/
@@ -84,7 +84,7 @@ void test_tree_get_data(void)
 	CU_ASSERT(NULL != node);
 
 	// delete
-/*
+//*
 	char* value_ret = (char*) red_black_delete(node);
 	CU_ASSERT(*value == *value_ret);
 	free(value);
@@ -146,7 +146,7 @@ void test_tree_print(void)
 	red_black_insert(10, &values[10]);
 	red_black_insert(12, &values[12]);
 	red_black_insert(14, &values[14]);
-
+// */
 	// verification
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));

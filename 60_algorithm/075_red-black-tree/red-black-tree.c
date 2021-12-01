@@ -57,13 +57,13 @@ void tree_print_dot(const char* filename, node_p node)
 	fprintf(fp, "{\n");
 	if (node->left) _tree_inorder_walk(fp, node->left, "L");
 	if (node->right) _tree_inorder_walk(fp, node->right, "R");
-	if (!node->left && !node->right) {
+//	if (!node->left && !node->right) {
 		fprintf(fp, "%lld [style=filled, %s];\n",
 			node->key,
 			(node->color == RED)
 			? "fillcolor=red"
 			: "fontcolor=white, fillcolor=black");
-	}
+//	}
 	fprintf(fp, "}\n");
 	fclose(fp);
 #endif
@@ -598,7 +598,9 @@ static void _red_black_delete_fixup(node_p node)
 			}
 		}
 	}
-	node->color = BLACK;
+	if (node) {
+		node->color = BLACK;
+	}
 }
 void red_black_delete_fixup(node_p node)
 {
@@ -618,6 +620,7 @@ void red_black_delete_fixup(node_p node)
  */
 static void _red_black_transplant(node_p node, node_p new_subtree)
 {
+	// replace (down)
 	if (!node->parent) {
 		_tree_root = new_subtree;
 	} else if (node == node->parent->left) {
@@ -626,7 +629,10 @@ static void _red_black_transplant(node_p node, node_p new_subtree)
 		node->parent->right = new_subtree;
 	}
 
-	new_subtree->parent = node->parent;
+	// set new parent (up)
+	if (new_subtree) {
+		new_subtree->parent = node->parent;
+	}
 }
 void red_black_transplant(node_p node, node_p new_subtree)
 {
