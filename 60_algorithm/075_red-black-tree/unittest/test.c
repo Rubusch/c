@@ -40,6 +40,7 @@ void test_tree_root(void)
 	// empty
 	node_p node = tree_root();
 	CU_ASSERT(NULL == node);
+	if (NULL != node) return;
 
 	// set root
 	char *value = malloc(sizeof(*value));
@@ -56,15 +57,8 @@ void test_tree_root(void)
 	tree_print_dot("root.dot", node);
 
 	// delete
-//*
-	red_black_delete(node);
+	red_black_delete(&node);
 	free(value);
-/*/
-	free(node);
-	node = NULL; // FIXME - memory leak, until red_black_delete() is working
-	_tree_root = NULL;
-	free(value);
-// */
 }
 
 void test_tree_get_data(void)
@@ -84,18 +78,11 @@ void test_tree_get_data(void)
 	CU_ASSERT(NULL != node);
 
 	// delete
-//*
-	char* value_ret = (char*) red_black_delete(node);
+	char* value_ret = (char*) red_black_delete(&node);
 	CU_ASSERT(*value == *value_ret);
 	free(value);
-/*/
-	free(node);
-	node = NULL; // FIXME - memory leak, until red_black_delete() is working
-	_tree_root = NULL;
-	free(value);
-// */
 }
-// */
+
 
 void test_tree_print(void)
 {
@@ -146,28 +133,20 @@ void test_tree_print(void)
 	red_black_insert(10, &values[10]);
 	red_black_insert(12, &values[12]);
 	red_black_insert(14, &values[14]);
-// */
+
 	// verification
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
 	tree_print_dot("tree.dot", node);
 
 	// delete
-/*
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		red_black_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
 
 	free(values);
-/*/
-	free(node);
-	node = NULL; // FIXME - memory leak, until red_black_delete() is working
-	_tree_root = NULL;
-	free(values);
-// */
 }
-// */
+
 /*
 void test_tree_transplant(void)
 {
@@ -1009,18 +988,15 @@ int main(void)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
+#if defined BASICTEST
 	CU_basic_run_tests();
+#else
+	CU_curses_run_tests();
+#endif
 	fprintf(stderr, "\n");
 	CU_basic_show_failures(CU_get_failure_list());
 	fprintf(stderr, "\n\n");
 
-#if defined BASICTEST
-	CU_automated_run_tests();
-#else
-	CU_curses_run_tests();
-#endif
-
-	/* clean up registry and return */
 	CU_cleanup_registry();
 	return CU_get_error();
 }

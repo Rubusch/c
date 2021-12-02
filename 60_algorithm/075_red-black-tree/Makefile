@@ -6,8 +6,9 @@ TARGET_BASIC_TEST = basictest.exe
 OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
-CC ?= gcc
-CFLAGS += -g -Wall
+CC = gcc
+CFLAGS += -g -Wall #-fsanitize=address -fno-omit-frame-pointer
+LD_PRELOAD = libasan.so
 LDFLAGS += -lcunit
 RM = rm -f
 
@@ -15,13 +16,13 @@ RM = rm -f
 	$(CC) -c $(CFLAGS) $<
 
 $(TARGET_TEST): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ unittest/test.c ${HEADERS_TEST} $(OBJECTS) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ unittest/test.c $(HEADERS_TEST) $(OBJECTS) $(LDFLAGS)
 
 all: $(TARGET_TEST)
 
 ## for automation
 $(TARGET_BASIC_TEST): $(OBJECTS)
-	$(CC) $(CFLAGS) -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(OBJECTS) $(LDFLAGS)
+	$(CC) $(CFLAGS) -DBASICTEST -o $@ unittest/test.c $(HEADERS_TEST) $(OBJECTS) $(LDFLAGS)
 
 .PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST)
 

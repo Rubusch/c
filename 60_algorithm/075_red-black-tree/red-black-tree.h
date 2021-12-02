@@ -1,10 +1,22 @@
 /*
   red black tree
 
-  TODO         
+  In addition to the requirements imposed on a binary search tree the
+  following must be satisfied by a red–black tree:
+
+  - Each node is either red or black.
+
+  - All NIL nodes (NIL connection) are considered black.
+
+  - A red node does not have a red child.
+
+  - Every path from a given node to any of its descendant NIL nodes
+    goes through the same number of black nodes.
+
 
   REFERENCES
   - Algorigthms [Cormen, Leiserson, Rivest, Stein]
+  - Sedgewick [2008]
  */
 
 #ifndef RED_BLACK_TREE_H
@@ -35,7 +47,6 @@ typedef struct node_s {
 } node_t;
 typedef struct node_s* node_p;
 
-node_p _tree_root;
 
 // public
 node_p tree_root(void);
@@ -55,7 +66,7 @@ void red_black_left_rotate(node_p node);
 void red_black_right_rotate(node_p node);
 void red_black_insert_fixup(node_p node);
 void red_black_insert(uint64_t key, void* data);
-void* red_black_delete(node_p node);
+void* red_black_delete(node_p *deletee);
 
 // private (access for testing interface)
 void red_black_insert_fixup(node_p node);
