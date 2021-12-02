@@ -284,9 +284,10 @@ void tree_transplant(node_p node, node_p new_subtree)
     y.left = z.left
     y.left.p = y
  */
-void* tree_delete(node_p node)
+void* tree_delete(node_p *deletee)
 {
-	if (!node) return NULL;
+	if (NULL == (*deletee)) return NULL;
+	node_p node = *deletee;
 	if (!node->left) {
 		// left of destination node is NULL
 		_tree_transplant(node, node->right);
@@ -307,8 +308,8 @@ void* tree_delete(node_p node)
 	}
 
 	void* ptr = node->data;
-	if (_tree_root == node) _tree_root = NULL;
-	free(node);
+	if (!node->parent) _tree_root = NULL;
+	free(*deletee); *deletee = NULL;
 	return ptr;
 }
 

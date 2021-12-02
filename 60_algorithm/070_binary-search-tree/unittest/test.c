@@ -52,7 +52,7 @@ void test_tree_root(void)
 	CU_ASSERT(NULL != node);
 
 	// delete
-	tree_delete(node);
+	tree_delete(&node);
 	free(value);
 }
 
@@ -73,7 +73,7 @@ void test_tree_get_data(void)
 	CU_ASSERT(NULL != node);
 
 	// delete
-	char* value_ret = (char*) tree_delete(node);
+	char* value_ret = (char*) tree_delete(&node);
 	CU_ASSERT(*value == *value_ret);
 	free(value);
 }
@@ -134,9 +134,8 @@ void test_tree_print(void)
 	tree_print_dot("tree.dot", node);
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -196,7 +195,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// left
@@ -222,7 +221,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// right subtree with valid root->left
@@ -256,7 +255,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// right, right, nil
@@ -295,7 +294,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// right, right, right, nil
@@ -335,7 +334,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// left, nil
@@ -370,7 +369,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// left, left, nil
@@ -409,7 +408,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// left, left, left, nil
@@ -449,7 +448,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	// right, full
@@ -489,7 +488,7 @@ void test_tree_transplant(void)
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -567,9 +566,8 @@ void test_tree_minimum(void)
 	CU_ASSERT(14 == node->key);
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -647,9 +645,8 @@ void test_tree_maximum(void)
 	CU_ASSERT(0 == node->key);
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -718,9 +715,8 @@ void test_tree_search(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -789,9 +785,8 @@ void test_tree_search_iterative(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -866,9 +861,8 @@ void test_tree_successor(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -943,9 +937,8 @@ void test_tree_predecessor(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		tree_delete(&node);
 	}
 
 	free(values);
@@ -982,16 +975,15 @@ int main(void)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
+#if defined BASICTEST
 	CU_basic_run_tests();
+#else
+	CU_curses_run_tests();
+#endif
 	fprintf(stderr, "\n");
 	CU_basic_show_failures(CU_get_failure_list());
 	fprintf(stderr, "\n\n");
 
-#if defined BASICTEST
-	CU_automated_run_tests();
-#else
-	CU_curses_run_tests();
-#endif
 
 	/* clean up registry and return */
 	CU_cleanup_registry();
