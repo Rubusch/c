@@ -6,7 +6,11 @@
 
 #include <stdint.h>
 
+
 /* private */
+
+static node_p _tree_root;
+
 
 static void _tree_failure(const char* msg)
 {
@@ -58,7 +62,7 @@ void tree_print_dot(const char* filename, node_p node)
 
 node_p tree_root(void)
 {
-	return _root;
+	return _tree_root;
 }
 
 void* tree_get_data(node_p node)
@@ -206,22 +210,23 @@ void tree_insert(uint64_t key, void* data)
 {
 	node_p parent = NULL;
 	node_p tmp = tree_root();
-	while (tmp != NULL) {
+	while (tmp) {
 		parent = tmp;
-		if (key < tmp->key)
+		if (key < tmp->key) {
 			tmp = tmp->left;
-		else
+		} else {
 			tmp = tmp->right;
+		}
 	}
 	node_p node = malloc(sizeof(*node));
 	if (!node) _tree_failure("allocation failed");
-	node->parent = parent;
 	node->key = key;
 	node->data = data;
 	node->left = NULL;
 	node->right = NULL;
+	node->parent = parent;
 	if (!parent) {
-		_root = node; // tree was empty
+		_tree_root = node; // tree was empty
 	} else if (node->key < parent->key) {
 		parent->left = node;
 	} else {
@@ -245,7 +250,7 @@ static void _tree_transplant(node_p node, node_p new_subtree)
 {
 	// replace (down)
 	if (!node->parent) {
-		_root = new_subtree;
+		_tree_root = new_subtree;
 	} else if (node == node->parent->left) {
 		node->parent->left = new_subtree;
 	} else {
@@ -283,13 +288,13 @@ void* tree_delete(node_p node)
 {
 	if (!node) return NULL;
 	if (!node->left) {
-		// left of destination location is NULL
+		// left of destination node is NULL
 		_tree_transplant(node, node->right);
 	} else if (!node->right) {
-		// right of destination location is NULL
+		// right of destination node is NULL
 		_tree_transplant(node, node->left);
 	} else {
-		// destination location has branches to reconnect
+		// destination node has branches to reconnect
 		node_p tmp = tree_minimum(node->right);
 		if (tmp->parent != node) {
 			_tree_transplant(tmp, tmp->right);
@@ -302,6 +307,7 @@ void* tree_delete(node_p node)
 	}
 
 	void* ptr = node->data;
+	if (_tree_root == node) _tree_root = NULL;
 	free(node);
 	return ptr;
 }

@@ -140,7 +140,6 @@ void test_tree_print(void)
 	}
 
 	free(values);
-// */
 }
 
 void test_tree_transplant(void)
@@ -174,7 +173,7 @@ void test_tree_transplant(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-//*	// right
+	// right
 	tree_insert(7, &values[7]);
 	tree_insert(11, &values[11]);
 	tree_insert(9, &values[9]);
@@ -199,9 +198,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// left
+	// left
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(1, &values[1]);
@@ -226,9 +224,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// right subtree with valid root->left
+	// right subtree with valid root->left
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -261,9 +258,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// right, right, nil
+	// right, right, nil
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -301,9 +297,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// right, right, right, nil
+	// right, right, right, nil
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -342,9 +337,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// left, nil
+	// left, nil
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -378,9 +372,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// left, left, nil
+	// left, left, nil
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -418,9 +411,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// left, left, left, nil
+	// left, left, left, nil
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -459,9 +451,8 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
 
-//*	// right, full
+	// right, full
 	tree_insert(7, &values[7]);
 	tree_insert(3, &values[3]);
 	tree_insert(11, &values[11]);
@@ -500,7 +491,7 @@ void test_tree_transplant(void)
 	for (node = tree_root(); node != NULL; node = tree_root()) {
 		tree_delete(node);
 	}
-// */
+
 	free(values);
 }
 

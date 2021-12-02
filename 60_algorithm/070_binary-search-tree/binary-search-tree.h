@@ -32,7 +32,6 @@ typedef struct node_s {
 } node_t;
 typedef struct node_s* node_p;
 
-node_p _root;
 
 // public
 node_p tree_root(void);
