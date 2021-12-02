@@ -308,7 +308,12 @@ void* tree_delete(node_p *deletee)
 	}
 
 	void* ptr = node->data;
+/*
+  NB: don't do this here!!! executing valgrind then will show that
+  this introduces a memory leak!
+
 	if (!node->parent) _tree_root = NULL;
+// */
 	free(*deletee); *deletee = NULL;
 	return ptr;
 }
