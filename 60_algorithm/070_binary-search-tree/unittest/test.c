@@ -984,8 +984,6 @@ int main(void)
 	CU_basic_show_failures(CU_get_failure_list());
 	fprintf(stderr, "\n\n");
 
-
-	/* clean up registry and return */
 	CU_cleanup_registry();
 	return CU_get_error();
 }
