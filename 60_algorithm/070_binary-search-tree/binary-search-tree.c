@@ -317,5 +317,3 @@ void* tree_delete(node_p *deletee)
 	free(*deletee); *deletee = NULL;
 	return ptr;
 }
-
-
