@@ -70,7 +70,7 @@ void* red_black_delete(node_p *deletee);
 
 // private (access for testing interface)
 void red_black_insert_fixup(node_p node);
-void red_black_delete_fixup(node_p node);
+void red_black_delete_fixup(node_p node, node_p parent);
 void red_black_transplant(node_p node, node_p new_subtree);
 //void tree_transplant(node_p node, node_p new_subtree);
 

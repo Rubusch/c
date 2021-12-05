@@ -5,6 +5,7 @@
 #include "red-black-tree.h"
 
 #include <stdint.h>
+#include <stdbool.h>
 
 
 /* private */
@@ -567,28 +568,28 @@ void red_black_insert(uint64_t key, void* data)
       <same as then clause with "right" and "left" exchanged>
   x.color = BLACK
 */
-static void _red_black_delete_fixup(node_p node)
+static void _red_black_delete_fixup(node_p node, node_p parent)
 {
-	if (!node) return; // TODO check if this is correct, NULL is BLACK
 /*
+	if (!node) return; // TODO check if this is correct, NULL is BLACK
 	node_p sibling;
 	while ((node != tree_root()) && (node->color == BLACK)) {
 		if (node == node->parent->left) {
 			// is left child
-			sibling = node->parent->right;
+			sibling = node->parent->right; 
 			if (sibling->color == RED) {
 				sibling->color = BLACK;
 				node->parent->color = RED;
 				red_black_left_rotate(node->parent);
 				sibling = node->parent->right;
 			}
-			if ((sibling->left->color == BLACK)
-			    && (sibling->right->color == BLACK)) {
+			if ((sibling->left->color == BLACK) 
+			    && (sibling->right->color == BLACK)) { 
 				sibling->color = RED;
 				node = node->parent;
 			} else {
-				if (sibling->right->color == BLACK) {
-					sibling->left->color = BLACK;
+				if (sibling->right->color == BLACK) { 
+					sibling->left->color = BLACK; 
 					sibling->color = RED;
 					red_black_right_rotate(sibling);
 					sibling = node->parent->right;
@@ -633,71 +634,111 @@ static void _red_black_delete_fixup(node_p node)
 /*/
 // TODO parameter node -> child
 // TODO change to pass parent instead of child, child could be NULL (decoupled, no NIL nodes here)
+	if (!parent) return; // TODO check if this is correct, NULL is BLACK
 
 	node_p sibling;
-	while ((node != tree_root()) && (node->color == BLACK)) {
-		if (node == node->parent->left) {
+	color_t node_color = (node == NULL) ? BLACK : node->color; // node can be NULL
+	while (node != tree_root() && (node_color == BLACK || node == NULL)) {
+		if (node == parent->left) { // parent->left == NULL and node is NULL? nvm, this or the other case deals with empty childs
 			// is left child
-			sibling = node->parent->right;
-			if (sibling->color == RED) {
+			sibling = parent->right; // can be NULL
+			bool is_sibling_red = (sibling == NULL) ? false : (sibling->color == RED);
+			if (is_sibling_red) {
+				/* case 1
+				 */
 				sibling->color = BLACK;
-				node->parent->color = RED;
-				red_black_left_rotate(node->parent);
-				sibling = node->parent->right;
+				parent->color = RED;
+				red_black_left_rotate(parent);
+				sibling = parent->right;
 			}
-			if ((sibling->left->color == BLACK)
-			    && (sibling->right->color == BLACK)) {
-				sibling->color = RED;
-				node = node->parent;
+
+			if (sibling == NULL) {
+				node = parent;
+				parent = node->parent;
+
 			} else {
-				if (sibling->right->color == BLACK) {
-					sibling->left->color = BLACK;
+				bool is_sibling_left_black = (sibling->left == NULL) ? true : (sibling->left->color == BLACK);
+				bool is_sibling_right_black = (sibling->right == NULL) ? true : (sibling->right->color == BLACK);
+				if (is_sibling_left_black && is_sibling_right_black) {
+					/* case 2
+					 */
 					sibling->color = RED;
-					red_black_right_rotate(sibling);
-					sibling = node->parent->right;
+					node = parent;
+					parent = node->parent;
+				} else {
+					if ((sibling->left != NULL) && is_sibling_right_black) {
+						/* case 3
+						 */
+						sibling->left->color = BLACK;
+						sibling->color = RED;
+						red_black_right_rotate(sibling);
+						sibling = parent->right;
+					}
+					/* case 4
+					 */
+					sibling->color = parent->color;
+					parent->color = BLACK;
+					if (sibling->right) sibling->right->color = BLACK;
+					red_black_left_rotate(parent);
+					node = tree_root();
+					parent = node->parent; // NULL
 				}
-				sibling->color = node->parent->color;
-				node->parent->color = BLACK;
-				sibling->right->color = BLACK;
-				red_black_left_rotate(node->parent);
-				node = tree_root();
 			}
 		} else {
 			// is right child
-			sibling = node->parent->left;
-			if (sibling->color == RED) {
+			sibling = parent->left;
+			bool is_sibling_red = (sibling == NULL) ? false : (sibling->color == RED);
+			if (is_sibling_red) {
+				/* case 1
+				 */
 				sibling->color = BLACK;
-				node->parent->color = RED;
-				red_black_right_rotate(node->parent);
-				sibling = node->parent->left;
+				parent->color = RED;
+				red_black_right_rotate(parent);
+				sibling = parent->left;
 			}
-			if ((sibling->right->color == BLACK)
-			    && (sibling->left->color == BLACK)) {
-				sibling->color = RED;
-				node = node->parent;
+
+			if (sibling == NULL) {
+				node = parent;
+				parent = node->parent;
 			} else {
-				if (sibling->left->color == BLACK) {
-					sibling->right->color = BLACK;
+				bool is_sibling_left_black = (sibling->left == NULL) ? true : (sibling->left->color == BLACK);
+				bool is_sibling_right_black = (sibling->right == NULL) ? true : (sibling->right->color == BLACK);
+				if (is_sibling_left_black && is_sibling_right_black) {
+					/* case 2
+					 */
 					sibling->color = RED;
-					red_black_left_rotate(sibling);
-					sibling = node->parent->left;
+					node = parent;
+					parent = node->parent;
+				} else {
+					if ((sibling->right == NULL) && is_sibling_left_black) {
+						/* case 3
+						 */
+						sibling->right->color = BLACK;
+						sibling->color = RED;
+						red_black_left_rotate(sibling);
+						sibling = parent->left;
+					}
+					/* case 4
+					 */
+					sibling->color = parent->color;
+					parent->color = BLACK;
+					if (sibling->left) sibling->left->color = BLACK;
+					red_black_right_rotate(parent);
+					node = tree_root();
+					parent = node->parent; // NULL
 				}
-				sibling->color = node->parent->color;
-				node->parent->color = BLACK;
-				sibling->left->color = BLACK;
-				red_black_right_rotate(node->parent);
-				node = tree_root();
 			}
 		}
+		node_color = (node == NULL) ? BLACK : node->color;
 	}
 	if (node) {
 		node->color = BLACK;
 	}
 // */
 }
-void red_black_delete_fixup(node_p node)
+void red_black_delete_fixup(node_p node, node_p parent)
 {
-	_red_black_delete_fixup(node);
+	_red_black_delete_fixup(node, parent);
 }
 
 /*
@@ -764,16 +805,19 @@ void* red_black_delete(node_p *deletee)
 {
 //*
 	node_p node = *deletee;
+	node_p parent = NULL;
 	node_p child = NULL;
 	color_t orig_color = node->color;
 	if (!node) return NULL;
 	if (!node->left) {
 		// left of destination node is NULL
 		child = node->right;
+		parent = node->parent; // child will replace "node"
 		_red_black_transplant(node, node->right);
 	} else if (!node->right) {
 		// right of destination node is NULL
 		child = node->left;
+		parent = node->parent;
 		_red_black_transplant(node, node->left);
 	} else {
 		// destination node has branches to reconnect
@@ -789,27 +833,33 @@ void* red_black_delete(node_p *deletee)
 			tmp->right->parent = tmp;
 		}
 		_red_black_transplant(node, tmp);
+		//parent = node->parent;
 		tmp->left = node->left;
 		if (tmp->left) tmp->left->parent = tmp;
 /*/
 		child = tmp->right;
+		parent = tmp;    
 //		if (tmp->parent == node) {
 //			child->parent = tmp;
 //		} else {
 		if (tmp->parent != node) {
 //			_red_black_transplant(node, tmp);
 			_red_black_transplant(tmp, tmp->right);
+			parent = tmp->parent;    
 			tmp->right = node->right;
 			tmp->right->parent = tmp;
 		}
 		_red_black_transplant(node, tmp);
+//		parent = node->parent;    
 		tmp->left = node->left;
 		if (tmp->left) tmp->left->parent = tmp;
 // */
 		tmp->color = node->color;
 	}
-	if (child != NULL && orig_color == BLACK) { // TODO check "child != NULL"
-		_red_black_delete_fixup(child);
+//	if (child != NULL && orig_color == BLACK) { // TODO check "child != NULL"
+//	if (child == NULL || orig_color == BLACK) { // TODO check "child != NULL"
+	if (orig_color == BLACK && parent != NULL) { // TODO check "child != NULL"
+		_red_black_delete_fixup(child, parent);
 	}
 
 	void *ptr = node->data;
