@@ -1,24 +1,30 @@
 /*
   cunit - tests
 
+  NB: red_black_delete_fixup() and red_black_insert_fixup() should be
+  tested separately, i.e. insert and insert_fixup should be divided
+  into separate test cases, as also delete and delete_fixup. Anyhow,
+  this implies fabricating certain tree situations, and confirm a
+  correct red-black re-balancing, especially in the fixup
+  functions. As also covering all NULL cases. The current test just
+  tests the entire insert-fixup and delete-fixup situation +/-
+  sufficient for demo cases.
+
+
   compile
   $ make clean && make basictest.exe
 
-TODO          
   test
   $ ./basictest.exe
 
   verification
   $ valgrind --track-origins=yes --leak-check=full ./basictest.exe
-
-  ==30041== HEAP SUMMARY:
-  ==30041==     in use at exit: 0 bytes in 0 blocks
-  ==30041==   total heap usage: 386 allocs, 386 frees, 18,783 bytes allocated
-  ==30041==
-  ==30041== All heap blocks were freed -- no leaks are possible
-  ==30041==
-  ==30041== For counts of detected and suppressed errors, rerun with: -v
-  ==30041== ERROR SUMMARY: 36696 errors from 256 contexts (suppressed: 464 from 1)
+    ...
+    ==17766== HEAP SUMMARY:
+    ==17766==     in use at exit: 0 bytes in 0 blocks
+    ==17766==   total heap usage: 307 allocs, 307 frees, 202,320 bytes allocated
+    ==17766==
+    ==17766== All heap blocks were freed -- no leaks are possible
 
   graphical representation
   (via print function)
@@ -58,8 +64,6 @@ void test_tree_root(void)
 	CU_ASSERT(NULL == node->left);
 	CU_ASSERT(NULL == node->right);
 
-//	tree_print_dot("root.dot", node);
-
 	// delete
 	red_black_delete(&node);
 	free(value);
@@ -90,7 +94,6 @@ void test_tree_get_data(void)
 	CU_ASSERT(*value == *value_ret);
 	free(value);
 }
-
 
 void test_tree_print(void)
 {
@@ -660,7 +663,7 @@ void test_red_black_delete_fixup(void)
 		CU_ASSERT(BLACK == node->right->color);
 		CU_ASSERT(NULL == node->right->left);
 		CU_ASSERT(NULL == node->right->right);
-
+// */
 		// delete
 		for (node = tree_root(); node != NULL; node = tree_root()) {
 			red_black_delete(&node);
@@ -808,6 +811,7 @@ void test_red_black_delete_fixup(void)
 		red_black_insert(14, &values[14]);
 
 		node = tree_root();
+		tree_print_dot("delete00.dot", node);
 
 		CU_ASSERT( 7 == node->key);
 		CU_ASSERT(NULL == node->parent);
@@ -857,6 +861,7 @@ void test_red_black_delete_fixup(void)
 		// 1. delete 7
 		red_black_delete(&node);
 		node = tree_root();
+		tree_print_dot("delete01.dot", node);
 
 		CU_ASSERT( 8 == node->key);
 		CU_ASSERT(NULL == node->parent);
@@ -903,6 +908,7 @@ void test_red_black_delete_fixup(void)
 		// 2. delete 8
 		red_black_delete(&node);
 		node = tree_root();
+		tree_print_dot("delete02.dot", node);
 
 		CU_ASSERT( 9 == node->key);
 		CU_ASSERT(NULL == node->parent);
@@ -946,6 +952,7 @@ void test_red_black_delete_fixup(void)
 		// 3. delete 9
 		red_black_delete(&node);
 		node = tree_root();
+		tree_print_dot("delete03.dot", node);
 
 		CU_ASSERT(10 == node->key);
 		CU_ASSERT(NULL == node->parent);
@@ -982,7 +989,251 @@ void test_red_black_delete_fixup(void)
 		CU_ASSERT(BLACK == node->right->right->color);
 		CU_ASSERT(NULL == node->right->right->left);
 		CU_ASSERT(NULL == node->right->right->right);
-// */
+
+		// 4. delete 10
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete04.dot", node);
+
+		CU_ASSERT(11 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 3 == node->left->key);
+		CU_ASSERT(RED == node->left->color);
+		CU_ASSERT(13 == node->right->key);
+		CU_ASSERT(RED == node->right->color);
+		CU_ASSERT( 1 == node->left->left->key);
+		CU_ASSERT(BLACK == node->left->left->color);
+		CU_ASSERT(NULL == node->left->left->left); // node 0 not set
+		CU_ASSERT( 5 == node->left->right->key);
+		CU_ASSERT(BLACK == node->left->right->color);
+		CU_ASSERT(12 == node->right->left->key);
+		CU_ASSERT(BLACK == node->right->left->color);
+		CU_ASSERT(NULL == node->right->left->left);
+		CU_ASSERT(NULL == node->right->left->right);
+		CU_ASSERT( 2 == node->left->left->right->key);
+		CU_ASSERT(RED == node->left->left->right->color);
+		CU_ASSERT(NULL == node->left->left->right->left);
+		CU_ASSERT(NULL == node->left->left->right->right);
+		CU_ASSERT( 4 == node->left->right->left->key);
+		CU_ASSERT(RED == node->left->right->left->color);
+		CU_ASSERT(NULL == node->left->right->left->left);
+		CU_ASSERT(NULL == node->left->right->left->right);
+		CU_ASSERT( 6 == node->left->right->right->key);
+		CU_ASSERT(RED == node->left->right->right->color);
+		CU_ASSERT(NULL == node->left->right->right->left);
+		CU_ASSERT(NULL == node->left->right->right->right);
+		CU_ASSERT(14 == node->right->right->key);
+		CU_ASSERT(BLACK == node->right->right->color);
+		CU_ASSERT(NULL == node->right->right->left);
+		CU_ASSERT(NULL == node->right->right->right);
+
+		// 5. delete 11
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete05.dot", node);
+
+		CU_ASSERT(12 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 3 == node->left->key);
+		CU_ASSERT(RED == node->left->color);
+		CU_ASSERT(13 == node->right->key);
+		CU_ASSERT(BLACK == node->right->color);
+		CU_ASSERT(NULL == node->right->left);
+		CU_ASSERT( 1 == node->left->left->key);
+		CU_ASSERT(BLACK == node->left->left->color);
+		CU_ASSERT(NULL == node->left->left->left); // node 0 not set
+		CU_ASSERT( 5 == node->left->right->key);
+		CU_ASSERT(BLACK == node->left->right->color);
+		CU_ASSERT( 2 == node->left->left->right->key);
+		CU_ASSERT(RED == node->left->left->right->color);
+		CU_ASSERT(NULL == node->left->left->right->left);
+		CU_ASSERT(NULL == node->left->left->right->right);
+		CU_ASSERT( 4 == node->left->right->left->key);
+		CU_ASSERT(RED == node->left->right->left->color);
+		CU_ASSERT(NULL == node->left->right->left->left);
+		CU_ASSERT(NULL == node->left->right->left->right);
+		CU_ASSERT( 6 == node->left->right->right->key);
+		CU_ASSERT(RED == node->left->right->right->color);
+		CU_ASSERT(NULL == node->left->right->right->left);
+		CU_ASSERT(NULL == node->left->right->right->right);
+		CU_ASSERT(14 == node->right->right->key);
+		CU_ASSERT(RED == node->right->right->color);
+		CU_ASSERT(NULL == node->right->right->left);
+		CU_ASSERT(NULL == node->right->right->right);
+
+		// 6. delete 12
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete06.dot", node);
+
+		CU_ASSERT(13 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 3 == node->left->key);
+		CU_ASSERT(RED == node->left->color);
+		CU_ASSERT(14 == node->right->key);
+		CU_ASSERT(BLACK == node->right->color);
+		CU_ASSERT(NULL == node->right->left);
+		CU_ASSERT(NULL == node->right->right);
+		CU_ASSERT( 1 == node->left->left->key);
+		CU_ASSERT(BLACK == node->left->left->color);
+		CU_ASSERT(NULL == node->left->left->left); // node 0 not set
+		CU_ASSERT( 5 == node->left->right->key);
+		CU_ASSERT(BLACK == node->left->right->color);
+		CU_ASSERT( 2 == node->left->left->right->key);
+		CU_ASSERT(RED == node->left->left->right->color);
+		CU_ASSERT(NULL == node->left->left->right->left);
+		CU_ASSERT(NULL == node->left->left->right->right);
+		CU_ASSERT( 4 == node->left->right->left->key);
+		CU_ASSERT(RED == node->left->right->left->color);
+		CU_ASSERT(NULL == node->left->right->left->left);
+		CU_ASSERT(NULL == node->left->right->left->right);
+		CU_ASSERT( 6 == node->left->right->right->key);
+		CU_ASSERT(RED == node->left->right->right->color);
+		CU_ASSERT(NULL == node->left->right->right->left);
+		CU_ASSERT(NULL == node->left->right->right->right);
+
+		// 7. delete 13
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete07.dot", node);
+
+		CU_ASSERT(3 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 1 == node->left->key);
+		CU_ASSERT(BLACK == node->left->color);
+		CU_ASSERT(NULL == node->left->left);
+		CU_ASSERT( 5 == node->right->key);
+		CU_ASSERT(RED == node->right->color);
+		CU_ASSERT( 2 == node->left->right->key);
+		CU_ASSERT(RED == node->left->right->color);
+		CU_ASSERT(NULL == node->left->right->left);
+		CU_ASSERT(NULL == node->left->right->right);
+		CU_ASSERT( 4 == node->right->left->key);
+		CU_ASSERT(BLACK == node->right->left->color);
+		CU_ASSERT(NULL == node->right->left->left);
+		CU_ASSERT(NULL == node->right->left->right);
+		CU_ASSERT(14 == node->right->right->key);
+		CU_ASSERT(BLACK == node->right->right->color);
+		CU_ASSERT(NULL == node->right->right->right);
+		CU_ASSERT( 6 == node->right->right->left->key);
+		CU_ASSERT(RED == node->right->right->left->color);
+		CU_ASSERT(NULL == node->right->right->left->left);
+		CU_ASSERT(NULL == node->right->right->left->right);
+
+		// 8. delete 3
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete08.dot", node);
+
+		CU_ASSERT( 4 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 1 == node->left->key);
+		CU_ASSERT(BLACK == node->left->color);
+		CU_ASSERT(NULL == node->left->left);
+		CU_ASSERT( 6 == node->right->key);
+		CU_ASSERT(RED == node->right->color);
+		CU_ASSERT( 2 == node->left->right->key);
+		CU_ASSERT(RED == node->left->right->color);
+		CU_ASSERT(NULL == node->left->right->left);
+		CU_ASSERT(NULL == node->left->right->right);
+		CU_ASSERT( 5 == node->right->left->key);
+		CU_ASSERT(BLACK == node->right->left->color);
+		CU_ASSERT(NULL == node->right->left->left);
+		CU_ASSERT(NULL == node->right->left->right);
+		CU_ASSERT(14 == node->right->right->key);
+		CU_ASSERT(BLACK == node->right->right->color);
+		CU_ASSERT(NULL == node->right->right->right);
+		CU_ASSERT(NULL == node->right->right->left);
+
+		// 9. delete 4
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete09.dot", node);
+
+		CU_ASSERT( 5 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 1 == node->left->key);
+		CU_ASSERT(BLACK == node->left->color);
+		CU_ASSERT(NULL == node->left->left);
+		CU_ASSERT( 6 == node->right->key);
+		CU_ASSERT(BLACK == node->right->color);
+		CU_ASSERT(NULL == node->right->left);
+		CU_ASSERT( 2 == node->left->right->key);
+		CU_ASSERT(RED == node->left->right->color);
+		CU_ASSERT(NULL == node->left->right->left);
+		CU_ASSERT(NULL == node->left->right->right);
+		CU_ASSERT(14 == node->right->right->key);
+		CU_ASSERT(RED == node->right->right->color);
+		CU_ASSERT(NULL == node->right->right->right);
+		CU_ASSERT(NULL == node->right->right->left);
+
+		// 10. delete 5
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete10.dot", node);
+
+		CU_ASSERT( 6 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT( 1 == node->left->key);
+		CU_ASSERT(BLACK == node->left->color);
+		CU_ASSERT(NULL == node->left->left);
+		CU_ASSERT(14 == node->right->key);
+		CU_ASSERT(BLACK == node->right->color);
+		CU_ASSERT(NULL == node->right->left);
+		CU_ASSERT(NULL == node->right->right);
+		CU_ASSERT( 2 == node->left->right->key);
+		CU_ASSERT(RED == node->left->right->color);
+		CU_ASSERT(NULL == node->left->right->left);
+		CU_ASSERT(NULL == node->left->right->right);
+
+		// 11. delete 6
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete11.dot", node);
+
+		// NB: other red-black trees here result in a 1/2\14 setup (bug?)
+		CU_ASSERT( 1 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT(14 == node->right->key);
+		CU_ASSERT(BLACK == node->right->color);
+		CU_ASSERT(NULL == node->right->right);
+		CU_ASSERT( 2 == node->right->left->key);
+		CU_ASSERT(RED == node->right->left->color);
+		CU_ASSERT(NULL == node->right->left->left);
+		CU_ASSERT(NULL == node->right->left->right);
+
+		// 12. delete 1
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete12.dot", node);
+
+		CU_ASSERT(14 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(BLACK == node->color);
+		CU_ASSERT(NULL == node->right);
+		CU_ASSERT( 2 == node->left->key);
+		CU_ASSERT(RED == node->left->color);
+		CU_ASSERT(NULL == node->left->left);
+		CU_ASSERT(NULL == node->left->right);
+
+		// 13. delete 14
+		red_black_delete(&node);
+		node = tree_root();
+		tree_print_dot("delete13.dot", node);
+
+		CU_ASSERT(2 == node->key);
+		CU_ASSERT(NULL == node->parent);
+		CU_ASSERT(RED == node->color); // EXCEPTION: only a single node is RED
+		CU_ASSERT(NULL == node->left);
+		CU_ASSERT(NULL == node->right);
 
 		// delete
 		for (node = tree_root(); node != NULL; node = tree_root()) {
@@ -990,10 +1241,13 @@ void test_red_black_delete_fixup(void)
 		}
 	}
 
+	// delete
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
+	}
 	free(values);
 }
 
-/*
 void test_tree_transplant(void)
 {
 	node_p node = tree_root();
@@ -1026,324 +1280,60 @@ void test_tree_transplant(void)
 	values[14] = 'O';
 
 	// right
-	tree_insert(7, &values[7]);
-	tree_insert(11, &values[11]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(7, &values[7]);
+	red_black_insert(11, &values[11]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 	node = tree_root();
-	tree_print_dot("tree_transplant_root_right__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
+	tree_print_dot("transplant00.dot", node);
+	CU_ASSERT(9 == node->key);
+	CU_ASSERT(11 == node->right->key);
        	{
 		node = tree_root();
-		tree_transplant(node, node->right);
+		node_p deletee = node->right;
+		red_black_transplant(node->right, node->right->right);
 
 		// delete
-		free(node);
+		free(deletee);
 	}
 
 	node = tree_root();
-	tree_print_dot("tree_transplant_root_right__after.dot", node);
-	CU_ASSERT(11 == node->key);
+	tree_print_dot("transplant01.dot", node);
+	CU_ASSERT(9 == node->key);
+	CU_ASSERT(13 == node->right->key);
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		red_black_delete(&node);
 	}
 
         // left
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(7, &values[7]);
+	red_black_insert(1, &values[1]);
 	node = tree_root();
-	tree_print_dot("tree_transplant_root_left__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
+	tree_print_dot("transplant10.dot", node);
+	CU_ASSERT(3 == node->key);
+	CU_ASSERT(2 == node->left->key);
        	{
 		node = tree_root();
-		tree_transplant(node, node->left);
+		node_p deletee = node->left;
+		red_black_transplant(node->left, node->left->left);
 
 		// delete
-		free(node);
+		free(deletee);
 	}
 
 	node = tree_root();
-	tree_print_dot("tree_transplant_root_left__after.dot", node);
+	tree_print_dot("transplant11.dot", node);
 	CU_ASSERT(3 == node->key);
+	CU_ASSERT(1 == node->left->key);
 
 	// delete
 	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
+		red_black_delete(&node);
 	}
-
-	// right subtree with valid root->left
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(13, &values[13]);
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_nil__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_nil__after.dot", node);
-	CU_ASSERT(11 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
-	// right, right, nil
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(9, &values[9]);
-	tree_insert(10, &values[10]);
-	tree_insert(13, &values[13]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_right_nil__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_right_nil__after.dot", node);
-	CU_ASSERT(9 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
-	// right, right, right, nil
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(9, &values[9]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(13, &values[13]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_right_right_nil__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_right_right_nil__after.dot", node);
-	CU_ASSERT(8 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
-	// left, nil
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(1, &values[1]);
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_left_nil__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_left_nil__after.dot", node);
-	CU_ASSERT(11 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
-	// left, left, nil
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_left_left_nil__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_left_left_nil__after.dot", node);
-	CU_ASSERT(11 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
-	// left, left, left, nil
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_left_left_left_nil__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_left_left_left_nil__after.dot", node);
-	CU_ASSERT(11 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
-	// right, full
-	tree_insert(7, &values[7]);
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
-	tree_insert(9, &values[9]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(13, &values[13]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_full__before.dot", node);
-	CU_ASSERT(7 == node->key);
-
-	{
-		node = tree_root();
-		node_p tmp = tree_minimum(node->right);
-		if (tmp->parent != node) {
-			tree_transplant(tmp, tmp->right);
-			tmp->right = node->right;
-			tmp->right->parent = tmp;
-		}
-		tree_transplant(node, tmp);
-		tmp->left = node->left;
-		if (tmp->left) tmp->left->parent = tmp;
-
-		// delete
-		free(node);
-	}
-
-	node = tree_root();
-	tree_print_dot("tree_transplant_root_right_full__after.dot", node);
-	CU_ASSERT(8 == node->key);
-
-	// delete
-	for (node = tree_root(); node != NULL; node = tree_root()) {
-		tree_delete(node);
-	}
-
 	free(values);
 }
 
@@ -1378,24 +1368,24 @@ void test_tree_minimum(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-	tree_insert(7, &values[7]);
+	red_black_insert(7, &values[7]);
 
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(11, &values[11]);
 
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(1, &values[1]);
+	red_black_insert(5, &values[5]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
+	red_black_insert(0, &values[0]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(4, &values[4]);
+	red_black_insert(6, &values[6]);
+	red_black_insert(8, &values[8]);
+	red_black_insert(10, &values[10]);
+	red_black_insert(12, &values[12]);
+	red_black_insert(14, &values[14]);
 
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
@@ -1419,11 +1409,9 @@ void test_tree_minimum(void)
 	CU_ASSERT(14 == node->key);
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
-
 	free(values);
 }
 
@@ -1458,24 +1446,24 @@ void test_tree_maximum(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-	tree_insert(7, &values[7]);
+	red_black_insert(7, &values[7]);
 
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(11, &values[11]);
 
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(1, &values[1]);
+	red_black_insert(5, &values[5]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
+	red_black_insert(0, &values[0]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(4, &values[4]);
+	red_black_insert(6, &values[6]);
+	red_black_insert(8, &values[8]);
+	red_black_insert(10, &values[10]);
+	red_black_insert(12, &values[12]);
+	red_black_insert(14, &values[14]);
 
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
@@ -1499,11 +1487,9 @@ void test_tree_maximum(void)
 	CU_ASSERT(0 == node->key);
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
-
 	free(values);
 }
 
@@ -1538,24 +1524,24 @@ void test_tree_search(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-	tree_insert(7, &values[7]);
+	red_black_insert(7, &values[7]);
 
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(11, &values[11]);
 
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(1, &values[1]);
+	red_black_insert(5, &values[5]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
+	red_black_insert(0, &values[0]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(4, &values[4]);
+	red_black_insert(6, &values[6]);
+	red_black_insert(8, &values[8]);
+	red_black_insert(10, &values[10]);
+	red_black_insert(12, &values[12]);
+	red_black_insert(14, &values[14]);
 
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
@@ -1570,11 +1556,9 @@ void test_tree_search(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
-
 	free(values);
 }
 
@@ -1609,24 +1593,24 @@ void test_tree_search_iterative(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-	tree_insert(7, &values[7]);
+	red_black_insert(7, &values[7]);
 
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(11, &values[11]);
 
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(1, &values[1]);
+	red_black_insert(5, &values[5]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
+	red_black_insert(0, &values[0]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(4, &values[4]);
+	red_black_insert(6, &values[6]);
+	red_black_insert(8, &values[8]);
+	red_black_insert(10, &values[10]);
+	red_black_insert(12, &values[12]);
+	red_black_insert(14, &values[14]);
 
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
@@ -1641,11 +1625,9 @@ void test_tree_search_iterative(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
-
 	free(values);
 }
 
@@ -1680,24 +1662,24 @@ void test_tree_successor(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-	tree_insert(7, &values[7]);
+	red_black_insert(7, &values[7]);
 
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(11, &values[11]);
 
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(1, &values[1]);
+	red_black_insert(5, &values[5]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
+	red_black_insert(0, &values[0]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(4, &values[4]);
+	red_black_insert(6, &values[6]);
+	red_black_insert(8, &values[8]);
+	red_black_insert(10, &values[10]);
+	red_black_insert(12, &values[12]);
+	red_black_insert(14, &values[14]);
 
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
@@ -1718,11 +1700,9 @@ void test_tree_successor(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
-
 	free(values);
 }
 
@@ -1757,24 +1737,24 @@ void test_tree_predecessor(void)
 	values[13] = 'N';
 	values[14] = 'O';
 
-	tree_insert(7, &values[7]);
+	red_black_insert(7, &values[7]);
 
-	tree_insert(3, &values[3]);
-	tree_insert(11, &values[11]);
+	red_black_insert(3, &values[3]);
+	red_black_insert(11, &values[11]);
 
-	tree_insert(1, &values[1]);
-	tree_insert(5, &values[5]);
-	tree_insert(9, &values[9]);
-	tree_insert(13, &values[13]);
+	red_black_insert(1, &values[1]);
+	red_black_insert(5, &values[5]);
+	red_black_insert(9, &values[9]);
+	red_black_insert(13, &values[13]);
 
-	tree_insert(0, &values[0]);
-	tree_insert(2, &values[2]);
-	tree_insert(4, &values[4]);
-	tree_insert(6, &values[6]);
-	tree_insert(8, &values[8]);
-	tree_insert(10, &values[10]);
-	tree_insert(12, &values[12]);
-	tree_insert(14, &values[14]);
+	red_black_insert(0, &values[0]);
+	red_black_insert(2, &values[2]);
+	red_black_insert(4, &values[4]);
+	red_black_insert(6, &values[6]);
+	red_black_insert(8, &values[8]);
+	red_black_insert(10, &values[10]);
+	red_black_insert(12, &values[12]);
+	red_black_insert(14, &values[14]);
 
 	node = tree_root();
 	CU_ASSERT('H' == *(char*) tree_get_data(node));
@@ -1795,14 +1775,12 @@ void test_tree_predecessor(void)
 	}
 
 	// delete
-	for (int idx = 0; idx < size; idx++) {
-		node = tree_root();
-		tree_delete(node);
+	for (node = tree_root(); node != NULL; node = tree_root()) {
+		red_black_delete(&node);
 	}
-
 	free(values);
 }
-// */
+
 
 int main(void)
 {
@@ -1828,13 +1806,13 @@ int main(void)
  		TEST_append(pSuite, "tree right rotate", test_tree_right_rotate)
 		TEST_append(pSuite, "tree insert fixup", test_red_black_insert_fixup)
 		TEST_append(pSuite, "tree delete fixup", test_red_black_delete_fixup)
-/* 		TEST_append(pSuite, "tree transplant", test_tree_transplant)
+ 		TEST_append(pSuite, "tree transplant", test_tree_transplant)
  		TEST_append(pSuite, "tree minimum", test_tree_minimum)
  		TEST_append(pSuite, "tree maximum", test_tree_maximum)
  		TEST_append(pSuite, "tree search", test_tree_search)
  		TEST_append(pSuite, "tree iterative search", test_tree_search_iterative)
  		TEST_append(pSuite, "tree successor", test_tree_successor)
- 		TEST_append(pSuite, "tree predecessor", test_tree_predecessor) // */
+ 		TEST_append(pSuite, "tree predecessor", test_tree_predecessor)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

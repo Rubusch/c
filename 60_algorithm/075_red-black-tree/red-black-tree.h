@@ -2,17 +2,14 @@
   red black tree
 
   In addition to the requirements imposed on a binary search tree the
-  following must be satisfied by a red–black tree:
+  following properties must be satisfied by a red–black tree:
 
-  - Each node is either red or black.
-
-  - All NIL nodes (NIL connection) are considered black.
-
-  - A red node does not have a red child.
-
-  - Every path from a given node to any of its descendant NIL nodes
-    goes through the same number of black nodes.
-
+  1. Every node is either RED or BLACK
+  2. The root node is BLACK (RED if no tree but only a single node)
+  3. Every leaf (NIL) is BLACK
+  4. If a node is red, then both its children are black
+  5. For each node, all simple paths from the node to descendant
+     leaves contain the same number of black nodes
 
   REFERENCES
   - Algorigthms [Cormen, Leiserson, Rivest, Stein]
@@ -59,8 +56,6 @@ node_p tree_minimum(node_p node);
 node_p tree_maximum(node_p node);
 node_p tree_successor(node_p node);
 node_p tree_predecessor(node_p node);
-//void tree_insert(uint64_t key, void* data);
-//void* tree_delete(node_p node);
 
 void red_black_left_rotate(node_p node);
 void red_black_right_rotate(node_p node);
@@ -72,7 +67,6 @@ void* red_black_delete(node_p *deletee);
 void red_black_insert_fixup(node_p node);
 void red_black_delete_fixup(node_p node, node_p parent);
 void red_black_transplant(node_p node, node_p new_subtree);
-//void tree_transplant(node_p node, node_p new_subtree);
 
 
 #endif /* RED_BLACK_TREE_H */
