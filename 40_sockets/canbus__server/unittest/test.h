@@ -41,5 +41,9 @@
 int init_suite_canif(void) { return 0; }
 int clean_suite_canif(void) { return 0; }
 
+int init_suite_pdu(void) { return 0; }
+int clean_suite_pdu(void) { return 0; }
+
+
 
 #endif

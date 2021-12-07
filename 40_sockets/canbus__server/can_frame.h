@@ -2,6 +2,9 @@
 #define CAN_FRAME_H
 
 
+#include <stdint.h>
+#include <linux/can.h>
+
 typedef union {
 	struct {
 		uint16_t dest:8;
@@ -25,16 +28,25 @@ typedef struct pdu_s {
 	uint8_t dlc;
 	pdu_payload_t data;
 } pdu_t;
-typedef struct pdu_s *pdu_p;
+typedef struct pdu_s* pdu_p;
 
+pdu_p create_pdu(void);
+void destroy_pdu(pdu_p *pdu);
 
-/* // TODO provide access to the particular fileds
-void get_id_dest();
-void set_id_dest();
+void init_can_id(pdu_p pdu, uint16_t *id);
+void init_can_data(pdu_p pdu, uint8_t data[CAN_MAX_DLEN]);
 
-void get_data_seqn();
-void set_data_seqn();
-...
-// */
+uint8_t get_id_dest(pdu_p pdu);
+void set_id_dest(pdu_p pdu, uint8_t destination);
+
+uint8_t get_id_prio(pdu_p pdu);
+void set_id_prio(pdu_p pdu, uint8_t prio);
+
+uint8_t get_data_seqn(pdu_p pdu);
+void set_data_seqn(pdu_p pdu, uint8_t seqn);
+
+uint64_t get_data_payload(pdu_p pdu);
+void set_data_payload(pdu_p pdu, uint64_t payload);
+
 
 #endif /* CAN_FRAME_H */

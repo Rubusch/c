@@ -84,14 +84,11 @@ int canif__shutdown();
 /**
    send a can frame (put on tx_queue)
  */
-//int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[]);
-//int canif__send(const pdu_id_t *can_id, uint8_t can_dlc, const pdu_payload_t *data);
 int canif__send(const pdu_t *pdu);
 
 /**
    fetches asynchronously from the rx_queue, return nbytes fetched or 0
  */
-//int canif__recv(uint8_t *can_dlc, uint8_t data[]);
 int canif__recv(pdu_id_t *pdu_id, uint8_t *pdu_dlc, pdu_payload_t *data);
 
 #ifdef TESTING
