@@ -1,8 +1,26 @@
 // pthread_condition_var.c
 /*
-  demonstrates the use of condition variables - using static join and static
-   mutex-es
-//*/
+  Static vs Dynamic Allocation of mutex, cond vars,...
+
+  1.) Dynamic allocation of pthread elements need:
+  - pthread_<element>_init()
+  - pthread_<element>_destroy()
+
+  Dynamically allocated elements are able to be used outside the
+  current scope, e.g. the compiel unit (i.e. the '.c' file); it
+  provides means to create and destroy, hence to control life span of
+  the particular pthread element.
+
+  2.) Statically allocated elements need
+  var = PTHREAD_<element>_INITIALIZER
+
+  Statically allocated elements can only be used inside the current
+  compile unit, i.e. when usage is locally.
+
+
+  the example demonstrates the use of condition variables - using
+  static join and static mutex-es
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
