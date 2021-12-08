@@ -3,9 +3,9 @@
   CONDITION VARIABLES
 
 
-  condition variables are declared with pthread_cond_t and must be initialized
-before usage, either statically (outside of a function): pthread_cond_t myconvar
-= PTHREAD_COND_INITIALIZER;
+  Condition variables are declared with pthread_cond_t and must be
+  initialized before usage, either statically (outside of a function):
+  pthread_cond_t myconvar = PTHREAD_COND_INITIALIZER;
 
   or dynamically:
       pthread_cond_init()
@@ -19,20 +19,40 @@ before usage, either statically (outside of a function): pthread_cond_t myconvar
 
   pthread_contaddr_destroy(attr)     - destroy condition attributes
 
-  pthread_cond_wait(condition, mutex) - blocks the calling thread until the
-specified condition is signalled, the function should only be called iwth a
-locked mutex. The mutex will be released automatically while the condition is
-waiting. After signal is received and the thread is awakened, mutex will be
-automatically locked for use by the thread. The programmer is then responsible
-for unlocking the mutex when the thread is finished with it
+  pthread_cond_wait(condition, mutex) - blocks the calling thread
+  until the specified condition is signalled, the function should only
+  be called with a locked mutex. The mutex will be released
+  automatically while the condition is waiting. After signal is
+  received and the thread is awakened, mutex will be automatically
+  locked for use by the thread. The programmer is then responsible for
+  unlocking the mutex when the thread is finished with it
 
-  pthread_cond_signal(condition) - is used to signal or awake another thread
-which is waiting on the condition variable. It should be called after mutex is
-locked and must unlock mutex in order for pthread_cond_wait() routine to
-complete
+  pthread_cond_signal(condition) - is used to signal or awake another
+  thread which is waiting on the condition variable. It should be
+  called after mutex is locked and must unlock mutex in order for
+  pthread_cond_wait() routine to complete
 
   pthread_cond_broadcast(condition) - should be used instead of
-pthread_cond_signal() if more than one thread is in a blocking wait state
+  pthread_cond_signal() if more than one thread is in a blocking wait
+  state
+
+
+  Static vs Dynamic Allocation of mutex, cond vars,...
+
+  1.) Dynamic allocation of pthread elements need:
+  - pthread_<element>_init()
+  - pthread_<element>_destroy()
+
+  Dynamically allocated elements are able to be used outside the
+  current scope, e.g. the compiel unit (i.e. the '.c' file); it
+  provides means to create and destroy, hence to control life span of
+  the particular pthread element.
+
+  2.) Statically allocated elements need
+  var = PTHREAD_<element>_INITIALIZER
+
+  Statically allocated elements can only be used inside the current
+  compile unit, i.e. when usage is locally.
 
 
   the example shows the use of dynamic joins and mutex-es
@@ -60,8 +80,8 @@ pthread_cond_t cv_count_threshold;
 extern long int random();
 
 /*
-  check the value of the count and signal waiting thread when condition is
-reached. Note: this occurs while mutex is locked!
+  check the value of the count and signal waiting thread when
+  condition is reached. Note: this occurs while mutex is locked!
 //*/
 void *inc_count(void *idp)
 {
@@ -77,18 +97,20 @@ void *inc_count(void *idp)
 		if (count == COUNT_LIMIT) {
 			// send a conditional signal if count at limit
 			pthread_cond_signal(&cv_count_threshold);
-			printf("inc_count(): thread %d, count = %d threshold reached.\n",
+			fprintf(stderr,
+				"inc_count(): thread %d, count = %d threshold reached.\n",
 			       *my_id, count);
 		}
-		printf("inc_count(): thread %d, count = %d, unlocking mutex\n",
+		fprintf(stderr,
+			"inc_count(): thread %d, count = %d, unlocking mutex\n",
 		       *my_id, count);
 
 		// unlock the mx
 		pthread_mutex_unlock(&mx_count);
 
 		/*
-      do some work so threads can alternate on mutex lock
-    //*/
+		  do some work so threads can alternate on mutex lock
+		 */
 		for (idx2 = 0; idx2 < 1000; ++idx2) {
 			result += (double)random();
 		}
@@ -98,13 +120,14 @@ void *inc_count(void *idp)
 
 /*
   lock mutex and wait for signal.
-  Note: the pthread_cond_wait function will automatically and atomically unlock
-mutex while it waits.
 
-  Also note: that if COUNT_LIMIT is reached before this routine is run by the
-waiting thread, the loop will be skipped to prevent pthread_cond_wait from never
-returning.
-//*/
+  Note: the pthread_cond_wait function will automatically unlock mutex
+  while it waits.
+
+  Also note: that if COUNT_LIMIT is reached before this routine is run
+  by the waiting thread, the loop will be skipped to prevent
+  pthread_cond_wait from never returning.
+ */
 void *watch_count(void *idp)
 {
 	int *my_id = idp;
@@ -124,7 +147,7 @@ void *watch_count(void *idp)
 
 /*
   main
-//*/
+ */
 int main(int argc, char **argv)
 {
 	int idx = 0, rc = 0;
