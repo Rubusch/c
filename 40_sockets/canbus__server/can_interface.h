@@ -93,7 +93,10 @@ int canif__recv(pdu_id_t *pdu_id, uint8_t *pdu_dlc, pdu_payload_t *data);
 
 #ifdef TESTING
 
-struct can_frame *test_frame;
+// TODO make fifo for test_frames (series)
+struct can_frame *test__frame;
+int test__tx_nbytes;
+int test__rx_ret;
 
 #endif /* TESTING */
 

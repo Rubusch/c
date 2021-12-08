@@ -24,18 +24,33 @@ void destroy_pdu(pdu_p *pdu)
 	*pdu = NULL;
 }
 
-void init_can_id(pdu_p pdu, uint16_t *id)
+void init_can_id(const pdu_t* pdu, uint16_t *id)
 {
 	*id = (uint16_t) pdu->id.id;
 }
 
-void init_can_data(pdu_p pdu, uint8_t data[CAN_MAX_DLEN])
+void init_can_dlc(const pdu_t* pdu, uint8_t *dlc)
+{
+	*dlc = (uint8_t) pdu->dlc;
+}
+
+void init_can_data(const pdu_t* pdu, uint8_t data[CAN_MAX_DLEN])
 {
 	uint8_t *ptr = data;
 	uint8_t *psrc = (uint8_t*) &pdu->data.payload;
 	for (int idx = 0; idx < CAN_MAX_DLEN; idx++) {
 		ptr[idx] = psrc[idx];
 	}
+}
+
+uint8_t get_pdu_dlc(pdu_p pdu)
+{
+	return pdu->dlc;
+}
+
+void set_pdu_dlc(pdu_p pdu, uint8_t dlc)
+{
+	pdu->dlc = dlc;
 }
 
 uint8_t get_id_dest(pdu_p pdu)

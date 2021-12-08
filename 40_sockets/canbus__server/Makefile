@@ -17,25 +17,32 @@ LDFLAGS += -lcunit
 RM = rm -f
 
 .c.o:
-	$(shell find . -name "*.c" -exec etags -a {} \; )
-	$(shell find . -name "*.h" -exec etags -a {} \; )
 	$(CC) $(CFLAGS) -c $<
 
-$(TARGET): $(OBJECTS) TAGS
+#TAGS:
+#	$(shell find . -name "*.c" -exec etags -a {} \; )
+#	$(shell find . -name "*.h" -exec etags -a {} \; )
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -c $<
 	$(CC) $(CFLAGS) -o $@ main.c $(OBJECTS) -pthread
 
 all: $(TARGET)
 
 
-$(TARGET_TEST): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ unittest/test.c ${HEADERS_TEST} $(OBJECTS) $(LDFLAGS) -pthread
+$(TARGET_TEST):
+	$(CC) $(CFLAGS) -DTESTING -o $@ unittest/test.c ${HEADERS_TEST} $(SOURCE) $(LDFLAGS) -pthread
 
-## for automation
-$(TARGET_BASIC_TEST): $(OBJECTS)
-	$(CC) $(CFLAGS) -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(OBJECTS) $(LDFLAGS)  -pthread
+## memory checks (address sanitizer)
+#$(TARGET_BASIC_TEST):
+#	$(CC) $(CFLAGS) -DTESTING -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(SOURCE) $(LDFLAGS)  -fsanitize=address -fno-omit-frame-pointer -pthread
+
+$(TARGET_BASIC_TEST):
+	$(CC) $(CFLAGS) -DTESTING -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(SOURCE) $(LDFLAGS) -pthread
+
 
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) TAGS *~ *.log core
+	$(RM) $(OBJECTS) $(TARGET) TAGS *~ *.log core *.exe *.o *.xml ./unittest/*~
 
-.PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST)
+.PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST) TAGS

@@ -33,8 +33,12 @@ typedef struct pdu_s* pdu_p;
 pdu_p create_pdu(void);
 void destroy_pdu(pdu_p *pdu);
 
-void init_can_id(pdu_p pdu, uint16_t *id);
-void init_can_data(pdu_p pdu, uint8_t data[CAN_MAX_DLEN]);
+void init_can_id(const pdu_t* pdu, uint16_t *id);
+void init_can_dlc(const pdu_t* pdu, uint8_t *dlc);
+void init_can_data(const pdu_t* pdu, uint8_t data[CAN_MAX_DLEN]);
+
+uint8_t get_pdu_dlc(pdu_p pdu);
+void set_pdu_dlc(pdu_p pdu, uint8_t dlc);
 
 uint8_t get_id_dest(pdu_p pdu);
 void set_id_dest(pdu_p pdu, uint8_t destination);
