@@ -1,13 +1,34 @@
-// conditionalvariable.c
 /*
-  demonstrates the use of a conditional variable
-  1. conditional variables must be used with mutexes!
-  2. a conditional variable is similar to the thr_suspend() function under
-Solaris UNIX
+  conditionalvariable.c
 
-  variables can be declared globally or locally, depending on the situation,
-this example here demonstrates some techniques to do both
-//*/
+  Demonstrates the use of a conditional variable
+
+  1. Conditional variables must be used with mutexes!
+
+  2. A conditional variable is similar to the thr_suspend() function
+     under Solaris UNIX
+
+  Variables can be declared globally or locally, depending on the
+  situation, this example here demonstrates some techniques to do both
+
+
+  Static vs Dynamic Allocation of mutex, cond vars,...
+
+  1.) Dynamic allocation of pthread elements need:
+  - pthread_<element>_init()
+  - pthread_<element>_destroy()
+
+  Dynamically allocated elements are able to be used outside the
+  current scope, e.g. the compiel unit (i.e. the '.c' file); it
+  provides means to create and destroy, hence to control life span of
+  the particular pthread element.
+
+  2.) Statically allocated elements need
+  var = PTHREAD_<element>_INITIALIZER
+
+  Statically allocated elements can only be used inside the current
+  compile unit, i.e. when usage is locally.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,9 +50,9 @@ void *thread_sleepy(void *);
 int main()
 {
 	/*
-    1. init the conditional variable's attribute (when using it globally,
-  default is just the local space - NULL)
-  //*/
+	  1. init the conditional variable's attribute (when using it
+	     globally, default is just the local space - NULL)
+	 */
 
 	// cv: first init the cv attribute
 	pthread_condattr_t attr_cv_suspend; // here local variable
@@ -46,9 +67,9 @@ int main()
 	pthread_cond_init(&cv_suspend, &attr_cv_suspend);
 
 	/*
-    2. init the mutex attribute (when using it globally, default is just the
-  local space - NULL)
-  //*/
+	  2. init the mutex attribute (when using it globally, default
+	     is just the local space - NULL)
+	 */
 
 	pthread_mutexattr_t attr_mx_suspend; // here local variable
 	pthread_mutexattr_init(&attr_mx_suspend);
@@ -68,24 +89,26 @@ int main()
 	puts("MAIN: thread created!");
 
 	/*
-    3. suspend thread
-  //*/
+	  3. suspend thread
+	 */
+
 	//  puts("MAIN: now suspending the thread...");
-	// TODO
+// TODO    
 
 	// wait - this simulates some action in this thread..
 	sleep(1);
 
 	/*
-    4. awake suspended thread
-  //*/
+	  4. awake suspended thread
+	 */
 	puts("MAIN: now resuming the suspended thread, again");
+
 	// cv: awake conditional variable
 	pthread_cond_signal(&cv_suspend);
 
 	/*
-    cleaning up - necessary or we will have a memory leak
-  //*/
+	  5. cleaning up - necessary or we will have a memory leak
+	 */
 
 	// wait to let thread catch up
 	sleep(1);
@@ -109,8 +132,8 @@ void *thread_sleepy(void *arg)
 	puts("THREAD: suspends...");
 
 	/*
-    cv: suspend thread B using a conditional variable
-  //*/
+	  cv: suspend thread B using a conditional variable
+	 */
 	pthread_mutex_lock(&mx_suspend);
 	pthread_cond_wait(&cv_suspend, &mx_suspend);
 	pthread_mutex_unlock(&mx_suspend);
