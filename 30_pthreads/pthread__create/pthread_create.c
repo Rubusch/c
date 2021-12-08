@@ -1,7 +1,13 @@
 // pthread_create.c
 /*
   demonstrates the creation of pthreads
-//*/
+
+  create a thread
+  phtread_create(tid, attr, func, args);
+
+  destroy a running thread
+  pthread_cancel(tid);
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
