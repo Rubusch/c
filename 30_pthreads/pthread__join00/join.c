@@ -69,11 +69,11 @@ int main()
 		/*
       1. set up the attributes
 
-      pthread_create creates by default PTHREAD_CREATE_JOINABLE, also without
-    explicitely set up attr's!!!
+      pthread_create creates by default PTHREAD_CREATE_JOINABLE, also
+      without explicitely set up attr's!!!
 
-      Only when disabling the joining, it is necessary to set up the attributes
-    to PTHREAD_CREATE_DETACHED.
+      Only when disabling the joining, it is necessary to set up the
+      attributes to PTHREAD_CREATE_DETACHED.
     //*/
 		pthread_attr_t attr_add;
 		pthread_attr_init(&attr_add);
@@ -83,8 +83,8 @@ int main()
 		/*
       2. create the thread
 
-      created with *pthread_attr_t == NULL, this uses the default setting:
-    PTHREAD_CRATE_JOINABLE
+      created with *pthread_attr_t == NULL, this uses the default
+      setting: PTHREAD_CRATE_JOINABLE
     //*/
 		puts("MAIN: create thread tid_add");
 		if (0 !=
@@ -96,17 +96,19 @@ int main()
 		/*
       3. It's the JOIN - EPMD rulez! =D
 
-      join to tid_add! This means: make the calling thread [tid_main] wait
-    (suspend!), untill the joined [tid_add] has finished
+      join to tid_add! This means: make the calling thread [tid_main]
+      wait (suspend!), untill the joined [tid_add] has finished
 
-      Just to see what happens without JOIN, comment out the paragraph below by
-    removing the "// * /"
+      Just to see what happens without JOIN, comment out the paragraph
+      below by removing the "// * /"
     //*/
 		int return_status = 0;
 		if (0 > pthread_join(tid_add, (void *)&return_status)) {
 			perror("MAIN: pthread_join failed");
 			pthread_exit((
-				void *)11); // just any return code, here: 11 - can also be NULL
+				void *)11); // just any return code,
+					    // here: 11 - can also be
+					    // NULL
 		}
 		printf("MAIN: joining to tid_add %s\n",
 		       (return_status == 22) ? "succeeded" : "FAILED!!!\n");
@@ -115,13 +117,14 @@ int main()
 		/*
       4. operation in tid_main: divide
 
-      the following code here is just executed in tid_main, tid_add already is
-    running in parallel at this time. This means either the faster one wins or,
-    in case of tid_main was blocked, tid_add already finished its work on the
-    data [value, in this case] and tid_main continues.
+      the following code here is just executed in tid_main, tid_add
+      already is running in parallel at this time. This means either
+      the faster one wins or, in case of tid_main was blocked, tid_add
+      already finished its work on the data [value, in this case] and
+      tid_main continues.
 
       joining is a form of blocking another thread and, thus a form of
-    synchronization!
+      synchronization!
     //*/
 		printf("MAIN: %d / 2 ", value);
 		value /= 2;
@@ -139,11 +142,12 @@ int main()
 	} while (0);
 
 	/*
-    CAUTION: this code won't be executed if the thread creation worked!!!
-    It is safe here to procede like this, since allocated memory should be
-    freed in case the thread crashes (objects on the thread's stack are
-    usually not destroyed as well, a SIGSEGV is the logical consequence!
-  //*/
+	  CAUTION: this code won't be executed if the thread creation
+	  worked!!!  It is safe here to procede like this, since
+	  allocated memory should be freed in case the thread crashes
+	  (objects on the thread's stack are usually not destroyed as
+	  well, a SIGSEGV is the logical consequence!
+	//*/
 	puts("\nREADY.");
 	exit(EXIT_SUCCESS);
 }
