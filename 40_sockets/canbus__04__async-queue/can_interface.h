@@ -31,8 +31,18 @@
 
 #include <linux/can.h>
 
-#include "fifo/fifo.h"
-#include "fifo/content.h"
+#include "queue.h"
+
+
+#define MESSAGE_LENGTH 8
+typedef struct content_s {
+	char msg[MESSAGE_LENGTH];
+	int len;
+} content_t;
+typedef struct content_s* content_p;
+
+
+create_queue(fifo, content_p, 100)
 
 #define CANIF_NAMESIZE 16
 

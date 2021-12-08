@@ -87,7 +87,7 @@ void canif__listener()
 			memcpy(content->msg, frame.data, frame.can_dlc);
 
 			// push content to fifo
-			fifo__push(content);
+			fifo__enqueue(content);
 			// (improvement: use locks to guarantee access to the fifo)
 
 		} else {
@@ -156,7 +156,7 @@ int canif__shutdown()
 	content_p content = NULL;
 
 	while (0 < fifo__size()) {
-		content = fifo__pop();
+		fifo__dequeue(&content);
 		free(content);
 		content = NULL;
 	}
@@ -179,7 +179,8 @@ int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[])
 
 int canif__recv(uint8_t *can_dlc, uint8_t data[])
 {
-	content_p content = fifo__pop();
+	content_p content;
+	fifo__dequeue(&content);
 
 	if (NULL == content)
 		return -1;

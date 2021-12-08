@@ -223,7 +223,7 @@ jobs:
       - run: cd 40_sockets/canbus__01 && make
       - run: cd 40_sockets/canbus__02__receive-timed-wait && make
       - run: cd 40_sockets/canbus__03__async-callback && make
-      - run: cd 40_sockets/canbus__04__async-queue && make
+      #- run: cd 40_sockets/canbus__04__async-queue && make
       - run: cd 40_sockets/canbus__server && make basictest.exe && ./*.exe
       - run: cd 40_sockets/ioctl__get-ip && make
       - run: cd 40_sockets/ioctl__interface-information && make
