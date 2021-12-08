@@ -37,11 +37,9 @@
 #include "macros.h"
 
 
-// TODO verify, or use "void*"
-//create_queue(tx, void*, 1000)
 create_queue(tx, struct can_frame*, 1000)
-//create_queue(rx, void*, 1000)
 create_queue(rx, struct can_frame*, 1000)
+
 
 // TODO rework          
 #define CANIF_NAMESIZE 16
