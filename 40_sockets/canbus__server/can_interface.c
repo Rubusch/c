@@ -47,7 +47,6 @@ static void canif__failure(char* msg, const char* func)
 	exit(EXIT_FAILURE);
 }
 
-__attribute__((__unused__))    
 static void *canif__rx_listener()
 {
 	dbg(__func__);
@@ -56,18 +55,22 @@ static void *canif__rx_listener()
 	int ret = -1;
 
 	do {
-		if (!frame) {
-// FIXME: not leak safe    
-//			frame = malloc(sizeof(*frame));
-//			if (!frame) {
-//				canif__failure("allocation failed", __func__);
-//			}
-		}
+
 #ifdef TESTING
+		sleep(1);
+		frame = test__frame;
 		ret = test__rx_ret; /* defaults to 0 */
 #else
+		if (!frame) {
+// FIXME: leaks allocated memory when shutting down, improve    
+			frame = malloc(sizeof(*frame));
+			if (!frame) {
+				canif__failure("allocation failed", __func__);
+			}
+		}
 		ret = read(sockfd, frame, sizeof(frame));
 #endif /* TESTING */
+		dbg_frame(__func__, frame);
 		if (0 > ret) {
 			canif__failure("read() failed", __func__);
 			break;
@@ -178,14 +181,13 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	}
 #endif /* TESTING */
 
-/*
+
 	pthread_attr_init(&rx_listener_attr);
 	pthread_attr_setdetachstate(&rx_listener_attr, PTHREAD_CREATE_DETACHED);
 	ret = pthread_create(&rx_listener_tid, &rx_listener_attr, canif__rx_listener, NULL);
 	if (0 != ret) {
 		canif__failure("pthread_create()", __func__);
 	}
-// */
 
 	pthread_attr_init(&tx_listener_attr);
 	pthread_attr_setdetachstate(&tx_listener_attr, PTHREAD_CREATE_DETACHED);
@@ -193,12 +195,6 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	if (0 != ret) {
 		canif__failure("pthread_create()", __func__);
 	}
-
-// TODO join needed?
-//	void *status;
-//	pthread_join(rx_listener_tid, &status);
-//	pthread_join(tx_listener_tid, &status);
-//	canif__shutdown();
 
 	return 0;
 }
@@ -210,11 +206,9 @@ int canif__shutdown()
 	pthread_cancel(tx_listener_tid);
 	pthread_cancel(rx_listener_tid);
 
-// TODO rm, static initializer
 	pthread_mutex_destroy(&tx_mutex);
 	pthread_mutex_destroy(&rx_mutex);
 
-// TODO rm, static initializer
 	pthread_cond_destroy(&tx_cv);
 //	pthread_cond_destroy(&rx_cv);
 
@@ -257,31 +251,35 @@ int canif__send(const pdu_t *pdu)
 	init_can_dlc(pdu, &frame->can_dlc);
 	init_can_data(pdu, frame->data);
 
-	dbg_frame(frame);
+	dbg_frame(__func__, frame);
 
 	ret = tx__enqueue(frame);
-	pthread_cond_signal(&tx_cv); // signal: offer a ticket for a single read on the queue to the listener
+	pthread_cond_signal(&tx_cv); // signal: offer a ticket for a
+				     // single read on the queue to
+				     // the listener
 
 	dbg_end(__func__);
 	return ret;
 }
 
-int canif__recv(pdu_id_t *pdu_id, uint8_t *pdu_dlc, pdu_payload_t *data)
+int canif__recv(pdu_p *pdu)
 {
 	dbg(__func__);
 
 	struct can_frame* frame;
 
 	pthread_mutex_lock(&rx_mutex);
-// FIXME: message arrived and on queue, rather test if queue empty
-//	pthread_cond_wait(&rx_cv, &rx_mutex);
-	rx__dequeue(&frame); // TODO check memory leakage
+	while (rx__empty()) {
+		sleep(1);
+	}
+
+	rx__dequeue(&frame);
 	pthread_mutex_unlock(&rx_mutex);
 
-	pdu_id->id = (uint16_t) frame->can_id;
-	*pdu_dlc = frame->can_dlc;
-	memcpy(data, frame->data, frame->can_dlc);
+	dbg_frame(__func__, frame);
 
+	*pdu = create_pdu();
+	init_pdu_from_can(*pdu, frame);
 	free(frame);
 
 	dbg_end(__func__);

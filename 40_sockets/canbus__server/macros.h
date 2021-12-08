@@ -24,7 +24,7 @@ static inline void dbg_end(const char *name)
 #endif
 }
 
-static inline void dbg_frame(struct can_frame *frame)
+static inline void dbg_frame(const char *func, struct can_frame *frame)
 {
 #ifdef DEBUG
 	char str[32];
@@ -40,7 +40,7 @@ static inline void dbg_frame(struct can_frame *frame)
 		strcat(str, tmp);
 	}
 
-	fprintf(stderr, "%s\n", str);
+	fprintf(stderr, "%s(): %s\n", func, str);
 #endif
 }
 

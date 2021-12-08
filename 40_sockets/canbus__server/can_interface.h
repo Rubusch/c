@@ -89,7 +89,8 @@ int canif__send(const pdu_t *pdu);
 /**
    fetches asynchronously from the rx_queue, return nbytes fetched or 0
  */
-int canif__recv(pdu_id_t *pdu_id, uint8_t *pdu_dlc, pdu_payload_t *data);
+//int canif__recv(pdu_id_t *pdu_id, uint8_t *pdu_dlc, pdu_payload_t *data);
+int canif__recv(pdu_p *pdu);
 
 #ifdef TESTING
 

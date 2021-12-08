@@ -43,6 +43,13 @@ void init_can_data(const pdu_t* pdu, uint8_t data[CAN_MAX_DLEN])
 	}
 }
 
+void init_pdu_from_can(pdu_t* pdu, const struct can_frame *frame)
+{
+	pdu->id.id = (uint16_t) frame->can_id & 0x7ff;
+	pdu->dlc = (uint8_t) frame->can_dlc;
+	pdu->data.payload = *(uint64_t*) &frame->data;
+}
+
 uint8_t get_pdu_dlc(pdu_p pdu)
 {
 	return pdu->dlc;
