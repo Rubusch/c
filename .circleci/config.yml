@@ -93,9 +93,6 @@ jobs:
 ## 10: techniques
       - run: cd ./10_language-techniques/attribute__lto && make && ./*.exe
       - run: cd ./10_language-techniques/attribute__unused && make && ./*.exe
-      - run: cd ./10_language-techniques/datastructure__dequeue && make && export MALLOC_TRACE=./out.log && ./*.exe && mtrace ./*.exe ./out.log
-      - run: cd ./10_language-techniques/datastructure__fifo && make && export MALLOC_TRACE=./out.log && ./*.exe
-      - run: cd ./10_language-techniques/datastructure__stack && make && export MALLOC_TRACE=./out.log && ./*.exe
       - run: cd ./10_language-techniques/endianness && make && ./*.exe
       - run: cd ./10_language-techniques/file__operations && make && ./*.exe
       - run: cd ./10_language-techniques/file__tempfile && make && ./*.exe
@@ -114,8 +111,6 @@ jobs:
       - run: cd ./10_language-techniques/testing__cunit02 && make && ./*.exe
       - run: cd ./10_language-techniques/testing__cunit03 && make && ./*.exe
       - run: cd ./10_language-techniques/testing__cunit04-socket && make
-      - run: cd ./10_language-techniques/bintree__demo-TODO && make
-      - run: cd ./10_language-techniques/bintree__single-linked-TODO && make
       - run: cd ./10_language-techniques/bitoperations-FIXME && make
       - run: cd ./10_language-techniques/input && make
       - run: cd ./10_language-techniques/input__fgets-digit && make
