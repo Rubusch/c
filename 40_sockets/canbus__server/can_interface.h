@@ -90,13 +90,13 @@ int canif__send(const pdu_t *pdu);
 //int canif__recv(pdu_id_t *pdu_id, uint8_t *pdu_dlc, pdu_payload_t *data);
 int canif__recv(pdu_p *pdu);
 
-#ifdef TESTING
+# ifdef TESTING
 
-// TODO make fifo for test_frames (series)
-static struct can_frame *test__frame;
-static int test__tx_nbytes;
-static int test__rx_ret;
+// NB: don't use static, used for unittests
+struct can_frame *test__frame;
+int test__tx_nbytes;
+int test__rx_ret;
 
-#endif /* TESTING */
+# endif /* TESTING */
 
 #endif /* CAN_INTERFACE_H_ */

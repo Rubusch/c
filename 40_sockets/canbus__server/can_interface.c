@@ -19,6 +19,7 @@
 
 /* private */
 
+__attribute__((__unused__))   
 static int sockfd;
 
 /* pthread: no static INITIALIZERs, we want control startup and
@@ -28,10 +29,17 @@ static pthread_mutex_t tx_mutex;
 static pthread_cond_t tx_cv;
 static pthread_attr_t tx_listener_attr;
 
+//*
 static pthread_t rx_listener_tid;
 static pthread_mutex_t rx_mutex;
 //static pthread_cond_t rx_cv = PTHREAD_COND_INITIALIZER;
 static pthread_attr_t rx_listener_attr;
+/*/
+pthread_t rx_listener_tid;
+pthread_mutex_t rx_mutex;
+//static pthread_cond_t rx_cv = PTHREAD_COND_INITIALIZER;
+pthread_attr_t rx_listener_attr;
+// */
 
 #ifndef TESTING
 static struct sockaddr_can addr;
@@ -57,9 +65,12 @@ static void *canif__rx_listener()
 	do {
 
 #ifdef TESTING
-		sleep(1);
-		frame = test__frame;
+		while(NULL == (frame = test__frame)) {
+			sleep(1);
+		}
 		ret = test__rx_ret; /* defaults to 0 */
+
+
 #else
 		if (!frame) {
 // FIXME: leaks allocated memory when shutting down, improve    
@@ -70,7 +81,7 @@ static void *canif__rx_listener()
 		}
 		ret = read(sockfd, frame, sizeof(frame));
 #endif /* TESTING */
-		dbg_frame(__func__, frame);
+
 		if (0 > ret) {
 			canif__failure("read() failed", __func__);
 			break;
@@ -84,11 +95,16 @@ static void *canif__rx_listener()
 //			continue;
 //		}
 
-//		pthread_mutex_lock(&rx_mutex);
+		pthread_mutex_lock(&rx_mutex);
 		rx__enqueue(frame);
-//		pthread_mutex_unlock(&rx_mutex);
+ 		pthread_mutex_unlock(&rx_mutex);
 
 		frame = NULL;
+
+#ifdef TESTING
+		test__frame = NULL;
+#endif /* TESTING */
+
 	} while (true);
 
 	dbg_end(__func__);
@@ -108,7 +124,6 @@ static void *canif__tx_listener()
 		pthread_mutex_unlock(&tx_mutex);
 
 		tx__dequeue(&frame);
-
 		if (!frame) {
 			fprintf(stderr, "%s(): frame was empty\n", __func__);
 			continue;
@@ -147,23 +162,23 @@ int canif__startup(const char *ifname, size_t ifname_size)
 	pthread_mutex_init(&rx_mutex, NULL);
 
 // when using attributes, e.g. shared...
-//	pthread_condattr_t tx_cv_attr;
-//	pthread_condattr_init(&tx_cv_attr);
-//	pthread_condattr_setpshared(&tx_cv_attr, PTHREAD_PROCESS_SHARED);
-//	pthread_cond_init(&tx_cv, &tx_cv_attr);
-
+/*
+	pthread_condattr_t tx_cv_attr;
+	pthread_condattr_init(&tx_cv_attr);
+	pthread_condattr_setpshared(&tx_cv_attr, PTHREAD_PROCESS_SHARED);
+	pthread_cond_init(&tx_cv, &tx_cv_attr);
+/*/
 	pthread_cond_init(&tx_cv, NULL);
-//	rx_cv = PTHREAD_COND_INITIALIZER;
+// */
 
 	int ret;
+#ifdef TESTING
+	;
+#else
 	sockfd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 	if (-1 == sockfd) {
 		canif__failure("socket() failed", __func__);
 	}
-
-#ifdef TESTING
-	;
-#else
 
 	strncpy(ifr.ifr_name, ifname, ifname_size);
 	ifr.ifr_name[ifname_size - 1] = '\0';
@@ -180,7 +195,6 @@ int canif__startup(const char *ifname, size_t ifname_size)
 		canif__failure("Error at binding socket to address", __func__);
 	}
 #endif /* TESTING */
-
 
 	pthread_attr_init(&rx_listener_attr);
 	pthread_attr_setdetachstate(&rx_listener_attr, PTHREAD_CREATE_DETACHED);
@@ -203,33 +217,37 @@ int canif__shutdown()
 {
 	dbg(__func__);
 
+	struct can_frame *content = NULL;
 	pthread_cancel(tx_listener_tid);
 	pthread_cancel(rx_listener_tid);
 
-	pthread_mutex_destroy(&tx_mutex);
-	pthread_mutex_destroy(&rx_mutex);
-
-	pthread_cond_destroy(&tx_cv);
-//	pthread_cond_destroy(&rx_cv);
-
-	pthread_attr_destroy(&tx_listener_attr);
-	pthread_attr_destroy(&rx_listener_attr);
-
-	struct can_frame *content = NULL;
 
 	while (0 < rx__size()) {
 		rx__dequeue(&content);
-		free(content);
+		if (content != NULL) {
+			free(content);
+		}
 		content = NULL;
 	}
 
 	while (0 < tx__size()) {
 		tx__dequeue(&content);
-		free(content);
+		if (content != NULL) {
+			free(content);
+		}
 		content = NULL;
 	}
 
-	sleep(1); /* for safety */
+	pthread_mutex_destroy(&tx_mutex);
+	pthread_mutex_destroy(&rx_mutex);
+
+	pthread_cond_destroy(&tx_cv);
+
+	pthread_attr_destroy(&tx_listener_attr);
+	pthread_attr_destroy(&rx_listener_attr);
+
+//	sleep(1); /* for safety, pthread teardown */
+
 	dbg_end(__func__);
 #ifdef TESTING
 	return 0;
@@ -242,22 +260,30 @@ int canif__send(const pdu_t *pdu)
 {
 	dbg(__func__);
 
+	if (!pdu) {
+		return -1;
+	}
+
+fprintf(stderr, "%s() A\n", __func__);    
 	int ret = -1;
 	struct can_frame *frame;
+fprintf(stderr, "%s() B\n", __func__);    
 	frame = malloc(sizeof(*frame));
 	if (!frame) { canif__failure("allocation failed", __func__); }
-
+fprintf(stderr, "%s() C\n", __func__);    
 	init_can_id(pdu, (uint16_t*) &frame->can_id);
+fprintf(stderr, "%s() D\n", __func__);    
 	init_can_dlc(pdu, &frame->can_dlc);
+fprintf(stderr, "%s() E - dlc %d\n", __func__, frame->can_dlc);    
 	init_can_data(pdu, frame->data);
-
+fprintf(stderr, "%s() F - \n", __func__);    
 	dbg_frame(__func__, frame);
-
+fprintf(stderr, "%s() G\n", __func__);    
 	ret = tx__enqueue(frame);
+fprintf(stderr, "%s() H\n", __func__);    
 	pthread_cond_signal(&tx_cv); // signal: offer a ticket for a
 				     // single read on the queue to
 				     // the listener
-
 	dbg_end(__func__);
 	return ret;
 }
@@ -266,22 +292,26 @@ int canif__recv(pdu_p *pdu)
 {
 	dbg(__func__);
 
-	struct can_frame* frame;
+	int ret = -1;
+	struct can_frame* frame = NULL;
 
 	pthread_mutex_lock(&rx_mutex);
-	while (rx__empty()) {
-		sleep(1);
+	if (rx__empty()) {
+		pthread_mutex_unlock(&rx_mutex);
+		return 0;
 	}
 
 	rx__dequeue(&frame);
 	pthread_mutex_unlock(&rx_mutex);
 
-	dbg_frame(__func__, frame);
-
+	ret = frame->can_dlc;
 	*pdu = create_pdu();
 	init_pdu_from_can(*pdu, frame);
-	free(frame);
+	free(frame); frame = NULL; // FIXME: somehow this is NOT needed (double free)   
+
+// TODO: try here...	pthread_mutex_unlock(&rx_mutex);     
+//	pthread_mutex_unlock(&rx_mutex);
 
 	dbg_end(__func__);
-	return 0;
+	return ret;
 }

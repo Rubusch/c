@@ -285,23 +285,30 @@ void test_canif_interface(void)
 void test_tx_single(void)
 {
 	int ret = -1;
+	pdu_p pdu;
+	uint8_t dest;
+	uint8_t prio;
+	uint8_t seqn;
+	uint64_t payload;
+	uint8_t dlc;
+	struct can_frame *frame = NULL;
 
-	pdu_p pdu = create_pdu();
+	pdu = create_pdu();
 	CU_ASSERT(NULL != pdu);
 
-	uint8_t dest = 0x23;
+	dest = 0x23;
 	set_id_dest(pdu, dest);
 
-	uint8_t prio = 0x1;
+	prio = 0x1;
 	set_id_prio(pdu, prio);
 
-	uint8_t seqn = 0x7c;
+	seqn = 0x7c;
 	set_data_seqn(pdu, seqn);
 
-	uint64_t payload = 0x123456789abcde;
+	payload = 0x123456789abcde;
 	set_data_payload(pdu, payload);
 
-	uint8_t dlc = CAN_MAX_DLEN;
+	dlc = CAN_MAX_DLEN;
 	set_pdu_dlc(pdu, dlc);
 
 	ret = canif__startup("can0", strlen("can0") + 1);
@@ -315,7 +322,6 @@ void test_tx_single(void)
 	// verification
 	CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
 
-	struct can_frame *frame;
 	frame = test__frame;
 	dbg_frame(__func__, frame);
 
@@ -592,7 +598,7 @@ void test_rx_single(void)
 	// start
 	ret = canif__startup("can0", strlen("can0") + 1);
 	CU_ASSERT(ret == 0);
-	sleep(1); /* delay: listeners have to be ready first */
+//	sleep(1); /* delay: listeners have to be ready first */
 
 	// frame
 	frame = malloc(sizeof(*frame));
@@ -619,8 +625,14 @@ void test_rx_single(void)
 	test__rx_ret = sizeof(frame);
 
 	// receive
-	ret = canif__recv(&pdu);
-	CU_ASSERT(0 == ret);
+	for (int idx=0; idx < 3; idx++) {
+		ret = canif__recv(&pdu);
+		sleep(1);
+		if (ret != 0) {
+			break;
+		}
+	}
+	CU_ASSERT(0 < ret);
 
 	// verification
 	dest = get_id_dest(pdu);
@@ -640,7 +652,9 @@ void test_rx_single(void)
 
 	// cleanup
 	destroy_pdu(&pdu);
+	CU_ASSERT(NULL == pdu);
 	ret = canif__shutdown();
+	test__frame = NULL;
 	CU_ASSERT(ret == 0);
 }
 
@@ -658,7 +672,7 @@ void test_rx_multiple(void)
 	// start
 	ret = canif__startup("can0", strlen("can0") + 1);
 	CU_ASSERT(ret == 0);
-	sleep(1); /* delay: listeners have to be ready first */
+//	sleep(1); /* delay: listeners have to be ready first */
 
 	{
 		// frame
@@ -667,7 +681,6 @@ void test_rx_multiple(void)
 			perror("allocation failed");
 			exit(EXIT_FAILURE);
 		}
-		test__frame = frame;
 
 		frame->can_id = (uint16_t) 0x123;
 		frame->can_dlc = CAN_MAX_DLEN;
@@ -681,13 +694,20 @@ void test_rx_multiple(void)
 		frame->data[7] = 0xaa;
 
 		dbg_frame(__func__, test__frame);
+		test__frame = frame;
 
 		// trigger
 		test__rx_ret = sizeof(frame);
 
 		// receive
-		ret = canif__recv(&pdu);
-		CU_ASSERT(0 == ret);
+		for (int idx=0; idx < 3; idx++) {
+			ret = canif__recv(&pdu);
+			sleep(1);
+			if (ret != 0) {
+				break;
+			}
+		}
+		CU_ASSERT(0 < ret);
 
 		// verification
 		dest = get_id_dest(pdu);
@@ -707,6 +727,7 @@ void test_rx_multiple(void)
 
 		// cleanup
 		destroy_pdu(&pdu);
+		test__frame = NULL;
 	}
 
 	{
@@ -716,7 +737,6 @@ void test_rx_multiple(void)
 			perror("allocation failed");
 			exit(EXIT_FAILURE);
 		}
-		test__frame = frame;
 
 		frame->can_id = (uint16_t) 0x123;
 		frame->can_dlc = CAN_MAX_DLEN;
@@ -732,11 +752,18 @@ void test_rx_multiple(void)
 		dbg_frame(__func__, test__frame);
 
 		// trigger
+		test__frame = frame;
 		test__rx_ret = sizeof(frame);
 
 		// receive
-		ret = canif__recv(&pdu);
-		CU_ASSERT(0 == ret);
+		for (int idx=0; idx < 3; idx++) {
+			ret = canif__recv(&pdu);
+			sleep(1);
+			if (ret != 0) {
+				break;
+			}
+		}
+		CU_ASSERT(0 < ret);
 
 		// verification
 		dest = get_id_dest(pdu);
@@ -756,6 +783,7 @@ void test_rx_multiple(void)
 
 		// cleanup
 		destroy_pdu(&pdu);
+		test__frame = NULL;
 	}
 
 	{
@@ -784,8 +812,14 @@ void test_rx_multiple(void)
 		test__rx_ret = sizeof(frame);
 
 		// receive
-		ret = canif__recv(&pdu);
-		CU_ASSERT(0 == ret);
+		for (int idx=0; idx < 3; idx++) {
+			ret = canif__recv(&pdu);
+			sleep(1);
+			if (ret != 0) {
+				break;
+			}
+		}
+		CU_ASSERT(0 < ret);
 
 		// verification
 		dest = get_id_dest(pdu);
@@ -805,6 +839,7 @@ void test_rx_multiple(void)
 
 		// cleanup
 		destroy_pdu(&pdu);
+		test__frame = NULL;
 	}
 
 	{
@@ -833,8 +868,14 @@ void test_rx_multiple(void)
 		test__rx_ret = sizeof(frame);
 
 		// receive
-		ret = canif__recv(&pdu);
-		CU_ASSERT(0 == ret);
+		for (int idx=0; idx < 3; idx++) {
+			ret = canif__recv(&pdu);
+			sleep(1);
+			if (ret != 0) {
+				break;
+			}
+		}
+		CU_ASSERT(0 < ret);
 
 		// verification
 		dest = get_id_dest(pdu);
@@ -854,6 +895,7 @@ void test_rx_multiple(void)
 
 		// cleanup
 		destroy_pdu(&pdu);
+		test__frame = NULL;
 	}
 
 	{
@@ -882,8 +924,14 @@ void test_rx_multiple(void)
 		test__rx_ret = sizeof(frame);
 
 		// receive
-		ret = canif__recv(&pdu);
-		CU_ASSERT(0 == ret);
+		for (int idx=0; idx < 3; idx++) {
+			ret = canif__recv(&pdu);
+			sleep(1);
+			if (ret != 0) {
+				break;
+			}
+		}
+		CU_ASSERT(0 < ret);
 
 		// verification
 		dest = get_id_dest(pdu);
@@ -903,6 +951,7 @@ void test_rx_multiple(void)
 
 		// cleanup
 		destroy_pdu(&pdu);
+		test__frame = NULL;
 	}
 
 	ret = canif__shutdown();

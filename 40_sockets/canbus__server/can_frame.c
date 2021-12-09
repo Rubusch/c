@@ -24,6 +24,9 @@ void destroy_pdu(pdu_p *pdu)
 	*pdu = NULL;
 }
 
+
+// init
+
 void init_can_id(const pdu_t* pdu, uint16_t *id)
 {
 	*id = (uint16_t) pdu->id.id;
@@ -49,6 +52,9 @@ void init_pdu_from_can(pdu_t* pdu, const struct can_frame *frame)
 	pdu->dlc = (uint8_t) frame->can_dlc;
 	pdu->data.payload = *(uint64_t*) &frame->data;
 }
+
+
+// get / set
 
 uint8_t get_pdu_dlc(pdu_p pdu)
 {
