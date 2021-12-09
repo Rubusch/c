@@ -72,13 +72,9 @@
 // utils
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
-void print_dot_start(const char* filename);
-void print_dot_element(int rod_len, int revenue);
-void print_dot_end(void);
-
 
 int cut_rod(const int *prices, const int nprices, int length);
-int memoized_cut_rod_aux(const int *prices, const int nprices, int length);
+//int memoized_cut_rod_aux(const int *prices, const int nprices, int length);
 int memoized_cut_rod(const int *prices, const int nprices, int length);
 int bottom_up_cut_rod(const int *prices, const int nprices, int length);
 int extended_bottom_up_cut_rod(const int *prices, const int nprices, int length);

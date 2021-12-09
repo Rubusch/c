@@ -30,46 +30,6 @@ static FILE* fp;
 #endif /* DEBUG */
 
 
-void print_dot_start(const char* filename)
-{
-#ifdef DEBUG
-	if (!filename) return;
-	memset(line, '\0', LINE_SIZE);
-	if (fp != NULL) fclose(fp);
-	fp = fopen(filename, "w");
-	fprintf(fp, "strict digraph %s\n", "tree");
-	fprintf(fp, "{\n");
-#endif /* DEBUG */
-}
-
-void print_dot_element(int rod_len, int revenue)
-{
-#ifdef DEBUG
-	if (strlen(line) == 0) {
-		sprintf(line, "%d", rod_len);
-	} else if (rod_len == 0) {
-		sprintf(line, "%s -> %d\n", line, rod_len); // FIXME: improve
-		strcat(line
-		fprintf(fp, line);
-//		fprintf(fp, "%d [shape=box]\n", revenue);
-//		memset(line, '\0', LINE_SIZE);
-	} else {
-		sprintf(line, "%s -> %d\n", line, rod_len);
-		fprintf(fp, line);
-		memset(line, '\0', LINE_SIZE);
-	}
-#endif /* DEBUG */
-}
-
-void print_dot_end(void)
-{
-#ifdef DEBUG
-	fprintf(fp, "}\n");
-	fclose(fp);
-#endif /* DEBUG */
-}
-
-
 /*
   CUT-ROD(p, n)
   the inefficient approach, O(2^n)
@@ -95,12 +55,11 @@ int cut_rod(const int *prices, const int nprices, int length)
 
 	int revenue = 0;
 	for (int idx = 0; idx < length; idx++) {
+		fprintf(stderr, " %d", length-(idx-1));    
 		int revenue_sub = cut_rod(prices, nprices, length - (idx+1) );
-		revenue = max(revenue,
-			      (prices[idx] + revenue_sub));
-
-		print_dot_element(length - idx, revenue);   
+		revenue = max(revenue, (prices[idx] + revenue_sub));
 	}
+	fprintf(stderr, " - %d\n", revenue);    
 
 	return revenue;
 }
@@ -119,10 +78,25 @@ int cut_rod(const int *prices, const int nprices, int length)
   r[n] = q
   return q
  */
-int memoized_cut_rod_aux(const int *prices, const int nprices, int length, const int* arr)
+int _memoized_cut_rod_aux(const int *prices, const int nprices, int length, int* arr)
 {
-	// TODO     
-	return -1;
+	int revenue = 0;
+	if (arr[length] >= 0) {
+		return arr[length];
+	}
+	if (length == 0) {
+		revenue = 0;
+	} else {
+		revenue = -1;
+	}
+	for (int idx = 1; idx < length; idx++) {
+		int revenue_sub = prices[idx]
+			+ _memoized_cut_rod_aux(prices, nprices, (length - idx), arr);
+		revenue = max(revenue, revenue_sub);
+	}
+	arr[length] = revenue;
+
+	return revenue;
 }
 
 /*
@@ -145,7 +119,7 @@ int memoized_cut_rod(const int *prices, const int nprices, int length)
 		arr[idx] = -1;
 	}
 
-	int result = memoized_cut_rod_aux(prices, nprices, length, arr);
+	int result = _memoized_cut_rod_aux(prices, nprices, length, arr);
 	free(arr);
 
 	return result;

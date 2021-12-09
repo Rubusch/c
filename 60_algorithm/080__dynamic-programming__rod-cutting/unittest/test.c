@@ -18,12 +18,21 @@ void test_cut_rod(void)
 //	int rod_size = 20; // gets very slow
 	int rod_size = 10;
 
-	print_dot_start("cut_rod.dot");
 	int result = cut_rod(prices, nprices, rod_size);
-	print_dot_end();
-//	fprintf(stderr, "XXX res: %d\n", result);   
 	CU_ASSERT(30 == result);
 }
+
+void test_memoized_cut_rod(void)
+{
+	int nprices = sizeof(prices) / sizeof(*prices);
+	int rod_size = 10;
+	int result = -1;
+
+	result = memoized_cut_rod(prices, nprices, rod_size);
+	fprintf(stderr, "XXX result %d\n", result);   
+	CU_ASSERT(30 == result);
+}
+
 
 int main(void)
 {
@@ -42,8 +51,8 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "cut_rod", test_cut_rod)
-/* 		TEST_append(pSuite, "empty", test_list_empty) // */
+	TEST_start(pSuite, "rod cut", test_cut_rod)
+ 		TEST_append(pSuite, "memoized rod cut", test_memoized_cut_rod) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
