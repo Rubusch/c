@@ -1,0 +1,77 @@
+variable arguments (variadic)
+
+
+REFERENCES
+
+https://en.cppreference.com/w/c/variadic/va_start
+
+
+
+
+
+USAGE
+
+Dynamic darameters (argumentlist) be aware of memory leaks!!! If the
+pointer is empty it's not pointing to NULL!
+
+
+Situation 1: int list
+
+    int argumentList(int a, int b, ...)
+    {
+      int x=0;
+
+    // set pointer to the list
+      va_list arglist;
+
+    // set start argument
+      va_start(arglist, b);
+
+      int idx=0;
+      for (idx=0; idx<n; ++idx){
+    // read out the list
+        x += va_arg(arglist, int);
+      }
+    // close the list
+      va_end(arglist);
+      return s;
+    }
+
+
+
+Situation 2: save a string of max 127 token into a buffer
+
+    int argumentList(int blah, long blub, char* foo, ...)
+    {
+      char* myString = malloc(128 * sizeof(char));
+      va_list arglist;
+      va_start(arglist, foo);
+      myString = va_arg(arglist, char*);
+      va_end(arglist);
+    }
+
+
+
+Situation 3: Wrapping sprinf()
+
+example printf()
+
+    int myprintf(const char* format, ...)
+    {
+	va_list arglist;
+	va_start(arglist, format);
+	vprintf(format, arglist);
+	va_end(arglist);
+    }
+
+
+example: sprintf()
+
+    int mysprintf(const char* format, ...)
+    {
+        va_list arglist;
+        va_start(arglist, text);
+        int n = vsprintf(text, arglist);
+        va_end(text);
+        return n;
+    }
