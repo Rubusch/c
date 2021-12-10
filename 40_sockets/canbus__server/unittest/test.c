@@ -10,9 +10,18 @@
 #include <linux/can.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdarg.h>
 
-#include <mcheck.h> /* mcheck */
 
+void test_printf(const char* msg, ...)
+{
+#ifdef DEBUG
+	va_list arglist;
+	va_start(arglist, msg);
+	vprintf(msg, arglist);
+	va_end(arglist);
+#endif /* DEBUG */
+}
 
 void test_pdu_id(void)
 {
@@ -173,21 +182,21 @@ void test_pdu_data_seqn2(void)
 	memset(data, 0, sizeof(data));
 	init_can_data(pdu, data);
 	CU_ASSERT(data[0] == 0x00);
-//	fprintf(stderr, "data[0] 0x%02x\n", data[0]);
+	test_printf("data[0] 0x%02x\n", data[0]);
 	CU_ASSERT(data[1] == 0xde);
-//	fprintf(stderr, "data[1] 0x%02x\n", data[1]);
+	test_printf("data[1] 0x%02x\n", data[1]);
 	CU_ASSERT(data[2] == 0xbc);
-//	fprintf(stderr, "data[2] 0x%02x\n", data[2]);
+	test_printf("data[2] 0x%02x\n", data[2]);
 	CU_ASSERT(data[3] == 0x9a);
-//	fprintf(stderr, "data[3] 0x%02x\n", data[3]);
+	test_printf("data[3] 0x%02x\n", data[3]);
 	CU_ASSERT(data[4] == 0x78);
-//	fprintf(stderr, "data[4] 0x%02x\n", data[4]);
+	test_printf("data[4] 0x%02x\n", data[4]);
 	CU_ASSERT(data[5] == 0x56);
-//	fprintf(stderr, "data[5] 0x%02x\n", data[5]);
+	test_printf("data[5] 0x%02x\n", data[5]);
 	CU_ASSERT(data[6] == 0x34);
-//	fprintf(stderr, "data[6] 0x%02x\n", data[6]);
+	test_printf("data[6] 0x%02x\n", data[6]);
 	CU_ASSERT(data[7] == 0x12);
-//	fprintf(stderr, "data[7] 0x%02x\n", data[7]);
+	test_printf("data[7] 0x%02x\n", data[7]);
 
 	destroy_pdu(&pdu);
 	CU_ASSERT(NULL == pdu);
@@ -226,21 +235,21 @@ void test_pdu_frame(void)
 	memset(data, 0, sizeof(data));
 	init_can_data(pdu, data);
 	CU_ASSERT(data[0] == 0x7c);
-//	fprintf(stderr, "data[0] 0x%02x\n", data[0]);  
+	test_printf("data[0] 0x%02x\n", data[0]);
 	CU_ASSERT(data[1] == 0xde);
-//	fprintf(stderr, "data[1] 0x%02x\n", data[1]);  
+	test_printf("data[1] 0x%02x\n", data[1]);
 	CU_ASSERT(data[2] == 0xbc);
-//	fprintf(stderr, "data[2] 0x%02x\n", data[2]);  
+	test_printf("data[2] 0x%02x\n", data[2]);
 	CU_ASSERT(data[3] == 0x9a);
-//	fprintf(stderr, "data[3] 0x%02x\n", data[3]);  
+	test_printf("data[3] 0x%02x\n", data[3]);
 	CU_ASSERT(data[4] == 0x78);
-//	fprintf(stderr, "data[4] 0x%02x\n", data[4]);  
+	test_printf("data[4] 0x%02x\n", data[4]);
 	CU_ASSERT(data[5] == 0x56);
-//	fprintf(stderr, "data[5] 0x%02x\n", data[5]);  
+	test_printf("data[5] 0x%02x\n", data[5]);
 	CU_ASSERT(data[6] == 0x34);
-//	fprintf(stderr, "data[6] 0x%02x\n", data[6]);  
+	test_printf("data[6] 0x%02x\n", data[6]);
 	CU_ASSERT(data[7] == 0x12);
-//	fprintf(stderr, "data[7] 0x%02x\n", data[7]);  
+	test_printf("data[7] 0x%02x\n", data[7]);
 
 	destroy_pdu(&pdu);
 	CU_ASSERT(NULL == pdu);
@@ -282,323 +291,21 @@ void test_canif_interface(void)
 	CU_ASSERT(ret == 0);
 }
 
-void test_tx_single(void)
+static void verify_rx_frame(uint8_t dest, uint8_t prio, uint8_t seqn, uint64_t payload, uint8_t dlc)
 {
 	int ret = -1;
 	pdu_p pdu;
-	uint8_t dest;
-	uint8_t prio;
-	uint8_t seqn;
-	uint64_t payload;
-	uint8_t dlc;
-	struct can_frame *frame = NULL;
-
-	pdu = create_pdu();
-	CU_ASSERT(NULL != pdu);
-
-	dest = 0x23;
-	set_id_dest(pdu, dest);
-
-	prio = 0x1;
-	set_id_prio(pdu, prio);
-
-	seqn = 0x7c;
-	set_data_seqn(pdu, seqn);
-
-	payload = 0x123456789abcde;
-	set_data_payload(pdu, payload);
-
-	dlc = CAN_MAX_DLEN;
-	set_pdu_dlc(pdu, dlc);
-
-	ret = canif__startup("can0", strlen("can0") + 1);
-	CU_ASSERT(ret == 0);
-	sleep(1); /* delay: listeners have to be ready first */
-
-	// send
-	canif__send(pdu);
-	sleep(1); /* delay: pdu has to be processed to test framework */
-
-	// verification
-	CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
-
-	frame = test__frame;
-	dbg_frame(__func__, frame);
-
-	CU_ASSERT((uint16_t)frame->can_id == 0x123);
-	CU_ASSERT(frame->can_dlc == CAN_MAX_DLEN);
-	CU_ASSERT(frame->data[0] == 0x7c);
-	CU_ASSERT(frame->data[1] == 0xde);
-	CU_ASSERT(frame->data[2] == 0xbc);
-	CU_ASSERT(frame->data[3] == 0x9a);
-	CU_ASSERT(frame->data[4] == 0x78);
-	CU_ASSERT(frame->data[5] == 0x56);
-	CU_ASSERT(frame->data[6] == 0x34);
-	CU_ASSERT(frame->data[7] == 0x12);
-
-	// cleanup
-	free(frame); frame = NULL;
-	test__frame = NULL;
-	destroy_pdu(&pdu);
-
-	ret = canif__shutdown();
-	CU_ASSERT(ret == 0);
-}
-
-void test_tx_multiple(void)
-{
-	int ret = -1;
-	pdu_p pdu;
-	uint8_t dest;
-	uint8_t prio;
-	uint8_t seqn;
-	uint64_t payload;
-	uint8_t dlc;
-	struct can_frame *frame = NULL;
-
-	ret = canif__startup("can0", strlen("can0") + 1);
-	CU_ASSERT(ret == 0);
-	sleep(1); /* delay: listeners have to be ready first */
-
-	{
-		// 1. frame
-		pdu = create_pdu();
-		CU_ASSERT(NULL != pdu);
-
-		dest = 0x23;
-		set_id_dest(pdu, dest);
-
-		prio = 0x1;
-		set_id_prio(pdu, prio);
-
-		seqn = 0x71;
-		set_data_seqn(pdu, seqn);
-
-		payload = 0xaaaaaaaaaaaaaa;
-		set_data_payload(pdu, payload);
-
-		dlc = CAN_MAX_DLEN;
-		set_pdu_dlc(pdu, dlc);
-
-		canif__send(pdu);
-		sleep(1); /* delay: pdu has to be processed to test framework */
-
-		CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
-
-		frame = test__frame;
-		dbg_frame(__func__, frame);
-		CU_ASSERT((uint16_t)frame->can_id == 0x123);
-		CU_ASSERT(frame->can_dlc == CAN_MAX_DLEN);
-		CU_ASSERT(frame->data[0] == 0x71);
-		CU_ASSERT(frame->data[1] == 0xaa);
-		CU_ASSERT(frame->data[2] == 0xaa);
-		CU_ASSERT(frame->data[3] == 0xaa);
-		CU_ASSERT(frame->data[4] == 0xaa);
-		CU_ASSERT(frame->data[5] == 0xaa);
-		CU_ASSERT(frame->data[6] == 0xaa);
-		CU_ASSERT(frame->data[7] == 0xaa);
-
-		// cleanup
-		free(frame); frame = NULL;
-		test__frame = NULL;
-		destroy_pdu(&pdu);
-	}
-
-	{
-		// 2. frame
-		pdu = create_pdu();
-		CU_ASSERT(NULL != pdu);
-
-		dest = 0x23;
-		set_id_dest(pdu, dest);
-
-		prio = 0x1;
-		set_id_prio(pdu, prio);
-
-		seqn = 0x72;
-		set_data_seqn(pdu, seqn);
-
-		payload = 0xbbbbbbbbbbbbbb;
-		set_data_payload(pdu, payload);
-
-		dlc = CAN_MAX_DLEN;
-		set_pdu_dlc(pdu, dlc);
-
-		canif__send(pdu);
-		sleep(1); /* delay: pdu has to be processed to test framework */
-
-		CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
-
-		frame = test__frame;
-		dbg_frame(__func__, frame);
-		CU_ASSERT((uint16_t)frame->can_id == 0x123);
-		CU_ASSERT(frame->can_dlc == CAN_MAX_DLEN);
-		CU_ASSERT(frame->data[0] == 0x72);
-		CU_ASSERT(frame->data[1] == 0xbb);
-		CU_ASSERT(frame->data[2] == 0xbb);
-		CU_ASSERT(frame->data[3] == 0xbb);
-		CU_ASSERT(frame->data[4] == 0xbb);
-		CU_ASSERT(frame->data[5] == 0xbb);
-		CU_ASSERT(frame->data[6] == 0xbb);
-		CU_ASSERT(frame->data[7] == 0xbb);
-
-		// cleanup
-		free(frame); frame = NULL;
-		test__frame = NULL;
-		destroy_pdu(&pdu);
-	}
-
-	{
-		// 3. frame
-		pdu = create_pdu();
-		CU_ASSERT(NULL != pdu);
-
-		dest = 0x23;
-		set_id_dest(pdu, dest);
-
-		prio = 0x1;
-		set_id_prio(pdu, prio);
-
-		seqn = 0x73;
-		set_data_seqn(pdu, seqn);
-
-		payload = 0xcccccccccccccc;
-		set_data_payload(pdu, payload);
-
-		dlc = CAN_MAX_DLEN;
-		set_pdu_dlc(pdu, dlc);
-
-		canif__send(pdu);
-		sleep(1); /* delay: pdu has to be processed to test framework */
-
-		CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
-
-		frame = test__frame;
-		dbg_frame(__func__, frame);
-		CU_ASSERT((uint16_t)frame->can_id == 0x123);
-		CU_ASSERT(frame->can_dlc == CAN_MAX_DLEN);
-		CU_ASSERT(frame->data[0] == 0x73);
-		CU_ASSERT(frame->data[1] == 0xcc);
-		CU_ASSERT(frame->data[2] == 0xcc);
-		CU_ASSERT(frame->data[3] == 0xcc);
-		CU_ASSERT(frame->data[4] == 0xcc);
-		CU_ASSERT(frame->data[5] == 0xcc);
-		CU_ASSERT(frame->data[6] == 0xcc);
-		CU_ASSERT(frame->data[7] == 0xcc);
-
-		// cleanup
-		free(frame); frame = NULL;
-		test__frame = NULL;
-		destroy_pdu(&pdu);
-	}
-
-	{
-		// 4. frame
-		pdu = create_pdu();
-		CU_ASSERT(NULL != pdu);
-
-		dest = 0x23;
-		set_id_dest(pdu, dest);
-
-		prio = 0x1;
-		set_id_prio(pdu, prio);
-
-		seqn = 0x74;
-		set_data_seqn(pdu, seqn);
-
-		payload = 0xdddddddddddddd;
-		set_data_payload(pdu, payload);
-
-		dlc = CAN_MAX_DLEN;
-		set_pdu_dlc(pdu, dlc);
-
-		canif__send(pdu);
-		sleep(1); /* delay: pdu has to be processed to test framework */
-
-		CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
-
-		frame = test__frame;
-		dbg_frame(__func__, frame);
-		CU_ASSERT((uint16_t)frame->can_id == 0x123);
-		CU_ASSERT(frame->can_dlc == CAN_MAX_DLEN);
-		CU_ASSERT(frame->data[0] == 0x74);
-		CU_ASSERT(frame->data[1] == 0xdd);
-		CU_ASSERT(frame->data[2] == 0xdd);
-		CU_ASSERT(frame->data[3] == 0xdd);
-		CU_ASSERT(frame->data[4] == 0xdd);
-		CU_ASSERT(frame->data[5] == 0xdd);
-		CU_ASSERT(frame->data[6] == 0xdd);
-		CU_ASSERT(frame->data[7] == 0xdd);
-
-		// cleanup
-		free(frame); frame = NULL;
-		test__frame = NULL;
-		destroy_pdu(&pdu);
-	}
-
-	{
-		// 5. frame
-		pdu = create_pdu();
-		CU_ASSERT(NULL != pdu);
-
-		dest = 0x23;
-		set_id_dest(pdu, dest);
-
-		prio = 0x1;
-		set_id_prio(pdu, prio);
-
-		seqn = 0x75;
-		set_data_seqn(pdu, seqn);
-
-		payload = 0xeeeeeeeeeeeeee;
-		set_data_payload(pdu, payload);
-
-		dlc = CAN_MAX_DLEN;
-		set_pdu_dlc(pdu, dlc);
-
-		canif__send(pdu);
-		sleep(1); /* delay: pdu has to be processed to test framework */
-
-		CU_ASSERT(test__tx_nbytes == CAN_MAX_DLEN);
-
-		frame = test__frame;
-		dbg_frame(__func__, frame);
-		CU_ASSERT((uint16_t)frame->can_id == 0x123);
-		CU_ASSERT(frame->can_dlc == CAN_MAX_DLEN);
-		CU_ASSERT(frame->data[0] == 0x75);
-		CU_ASSERT(frame->data[1] == 0xee);
-		CU_ASSERT(frame->data[2] == 0xee);
-		CU_ASSERT(frame->data[3] == 0xee);
-		CU_ASSERT(frame->data[4] == 0xee);
-		CU_ASSERT(frame->data[5] == 0xee);
-		CU_ASSERT(frame->data[6] == 0xee);
-		CU_ASSERT(frame->data[7] == 0xee);
-
-		// cleanup
-		free(frame); frame = NULL;
-		test__frame = NULL;
-		destroy_pdu(&pdu);
-	}
-
-	ret = canif__shutdown();
-	CU_ASSERT(ret == 0);
-}
-
-void test_rx_single(void)
-{
-	int ret = -1;
-	pdu_p pdu;
-	uint8_t dest;
-	uint8_t prio;
-	uint8_t seqn;
-	uint64_t payload;
-	uint8_t dlc;
+	uint8_t exp_dest = dest;
+	uint8_t x_dest = 0;
+	uint8_t exp_prio = prio;
+	uint8_t x_prio = 0;
+	uint8_t exp_seqn = seqn;
+	uint8_t x_seqn = 0;
+	uint64_t exp_payload = payload;
+	uint64_t x_payload;
+	uint8_t exp_dlc = dlc;
+	uint8_t x_dlc = 0;
 	struct can_frame *frame;
-
-	// start
-	ret = canif__startup("can0", strlen("can0") + 1);
-	CU_ASSERT(ret == 0);
-//	sleep(1); /* delay: listeners have to be ready first */
 
 	// frame
 	frame = malloc(sizeof(*frame));
@@ -608,16 +315,16 @@ void test_rx_single(void)
 	}
 	test__frame = frame;
 
-	frame->can_id = (uint16_t) 0x123;
-	frame->can_dlc = CAN_MAX_DLEN;
-	frame->data[0] = 0x81;
-	frame->data[1] = 0xde;
-	frame->data[2] = 0xbc;
-	frame->data[3] = 0x9a;
-	frame->data[4] = 0x78;
-	frame->data[5] = 0x56;
-	frame->data[6] = 0x34;
-	frame->data[7] = 0x12;
+	frame->can_id = (prio<<8 | dest) & 0x7ff;
+	frame->can_dlc = dlc;
+	frame->data[0] = seqn;
+	frame->data[1] = (uint8_t) ((payload & 0x00000000000000ff));
+	frame->data[2] = (uint8_t) ((payload & 0x000000000000ff00) >>8);
+	frame->data[3] = (uint8_t) ((payload & 0x0000000000ff0000) >>16);
+	frame->data[4] = (uint8_t) ((payload & 0x00000000ff000000) >>24);
+	frame->data[5] = (uint8_t) ((payload & 0x000000ff00000000) >>32);
+	frame->data[6] = (uint8_t) ((payload & 0x0000ff0000000000) >>40);
+	frame->data[7] = (uint8_t) ((payload & 0x00ff000000000000) >>48);
 
 	dbg_frame(__func__, test__frame);
 
@@ -635,324 +342,149 @@ void test_rx_single(void)
 	CU_ASSERT(0 < ret);
 
 	// verification
-	dest = get_id_dest(pdu);
-	CU_ASSERT(dest == 0x23);
+	x_dest = get_id_dest(pdu);
+	CU_ASSERT(x_dest == exp_dest);
 
-	prio = get_id_prio(pdu);
-	CU_ASSERT(prio == 0x1);
+	x_prio = get_id_prio(pdu);
+	CU_ASSERT(x_prio == exp_prio);
 
-	seqn = get_data_seqn(pdu);
-	CU_ASSERT(seqn == 0x81);
+	x_seqn = get_data_seqn(pdu);
+	CU_ASSERT(x_seqn == exp_seqn);
 
-	payload = get_data_payload(pdu);
-	CU_ASSERT(payload == 0x123456789abcde);
+	x_payload = get_data_payload(pdu);
+	CU_ASSERT(x_payload == exp_payload);
 
-	dlc = get_pdu_dlc(pdu);
-	CU_ASSERT(dlc == CAN_MAX_DLEN);
+	x_dlc = get_pdu_dlc(pdu);
+	CU_ASSERT(x_dlc == exp_dlc);
 
 	// cleanup
 	destroy_pdu(&pdu);
 	CU_ASSERT(NULL == pdu);
-	ret = canif__shutdown();
 	test__frame = NULL;
+}
+
+static void verify_tx_frame(uint8_t dest, uint8_t prio, uint8_t seqn, uint64_t payload, uint8_t dlc)
+{
+	pdu_p pdu;
+	struct can_frame *frame = NULL;
+
+	// expected
+	uint16_t exp_id = (prio<<8 | dest) & 0x7ff;
+	uint8_t exp_dlc = dlc;
+	uint8_t exp_data[CAN_MAX_DLEN];
+	exp_data[0] = seqn;
+	exp_data[1] = (uint8_t) ((payload & 0x00000000000000ff));
+	exp_data[2] = (uint8_t) ((payload & 0x000000000000ff00) >>8);
+	exp_data[3] = (uint8_t) ((payload & 0x0000000000ff0000) >>16);
+	exp_data[4] = (uint8_t) ((payload & 0x00000000ff000000) >>24);
+	exp_data[5] = (uint8_t) ((payload & 0x000000ff00000000) >>32);
+	exp_data[6] = (uint8_t) ((payload & 0x0000ff0000000000) >>40);
+	exp_data[7] = (uint8_t) ((payload & 0x00ff000000000000) >>48);
+
+	// init pdu
+	pdu = create_pdu();
+	CU_ASSERT(NULL != pdu);
+
+	set_id_dest(pdu, dest);
+	set_id_prio(pdu, prio);
+	set_data_seqn(pdu, seqn);
+	set_data_payload(pdu, payload);
+	set_pdu_dlc(pdu, dlc);
+
+	canif__send(pdu);
+	sleep(1); /* delay: pdu has to be processed to test framework */
+
+	// verification
+	CU_ASSERT(test__tx_nbytes == exp_dlc);
+
+	frame = test__frame;
+	dbg_frame(__func__, frame);
+	CU_ASSERT((uint16_t)frame->can_id == exp_id);
+	test_printf("frame->can_id %03x [%03x]\n", frame->can_id, exp_id);
+	CU_ASSERT(frame->can_dlc == exp_dlc);
+	test_printf("frame->can_dlc %d [%d]\n", frame->can_dlc, exp_dlc);
+	CU_ASSERT(frame->data[0] == exp_data[0]);
+	test_printf("frame->data[0] 0x%02x [0x%02x]\n", frame->data[0], exp_data[0]);
+	CU_ASSERT(frame->data[1] == exp_data[1]);
+	test_printf("frame->data[1] 0x%02x [0x%02x]\n", frame->data[1], exp_data[1]);
+	CU_ASSERT(frame->data[2] == exp_data[2]);
+	test_printf("frame->data[2] 0x%02x [0x%02x]\n", frame->data[2], exp_data[2]);
+	CU_ASSERT(frame->data[3] == exp_data[3]);
+	test_printf("frame->data[3] 0x%02x [0x%02x]\n", frame->data[3], exp_data[3]);
+	CU_ASSERT(frame->data[4] == exp_data[4]);
+	test_printf("frame->data[4] 0x%02x [0x%02x]\n", frame->data[4], exp_data[4]);
+	CU_ASSERT(frame->data[5] == exp_data[5]);
+	test_printf("frame->data[5] 0x%02x [0x%02x]\n", frame->data[5], exp_data[5]);
+	CU_ASSERT(frame->data[6] == exp_data[6]);
+	test_printf("frame->data[6] 0x%02x [0x%02x]\n", frame->data[6], exp_data[6]);
+	CU_ASSERT(frame->data[7] == exp_data[7]);
+	test_printf("frame->data[7] 0x%02x [0x%02x]\n", frame->data[7], exp_data[7]);
+
+	// cleanup
+	free(frame); frame = NULL;
+	test__frame = NULL;
+	destroy_pdu(&pdu);
+}
+
+void test_tx_single(void)
+{
+	int ret = -1;
+
+	ret = canif__startup("can0", strlen("can0") + 1);
+	CU_ASSERT(ret == 0);
+	sleep(1); // safety
+
+	verify_tx_frame(0x23, 0x1, 0x7c, 0x123456789abcde, CAN_MAX_DLEN);
+
+	ret = canif__shutdown();
+	CU_ASSERT(ret == 0);
+}
+
+void test_tx_multiple(void)
+{
+	int ret = -1;
+
+	ret = canif__startup("can0", strlen("can0") + 1);
+	CU_ASSERT(ret == 0);
+	sleep(1); // safety
+
+	verify_tx_frame(0x23, 0x1, 0x71, 0xaaaaaaaaaaaaaa, CAN_MAX_DLEN);
+	verify_tx_frame(0x23, 0x1, 0x72, 0xbbbbbbbbbbbbbb, CAN_MAX_DLEN);
+	verify_tx_frame(0x23, 0x1, 0x73, 0xcccccccccccccc, CAN_MAX_DLEN);
+	verify_tx_frame(0x23, 0x1, 0x74, 0xdddddddddddddd, CAN_MAX_DLEN);
+	verify_tx_frame(0x23, 0x1, 0x75, 0xeeeeeeeeeeeeee, CAN_MAX_DLEN);
+
+	ret = canif__shutdown();
+	CU_ASSERT(ret == 0);
+}
+
+void test_rx_single(void)
+{
+	int ret = -1;
+	ret = canif__startup("can0", strlen("can0") + 1);
+	CU_ASSERT(ret == 0);
+	sleep(1); // safety
+
+	verify_rx_frame(0x23, 0x1, 0x81, 0x123456789abcde, CAN_MAX_DLEN);
+
+	ret = canif__shutdown();
 	CU_ASSERT(ret == 0);
 }
 
 void test_rx_multiple(void)
 {
 	int ret = -1;
-	pdu_p pdu;
-	uint8_t dest;
-	uint8_t prio;
-	uint8_t seqn;
-	uint64_t payload;
-	uint8_t dlc;
-	struct can_frame *frame;
 
-	// start
 	ret = canif__startup("can0", strlen("can0") + 1);
 	CU_ASSERT(ret == 0);
-//	sleep(1); /* delay: listeners have to be ready first */
+	sleep(1); // safety
 
-	{
-		// frame
-		frame = malloc(sizeof(*frame));
-		if (!frame) {
-			perror("allocation failed");
-			exit(EXIT_FAILURE);
-		}
-
-		frame->can_id = (uint16_t) 0x123;
-		frame->can_dlc = CAN_MAX_DLEN;
-		frame->data[0] = 0x81;
-		frame->data[1] = 0xaa;
-		frame->data[2] = 0xaa;
-		frame->data[3] = 0xaa;
-		frame->data[4] = 0xaa;
-		frame->data[5] = 0xaa;
-		frame->data[6] = 0xaa;
-		frame->data[7] = 0xaa;
-
-		dbg_frame(__func__, test__frame);
-		test__frame = frame;
-
-		// trigger
-		test__rx_ret = sizeof(frame);
-
-		// receive
-		for (int idx=0; idx < 3; idx++) {
-			ret = canif__recv(&pdu);
-			sleep(1);
-			if (ret != 0) {
-				break;
-			}
-		}
-		CU_ASSERT(0 < ret);
-
-		// verification
-		dest = get_id_dest(pdu);
-		CU_ASSERT(dest == 0x23);
-
-		prio = get_id_prio(pdu);
-		CU_ASSERT(prio == 0x1);
-
-		seqn = get_data_seqn(pdu);
-		CU_ASSERT(seqn == 0x81);
-
-		payload = get_data_payload(pdu);
-		CU_ASSERT(payload == 0xaaaaaaaaaaaaaa);
-
-		dlc = get_pdu_dlc(pdu);
-		CU_ASSERT(dlc == CAN_MAX_DLEN);
-
-		// cleanup
-		destroy_pdu(&pdu);
-		test__frame = NULL;
-	}
-
-	{
-		// frame
-		frame = malloc(sizeof(*frame));
-		if (!frame) {
-			perror("allocation failed");
-			exit(EXIT_FAILURE);
-		}
-
-		frame->can_id = (uint16_t) 0x123;
-		frame->can_dlc = CAN_MAX_DLEN;
-		frame->data[0] = 0x82;
-		frame->data[1] = 0xbb;
-		frame->data[2] = 0xbb;
-		frame->data[3] = 0xbb;
-		frame->data[4] = 0xbb;
-		frame->data[5] = 0xbb;
-		frame->data[6] = 0xbb;
-		frame->data[7] = 0xbb;
-
-		dbg_frame(__func__, test__frame);
-
-		// trigger
-		test__frame = frame;
-		test__rx_ret = sizeof(frame);
-
-		// receive
-		for (int idx=0; idx < 3; idx++) {
-			ret = canif__recv(&pdu);
-			sleep(1);
-			if (ret != 0) {
-				break;
-			}
-		}
-		CU_ASSERT(0 < ret);
-
-		// verification
-		dest = get_id_dest(pdu);
-		CU_ASSERT(dest == 0x23);
-
-		prio = get_id_prio(pdu);
-		CU_ASSERT(prio == 0x1);
-
-		seqn = get_data_seqn(pdu);
-		CU_ASSERT(seqn == 0x82);
-
-		payload = get_data_payload(pdu);
-		CU_ASSERT(payload == 0xbbbbbbbbbbbbbb);
-
-		dlc = get_pdu_dlc(pdu);
-		CU_ASSERT(dlc == CAN_MAX_DLEN);
-
-		// cleanup
-		destroy_pdu(&pdu);
-		test__frame = NULL;
-	}
-
-	{
-		// frame
-		frame = malloc(sizeof(*frame));
-		if (!frame) {
-			perror("allocation failed");
-			exit(EXIT_FAILURE);
-		}
-		test__frame = frame;
-
-		frame->can_id = (uint16_t) 0x123;
-		frame->can_dlc = CAN_MAX_DLEN;
-		frame->data[0] = 0x83;
-		frame->data[1] = 0xcc;
-		frame->data[2] = 0xcc;
-		frame->data[3] = 0xcc;
-		frame->data[4] = 0xcc;
-		frame->data[5] = 0xcc;
-		frame->data[6] = 0xcc;
-		frame->data[7] = 0xcc;
-
-		dbg_frame(__func__, test__frame);
-
-		// trigger
-		test__rx_ret = sizeof(frame);
-
-		// receive
-		for (int idx=0; idx < 3; idx++) {
-			ret = canif__recv(&pdu);
-			sleep(1);
-			if (ret != 0) {
-				break;
-			}
-		}
-		CU_ASSERT(0 < ret);
-
-		// verification
-		dest = get_id_dest(pdu);
-		CU_ASSERT(dest == 0x23);
-
-		prio = get_id_prio(pdu);
-		CU_ASSERT(prio == 0x1);
-
-		seqn = get_data_seqn(pdu);
-		CU_ASSERT(seqn == 0x83);
-
-		payload = get_data_payload(pdu);
-		CU_ASSERT(payload == 0xcccccccccccccc);
-
-		dlc = get_pdu_dlc(pdu);
-		CU_ASSERT(dlc == CAN_MAX_DLEN);
-
-		// cleanup
-		destroy_pdu(&pdu);
-		test__frame = NULL;
-	}
-
-	{
-		// frame
-		frame = malloc(sizeof(*frame));
-		if (!frame) {
-			perror("allocation failed");
-			exit(EXIT_FAILURE);
-		}
-		test__frame = frame;
-
-		frame->can_id = (uint16_t) 0x123;
-		frame->can_dlc = CAN_MAX_DLEN;
-		frame->data[0] = 0x84;
-		frame->data[1] = 0xdd;
-		frame->data[2] = 0xdd;
-		frame->data[3] = 0xdd;
-		frame->data[4] = 0xdd;
-		frame->data[5] = 0xdd;
-		frame->data[6] = 0xdd;
-		frame->data[7] = 0xdd;
-
-		dbg_frame(__func__, test__frame);
-
-		// trigger
-		test__rx_ret = sizeof(frame);
-
-		// receive
-		for (int idx=0; idx < 3; idx++) {
-			ret = canif__recv(&pdu);
-			sleep(1);
-			if (ret != 0) {
-				break;
-			}
-		}
-		CU_ASSERT(0 < ret);
-
-		// verification
-		dest = get_id_dest(pdu);
-		CU_ASSERT(dest == 0x23);
-
-		prio = get_id_prio(pdu);
-		CU_ASSERT(prio == 0x1);
-
-		seqn = get_data_seqn(pdu);
-		CU_ASSERT(seqn == 0x84);
-
-		payload = get_data_payload(pdu);
-		CU_ASSERT(payload == 0xdddddddddddddd);
-
-		dlc = get_pdu_dlc(pdu);
-		CU_ASSERT(dlc == CAN_MAX_DLEN);
-
-		// cleanup
-		destroy_pdu(&pdu);
-		test__frame = NULL;
-	}
-
-	{
-		// frame
-		frame = malloc(sizeof(*frame));
-		if (!frame) {
-			perror("allocation failed");
-			exit(EXIT_FAILURE);
-		}
-		test__frame = frame;
-
-		frame->can_id = (uint16_t) 0x123;
-		frame->can_dlc = CAN_MAX_DLEN;
-		frame->data[0] = 0x85;
-		frame->data[1] = 0xee;
-		frame->data[2] = 0xee;
-		frame->data[3] = 0xee;
-		frame->data[4] = 0xee;
-		frame->data[5] = 0xee;
-		frame->data[6] = 0xee;
-		frame->data[7] = 0xee;
-
-		dbg_frame(__func__, test__frame);
-
-		// trigger
-		test__rx_ret = sizeof(frame);
-
-		// receive
-		for (int idx=0; idx < 3; idx++) {
-			ret = canif__recv(&pdu);
-			sleep(1);
-			if (ret != 0) {
-				break;
-			}
-		}
-		CU_ASSERT(0 < ret);
-
-		// verification
-		dest = get_id_dest(pdu);
-		CU_ASSERT(dest == 0x23);
-
-		prio = get_id_prio(pdu);
-		CU_ASSERT(prio == 0x1);
-
-		seqn = get_data_seqn(pdu);
-		CU_ASSERT(seqn == 0x85);
-
-		payload = get_data_payload(pdu);
-		CU_ASSERT(payload == 0xeeeeeeeeeeeeee);
-
-		dlc = get_pdu_dlc(pdu);
-		CU_ASSERT(dlc == CAN_MAX_DLEN);
-
-		// cleanup
-		destroy_pdu(&pdu);
-		test__frame = NULL;
-	}
+	verify_rx_frame(0x23, 0x1, 0x31, 0xaaaaaaaaaaaaaa, CAN_MAX_DLEN);
+	verify_rx_frame(0x23, 0x1, 0x32, 0xbbbbbbbbbbbbbb, CAN_MAX_DLEN);
+	verify_rx_frame(0x23, 0x1, 0x33, 0xcccccccccccccc, CAN_MAX_DLEN);
+	verify_rx_frame(0x23, 0x1, 0x34, 0xdddddddddddddd, CAN_MAX_DLEN);
+	verify_rx_frame(0x23, 0x1, 0x35, 0xeeeeeeeeeeeeee, CAN_MAX_DLEN);
+	verify_rx_frame(0x23, 0x1, 0x35, 0xffffffffffffff, CAN_MAX_DLEN);
 
 	ret = canif__shutdown();
 	CU_ASSERT(ret == 0);
@@ -961,8 +493,6 @@ void test_rx_multiple(void)
 
 int main(void)
 {
-//	mtrace(); // mem check
-
 	CU_pSuite pSuite = NULL;
 
 	/* initialize the CUnit test registry */
@@ -1016,8 +546,6 @@ int main(void)
 
 	/* clean up registry and return */
 	CU_cleanup_registry();
-
-//	muntrace(); // mem check
 
 	return CU_get_error();
 }

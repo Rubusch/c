@@ -15,6 +15,7 @@ pdu_p create_pdu(void)
 		exit(EXIT_FAILURE);
 	}
 	memset(pdu, 0, sizeof(*pdu));
+	pdu->id.init.forbidden = 0x00;
 	return pdu;
 }
 
@@ -29,7 +30,7 @@ void destroy_pdu(pdu_p *pdu)
 
 void init_can_id(const pdu_t* pdu, uint16_t *id)
 {
-	*id = (uint16_t) pdu->id.id;
+	*id = ((uint16_t) pdu->id.id) & 0x7ff;
 }
 
 void init_can_dlc(const pdu_t* pdu, uint8_t *dlc)
@@ -83,7 +84,7 @@ uint8_t get_id_prio(pdu_p pdu)
 
 void set_id_prio(pdu_p pdu, uint8_t prio)
 {
-	pdu->id.init.prio = prio;
+	pdu->id.init.prio = prio & 0x7;
 }
 
 uint8_t get_data_seqn(pdu_p pdu)
@@ -103,5 +104,5 @@ uint64_t get_data_payload(pdu_p pdu)
 
 void set_data_payload(pdu_p pdu, uint64_t payload)
 {
-	pdu->data.init.data = payload;
+	pdu->data.init.data = payload & 0xffffffffffffff;
 }

@@ -264,23 +264,18 @@ int canif__send(const pdu_t *pdu)
 		return -1;
 	}
 
-fprintf(stderr, "%s() A\n", __func__);    
 	int ret = -1;
 	struct can_frame *frame;
-fprintf(stderr, "%s() B\n", __func__);    
 	frame = malloc(sizeof(*frame));
 	if (!frame) { canif__failure("allocation failed", __func__); }
-fprintf(stderr, "%s() C\n", __func__);    
+	memset(frame, 0, sizeof(*frame));
+
 	init_can_id(pdu, (uint16_t*) &frame->can_id);
-fprintf(stderr, "%s() D\n", __func__);    
 	init_can_dlc(pdu, &frame->can_dlc);
-fprintf(stderr, "%s() E - dlc %d\n", __func__, frame->can_dlc);    
 	init_can_data(pdu, frame->data);
-fprintf(stderr, "%s() F - \n", __func__);    
 	dbg_frame(__func__, frame);
-fprintf(stderr, "%s() G\n", __func__);    
 	ret = tx__enqueue(frame);
-fprintf(stderr, "%s() H\n", __func__);    
+
 	pthread_cond_signal(&tx_cv); // signal: offer a ticket for a
 				     // single read on the queue to
 				     // the listener
@@ -307,10 +302,7 @@ int canif__recv(pdu_p *pdu)
 	ret = frame->can_dlc;
 	*pdu = create_pdu();
 	init_pdu_from_can(*pdu, frame);
-	free(frame); frame = NULL; // FIXME: somehow this is NOT needed (double free)   
-
-// TODO: try here...	pthread_mutex_unlock(&rx_mutex);     
-//	pthread_mutex_unlock(&rx_mutex);
+	free(frame); frame = NULL;
 
 	dbg_end(__func__);
 	return ret;

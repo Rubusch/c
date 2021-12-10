@@ -4,7 +4,7 @@
 #include <linux/can.h>
 
 /* debug print */
-#define DEBUG 1
+//#define DEBUG 1
 
 /* mock for unittest */
 //#define TESTING 1
