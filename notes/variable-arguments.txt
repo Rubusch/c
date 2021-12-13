@@ -54,6 +54,9 @@ Situation 2: save a string of max 127 token into a buffer
 
 Situation 3: Wrapping sprinf()
 
+#include <stdio.h>
+#include <stdarg.h>
+
 example printf()
 
     int myprintf(const char* format, ...)
