@@ -24,10 +24,17 @@ static int sockfd;
 
 /* pthread: no static INITIALIZERs, we want control startup and
  * teardown of ptread stuff */
+//*
 static pthread_t tx_listener_tid;
 static pthread_mutex_t tx_mutex;
 static pthread_cond_t tx_cv;
 static pthread_attr_t tx_listener_attr;
+/*/
+pthread_t tx_listener_tid;
+pthread_mutex_t tx_mutex;
+pthread_cond_t tx_cv;
+pthread_attr_t tx_listener_attr;
+// */
 
 //*
 static pthread_t rx_listener_tid;
@@ -59,7 +66,7 @@ static void *canif__rx_listener()
 {
 	dbg(__func__);
 
-	struct can_frame *frame = NULL;
+	struct can_frame *frame = NULL; // TODO fix supposed leak by making this pointer global, then if not NULL delete in shutdown
 	int ret = -1;
 
 	do {
@@ -198,14 +205,20 @@ int canif__startup(const char *ifname, size_t ifname_size)
 
 	pthread_attr_init(&rx_listener_attr);
 	pthread_attr_setdetachstate(&rx_listener_attr, PTHREAD_CREATE_DETACHED);
-	ret = pthread_create(&rx_listener_tid, &rx_listener_attr, canif__rx_listener, NULL);
+	ret = pthread_create(&rx_listener_tid,
+			     &rx_listener_attr,
+			     canif__rx_listener,
+			     NULL);
 	if (0 != ret) {
 		canif__failure("pthread_create()", __func__);
 	}
 
 	pthread_attr_init(&tx_listener_attr);
 	pthread_attr_setdetachstate(&tx_listener_attr, PTHREAD_CREATE_DETACHED);
-	ret = pthread_create(&tx_listener_tid, &tx_listener_attr, canif__tx_listener, NULL);
+	ret = pthread_create(&tx_listener_tid,
+			     &tx_listener_attr,
+			     canif__tx_listener,
+			     NULL);
 	if (0 != ret) {
 		canif__failure("pthread_create()", __func__);
 	}
