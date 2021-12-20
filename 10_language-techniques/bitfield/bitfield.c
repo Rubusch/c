@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 
 
 	// copy in case of a field
-	protocol_id_t transfer = { .bits = *(uint16_t*) &my_id }; // should work w/o cast
+	protocol_id_t transfer = { .bits = *(uint16_t*) &my_id };
 	header = transfer.bits;
 
 
