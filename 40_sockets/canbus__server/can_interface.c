@@ -259,7 +259,12 @@ int canif__shutdown()
 	pthread_attr_destroy(&tx_listener_attr);
 	pthread_attr_destroy(&rx_listener_attr);
 
-//	sleep(1); /* for safety, pthread teardown */
+	sleep(1); /* safety! - pthread teardown followed by a startup
+		   * right away (e.g. unittests) may cause
+		   * segmentation violation faults, due to destruction
+		   * followed by immediate recreation and/or still
+		   * usage of to be freed element e.g. cond var,
+		   * i.e. of the same synch mechanisms itself */
 
 	dbg_end(__func__);
 #ifdef TESTING
