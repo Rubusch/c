@@ -22,8 +22,6 @@
 __attribute__((__unused__))
 static int sockfd;
 
-/* pthread: no static INITIALIZERs, we want control startup and
- * teardown of ptread stuff */
 static pthread_t tx_listener_tid;
 static pthread_mutex_t tx_mutex;
 static pthread_cond_t tx_cv;
@@ -38,6 +36,8 @@ static struct sockaddr_can addr;
 static struct ifreq ifr;
 #endif /* not TESTING */
 
+static struct can_frame *frame_ptr = NULL;
+
 static void canif__failure(char* msg, const char* func)
 {
 	char message[BUFSIZ];
@@ -51,27 +51,24 @@ static void *canif__rx_listener()
 {
 	dbg(__func__);
 
-	struct can_frame *frame = NULL; // TODO fix supposed leak by making this pointer global, then if not NULL delete in shutdown
 	int ret = -1;
-
 	do {
 
 #ifdef TESTING
-		while(NULL == (frame = test__frame)) {
+		while(NULL == (frame_ptr = test__frame)) {
 			sleep(1);
 		}
 		ret = test__rx_ret; /* defaults to 0 */
 
 
 #else
-		if (!frame) {
-// FIXME: leaks allocated memory when shutting down, improve    
-			frame = malloc(sizeof(*frame));
-			if (!frame) {
+		if (!frame_ptr) {
+			frame_ptr = malloc(sizeof(*frame_ptr));
+			if (!frame_ptr) {
 				canif__failure("allocation failed", __func__);
 			}
 		}
-		ret = read(sockfd, frame, sizeof(frame));
+		ret = read(sockfd, frame_ptr, sizeof(frame_ptr));
 #endif /* TESTING */
 
 		if (0 > ret) {
@@ -82,16 +79,16 @@ static void *canif__rx_listener()
 		}
 
 // TODO check if package can be dropped, when off - promiscuous
-//		if (! (frame->can_id & CANIF_MY_ID)) {
+//		if (! (frame_ptr->can_id & CANIF_MY_ID)) {
 //			fprintf(stderr, "%s() dropped\n", __func__);
 //			continue;
 //		}
 
 		pthread_mutex_lock(&rx_mutex);
-		rx__enqueue(frame);
+		rx__enqueue(frame_ptr);
  		pthread_mutex_unlock(&rx_mutex);
 
-		frame = NULL;
+		frame_ptr = NULL;
 
 #ifdef TESTING
 		test__frame = NULL;
@@ -249,6 +246,11 @@ int canif__shutdown()
 		   * followed by immediate recreation and/or still
 		   * usage of to be freed element e.g. cond var,
 		   * i.e. of the same synch mechanisms itself */
+
+	if (frame_ptr) {
+		free(frame_ptr);
+		frame_ptr = NULL;
+	}
 
 	dbg_end(__func__);
 #ifdef TESTING
