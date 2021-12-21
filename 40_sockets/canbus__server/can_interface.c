@@ -6,7 +6,7 @@
  */
 
 #include "can_interface.h"
-#include "macros.h"
+#include "debug.h"
 
 #include <stdbool.h>
 #include <pthread.h>

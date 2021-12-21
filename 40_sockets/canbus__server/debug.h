@@ -1,5 +1,5 @@
-#ifndef MACROS_H
-#define MACROS_H
+#ifndef DEBUG_H
+#define DEBUG_H
 
 #include <linux/can.h>
 
@@ -48,4 +48,4 @@ static inline void dbg_frame(const char *func, struct can_frame *frame)
 }
 
 
-#endif
+#endif /* DEBUG_H */

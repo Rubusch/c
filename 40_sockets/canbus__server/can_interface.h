@@ -34,7 +34,7 @@
 
 #include "queue.h"
 #include "can_frame.h"
-#include "macros.h"
+#include "debug.h"
 
 
 create_queue(tx, struct can_frame*, 1000)
