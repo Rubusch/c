@@ -507,15 +507,15 @@ int main(void)
 	}
 
 	TEST_start(pSuite, "pdu id", test_pdu_id)
- 		TEST_append(pSuite, "pdu dlc", test_pdu_dlc)
- 		TEST_append(pSuite, "id dest empty", test_pdu_id_dest0)
- 		TEST_append(pSuite, "id dest full", test_pdu_id_dest1)
- 		TEST_append(pSuite, "id ip empty", test_pdu_id_prio0)
- 		TEST_append(pSuite, "id ip full", test_pdu_id_prio1)
- 		TEST_append(pSuite, "data seqn empty", test_pdu_data_seqn0)
- 		TEST_append(pSuite, "data seqn full", test_pdu_data_seqn1)
- 		TEST_append(pSuite, "data seqn series", test_pdu_data_seqn2)
- 		TEST_append(pSuite, "pdu frame", test_pdu_frame)
+		TEST_append(pSuite, "pdu dlc", test_pdu_dlc)
+		TEST_append(pSuite, "id dest empty", test_pdu_id_dest0)
+		TEST_append(pSuite, "id dest full", test_pdu_id_dest1)
+		TEST_append(pSuite, "id ip empty", test_pdu_id_prio0)
+		TEST_append(pSuite, "id ip full", test_pdu_id_prio1)
+		TEST_append(pSuite, "data seqn empty", test_pdu_data_seqn0)
+		TEST_append(pSuite, "data seqn full", test_pdu_data_seqn1)
+		TEST_append(pSuite, "data seqn series", test_pdu_data_seqn2)
+		TEST_append(pSuite, "pdu frame", test_pdu_frame)
 	TEST_end();
 
 	/* add a suite to the registry */
@@ -527,12 +527,11 @@ int main(void)
 
 	/* utilities */
 	TEST_start(pSuite, "empty queues", test_queue_empty)
-//FIXME
-/* 		TEST_append(pSuite, "interface setup", test_canif_interface) // */
-/* 		TEST_append(pSuite, "tx single", test_tx_single) // */
- 		TEST_append(pSuite, "tx multiple", test_tx_multiple) // */
- 		TEST_append(pSuite, "rx single", test_rx_single) // */
- 		TEST_append(pSuite, "rx multiple", test_rx_multiple) // */
+		TEST_append(pSuite, "interface setup", test_canif_interface)
+		TEST_append(pSuite, "tx single", test_tx_single)
+		TEST_append(pSuite, "tx multiple", test_tx_multiple)
+		TEST_append(pSuite, "rx single", test_rx_single)
+		TEST_append(pSuite, "rx multiple", test_rx_multiple)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
