@@ -10,36 +10,36 @@
 
 
 static const int prices[] = { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+//static const int prices[] = { 1, 5, 8 };
 
 void test_cut_rod(void)
 {
 
-	int nprices = sizeof(prices) / sizeof(*prices);
-	int rod_size = 10; // gets very slow, very soon - by O(2^n)
+	int rod_len = sizeof(prices) / sizeof(*prices);
 
-	int result = cut_rod(prices, nprices, rod_size);
-	fprintf(stderr, "NAIVE - result %d\n", result);   
+	debug("\n");
+	int result = cut_rod(prices, rod_len);
+	debug("NAIVE - result %d\n", result);
 	CU_ASSERT(30 == result);
 }
 
 void test_memoized_cut_rod(void)
 {
-	int nprices = sizeof(prices) / sizeof(*prices);
-	int rod_size = 10;
+	int rod_len = sizeof(prices) / sizeof(*prices);
 	int result = -1;
 
-	result = memoized_cut_rod(prices, nprices, rod_size);
-	fprintf(stderr, "MEMOIZED - result %d\n", result);   
+	debug("\n");
+	result = memoized_cut_rod(prices, rod_len);
+	debug("MEMOIZED - result %d\n", result);
 	CU_ASSERT(30 == result);
 }
 
 void test_bottom_up_cut_rod(void)
 {
-	int nprices = sizeof(prices) / sizeof(*prices);
-	int rod_size = 10;
+	int rod_len = sizeof(prices) / sizeof(*prices);
 	int result = -1;
 
-	result = bottom_up_cut_rod(prices, nprices, rod_size);
+	result = bottom_up_cut_rod(prices, rod_len);
 	fprintf(stderr, "BOTTOM UP - result %d\n", result);   
 	CU_ASSERT(30 == result);
 }
@@ -62,9 +62,10 @@ int main(void)
 	}
 
 	/* utilities */
+/*	TEST_start(pSuite, "memoized rod cut", test_memoized_cut_rod) // */
 	TEST_start(pSuite, "rod cut", test_cut_rod)
  		TEST_append(pSuite, "memoized rod cut", test_memoized_cut_rod) // */
- 		TEST_append(pSuite, "bottom up rod cut", test_bottom_up_cut_rod) // */
+/* 		TEST_append(pSuite, "bottom up rod cut", test_bottom_up_cut_rod) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

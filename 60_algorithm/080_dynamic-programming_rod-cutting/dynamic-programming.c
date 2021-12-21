@@ -29,7 +29,15 @@ void debug(const char* format, ...)
 #endif
 }
 
-
+void dynamic_programming_failure(const char* format, ...)
+{
+	perror("failed!");
+	va_list arglist;
+	va_start(arglist, format);
+	vprintf(format, arglist);
+	va_end(arglist);
+	exit(EXIT_FAILURE);
+}
 
 /*
   CUT-ROD(p, n)
@@ -47,20 +55,26 @@ void debug(const char* format, ...)
   p[1..n] is an array of prices
   n is a length of a rod / rod cut
   q is the maximum revenue
+
+  NB: nPrizes == len of rod! we may cut the rod at each inch/meter,
+  the prices gives a table for every possible resulting size (i.e. len
+  is discrete)
  */
-int cut_rod(const int *prices, const int nprices, int length)
+int cut_rod(const int *prices, int len)
 {
-	if (length == 0) {
+	if (len == 0) {
+		debug(" 0\t- ");
 		return 0;
+	} else {
+		debug(" %d", len);
 	}
 
 	int revenue = 0;
-	for (int idx = 0; idx < length; idx++) {
-		debug(" %d", length-(idx-1));
-		int revenue_sub = cut_rod(prices, nprices, length - (idx+1) );
+	for (int idx = 0; idx < len; idx++) {
+		int revenue_sub = cut_rod(prices, len - (idx+1));
 		revenue = max(revenue, (prices[idx] + revenue_sub));
 	}
-	debug(" - %d\n", revenue);
+	debug(" last cut at %d, revenue: %d\n", len, revenue);
 
 	return revenue;
 }
@@ -78,28 +92,34 @@ int cut_rod(const int *prices, const int nprices, int length)
       q = max(q, p[i] + MEMOIZED-CUT-ROD-AUX(p, n-i, r))
   r[n] = q
   return q
+
+  r := the memo
  */
-int _memoized_cut_rod_aux(const int *prices, const int nprices, int length, int* arr)
+int _memoized_cut_rod_aux(const int *prices, int len, int* arr)
 {
-	int revenue = 0;
-	if (arr[length-1] >= 0) {
-		return arr[length-1];
-	}
-	if (length-1 == 0) {
-		fprintf(stderr, "%s(): length == 0\n", __func__);
-		revenue = 0;
+	if (len == 0) {
+		debug(" 0\t- ");
+		return 0;
 	} else {
-		fprintf(stderr, "%s(): length != 0\n", __func__);
+		debug(" %d", len);
+	}
+
+	int revenue = 0;
+	if (arr[len-1] >= 0) {
+		return arr[len-1];
+	}
+
+	if (len-1 == 0) {
+		revenue = prices[0];
+	} else {
 		revenue = -1;
-		for (int idx = 1; idx < length; idx++) {
-			debug(" %d", length - idx);
-			int revenue_sub = prices[idx]
-				+ _memoized_cut_rod_aux(prices, nprices, (length - idx), arr);
-			revenue = max(revenue, revenue_sub);
+		for (int idx = 0; idx < len; idx++) {
+			int revenue_sub = _memoized_cut_rod_aux(prices, (len - (idx+1)), arr);
+			revenue = max(revenue, (prices[idx] + revenue_sub));
 		}
 	}
-	arr[length] = revenue;
-	debug(" - %d\n", revenue);
+	arr[len-1] = revenue;
+	debug(" last cut at %d, revenue: %d\n", len, revenue);
 
 	return revenue;
 }
@@ -112,20 +132,19 @@ int _memoized_cut_rod_aux(const int *prices, const int nprices, int length, int*
     r[i] = -oo
   return MEMOIZED-CUT-ROD-AUX(p, n, r)
 */
-int memoized_cut_rod(const int *prices, const int nprices, int length)
+int memoized_cut_rod(const int *prices, int len)
 {
-	int *arr = malloc((length) * sizeof(*arr));
+	int *arr = malloc((len) * sizeof(*arr));
 	if (!arr) {
-		perror("allocation failed");
-		exit(EXIT_FAILURE);
+		dynamic_programming_failure("allocation failed");
 	}
 
-	memset(arr, -1, length * sizeof(*arr));
+	memset(arr, -1, len * sizeof(*arr));
+	int revenue = _memoized_cut_rod_aux(prices, len, arr);
 
-	int result = _memoized_cut_rod_aux(prices, nprices, length, arr);
 	free(arr);
 
-	return result;
+	return revenue;
 }
 
 
@@ -141,24 +160,24 @@ int memoized_cut_rod(const int *prices, const int nprices, int length)
     r[j] = q
   return r[n]
  */
-int bottom_up_cut_rod(const int *prices, const int nprices, int length)
+int bottom_up_cut_rod(const int *prices, int len)
 {
-	int *arr = malloc(length * sizeof(*arr));
+	
+	int *arr = malloc(len * sizeof(*arr));
 	if (!arr) {
-		perror("allocation failed");
-		exit(EXIT_FAILURE);
+		dynamic_programming_failure("allocation failed");
 	}
 
 	arr[0] = 0;
-	for (int jdx = 1; jdx < length; jdx++) {
+	for (int jdx = 1; jdx < len; jdx++) {
 		int revenue = -1;
 		for (int idx = revenue; idx < jdx; idx++) {
-			revenue = max(revenue, prices[idx] + arr[jdx - idx]); // TODO check nprices
+			revenue = max(revenue, prices[idx] + arr[jdx - idx]);
 		}
 		arr[jdx] = revenue;
 	}
 
-	return arr[length-1];
+	return arr[len-1];
 }
 
 
@@ -176,10 +195,22 @@ int bottom_up_cut_rod(const int *prices, const int nprices, int length)
     r[j] = q
   return r and s
  */
-int extended_bottom_up_cut_rod(const int *prices, const int nprices, int length)
+memo_p extended_bottom_up_cut_rod(const int *prices, int len, memo_p memo)
 {
-	// TODO           
-	return -1;
+	int revenue = -1;
+
+	for (int jdx = 0; jdx < len; jdx++) {
+		revenue = -1;
+		for (int idx = 0; idx <= jdx; idx++) {
+			if (revenue < prices[idx] + memo->r[jdx - idx]) {
+				revenue = prices[idx] + memo->r[jdx - idx];
+				memo->s[jdx] = idx;
+			}
+		}
+		memo->r[jdx] = revenue; // TODO check level of indention    
+	}
+
+	return memo; // TODO figure out results of this   
 }
 
 
@@ -191,7 +222,42 @@ int extended_bottom_up_cut_rod(const int *prices, const int nprices, int length)
     print s[n]
     n = n - s[n]
  */
-void print_cut_rod_solution(const int *prices, const int nprices, int length)
+void print_cut_rod_solution(const int *prices, int len)
 {
-	// TODO  
+	memo_p memo;
+	memo = malloc(sizeof(*memo));
+	if (!memo) {
+		dynamic_programming_failure("allocation failed");
+	}
+
+	memo->r = malloc(len * sizeof(*memo->r));
+	if (!memo->r) {
+		dynamic_programming_failure("allocation failed");
+	}
+	memset(memo->r, 0, len);
+
+	memo->s = malloc(len * sizeof(*memo->s));
+	if (!memo->s) {
+		dynamic_programming_failure("allocation failed");
+	}
+	memset(memo->s, 0, len);
+
+
+	memo = extended_bottom_up_cut_rod(prices, len, memo);
+	while (len > 0) {
+		debug("%d ", memo->s[len]);
+		len = len - memo->s[len];
+	}
+	debug("\n");
+
+
+	if (memo->r) {
+		free(memo->r);
+		memo->r = NULL;
+	}
+	if (memo->s) {
+		free(memo->s);
+		memo->s = NULL;
+	}
+	free(memo);
 }

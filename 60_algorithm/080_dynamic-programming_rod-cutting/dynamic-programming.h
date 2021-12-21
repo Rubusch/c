@@ -66,19 +66,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct memo_s {
+	int *r;
+	int *s;
+} memo_t;
+typedef memo_t* memo_p;
+
 // enable debug printout (dot)
-//#define DEBUG 1
+#define DEBUG 1
 
 // utils
 #define max(a, b) ((a) > (b) ? (a) : (b))
+void debug(const char* format, ...);
+void dynamic_programming_failure(const char* format, ...);
 
-
-int cut_rod(const int *prices, const int nprices, int length);
-//int memoized_cut_rod_aux(const int *prices, const int nprices, int length);
-int memoized_cut_rod(const int *prices, const int nprices, int length);
-int bottom_up_cut_rod(const int *prices, const int nprices, int length);
-int extended_bottom_up_cut_rod(const int *prices, const int nprices, int length);
-void print_cut_rod_solution(const int *prices, const int nprices, int length);
+int cut_rod(const int *prices, int len);
+int memoized_cut_rod(const int *prices, int len);
+int bottom_up_cut_rod(const int *prices, int len);
+memo_p extended_bottom_up_cut_rod(const int *prices, int len, memo_p memo);
+void print_cut_rod_solution(const int *prices, int len);
 
 
 #endif /* DYNAMIC_PROGRAMMING_H */
