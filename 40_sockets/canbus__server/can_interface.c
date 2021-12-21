@@ -19,34 +19,19 @@
 
 /* private */
 
-__attribute__((__unused__))   
+__attribute__((__unused__))
 static int sockfd;
 
 /* pthread: no static INITIALIZERs, we want control startup and
  * teardown of ptread stuff */
-//*
 static pthread_t tx_listener_tid;
 static pthread_mutex_t tx_mutex;
 static pthread_cond_t tx_cv;
 static pthread_attr_t tx_listener_attr;
-/*/
-pthread_t tx_listener_tid;
-pthread_mutex_t tx_mutex;
-pthread_cond_t tx_cv;
-pthread_attr_t tx_listener_attr;
-// */
 
-//*
 static pthread_t rx_listener_tid;
 static pthread_mutex_t rx_mutex;
-//static pthread_cond_t rx_cv = PTHREAD_COND_INITIALIZER;
 static pthread_attr_t rx_listener_attr;
-/*/
-pthread_t rx_listener_tid;
-pthread_mutex_t rx_mutex;
-//static pthread_cond_t rx_cv = PTHREAD_COND_INITIALIZER;
-pthread_attr_t rx_listener_attr;
-// */
 
 #ifndef TESTING
 static struct sockaddr_can addr;
@@ -233,7 +218,6 @@ int canif__shutdown()
 	struct can_frame *content = NULL;
 	pthread_cancel(tx_listener_tid);
 	pthread_cancel(rx_listener_tid);
-
 
 	while (0 < rx__size()) {
 		rx__dequeue(&content);

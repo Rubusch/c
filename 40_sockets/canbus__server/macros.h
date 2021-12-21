@@ -6,7 +6,7 @@
 /* debug print */
 //#define DEBUG 1
 
-/* mock for unittest */
+/* mock for unittest (set in Makefile) */
 //#define TESTING 1
 
 
