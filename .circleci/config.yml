@@ -300,6 +300,7 @@ jobs:
       - run: cd 60_algorithm/045_order-statistics && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/050_linked-list && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/052_stack && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/053_stack-mini && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/055_queue && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/056_queue-mini && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/057_queue-macro-fifo && make && make basictest.exe && ./*.exe
