@@ -22,9 +22,9 @@ typedef struct node_s {
 
 typedef node_t* node_p;
 
-node_p _stack_first; 
-node_p _stack_head; 
-int _stack_size; 
+node_p _stack_first;
+node_p _stack_head;
+int _stack_size;
 
 #define STACK_MAX_SIZE 10
 
@@ -36,8 +36,8 @@ int stack_empty();
 int stack_size();
 node_p stack_successor(node_p ptr);
 node_p stack_predecessor(node_p ptr);
-void stack_push(int data);
-int stack_pop();
+int stack_push(int data);
+int stack_pop(int* data);
 
 
 #endif /* STACK_H */

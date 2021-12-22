@@ -73,14 +73,11 @@ node_p stack_predecessor(node_p ptr)
 	return ptr->prev;
 }
 
-void stack_push(int data)
+int stack_push(int data)
 {
-/*
-	stack_insert(data);
-/*/
 	if (stack_size() >= STACK_MAX_SIZE) {
 		fprintf(stderr, "%s(): queue is full, dropped\n", __func__);
-		return;
+		return -1;
 	}
 	node_p ptr = NULL;
 	ptr = malloc(sizeof(*ptr));
@@ -102,23 +99,11 @@ void stack_push(int data)
 	}
 
 	_stack_size++;
-// */
+	return 0;
 }
 
-int stack_pop()
+int stack_pop(int *data)
 {
-/*
-	node_p ptr = stack_head();
-	if (NULL == ptr) {
-		fprintf(stderr, "%s(): underflow\n", __func__);
-		return -1;
-	}
-
-	int data = ptr->data;
-	stack_delete(ptr);
-	return data;
-/*/
-//	node_p ptr = stack_first();  
 	node_p ptr = stack_head();
 	if (NULL == ptr) {
 		fprintf(stderr, "%s(): underflow\n", __func__);
@@ -130,7 +115,9 @@ int stack_pop()
 		fprintf(stderr, "ptr != NULL, but queue was empty!!!\n");
 		return -2;
 	}
-	int data = ptr->data;
+	if (data) {
+		*data = ptr->data;
+	}
 	node_p predecessor_node = stack_predecessor(ptr);
 	node_p successor_node = stack_successor(ptr);
 	if (predecessor_node) {
@@ -145,8 +132,7 @@ int stack_pop()
 	}
 	free(ptr);
 	_stack_size--;
-	return data;
-// */
+	return 0;
 }
 
 

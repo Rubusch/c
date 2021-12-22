@@ -29,7 +29,7 @@ void test_stack_print(void)
 
 	int size = stack_size();
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop();
+		stack_pop(NULL);
 	}
 
 	CU_ASSERT(0 == stack_size());
@@ -90,7 +90,7 @@ void test_stack_size(void)
 
 	int size = stack_size();
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop();
+		stack_pop(NULL);
 	}
 	CU_ASSERT(0 == stack_size());
 }
@@ -114,7 +114,7 @@ void test_stack_successor(void)
 	CU_ASSERT(stack_first()->next->next == stack_successor(stack_first()->next));
 
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop();
+		stack_pop(NULL);
 	}
 
 	CU_ASSERT(0 == stack_size());
@@ -140,7 +140,7 @@ void test_stack_predecessor(void)
 	CU_ASSERT(ptr == stack_predecessor(ptr->next));
 
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop();
+		stack_pop(NULL);
 	}
 
 	CU_ASSERT(0 == stack_size());
@@ -174,7 +174,7 @@ void test_stack_push(void)
 
 	int size = stack_size();
 	for (int idx = 0; idx < size; idx++) {
-		stack_pop();
+		stack_pop(NULL);
 	}
 
 	CU_ASSERT(0 == stack_size());
@@ -198,7 +198,7 @@ void test_stack_pop(void)
 	CU_ASSERT(STACK_MAX_SIZE == stack_size());
 
 	for (int idx = size-1; idx >= 0; idx--) {
-		data = stack_pop();
+		stack_pop(&data);
 		CU_ASSERT(arr[idx] == data);
 	}
 
