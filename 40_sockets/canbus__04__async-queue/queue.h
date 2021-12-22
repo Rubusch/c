@@ -1,1 +1,1 @@
-../../60_algorithm/057_mini-macro-fifo/queue.h
+../../60_algorithm/057_queue-macro-fifo/queue.h
