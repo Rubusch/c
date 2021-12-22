@@ -108,7 +108,7 @@
 		return 0;						\
 	}								\
 									\
-        static inline int NAME##__dequeue(DATATYPE *data)		\
+        int NAME##__dequeue(DATATYPE *data)				\
 	{								\
 		NAME##__node_p ptr = NAME##__first();			\
 		if (NULL == ptr) {					\
