@@ -22,7 +22,7 @@
 									\
 	typedef NAME##__node_t* NAME##__node_p;				\
 									\
-	NAME##__node_p _##NAME##__first;					\
+	NAME##__node_p _##NAME##__first;				\
 	NAME##__node_p _##NAME##__head;					\
 	int _##NAME##__size;						\
 	static const int NAME##__MAX_SIZE = MAXSIZE;			\
