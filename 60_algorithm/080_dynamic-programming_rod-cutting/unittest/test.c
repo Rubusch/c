@@ -138,9 +138,12 @@ int main(void)
 
 	/* utilities */
 	TEST_start(pSuite, "rod cut", test_cut_rod)
- 		TEST_append(pSuite, "memoized rod cut", test_memoized_cut_rod)
- 		TEST_append(pSuite, "bottom up rod cut", test_bottom_up_cut_rod)
- 		TEST_append(pSuite, "extended bottom up rod cut", test_extended_bottom_up_cut_rod)
+ 		TEST_append(pSuite, "memoized rod cut",
+			    test_memoized_cut_rod)
+ 		TEST_append(pSuite, "bottom up rod cut",
+			    test_bottom_up_cut_rod)
+ 		TEST_append(pSuite, "extended bottom up rod cut",
+			    test_extended_bottom_up_cut_rod)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

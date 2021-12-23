@@ -222,9 +222,11 @@ int bottom_up_cut_rod(const int *prices, int len)
 	memset(memo, -1, (len-1) * sizeof(*memo));
 
 	memo[0] = 0;
+
+	int revenue = 0;
 	for (int jdx = 1; jdx < len; jdx++) {
-		int revenue = 0;
-		for (int idx = revenue; idx < jdx; idx++) {
+		revenue = 0;
+		for (int idx = 1; idx <= jdx; idx++) {
 			revenue = max(revenue, prices[idx] + memo[jdx - idx]);
 		}
 		memo[jdx] = revenue;
