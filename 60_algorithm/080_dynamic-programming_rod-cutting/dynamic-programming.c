@@ -11,15 +11,20 @@
   -----------+---+---+---+---+----+----+----+----+----+----+
   price p[i] | 1 | 5 | 8 | 9 | 10 | 17 | 17 | 20 | 24 | 30 |
 
+
+  NB: The dynamic programming rod cutting solutions solve the rod
+  cutting problem - it DOES NOT NEED TO TELL HOW TO CUT the rod. It is
+  asked, though, for the max. revenue, which is possible.
  */
 
 #include "dynamic-programming.h"
 
 #include <stdarg.h>
 
+
 /* utils */
 
-void debug(const char* format, ...)
+void dynamic_programming_debug(const char* format, ...)
 {
 #ifdef DEBUG
 	va_list arglist;
@@ -56,25 +61,51 @@ void dynamic_programming_failure(const char* format, ...)
   n is a length of a rod / rod cut
   q is the maximum revenue
 
-  NB: nPrizes == len of rod! we may cut the rod at each inch/meter,
-  the prices gives a table for every possible resulting size (i.e. len
-  is discrete)
- */
+  this shows +/- the following recursion:
+      for 1->10
+       for 1->9
+        for 1->8
+         for 1->7
+	  (...)
+	 (...)
+      for 1->9
+       (...)
+      for 1->8
+       (...)
+      for 1->7
+      (...)
+
+      -> O(n^n)
+
+  NB: number of prizes == len of rod or shifted by 1, since prices[0]
+  is the first element for the first "cut"!
+
+  NB: debug output and numbers are NOT THE ROD FRAGMENTS to cut!!! it
+  is rather a small hint where we stand inside the recursion
+*/
 int cut_rod(const int *prices, int len)
 {
 	if (len == 0) {
-		debug(" 0\t- ");
 		return 0;
-	} else {
-		debug(" %d", len);
 	}
 
+	int debug_idx = -1;
 	int revenue = 0;
-	for (int idx = 0; idx < len; idx++) {
-		int revenue_sub = cut_rod(prices, len - (idx+1));
-		revenue = max(revenue, (prices[idx] + revenue_sub));
+	for (int idx = 1; idx < len; idx++) {
+		int revenue_sub = cut_rod(prices, len - idx);
+		int revenue_max = max(revenue, (prices[idx] + revenue_sub));
+
+		// debug printing
+		if (revenue != revenue_max) debug_idx = idx;
+
+		revenue = revenue_max;
 	}
-	debug(" last cut at %d, revenue: %d\n", len, revenue);
+
+	// debug printing
+	if (debug_idx > 0) {
+		dynamic_programming_debug("revenue: %d, from solution %d\n",
+					  revenue, debug_idx);
+	}
 
 	return revenue;
 }
@@ -94,32 +125,52 @@ int cut_rod(const int *prices, int len)
   return q
 
   r := the memo
+
+  NB: A dynamic-programming approach runs in polynomial time when the
+  number of distinct subproblems involved is polynomial in the input
+  size and we can solve each such subproblem in polynomial time
  */
-int _memoized_cut_rod_aux(const int *prices, int len, int* arr)
+int _memoized_cut_rod(const int *prices, int len, int* memo)
 {
 	if (len == 0) {
-		debug(" 0\t- ");
 		return 0;
-	} else {
-		debug(" %d", len);
 	}
 
 	int revenue = 0;
-	if (arr[len-1] >= 0) {
-		return arr[len-1];
+	int debug_idx = -1;
+	if (memo[len-1] >= 0) {
+		return memo[len-1]; //  return in case memo has something
 	}
 
 	if (len-1 == 0) {
 		revenue = prices[0];
 	} else {
 		revenue = -1;
-		for (int idx = 0; idx < len; idx++) {
-			int revenue_sub = _memoized_cut_rod_aux(prices, (len - (idx+1)), arr);
-			revenue = max(revenue, (prices[idx] + revenue_sub));
+		for (int idx = 1; idx < len; idx++) {
+			int revenue_sub = _memoized_cut_rod(prices, len - idx,
+								memo);
+			int revenue_max = max(revenue, (prices[idx]+revenue_sub));
+
+			// debug printing
+			if (revenue != revenue_max) debug_idx = idx;
+
+			revenue = revenue_max;
 		}
 	}
-	arr[len-1] = revenue;
-	debug(" last cut at %d, revenue: %d\n", len, revenue);
+	memo[len-1] = revenue; // registered revenue, in case is 0,
+			       // does not need to be checked again as
+			       // in NAIVE approach
+
+	// debug printing
+	if (debug_idx > 0) {
+		for (int idx = 0; idx < len; idx++) {
+			if (memo[idx] > 0) {
+				dynamic_programming_debug(" %d", idx);
+			}
+		}
+		dynamic_programming_debug(" revenue: %d, from solution %d\n",
+					  revenue, debug_idx);
+	}
 
 	return revenue;
 }
@@ -134,19 +185,18 @@ int _memoized_cut_rod_aux(const int *prices, int len, int* arr)
 */
 int memoized_cut_rod(const int *prices, int len)
 {
-	int *arr = malloc((len) * sizeof(*arr));
-	if (!arr) {
+	int *memo = malloc((len) * sizeof(*memo));
+	if (!memo) {
 		dynamic_programming_failure("allocation failed");
 	}
 
-	memset(arr, -1, len * sizeof(*arr));
-	int revenue = _memoized_cut_rod_aux(prices, len, arr);
+	memset(memo, -1, len * sizeof(*memo));
+	int revenue = _memoized_cut_rod(prices, len, memo);
 
-	free(arr);
+	free(memo);
 
 	return revenue;
 }
-
 
 /*
   BOTTOM-UP-CUT-ROD(p, n)
@@ -159,27 +209,37 @@ int memoized_cut_rod(const int *prices, int len)
       q = max(q, p[i]+r[j-i])
     r[j] = q
   return r[n]
+
+  NB: kind of an iterative approach to dynamic-programming
+  implementations
  */
 int bottom_up_cut_rod(const int *prices, int len)
 {
-	
-	int *arr = malloc(len * sizeof(*arr));
-	if (!arr) {
+	int *memo = malloc(len * sizeof(*memo));
+	if (!memo) {
 		dynamic_programming_failure("allocation failed");
 	}
+	memset(memo, -1, (len-1) * sizeof(*memo));
 
-	arr[0] = 0;
+	memo[0] = 0;
 	for (int jdx = 1; jdx < len; jdx++) {
-		int revenue = -1;
+		int revenue = 0;
 		for (int idx = revenue; idx < jdx; idx++) {
-			revenue = max(revenue, prices[idx] + arr[jdx - idx]);
+			revenue = max(revenue, prices[idx] + memo[jdx - idx]);
 		}
-		arr[jdx] = revenue;
+		memo[jdx] = revenue;
 	}
+	int result = memo[len-1];
 
-	return arr[len-1];
+	// debug printing
+	for (int idx = 0; idx < len; idx++) {
+		dynamic_programming_debug("%d: %d\n", idx, memo[idx]);
+	}
+	dynamic_programming_debug("revenue: %d\n", result);
+
+	free(memo);
+	return result;
 }
-
 
 /*
   EXTENDED-BOTTOM-UP-CUT-ROD(p, n)
@@ -194,23 +254,35 @@ int bottom_up_cut_rod(const int *prices, int len)
 	s[j] = i
     r[j] = q
   return r and s
+
+
+  NB: The dynamic-programming solutions to the rod-cutting problem
+  return the value of an optimal solution, but they do not return an
+  acutal solution: a list of piece sizes.
+
+  This is an extended version of BOTTOM-UP-CUT-ROD that computes, for
+  each rod size j, not only the maximum revenue r[j], but also s[j],
+  the optimal size of the first piece to cut off.
+
+  memo.r := the revenue
+  memo.s := the first rod size to cut
  */
-memo_p extended_bottom_up_cut_rod(const int *prices, int len, memo_p memo)
+memo_p _extended_bottom_up_cut_rod(const int *prices, int len, memo_p memo)
 {
 	int revenue = -1;
 
-	for (int jdx = 0; jdx < len; jdx++) {
+	for (int jdx = 1; jdx < len; jdx++) {
 		revenue = -1;
-		for (int idx = 0; idx <= jdx; idx++) {
+		for (int idx = 1; idx <= jdx; idx++) {
 			if (revenue < prices[idx] + memo->r[jdx - idx]) {
 				revenue = prices[idx] + memo->r[jdx - idx];
 				memo->s[jdx] = idx;
 			}
 		}
-		memo->r[jdx] = revenue; // TODO check level of indention    
+		memo->r[jdx] = revenue;
 	}
 
-	return memo; // TODO figure out results of this   
+	return memo;
 }
 
 
@@ -222,8 +294,9 @@ memo_p extended_bottom_up_cut_rod(const int *prices, int len, memo_p memo)
     print s[n]
     n = n - s[n]
  */
-void print_cut_rod_solution(const int *prices, int len)
+int print_cut_rod_solution(const int *prices, int len)
 {
+	// startup
 	memo_p memo;
 	memo = malloc(sizeof(*memo));
 	if (!memo) {
@@ -242,15 +315,18 @@ void print_cut_rod_solution(const int *prices, int len)
 	}
 	memset(memo->s, 0, len);
 
+	// actual rod cutting
+	memo = _extended_bottom_up_cut_rod(prices, len, memo);
+	int res = memo->r[len-1];
 
-	memo = extended_bottom_up_cut_rod(prices, len, memo);
-	while (len > 0) {
-		debug("%d ", memo->s[len]);
-		len = len - memo->s[len];
+	dynamic_programming_debug("cut sizes: ");
+	while (len > 1) {
+		dynamic_programming_debug("%d ", memo->s[len-1]);
+		len -= memo->s[len-1];
 	}
-	debug("\n");
+	dynamic_programming_debug("\n");
 
-
+	// teardown
 	if (memo->r) {
 		free(memo->r);
 		memo->r = NULL;
@@ -260,4 +336,6 @@ void print_cut_rod_solution(const int *prices, int len)
 		memo->s = NULL;
 	}
 	free(memo);
+
+	return res;
 }

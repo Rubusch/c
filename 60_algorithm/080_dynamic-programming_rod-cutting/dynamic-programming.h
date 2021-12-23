@@ -22,16 +22,24 @@
   4. Construct an optimal solution from computed information
 
 
-  NB: The relation to "greedy algorithms", which have many
-  similarities to dynamic programming. In particular, problems to
-  which greedy algorithms apply have optimal substru cture. One major
-  difference between greedy algorithms and dynamic programming is that
-  instead of first finding optimal solutions to subproblems and then
-  making an informed choice, greedy algorithms first make a "greedy"
-  choice - the choice that looks best at the time - and then solve a
-  resulting subproblem, without bothering to solve all possible
-  related smaller subproblems. Surprisingly, in some cases this
-  strategy works!
+  Relation to "greedy algorithms"
+
+  The relation to "greedy algorithms", which have many similarities to
+  dynamic programming. In particular, problems to which greedy
+  algorithms apply have optimal substru cture. One major difference
+  between greedy algorithms and dynamic programming is that instead of
+  first finding optimal solutions to subproblems and then making an
+  informed choice, greedy algorithms first make a "greedy" choice -
+  the choice that looks best at the time - and then solve a resulting
+  subproblem, without bothering to solve all possible related smaller
+  subproblems. Surprisingly, in some cases this strategy works!
+
+
+  Two main properties of a problem that suggest that the given problem
+  can be solved using Dynamic programming:
+
+  1) Overlapping Subproblems
+  2) Optimal Substructure
 
 
   Overlapping Subproblems
@@ -55,6 +63,10 @@
   storing the solution in a table where it can be looked up when
   needed, using constant time per lookup.
 
+  NB: The dynamic programming optimization solutions do not need to
+  tell how to do things. They tell about the maximum revenue possible.
+
+
   REFERENCES
   - Algorigthms [Cormen, Leiserson, Rivest, Stein]
  */
@@ -66,25 +78,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 typedef struct memo_s {
 	int *r;
 	int *s;
 } memo_t;
 typedef memo_t* memo_p;
 
-// enable debug printout (dot)
+// enable debug printout
 #define DEBUG 1
 
 // utils
+#define STACK_SIZE 16
 #define max(a, b) ((a) > (b) ? (a) : (b))
-void debug(const char* format, ...);
+void dynamic_programming_debug(const char* format, ...);
 void dynamic_programming_failure(const char* format, ...);
 
 int cut_rod(const int *prices, int len);
 int memoized_cut_rod(const int *prices, int len);
 int bottom_up_cut_rod(const int *prices, int len);
-memo_p extended_bottom_up_cut_rod(const int *prices, int len, memo_p memo);
-void print_cut_rod_solution(const int *prices, int len);
+int print_cut_rod_solution(const int *prices, int len);
 
 
 #endif /* DYNAMIC_PROGRAMMING_H */

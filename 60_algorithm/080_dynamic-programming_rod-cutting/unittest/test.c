@@ -9,39 +9,114 @@
 #include "time.h"
 
 
-static const int prices[] = { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
-//static const int prices[] = { 1, 5, 8 };
-
 void test_cut_rod(void)
 {
+        // NB: indices are shifted by one, i.e. cutting at index '0'
+        // has revenue 0
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+		int expect_max_revenue = 30; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
 
-	int rod_len = sizeof(prices) / sizeof(*prices);
+		dynamic_programming_debug("\n");
+		int result = cut_rod(prices, rod_len);
+		dynamic_programming_debug("NAIVE - result %d\n", result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
 
-	debug("\n");
-	int result = cut_rod(prices, rod_len);
-	debug("NAIVE - result %d\n", result);
-	CU_ASSERT(30 == result);
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20 };
+		int expect_max_revenue = 22; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+
+		dynamic_programming_debug("\n");
+		int result = cut_rod(prices, rod_len);
+		dynamic_programming_debug("NAIVE - result %d\n", result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
 }
 
 void test_memoized_cut_rod(void)
 {
-	int rod_len = sizeof(prices) / sizeof(*prices);
-	int result = -1;
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+		int expect_max_revenue = 30; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+		int result = -1;
 
-	debug("\n");
-	result = memoized_cut_rod(prices, rod_len);
-	debug("MEMOIZED - result %d\n", result);
-	CU_ASSERT(30 == result);
+		dynamic_programming_debug("\n");
+		result = memoized_cut_rod(prices, rod_len);
+		dynamic_programming_debug("MEMOIZED - result %d\n", result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
+
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20 };
+		int expect_max_revenue = 22; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+		int result = -1;
+
+		dynamic_programming_debug("\n");
+		result = memoized_cut_rod(prices, rod_len);
+		dynamic_programming_debug("MEMOIZED - result %d\n", result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
 }
 
 void test_bottom_up_cut_rod(void)
 {
-	int rod_len = sizeof(prices) / sizeof(*prices);
-	int result = -1;
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+		int expect_max_revenue = 30; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+		int result = -1;
 
-	result = bottom_up_cut_rod(prices, rod_len);
-	fprintf(stderr, "BOTTOM UP - result %d\n", result);   
-	CU_ASSERT(30 == result);
+		dynamic_programming_debug("\n");
+		result = bottom_up_cut_rod(prices, rod_len);
+		dynamic_programming_debug("BOTTOM UP - result %d\n", result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
+
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20 };
+		int expect_max_revenue = 22; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+		int result = -1;
+
+		dynamic_programming_debug("\n");
+		result = bottom_up_cut_rod(prices, rod_len);
+		dynamic_programming_debug("BOTTOM UP - result %d\n", result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
+}
+
+void test_extended_bottom_up_cut_rod(void)
+{
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+		int expect_max_revenue = 30; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+		int result = -1;
+
+		dynamic_programming_debug("\n");
+		result = print_cut_rod_solution(prices, rod_len);
+		dynamic_programming_debug("EXTENDED BOTTOM UP - result %d\n",
+					  result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
+
+	{
+		int prices[] = { 0, 1, 5, 8, 9, 10, 17, 17, 20 };
+		int expect_max_revenue = 22; // maximum obtained revenue
+		int rod_len = sizeof(prices) / sizeof(*prices);
+		int result = -1;
+
+		dynamic_programming_debug("\n");
+		result = print_cut_rod_solution(prices, rod_len);
+		dynamic_programming_debug("EXTENDED BOTTOM UP - result %d\n",
+					  result);
+		CU_ASSERT(expect_max_revenue == result);
+	}
 }
 
 
@@ -62,10 +137,10 @@ int main(void)
 	}
 
 	/* utilities */
-/*	TEST_start(pSuite, "memoized rod cut", test_memoized_cut_rod) // */
 	TEST_start(pSuite, "rod cut", test_cut_rod)
- 		TEST_append(pSuite, "memoized rod cut", test_memoized_cut_rod) // */
-/* 		TEST_append(pSuite, "bottom up rod cut", test_bottom_up_cut_rod) // */
+ 		TEST_append(pSuite, "memoized rod cut", test_memoized_cut_rod)
+ 		TEST_append(pSuite, "bottom up rod cut", test_bottom_up_cut_rod)
+ 		TEST_append(pSuite, "extended bottom up rod cut", test_extended_bottom_up_cut_rod)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
