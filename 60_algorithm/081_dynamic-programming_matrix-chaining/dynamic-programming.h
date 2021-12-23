@@ -78,25 +78,42 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MATRIX_NAME_SIZE 16
+typedef struct matrix_s
+{
+	char name[MATRIX_NAME_SIZE];
+	int **m;
+	int nrows;
+	int ncols;
+} matrix_t;
+typedef matrix_t* matrix_p;
 
+//*
 typedef struct memo_s
 {
-	int** m;
-	int** s;
-} memo_t
+	matrix_p m;
+	matrix_p s;
+} memo_t;
 typedef memo_t* memo_p;
+// */
 
 // enable debug printout
 #define DEBUG 1
 
 // utils
-#define STACK_SIZE 16
 #define max(a, b) ((a) > (b) ? (a) : (b))
 void dynamic_programming_debug(const char* format, ...);
 void dynamic_programming_failure(const char* format, ...);
 
-int matrix_multiply(const int**A, const int** B, int**C);
-memo_p matrix_chain_order(const int** p);
+// matrix
+matrix_p matrix_create(const char *name, int ncols, int nrows);
+void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size);
+void matrix_destroy(matrix_p mat);
+void matrix_print(matrix_p mat);
+
+// dynamic-programming problem
+int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C);
+memo_p matrix_chain_order(matrix_p p);
 void print_optimal_parens(int s, int i, int j);
 
 

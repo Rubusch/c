@@ -60,6 +60,77 @@ void dynamic_programming_failure(const char* format, ...)
 	exit(EXIT_FAILURE);
 }
 
+// matrix
+matrix_p matrix_create(const char *name, int ncols, int nrows)
+{
+	matrix_p mat = malloc(sizeof(*mat));
+	if (!mat) {
+		dynamic_programming_failure("allocation failed");
+	}
+
+	mat->m = malloc(nrows * sizeof(*mat->m));
+	for (int idx = 0; idx < nrows; idx++) {
+		mat->m[idx] = malloc(ncols * sizeof(*mat->m));
+		for (int jdx = 0; jdx < ncols; jdx++) {
+			mat->m[idx][jdx] = 0;
+		}
+	}
+
+	if (strlen(name) >= MATRIX_NAME_SIZE) {
+		dynamic_programming_failure("matrix name overrun");
+	}
+	memset(mat->name, '\0', (MATRIX_NAME_SIZE-1) * sizeof(*mat->name));
+	strncpy(mat->name, name, strlen(name));
+	mat->name[MATRIX_NAME_SIZE-1] = '\0';
+	mat->ncols = ncols;
+	mat->nrows = nrows;
+
+	return mat;
+}
+
+void matrix_destroy(matrix_p mat)
+{
+	if (!mat) {
+		return;
+	}
+
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		free(mat->m[idx]);
+	}
+	free(mat->m);
+	free(mat);
+}
+
+void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size)
+{
+	if (!mat) return;
+	if (rowidx >= mat->nrows) return;
+	if (vals_size != mat->ncols) return;
+
+	for (int idx = 0; idx < mat->ncols; idx++) {
+		mat->m[rowidx][idx] = vals[idx];
+	}
+}
+
+void matrix_print(matrix_p mat)
+{
+#ifdef DEBUG
+	if (!mat) {
+		return;
+	}
+	dynamic_programming_debug("\n%s =\n", mat->name);
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		for (int jdx = 0; jdx < mat->ncols; jdx++) {
+			dynamic_programming_debug("%d ", mat->m[idx][jdx]);
+		}
+		dynamic_programming_debug("\n");
+	}
+#endif /* DEBUG */
+}
+
+
+// dynamic-programming
+
 /*
   MATRIX-MULTIPLY(A, B)
 
@@ -71,13 +142,32 @@ void dynamic_programming_failure(const char* format, ...)
       for j = 1 to B.columns
         c[i,j] = 0
 	for k = 1 to A.columns
-	  c[i,j] = c[i,j] + a[i,j] * b[k,j]
+	  c[i,j] = c[i,j] + a[i,k] * b[k,j]
     return C
 */
-int matrix_multiply(const int**A, const int** B, int**C)
+int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C)
 {
-	
-	return -1;
+	if (!A) return -1;
+	if (!B) return -2;
+	if (!C) return -3;
+
+	if (A->ncols != B->nrows) {
+		dynamic_programming_failure("%s(): incompatible dimensions\n",
+					    __func__);
+	}
+	if (C->nrows != A->nrows) return -4;
+	if (C->ncols != B->ncols) return -5;
+
+	for (int idx = 0; idx < A->nrows; idx++) {
+		for (int jdx = 0; jdx < B->ncols; jdx++) {
+			C->m[idx][jdx] = 0;
+			for (int kdx = 0; kdx < A->ncols; kdx++) {
+				C->m[idx][jdx] = C->m[idx][jdx]
+					+ A->m[idx][kdx] * B->m[kdx][jdx];
+			}
+		}
+	}
+	return 0;
 }
 
 /*
@@ -98,7 +188,7 @@ int matrix_multiply(const int**A, const int** B, int**C)
 	  s[i,j] = k
   return m and s
 */
-memo_p matrix_chain_order(const int** p)
+memo_p matrix_chain_order(matrix_p p)
 {
 	
 	return NULL;
