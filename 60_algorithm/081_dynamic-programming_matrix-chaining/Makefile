@@ -1,4 +1,4 @@
-SOURCE = dynamic-programming.c
+SOURCE = dynamic-programming.c matrix.c
 HEADERS_TEST = -I. -Iunittest
 TARGET_TEST = test.exe
 TARGET_BASIC_TEST = basictest.exe
