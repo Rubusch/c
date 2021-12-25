@@ -286,7 +286,7 @@ jobs:
 ## (instead of a main, mostly a unittest based on cunit is implemented)
 ## references: Algorithms by Cormen/Leiserson/Rivest/Stein
       - run: cd 60_algorithm/000_insertionsort && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/001_mergesort && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/002_mergesort && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/005_divide-and-conquer-preparations && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/006_divide-and-conquer && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/007_square-matrix-multiply && make basictest.exe && ./*.exe
