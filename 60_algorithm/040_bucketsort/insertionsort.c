@@ -1,1 +1,1 @@
-../000_insertionsort/insertionsort.c
+../001_insertionsort/insertionsort.c
