@@ -69,6 +69,16 @@ void matrix_destroy(matrix_p mat)
 	free(mat);
 }
 
+void matrix_init_all(matrix_p mat, int value)
+{
+	if (!mat) return;
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		for (int jdx = 0; jdx < mat->ncols; jdx++) {
+			mat->m[idx][jdx] = value;
+		}
+	}
+}
+
 void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size)
 {
 	if (!mat) return;

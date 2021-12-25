@@ -19,6 +19,7 @@ void matrix_debug(const char* format, ...);
 void matrix_failure(const char* format, ...);
 
 matrix_p matrix_create(const char *name, int nrows, int ncols);
+void matrix_init_all(matrix_p mat, int value);
 void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size);
 void matrix_destroy(matrix_p mat);
 void matrix_print(matrix_p mat);

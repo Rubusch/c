@@ -182,6 +182,23 @@ void test_matrix_multiple(void)
 	matrix_destroy(B);
 }
 
+void test_matrix_init(void)
+{
+	matrix_p M = NULL;
+	M = matrix_create("M", 3, 3);
+	matrix_init_all(M, 123);
+	matrix_print(M);
+
+	CU_ASSERT(123 == M->m[ 0][ 0]);
+	CU_ASSERT(123 == M->m[ 0][ 1]);
+	CU_ASSERT(123 == M->m[ 0][ 2]);
+	CU_ASSERT(123 == M->m[ 1][ 0]);
+	CU_ASSERT(123 == M->m[ 1][ 1]);
+	CU_ASSERT(123 == M->m[ 1][ 2]);
+	CU_ASSERT(123 == M->m[ 2][ 0]);
+	CU_ASSERT(123 == M->m[ 2][ 1]);
+	CU_ASSERT(123 == M->m[ 2][ 2]);
+}
 
 int main(void)
 {
@@ -201,8 +218,10 @@ int main(void)
 
 	/* utilities */
 	TEST_start(pSuite, "matrix struct", test_matrix_simple)
- 		TEST_append(pSuite, "matrix-chain multiple",
+ 		TEST_append(pSuite, "matrix multiple",
 			    test_matrix_multiple) // */
+		TEST_append(pSuite, "matrix init",
+			    test_matrix_init) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
