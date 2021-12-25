@@ -75,11 +75,11 @@ node_p queue_predecessor(node_p ptr)
 	return ptr->prev;
 }
 
-void queue_enqueue(int data)
+int queue_enqueue(int data)
 {
 	if (queue_size() >= QUEUE_MAX_SIZE) {
 		fprintf(stderr, "%s(): queue is full, dropped\n", __func__);
-		return;
+		return -1;
 	}
 	node_p ptr = NULL;
 	ptr = malloc(sizeof(*ptr));
@@ -101,9 +101,10 @@ void queue_enqueue(int data)
 	}
 
 	 _queue_size++;
+	 return 0;
 }
 
-int queue_dequeue()
+int queue_dequeue(int* data)
 {
 	node_p ptr = queue_first();
 	if (NULL == ptr) {
@@ -116,7 +117,9 @@ int queue_dequeue()
 		fprintf(stderr, "ptr != NULL, but queue was empty!!!\n");
 		return -2;
 	}
-	int data = ptr->data;
+	if (data) {
+		*data = ptr->data;
+	}
 	node_p predecessor_node = queue_predecessor(ptr);
 	node_p successor_node = queue_successor(ptr);
 	if (predecessor_node) {
@@ -131,8 +134,7 @@ int queue_dequeue()
 	}
 	free(ptr);
 	_queue_size--;
-	return data;
+
+	return 0;
 }
-
-
 

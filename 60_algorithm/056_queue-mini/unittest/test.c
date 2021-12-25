@@ -29,7 +29,7 @@ void test_queue_print(void)
 
 	int size = queue_size();
 	for (int idx = 0; idx < size; idx++) {
-		queue_dequeue();
+		queue_dequeue(NULL);
 	}
 
 	CU_ASSERT(0 == queue_size());
@@ -90,7 +90,7 @@ void test_queue_size(void)
 
 	int size = queue_size();
 	for (int idx = 0; idx < size; idx++) {
-		queue_dequeue();
+		queue_dequeue(NULL);
 	}
 	CU_ASSERT(0 == queue_size());
 }
@@ -114,7 +114,7 @@ void test_queue_successor(void)
 	CU_ASSERT(queue_first()->next->next == queue_successor(queue_first()->next));
 
 	for (int idx = 0; idx < size; idx++) {
-		queue_dequeue();
+		queue_dequeue(NULL);
 	}
 
 	CU_ASSERT(0 == queue_size());
@@ -140,7 +140,7 @@ void test_queue_predecessor(void)
 	CU_ASSERT(ptr == queue_predecessor(ptr->next));
 
 	for (int idx = 0; idx < size; idx++) {
-		queue_dequeue();
+		queue_dequeue(NULL);
 	}
 
 	CU_ASSERT(0 == queue_size());
@@ -166,7 +166,7 @@ void test_queue_enqueue(void)
 
 	int size = queue_size();
 	for (int idx = 0; idx < size; idx++) {
-		queue_dequeue();
+		queue_dequeue(NULL);
 	}
 
 	CU_ASSERT(0 == queue_size());
@@ -187,7 +187,7 @@ void test_queue_dequeue(void)
 	CU_ASSERT(size == queue_size());
 
 	for (int idx = 0; idx < size; idx++) {
-		data = queue_dequeue();
+		queue_dequeue(&data);
 		CU_ASSERT(arr[idx] == data);
 	}
 

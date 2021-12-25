@@ -36,8 +36,8 @@ int queue_empty();
 int queue_size();
 node_p queue_successor(node_p ptr);
 node_p queue_predecessor(node_p ptr);
-void queue_enqueue(int data); // TODO return int
-int queue_dequeue(); // TODO int queue_dequeue(int* data);
+int queue_enqueue(int data);
+int queue_dequeue(int *data);
 
 
 #endif /* QUEUE_H */
