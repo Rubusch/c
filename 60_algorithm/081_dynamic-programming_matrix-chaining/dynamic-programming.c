@@ -172,6 +172,12 @@ int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C)
            mtable_min_costs
 
       len := length of array p or r, the number of matrices to chain
+
+
+  NB: this does no matrix multiplication at all, it computes what is
+  the minimal cost possible for best chaining approach (multiplying
+  and setting parethesis); it does not even provide the particular
+  chaining which has this minimal cost!
 */
 memo_p matrix_chain_order(int *r, int *p, int len)
 {
@@ -188,93 +194,50 @@ memo_p matrix_chain_order(int *r, int *p, int len)
 				mtable_min_costs->m[idx][idx] = 0;
 				continue;
 			}
-			if (jdx == idx+1) {
-				mtable_min_costs->m[idx][jdx] = r[idx]
-					* p[idx]
-					* p[jdx];
-				continue;
+			if (jdx < idx) {
+				// just visualization
+				mtable_min_costs->m[idx][jdx] = -1;
 			}
 		}
 	}
 
-/*
 	for (int chain_len = 1; chain_len < len; chain_len++) {
-		// chain_len is the chain length!!!
-
-		for (int idx = 1; idx < len - chain_len + 1; idx++) {
-			int jdx = idx + chain_len - 1;
-
+		// chain_len is the chain length
+		for (int idx = 0; idx < len - chain_len; idx++) {
+			int jdx = idx + chain_len;
 			for (int kdx = idx; kdx < jdx; kdx++) {
-				
-#if 1==0
-dynamic_programming_debug("m[%d,%d] + m[%d,%d] + p[%d]p[%d]p[%d] = %d + %d + %d * %d * %d = %d\n",
-			  idx, kdx, (kdx+1), jdx, (idx-1), kdx, jdx,
-			  mtable_min_costs->m[idx][kdx], mtable_min_costs->m[kdx+1][jdx],
-			  p[idx-1], p[kdx], p[jdx],
-			  (mtable_min_costs->m[idx][kdx] + mtable_min_costs->m[kdx+1][jdx] + p[idx-1] * p[kdx] * p[jdx]));
-#endif
-				
-                                int min_cost;
-				min_cost = mtable_min_costs->m[idx][kdx]
+
+// debugging the algorthm //////////////////////////////////////////////////////
+dynamic_programming_debug(
+	"min_cost = m[%d,%d] + m[%d,%d] + r[%d]p[%d]p[%d] = %d + %d + %d * %d * %d = %d\n",
+	idx, kdx,  (kdx+1), jdx,  idx, kdx, jdx,
+	mtable_min_costs->m[idx][kdx], mtable_min_costs->m[kdx+1][jdx],
+	r[idx], p[kdx], p[jdx],
+	(mtable_min_costs->m[idx][kdx] + mtable_min_costs->m[kdx+1][jdx]
+	 + r[idx] * p[kdx] * p[jdx])
+);
+////////////////////////////////////////////////////////////////////////////////
+
+				int min_cost = mtable_min_costs->m[idx][kdx]
 					+ mtable_min_costs->m[kdx+1][jdx]
-					+ p[idx-1] * p[kdx] * p[jdx];
+					+ r[idx] * p[kdx] * p[jdx];
 
 				// now, find the min_cost among all costs
 				if (min_cost < mtable_min_costs->m[idx][jdx]) {
-					mtable_min_costs->m[idx][jdx] = min_cost;
+
+// debugging the algorthm //////////////////////////////////////////////////////
+dynamic_programming_debug(
+	"mtable_min_costs->m[%d,%d] = min_cost = %d\n",
+	idx, jdx, min_cost
+);
+////////////////////////////////////////////////////////////////////////////////
+
+                                        mtable_min_costs->m[idx][jdx] = min_cost;
 					mtable_solution_index->m[idx][jdx] = kdx;
 				}
 			}
 		}
 	}
-/*/
-	for (int chain_len = 1; chain_len < len; chain_len++) {
-		// chain_len is the chain length!!!
-
-		for (int idx = 1; idx < len - chain_len + 1; idx++) {
-//		for (int idx = 0; idx < len - chain_len; idx++) {
-
-			int jdx = idx + chain_len - 1;
-
-			for (int kdx = idx; kdx < jdx; kdx++) {
-
-				
-dynamic_programming_debug(
-	"m[%d,%d] + m[%d,%d] + p[%d]p[%d]p[%d] = %d + %d + %d * %d * %d = %d\n",
-	idx, kdx, (kdx+1), jdx, (idx-1), kdx, jdx,
-	mtable_min_costs->m[idx][kdx], mtable_min_costs->m[kdx+1][jdx],
-	p[idx-1], p[kdx], p[jdx],
-	(mtable_min_costs->m[idx][kdx]
-	 + mtable_min_costs->m[kdx+1][jdx] + p[idx-1] * p[kdx] * p[jdx]));
-				
-                                int min_cost;
-//				min_cost = mtable_min_costs->m[idx][kdx]
-//					+ mtable_min_costs->m[kdx+1][jdx]
-//					+ p[idx-1] * p[kdx] * p[jdx];
-
-				min_cost = mtable_min_costs->m[idx][kdx]
-					+ mtable_min_costs->m[kdx+1][jdx]
-					+ p[idx-1] * p[kdx] * p[jdx];
-
-				// now, find the min_cost among all costs
-//				if (min_cost < mtable_min_costs->m[idx][jdx]) {
-//					mtable_min_costs->m[idx][jdx] = min_cost;
-//					mtable_solution_index->m[idx][jdx] = kdx;
-//				}
-
-				if (min_cost < mtable_min_costs->m[idx][jdx]) {
-					
-dynamic_programming_debug(
-	"mtable_min_costs->m[%d][%d] = min_cost = %d\n",
-	idx, jdx, min_cost);
-					
-                                        mtable_min_costs->m[idx][jdx] = min_cost;
-//					mtable_solution_index->m[idx-1][jdx-1] = kdx;
-				}
-			}
-		}
-	}
-// */
 
 	memo_p memo = malloc(sizeof(*memo));
 	if (!memo) {
@@ -283,9 +246,10 @@ dynamic_programming_debug(
 	memo->mtable_min_costs = mtable_min_costs;
 	memo->mtable_solution_index = mtable_solution_index;
 
-	// NB: needs external free(memo),
-	// matrix_destroy(memo->mtable_min_costs) and
-	// matrix_destroy(memo->mtable_solution_index)
+	// NB: needs external
+	// matrix_destroy(memo->mtable_min_costs),
+	// matrix_destroy(memo->mtable_solution_index), and
+	// free(memo)
 
 	return memo;
 }

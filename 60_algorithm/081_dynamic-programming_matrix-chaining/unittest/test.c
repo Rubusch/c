@@ -94,12 +94,13 @@ void test_matrix_chain_order(void)
 	matrix_print(memo->mtable_min_costs);
 	matrix_print(memo->mtable_solution_index);
 
+	// auxiliary min cost table
 	CU_ASSERT(0 == memo->mtable_min_costs->m[0][0]);
 	CU_ASSERT(15750 == memo->mtable_min_costs->m[0][1]);
-//	CU_ASSERT(7875 == memo->mtable_min_costs->m[0][2]);
-//	CU_ASSERT(9375 == memo->mtable_min_costs->m[0][3]);
-//	CU_ASSERT(11875 == memo->mtable_min_costs->m[0][4]);
-//	CU_ASSERT(15125 == memo->mtable_min_costs->m[0][5]);
+	CU_ASSERT(7875 == memo->mtable_min_costs->m[0][2]);
+	CU_ASSERT(9375 == memo->mtable_min_costs->m[0][3]);
+	CU_ASSERT(11875 == memo->mtable_min_costs->m[0][4]);
+	CU_ASSERT(15125 == memo->mtable_min_costs->m[0][5]);
 
 	CU_ASSERT(0 == memo->mtable_min_costs->m[1][1]);
 	CU_ASSERT(2625 == memo->mtable_min_costs->m[1][2]);
@@ -121,6 +122,28 @@ void test_matrix_chain_order(void)
 
 	CU_ASSERT(0 == memo->mtable_min_costs->m[5][5]);
 
+	// solution index matrix
+	CU_ASSERT(0 == memo->mtable_solution_index->m[0][1]);
+	CU_ASSERT(0 == memo->mtable_solution_index->m[0][2]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[0][3]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[0][4]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[0][5]);
+
+	CU_ASSERT(1 == memo->mtable_solution_index->m[1][2]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[1][3]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[1][4]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[1][5]);
+
+	CU_ASSERT(2 == memo->mtable_solution_index->m[2][3]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[2][4]);
+	CU_ASSERT(2 == memo->mtable_solution_index->m[2][5]);
+
+	CU_ASSERT(3 == memo->mtable_solution_index->m[3][4]);
+	CU_ASSERT(4 == memo->mtable_solution_index->m[3][5]);
+
+	CU_ASSERT(4 == memo->mtable_solution_index->m[4][5]);
+
+	// clean
 	matrix_destroy(memo->mtable_min_costs);
 	matrix_destroy(memo->mtable_solution_index);
 	free(memo);
