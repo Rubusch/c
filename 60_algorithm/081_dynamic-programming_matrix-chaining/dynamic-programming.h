@@ -78,21 +78,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MATRIX_NAME_SIZE 16
-typedef struct matrix_s
-{
-	char name[MATRIX_NAME_SIZE];
-	int **m;
-	int nrows;
-	int ncols;
-} matrix_t;
-typedef matrix_t* matrix_p;
+#include "matrix.h"
 
 //*
 typedef struct memo_s
 {
-	matrix_p m;
-	matrix_p s;
+	matrix_p mtable_min_costs;
+	matrix_p mtable_solution_index;
 } memo_t;
 typedef memo_t* memo_p;
 // */
@@ -105,15 +97,9 @@ typedef memo_t* memo_p;
 void dynamic_programming_debug(const char* format, ...);
 void dynamic_programming_failure(const char* format, ...);
 
-// matrix
-matrix_p matrix_create(const char *name, int ncols, int nrows);
-void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size);
-void matrix_destroy(matrix_p mat);
-void matrix_print(matrix_p mat);
-
 // dynamic-programming problem
 int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C);
-memo_p matrix_chain_order(matrix_p p);
+memo_p matrix_chain_order(int *r, int *p, int len);
 void print_optimal_parens(int s, int i, int j);
 
 

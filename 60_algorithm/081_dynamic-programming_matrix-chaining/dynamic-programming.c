@@ -36,6 +36,8 @@
 #include "dynamic-programming.h"
 
 #include <stdarg.h>
+#include <limits.h>
+#include "matrix.h"
 
 
 /* utils */
@@ -58,74 +60,6 @@ void dynamic_programming_failure(const char* format, ...)
 	vprintf(format, arglist);
 	va_end(arglist);
 	exit(EXIT_FAILURE);
-}
-
-// matrix
-matrix_p matrix_create(const char *name, int ncols, int nrows)
-{
-	matrix_p mat = malloc(sizeof(*mat));
-	if (!mat) {
-		dynamic_programming_failure("allocation failed");
-	}
-
-	mat->m = malloc(nrows * sizeof(*mat->m));
-	for (int idx = 0; idx < nrows; idx++) {
-		mat->m[idx] = malloc(ncols * sizeof(*mat->m));
-		for (int jdx = 0; jdx < ncols; jdx++) {
-			mat->m[idx][jdx] = 0;
-		}
-	}
-
-	if (strlen(name) >= MATRIX_NAME_SIZE) {
-		dynamic_programming_failure("matrix name overrun");
-	}
-	memset(mat->name, '\0', (MATRIX_NAME_SIZE-1) * sizeof(*mat->name));
-	strncpy(mat->name, name, strlen(name));
-	mat->name[MATRIX_NAME_SIZE-1] = '\0';
-	mat->ncols = ncols;
-	mat->nrows = nrows;
-
-	return mat;
-}
-
-void matrix_destroy(matrix_p mat)
-{
-	if (!mat) {
-		return;
-	}
-
-	for (int idx = 0; idx < mat->nrows; idx++) {
-		free(mat->m[idx]);
-	}
-	free(mat->m);
-	free(mat);
-}
-
-void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size)
-{
-	if (!mat) return;
-	if (rowidx >= mat->nrows) return;
-	if (vals_size != mat->ncols) return;
-
-	for (int idx = 0; idx < mat->ncols; idx++) {
-		mat->m[rowidx][idx] = vals[idx];
-	}
-}
-
-void matrix_print(matrix_p mat)
-{
-#ifdef DEBUG
-	if (!mat) {
-		return;
-	}
-	dynamic_programming_debug("\n%s =\n", mat->name);
-	for (int idx = 0; idx < mat->nrows; idx++) {
-		for (int jdx = 0; jdx < mat->ncols; jdx++) {
-			dynamic_programming_debug("%d ", mat->m[idx][jdx]);
-		}
-		dynamic_programming_debug("\n");
-	}
-#endif /* DEBUG */
 }
 
 
@@ -187,11 +121,173 @@ int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C)
 	  m[i,j] = q
 	  s[i,j] = k
   return m and s
+
+
+  dynamic-programming approach
+
+  problem setup and variables in the above algorithm description
+  NB: we denote matrices as M[nrows, ncols]
+
+  matrix | nrows | ncols
+  -------+-------+-------
+     A  :=    p  x  q
+     B  :=    q  x  r
+   => C :=    p  x  r
+
+  -> matrix multiplication A x B = C, requires A.q (A->ncols) and B.q
+     (B->ncols) to be equal!
+
+  thus, we define
+  q := A.ncols = B.nrows
+  p := A.nrows
+  r := B.ncols
+
+  NB: A and B are ambiguously chosen names, to explain what is q, p
+  and r int each matrix multiplication.
+
+
+  example
+
+  multiplication of six matrices (n = 6)
+
+  matrix    |   A1  |   A2  |   A3  |   A4  |   A5  |   A6
+  ----------+-------+-------+-------+-------+-------+-------
+  dimension | 30x35 | 35x15 | 15x5  |  5x10 | 10x20 | 20x25
+  p[i]      |    35 |    15 |    5  |    10 |    20 |    25
+  r[i]      | 30    | 35    | 15    |  5    | 10    | 20
+
+  e.g. idx = 1; jdx = 2; m[1,2] = r[1] * p[1] * p[2] // A1 -> idx = 0, not 1!!
+
+  NB: redefinition of some above variables:
+      p := A.ncols (former/above 'q')
+      q := min cost !!!
+
+
+  arguments
+
+      r := auxiliary rows array to init the auxiliary mtable_min_costs
+           accordingly
+
+      p := cols array, to compute the initial values of the auxiliary
+           mtable_min_costs
+
+      len := length of array p or r, the number of matrices to chain
 */
-memo_p matrix_chain_order(matrix_p p)
+memo_p matrix_chain_order(int *r, int *p, int len)
 {
-	
-	return NULL;
+	matrix_p mtable_min_costs;
+	mtable_min_costs = matrix_create("MIN_COSTS", len, len);
+	matrix_p mtable_solution_index;
+	mtable_solution_index = matrix_create("SOLUTION_INDEX", len, len);
+
+	// pre-init of auxiliary matrix mtable_min_costs
+	matrix_init_all(mtable_min_costs, INT_MAX);
+	for (int idx = 0; idx < len; idx++) {
+		for (int jdx = 0; jdx < len; jdx++) {
+			if (jdx == idx) {
+				mtable_min_costs->m[idx][idx] = 0;
+				continue;
+			}
+			if (jdx == idx+1) {
+				mtable_min_costs->m[idx][jdx] = r[idx]
+					* p[idx]
+					* p[jdx];
+				continue;
+			}
+		}
+	}
+
+/*
+	for (int chain_len = 1; chain_len < len; chain_len++) {
+		// chain_len is the chain length!!!
+
+		for (int idx = 1; idx < len - chain_len + 1; idx++) {
+			int jdx = idx + chain_len - 1;
+
+			for (int kdx = idx; kdx < jdx; kdx++) {
+				
+#if 1==0
+dynamic_programming_debug("m[%d,%d] + m[%d,%d] + p[%d]p[%d]p[%d] = %d + %d + %d * %d * %d = %d\n",
+			  idx, kdx, (kdx+1), jdx, (idx-1), kdx, jdx,
+			  mtable_min_costs->m[idx][kdx], mtable_min_costs->m[kdx+1][jdx],
+			  p[idx-1], p[kdx], p[jdx],
+			  (mtable_min_costs->m[idx][kdx] + mtable_min_costs->m[kdx+1][jdx] + p[idx-1] * p[kdx] * p[jdx]));
+#endif
+				
+                                int min_cost;
+				min_cost = mtable_min_costs->m[idx][kdx]
+					+ mtable_min_costs->m[kdx+1][jdx]
+					+ p[idx-1] * p[kdx] * p[jdx];
+
+				// now, find the min_cost among all costs
+				if (min_cost < mtable_min_costs->m[idx][jdx]) {
+					mtable_min_costs->m[idx][jdx] = min_cost;
+					mtable_solution_index->m[idx][jdx] = kdx;
+				}
+			}
+		}
+	}
+/*/
+	for (int chain_len = 1; chain_len < len; chain_len++) {
+		// chain_len is the chain length!!!
+
+		for (int idx = 1; idx < len - chain_len + 1; idx++) {
+//		for (int idx = 0; idx < len - chain_len; idx++) {
+
+			int jdx = idx + chain_len - 1;
+
+			for (int kdx = idx; kdx < jdx; kdx++) {
+
+				
+dynamic_programming_debug(
+	"m[%d,%d] + m[%d,%d] + p[%d]p[%d]p[%d] = %d + %d + %d * %d * %d = %d\n",
+	idx, kdx, (kdx+1), jdx, (idx-1), kdx, jdx,
+	mtable_min_costs->m[idx][kdx], mtable_min_costs->m[kdx+1][jdx],
+	p[idx-1], p[kdx], p[jdx],
+	(mtable_min_costs->m[idx][kdx]
+	 + mtable_min_costs->m[kdx+1][jdx] + p[idx-1] * p[kdx] * p[jdx]));
+				
+                                int min_cost;
+//				min_cost = mtable_min_costs->m[idx][kdx]
+//					+ mtable_min_costs->m[kdx+1][jdx]
+//					+ p[idx-1] * p[kdx] * p[jdx];
+
+				min_cost = mtable_min_costs->m[idx][kdx]
+					+ mtable_min_costs->m[kdx+1][jdx]
+					+ p[idx-1] * p[kdx] * p[jdx];
+
+				// now, find the min_cost among all costs
+//				if (min_cost < mtable_min_costs->m[idx][jdx]) {
+//					mtable_min_costs->m[idx][jdx] = min_cost;
+//					mtable_solution_index->m[idx][jdx] = kdx;
+//				}
+
+				if (min_cost < mtable_min_costs->m[idx][jdx]) {
+					
+dynamic_programming_debug(
+	"mtable_min_costs->m[%d][%d] = min_cost = %d\n",
+	idx, jdx, min_cost);
+					
+                                        mtable_min_costs->m[idx][jdx] = min_cost;
+//					mtable_solution_index->m[idx-1][jdx-1] = kdx;
+				}
+			}
+		}
+	}
+// */
+
+	memo_p memo = malloc(sizeof(*memo));
+	if (!memo) {
+		dynamic_programming_failure("allocation failed");
+	}
+	memo->mtable_min_costs = mtable_min_costs;
+	memo->mtable_solution_index = mtable_solution_index;
+
+	// NB: needs external free(memo),
+	// matrix_destroy(memo->mtable_min_costs) and
+	// matrix_destroy(memo->mtable_solution_index)
+
+	return memo;
 }
 
 /*
@@ -204,6 +300,8 @@ memo_p matrix_chain_order(matrix_p p)
     PRINT-OPTIMAL-PARENS(s, i, s[i,j])
     PRINT-OPTIMAL-PARENS(s, s[i,j] + 1, j)
     print ")"
+
+    a recursive printer for the dynamic-programming approach
 */
 void print_optimal_parens(int s, int i, int j)
 {

@@ -3,6 +3,7 @@
  */
 
 #include "dynamic-programming.h"
+#include "matrix.h"
 
 #include "test.h"
 #include "stdlib.h"
@@ -71,6 +72,60 @@ void test_matrix_multiply(void)
 	}
 }
 
+void test_matrix_chain_order(void)
+{
+	//  verifies by the book's example of six matrices
+	//
+	//  matrix    |   A1  |   A2  |   A3  |   A4  |   A5  |   A6
+	//  ----------+-------+-------+-------+-------+-------+-------
+	//  dimension | 30x35 | 35x15 | 15x5  |  5x10 | 10x20 | 20x25
+	//  cols[i]   |    35 |    15 |    5  |    10 |    20 |    25
+	//  rows[i]   | 30    | 35    | 15    |  5    | 10    | 20
+
+	int cols[] = {35, 15, 5, 10, 20, 25};
+	int rows[] = {30, 35, 15, 5, 10, 20};
+	int size = 6; //sizeof(cols)/sizeof(*cols);
+	memo_p memo = NULL;
+
+	dynamic_programming_debug("\n");
+	memo = matrix_chain_order(rows, cols, size);
+	CU_ASSERT(NULL != memo);
+
+	matrix_print(memo->mtable_min_costs);
+	matrix_print(memo->mtable_solution_index);
+
+	CU_ASSERT(0 == memo->mtable_min_costs->m[0][0]);
+	CU_ASSERT(15750 == memo->mtable_min_costs->m[0][1]);
+//	CU_ASSERT(7875 == memo->mtable_min_costs->m[0][2]);
+//	CU_ASSERT(9375 == memo->mtable_min_costs->m[0][3]);
+//	CU_ASSERT(11875 == memo->mtable_min_costs->m[0][4]);
+//	CU_ASSERT(15125 == memo->mtable_min_costs->m[0][5]);
+
+	CU_ASSERT(0 == memo->mtable_min_costs->m[1][1]);
+	CU_ASSERT(2625 == memo->mtable_min_costs->m[1][2]);
+	CU_ASSERT(4375 == memo->mtable_min_costs->m[1][3]);
+	CU_ASSERT(7125 == memo->mtable_min_costs->m[1][4]);
+	CU_ASSERT(10500 == memo->mtable_min_costs->m[1][5]);
+
+	CU_ASSERT(0 == memo->mtable_min_costs->m[2][2]);
+	CU_ASSERT(750 == memo->mtable_min_costs->m[2][3]);
+	CU_ASSERT(2500 == memo->mtable_min_costs->m[2][4]);
+	CU_ASSERT(5375 == memo->mtable_min_costs->m[2][5]);
+
+	CU_ASSERT(0 == memo->mtable_min_costs->m[3][3]);
+	CU_ASSERT(1000 == memo->mtable_min_costs->m[3][4]);
+	CU_ASSERT(3500 == memo->mtable_min_costs->m[3][5]);
+
+	CU_ASSERT(0 == memo->mtable_min_costs->m[4][4]);
+	CU_ASSERT(5000 == memo->mtable_min_costs->m[4][5]);
+
+	CU_ASSERT(0 == memo->mtable_min_costs->m[5][5]);
+
+	matrix_destroy(memo->mtable_min_costs);
+	matrix_destroy(memo->mtable_solution_index);
+	free(memo);
+}
+
 
 int main(void)
 {
@@ -92,6 +147,8 @@ int main(void)
 	TEST_start(pSuite, "matrix struct", test_matrix)
  		TEST_append(pSuite, "matrix-chain multiply",
 		            test_matrix_multiply) // */
+		TEST_append(pSuite, "matrix-chain order",
+			    test_matrix_chain_order) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
