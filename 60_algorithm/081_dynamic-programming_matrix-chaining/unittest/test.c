@@ -143,6 +143,9 @@ void test_matrix_chain_order(void)
 
 	CU_ASSERT(4 == memo->mtable_solution_index->m[4][5]);
 
+	print_optimal_parens(memo->mtable_solution_index, 0, size-1);
+	dynamic_programming_debug("\n");
+
 	// clean
 	matrix_destroy(memo->mtable_min_costs);
 	matrix_destroy(memo->mtable_solution_index);

@@ -100,7 +100,7 @@ void dynamic_programming_failure(const char* format, ...);
 // dynamic-programming problem
 int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C);
 memo_p matrix_chain_order(int *r, int *p, int len);
-void print_optimal_parens(int s, int i, int j);
+void print_optimal_parens(matrix_p solution, int start_idx, int len);
 
 
 #endif /* DYNAMIC_PROGRAMMING_H */

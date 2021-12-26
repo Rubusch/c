@@ -265,11 +265,24 @@ dynamic_programming_debug(
     PRINT-OPTIMAL-PARENS(s, s[i,j] + 1, j)
     print ")"
 
-    a recursive printer for the dynamic-programming approach
+  a recursive printer for the dynamic-programming approach
+
+  start initially with:
+    print_optimal_parens(mtable_solution_index, 0, size-1)
 */
-void print_optimal_parens(int s, int i, int j)
+void print_optimal_parens(matrix_p solution, int start_idx, int len)
 {
-	
+	// dealing as of row/col in the solution matrix
+	int row = start_idx;
+	int col = len;
+	if (row == col) {
+		dynamic_programming_debug("A%d", start_idx);
+	} else {
+		dynamic_programming_debug("(");
+		print_optimal_parens(solution, row, solution->m[row][col]);
+		print_optimal_parens(solution, solution->m[row][col] + 1, col);
+		dynamic_programming_debug(")");
+	}
 }
 
 /*
