@@ -179,7 +179,7 @@ int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C)
   and setting parethesis); it does not even provide the particular
   chaining which has this minimal cost!
 */
-memo_p matrix_chain_order(int *r, int *p, int len)
+memo_p matrix_chain_order(const int *r, const int *p, int len)
 {
 	matrix_p mtable_min_costs;
 	mtable_min_costs = matrix_create("MIN_COSTS", len, len);
@@ -304,7 +304,7 @@ void print_optimal_parens(matrix_p solution, int start_idx, int len)
   *r := nrows of the orig. matrices
   *p := ncols of the orig. matrices
 */
-int _recursive_matrix_chain(matrix_p mat, int *r, int *p, int idx, int jdx)
+static int _recursive_matrix_chain(matrix_p mat, const int *r, const int *p, int idx, int jdx)
 {
 	if (idx == jdx) {
 		return 0;
@@ -323,8 +323,7 @@ int _recursive_matrix_chain(matrix_p mat, int *r, int *p, int idx, int jdx)
 	}
 	return mat->m[idx][jdx];
 }
-
-memo_p recursive_matrix_chain_order(int *r, int *p, int size)
+memo_p recursive_matrix_chain_order(const int *r, const int *p, int size)
 {
 	matrix_p mtable_min_costs;
 
