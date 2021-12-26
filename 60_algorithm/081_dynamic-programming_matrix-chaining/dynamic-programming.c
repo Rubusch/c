@@ -286,7 +286,7 @@ void print_optimal_parens(matrix_p solution, int start_idx, int len)
 }
 
 /*
-  RECURSIE-MATRIX-CHAIN(p, i, k)
+  RECURSIVE-MATRIX-CHAIN(p, i, j)
 
   if i == j
     return 0
@@ -298,8 +298,52 @@ void print_optimal_parens(matrix_p solution, int start_idx, int len)
     if q < m[i,j]
       m[i,j] = q
   return m[i,j]
+
+  the recursive function takes idx and jdx, respectively, as a kind of
+  'begin' and 'end' of range argument
+  *r := nrows of the orig. matrices
+  *p := ncols of the orig. matrices
 */
-// TODO       
+int _recursive_matrix_chain(matrix_p mat, int *r, int *p, int idx, int jdx)
+{
+	if (idx == jdx) {
+		return 0;
+	}
+	mat->m[idx][jdx] = INT_MAX;
+
+	for (int kdx = idx; kdx < jdx; kdx++) {
+		int min_cost;
+		min_cost = _recursive_matrix_chain(mat, r, p, idx, kdx)
+			+ _recursive_matrix_chain(mat, r, p, kdx + 1, jdx)
+			+ r[idx] * p[kdx] * p[jdx];
+
+		if (min_cost < mat->m[idx][jdx]) {
+			mat->m[idx][jdx] = min_cost;
+		}
+	}
+	return mat->m[idx][jdx];
+}
+
+memo_p recursive_matrix_chain_order(int *r, int *p, int size)
+{
+	matrix_p mtable_min_costs;
+
+	mtable_min_costs = matrix_create("MIN_COSTS", size, size);
+
+	int solution;
+	solution = _recursive_matrix_chain(mtable_min_costs, r, p, 0, size-1);
+	dynamic_programming_debug("solution found (min_costs): %d\n", solution);
+
+	memo_p memo;
+	memo = malloc(sizeof(*memo));
+	if (!memo) {
+		dynamic_programming_failure("allocation failed");
+	}
+	memo->mtable_min_costs = mtable_min_costs;
+	memo->mtable_solution_index = NULL;
+
+	return memo;
+}
 
 /*
   LOOKUP-CHAIN(m, p, i, j)
