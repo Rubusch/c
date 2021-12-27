@@ -80,14 +80,13 @@
 
 #include "matrix.h"
 
-//*
+
 typedef struct memo_s
 {
 	matrix_p mtable_min_costs;
 	matrix_p mtable_solution_index;
 } memo_t;
 typedef memo_t* memo_p;
-// */
 
 // enable debug printout
 #define DEBUG 1
@@ -101,7 +100,11 @@ void dynamic_programming_failure(const char* format, ...);
 int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C);
 memo_p matrix_chain_order(const int *r, const int *p, int len);
 void print_optimal_parens(matrix_p solution, int start_idx, int len);
+
+// recursive approach
 memo_p recursive_matrix_chain_order(const int *r, const int *p, int size);
+
+// dynamic-programming with memoization approach
 memo_p memoized_matrix_chain_order(const int *r, const int *p, int size);
 
 
