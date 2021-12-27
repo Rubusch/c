@@ -102,6 +102,7 @@ int matrix_multiply(const matrix_p A, const matrix_p B , matrix_p C);
 memo_p matrix_chain_order(const int *r, const int *p, int len);
 void print_optimal_parens(matrix_p solution, int start_idx, int len);
 memo_p recursive_matrix_chain_order(const int *r, const int *p, int size);
+memo_p memoized_matrix_chain_order(const int *r, const int *p, int size);
 
 
 #endif /* DYNAMIC_PROGRAMMING_H */

@@ -299,8 +299,12 @@ void print_optimal_parens(matrix_p solution, int start_idx, int len)
       m[i,j] = q
   return m[i,j]
 
+
+  second approach: recursive matrix-chain order
+
   the recursive function takes idx and jdx, respectively, as a kind of
   'begin' and 'end' of range argument
+
   *r := nrows of the orig. matrices
   *p := ncols of the orig. matrices
 */
@@ -326,12 +330,12 @@ static int _recursive_matrix_chain(matrix_p mat, const int *r, const int *p, int
 memo_p recursive_matrix_chain_order(const int *r, const int *p, int size)
 {
 	matrix_p mtable_min_costs;
-
 	mtable_min_costs = matrix_create("MIN_COSTS", size, size);
 
 	int solution;
 	solution = _recursive_matrix_chain(mtable_min_costs, r, p, 0, size-1);
-	dynamic_programming_debug("solution found (min_costs): %d\n", solution);
+	dynamic_programming_debug("recursive solution found (min_costs): %d\n",
+				  solution);
 
 	memo_p memo;
 	memo = malloc(sizeof(*memo));
@@ -360,8 +364,32 @@ memo_p recursive_matrix_chain_order(const int *r, const int *p, int size)
         m[i, j] = q
   return m[i, j]
 */
-// TODO       
+static int _memoized_lookup_chain(matrix_p mtable_min_costs, const int *r,
+				  const int *p, int idx, int jdx)
+{
+	int cost = mtable_min_costs->m[idx][jdx];
+	if (INT_MAX > cost) {
+		return cost;
+	}
+	if (idx == jdx) {
+		mtable_min_costs->m[idx][jdx] = 0;
+	} else {
+		for (int kdx = idx; kdx < jdx; jdx++) {
+			int min_cost = -1;
+			min_cost = _memoized_lookup_chain(mtable_min_costs,
+					r, p, idx, kdx) // TODO idx+1?    
+				+ _memoized_lookup_chain(mtable_min_costs,
+					r, p, (kdx + 1), jdx)
+				+ r[idx] * p[kdx] * p[jdx];
+			//      + p[idx-1] * p[kdx] * p[jdx];
 
+			if (min_cost < mtable_min_costs->m[idx][jdx]) {
+				mtable_min_costs->m[idx][jdx] = min_cost;
+			}
+		}
+	}
+	return mtable_min_costs->m[idx][jdx];
+}
 /*
   MEMOIZED-MATRIX-CHAIN(p)
 
@@ -371,6 +399,36 @@ memo_p recursive_matrix_chain_order(const int *r, const int *p, int size)
     for j = i to n
       m[i,j] = oo
   return LOOKUP-CHAIN(m, p, 1, n)
-*/
-// TODO       
 
+  third approach: memoized matrix-chain order
+*/
+memo_p memoized_matrix_chain_order(const int *r, const int *p, int size)
+{
+	matrix_p mtable_min_costs;
+	mtable_min_costs = matrix_create("MIN_COSTS", size, size);
+/*
+	for (int idx = 0; idx < size; idx++) {
+		for (int jdx = 0; jdx < size; jdx++) {
+			if (jdx > idx) {
+				mtable_min_costs->m[idx][jdx] = INT_MAX;
+			}
+		}
+	}
+/*/
+	matrix_init_all(mtable_min_costs, INT_MAX);
+// */
+	int solution;
+	solution = _memoized_lookup_chain(mtable_min_costs, r, p, 0, size-1);
+	dynamic_programming_debug("memoized solution found (min_costs): %d\n",
+				  solution);
+
+	memo_p memo;
+	memo = malloc(sizeof(*memo));
+	if (!memo) {
+		dynamic_programming_failure("allocation failed");
+	}
+	memo->mtable_min_costs = mtable_min_costs;
+	memo->mtable_solution_index = NULL;
+
+	return memo;
+}
