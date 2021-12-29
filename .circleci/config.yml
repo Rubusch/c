@@ -313,6 +313,7 @@ jobs:
       - run: cd 60_algorithm/075_red-black-tree && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/080_dynamic-programming_rod-cutting && make && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/081_dynamic-programming_matrix-chaining && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/082_dynamic-programming_longest-common-subsequence && make && make basictest.exe && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
