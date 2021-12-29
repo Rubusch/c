@@ -35,6 +35,7 @@
 
 #include "dynamic-programming.h"
 #include "matrix.h"
+#include "queue.h"
 
 #include <limits.h>
 
@@ -139,6 +140,7 @@ lcs_p lcs_length(const char *x, int xlen, const char *y, int ylen)
 	char_matrix_p bmat;
 	int_matrix_p cmat;
 	bmat = char_matrix_create("B", xlen, ylen);
+	char_matrix_init_all(bmat, '0');
 	cmat = int_matrix_create("C", xlen, ylen);
 	lcs = malloc(sizeof(*lcs));
 	if (!lcs) {
@@ -186,12 +188,16 @@ lcs_p lcs_length(const char *x, int xlen, const char *y, int ylen)
 */
 void lcs_print(char_matrix_p b, const char *x, int xlen, int idx, int jdx)
 {
+	if (!x || !b) {
+		return;
+	}
 	if (idx == 0 || jdx == 0) {
 		return;
 	}
 	if (b->m[idx][jdx] == '\\') {
 		lcs_print(b, x, xlen, idx-1, jdx-1);
-		dynamic_programming_debug("%c", x[idx]);
+		fifo__enqueue(x[idx]);
+//		dynamic_programming_debug("X%cX\n", x[idx]);
 	} else if (b->m[idx][jdx] == '|') {
 		lcs_print(b, x, xlen, idx-1, jdx);
 	} else {

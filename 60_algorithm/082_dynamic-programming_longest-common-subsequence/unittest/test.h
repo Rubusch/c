@@ -18,12 +18,6 @@
 #include "CUnit/CUCurses.h"
 
 
-// debugging print
-# ifndef DEBUG
-#  define DEBUG 1
-# endif /* DEBUG */
-
-
 /*
   TEST helper macros
 

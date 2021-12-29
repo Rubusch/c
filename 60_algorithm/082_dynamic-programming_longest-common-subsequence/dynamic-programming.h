@@ -83,6 +83,7 @@
 #include <stdarg.h>
 
 #include "matrix.h"
+#include "queue.h"
 
 // enable debug printout
 # ifndef DEBUG
@@ -95,6 +96,7 @@ void dynamic_programming_failure(const char* format, ...);
 
 create_matrix(int, int, 16, dynamic_programming_failure);
 create_matrix(char, char, 16, dynamic_programming_failure);
+create_queue(fifo, char, 10);
 
 void int_matrix_print(int_matrix_p mat);
 void char_matrix_print(char_matrix_p mat);
