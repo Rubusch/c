@@ -46,7 +46,54 @@ void int_matrix_print(my_matrix_p mat)
 	}
 }
 
+void char_matrix_print(char_matrix_p mat)
+{
+	if (!mat) {
+		return;
+	}
+	matrix_debug("\n%s =\n", mat->name);
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		for (int jdx = 0; jdx < mat->ncols; jdx++) {
+			matrix_debug("%c ", mat->m[idx][jdx]);
+		}
+		matrix_debug("\n");
+	}
+}
+
 // tests
+void test_matrix_char(void)
+{
+	char_matrix_p mat = NULL;
+	CU_ASSERT(NULL == mat);
+	mat = char_matrix_create("CHAR_MATRIX", 10, 10);
+	CU_ASSERT(NULL != mat);
+	CU_ASSERT(0 == strcmp("CHAR_MATRIX", mat->name));
+	char_matrix_print(mat);
+
+	char_matrix_init_all(mat, 'x');
+	char_matrix_print(mat);
+
+	char arr[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+	int arr_size = sizeof(arr) / sizeof(*arr);
+	char_matrix_init_row(mat, 7, arr, arr_size);
+	char_matrix_print(mat);
+
+	CU_ASSERT('A' == mat->m[ 7][ 0]);
+	CU_ASSERT('B' == mat->m[ 7][ 1]);
+	CU_ASSERT('C' == mat->m[ 7][ 2]);
+	CU_ASSERT('D' == mat->m[ 7][ 3]);
+	CU_ASSERT('E' == mat->m[ 7][ 4]);
+	CU_ASSERT('F' == mat->m[ 7][ 5]);
+	CU_ASSERT('G' == mat->m[ 7][ 6]);
+	CU_ASSERT('H' == mat->m[ 7][ 7]);
+	CU_ASSERT('I' == mat->m[ 7][ 8]);
+	CU_ASSERT('J' == mat->m[ 7][ 9]);
+
+	char_matrix_destroy(mat);
+	mat = NULL;
+
+}
+
 void test_matrix_simple(void)
 {
 	my_matrix_p mat = NULL;
@@ -54,7 +101,7 @@ void test_matrix_simple(void)
 	mat = my_matrix_create("MATRIX", 10, 10);
 	CU_ASSERT(NULL != mat);
 	CU_ASSERT(0 == strcmp("MATRIX", mat->name));
-	matrix_print(mat);
+	int_matrix_print(mat);
 
 	CU_ASSERT(0 == mat->m[ 0][ 0]);
 	CU_ASSERT(0 == mat->m[ 0][ 1]);
