@@ -10,6 +10,7 @@
 #  define FALSE 0
 # endif
 
+// some additional headers needed for matrix_create()
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
