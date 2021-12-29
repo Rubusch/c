@@ -85,14 +85,16 @@
 #include "matrix.h"
 
 // enable debug printout
-#define DEBUG 1
+# ifndef DEBUG
+#  define DEBUG 1
+# endif /* DEBUG */
 
 // utils
 void dynamic_programming_debug(const char* format, ...);
 void dynamic_programming_failure(const char* format, ...);
 
 create_matrix(int, int, 16, dynamic_programming_failure);
-create_matrix(char, int, 16, dynamic_programming_failure);
+create_matrix(char, char, 16, dynamic_programming_failure);
 
 void int_matrix_print(int_matrix_p mat);
 void char_matrix_print(char_matrix_p mat);

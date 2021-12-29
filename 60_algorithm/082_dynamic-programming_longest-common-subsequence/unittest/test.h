@@ -19,7 +19,9 @@
 
 
 // debugging print
-//#define DEBUG 1
+# ifndef DEBUG
+#  define DEBUG 1
+# endif /* DEBUG */
 
 
 /*

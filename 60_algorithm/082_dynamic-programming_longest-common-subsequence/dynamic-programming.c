@@ -122,6 +122,12 @@ void char_matrix_print(char_matrix_p mat)
 	b[i,j] = "-"
   return c and b
 
+
+  NB:
+  m == xlen
+  n == ylen
+
+
   further improvements
   - we can eliminate the b table altogether
   - we can reduce the asymptotic space requirements for LCS-LENGTH
@@ -129,8 +135,6 @@ void char_matrix_print(char_matrix_p mat)
 */
 lcs_p lcs_length(const char *x, int xlen, const char *y, int ylen)
 {
-	// m == xlen
-	// n == ylen
 	lcs_p lcs;
 	char_matrix_p bmat;
 	int_matrix_p cmat;
