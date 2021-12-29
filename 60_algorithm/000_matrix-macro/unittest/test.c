@@ -32,7 +32,7 @@ void matrix_failure(const char* format, ...)
 	exit(EXIT_FAILURE);
 }
 
-void matrix_print(my_matrix_p mat)
+void int_matrix_print(my_matrix_p mat)
 {
 	if (!mat) {
 		return;
@@ -169,7 +169,7 @@ void test_matrix_simple(void)
 	int arr[] = {1,2,3,4,5,6,7,8,9,10};
 	int arr_size = sizeof(arr) / sizeof(*arr);
 	my_matrix_init_row(mat, 7, arr, arr_size);
-	matrix_print(mat);
+	int_matrix_print(mat);
 
 	CU_ASSERT(1 == mat->m[ 7][ 0]);
 	CU_ASSERT(2 == mat->m[ 7][ 1]);
@@ -213,8 +213,8 @@ void test_matrix_multiple(void)
 	CU_ASSERT(5 == B->m[ 1][ 1]);
 	CU_ASSERT(6 == B->m[ 1][ 2]);
 
-	matrix_print(A);
-	matrix_print(B);
+	int_matrix_print(A);
+	int_matrix_print(B);
 
 	my_matrix_destroy(A);
 	my_matrix_destroy(B);
@@ -225,7 +225,7 @@ void test_matrix_init(void)
 	my_matrix_p M = NULL;
 	M = my_matrix_create("M", 3, 3);
 	my_matrix_init_all(M, 123);
-	matrix_print(M);
+	int_matrix_print(M);
 
 	CU_ASSERT(123 == M->m[ 0][ 0]);
 	CU_ASSERT(123 == M->m[ 0][ 1]);
@@ -255,11 +255,10 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "matrix struct", test_matrix_simple)
- 		TEST_append(pSuite, "matrix multiple",
-			    test_matrix_multiple) // */
-		TEST_append(pSuite, "matrix init",
-			    test_matrix_init) // */
+	TEST_start(pSuite, "char matrix", test_matrix_char)
+ 		TEST_append(pSuite, "matrix struct", test_matrix_simple) // */
+ 		TEST_append(pSuite, "matrix multiple", test_matrix_multiple) // */
+		TEST_append(pSuite, "matrix init", test_matrix_init) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

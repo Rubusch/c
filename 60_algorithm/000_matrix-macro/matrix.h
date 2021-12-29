@@ -23,10 +23,10 @@
 	static inline NAME##_matrix_p NAME##_matrix_create(const char *name, \
 							   int nrows, int ncols); \
 									\
-	static inline void NAME##_matrix_init_all(NAME##_matrix_p mat, int value); \
+	static inline void NAME##_matrix_init_all(NAME##_matrix_p mat, TYPE value); \
 									\
 	static inline void NAME##_matrix_init_row(NAME##_matrix_p mat, int rowidx, \
-						  int* vals, int vals_size); \
+						  TYPE* vals, int vals_size); \
 									\
 	static inline void NAME##_matrix_destroy(NAME##_matrix_p mat);	\
 									\

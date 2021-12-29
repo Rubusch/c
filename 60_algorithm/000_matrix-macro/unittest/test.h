@@ -56,6 +56,7 @@ void matrix_failure(const char* format, ...);
 
 // 2. instanciate the matrix
 create_matrix(my, int, 16, matrix_failure);
+create_matrix(char, char, 16, matrix_failure);
 
 // 3. extend its functionality
 void matrix_debug(const char* format, ...);
