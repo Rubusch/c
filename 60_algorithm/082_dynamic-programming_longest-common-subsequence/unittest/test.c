@@ -97,6 +97,9 @@ void test_lcs_length(void)
 			res[idx] = ch;
 			idx++;
 		}
+		res[idx+1] = '\0';
+
+		dynamic_programming_debug("solution: %s [BCBA]\n", res);
 
 		CU_ASSERT('B' == res[0]);
 		CU_ASSERT('C' == res[1]);
