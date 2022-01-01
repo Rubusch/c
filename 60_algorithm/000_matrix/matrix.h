@@ -32,6 +32,7 @@ void matrix_init_all(matrix_p mat, TYPE value);
 void matrix_init_row(matrix_p mat, int rowidx, TYPE* vals, int vals_size);
 
 // type dependent
+void matrix_print(matrix_p mat) { int_matrix_print(mat); }
 void int_matrix_print(matrix_p mat);
 void char_matrix_print(matrix_p mat);
 void double_matrix_print(matrix_p mat);
