@@ -55,12 +55,15 @@ int clean_suite_matrix(void) { return 0; }
 void matrix_failure(const char* format, ...);
 
 // 2. instanciate the matrix
-create_matrix(my, int, 16, matrix_failure);
-create_matrix(char, char, 16, matrix_failure);
+create_matrix(int, int, 32, matrix_failure);
+create_matrix(char, char, 32, matrix_failure);
+create_matrix(double, double, 32, matrix_failure);
 
 // 3. extend its functionality
 void matrix_debug(const char* format, ...);
-void matrix_print(my_matrix_p mat);
+void int_matrix_print(int_matrix_p mat);
+void char_matrix_print(char_matrix_p mat);
+void double_matrix_print(double_matrix_p mat);
 
 
 #endif

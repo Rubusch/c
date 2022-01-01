@@ -32,7 +32,7 @@ void matrix_failure(const char* format, ...)
 	exit(EXIT_FAILURE);
 }
 
-void int_matrix_print(my_matrix_p mat)
+void int_matrix_print(int_matrix_p mat)
 {
 	if (!mat) {
 		return;
@@ -60,7 +60,34 @@ void char_matrix_print(char_matrix_p mat)
 	}
 }
 
+void double_matrix_print(double_matrix_p mat)
+{
+	if (!mat) {
+		return;
+	}
+	matrix_debug("\n%s =\n", mat->name);
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		for (int jdx = 0; jdx < mat->ncols; jdx++) {
+			matrix_debug("%f ", mat->m[idx][jdx]);
+		}
+		matrix_debug("\n");
+	}
+}
+
 // tests
+void test_matrix_simple(void)
+{
+	int_matrix_p mat = NULL;
+	CU_ASSERT(NULL == mat);
+	mat = int_matrix_create("MATRIX", 10, 10);
+	CU_ASSERT(NULL != mat);
+	CU_ASSERT(0 == strcmp("MATRIX", mat->name));
+	int_matrix_print(mat);
+
+	int_matrix_destroy(mat);
+	mat = NULL;
+}
+
 void test_matrix_char(void)
 {
 	char_matrix_p mat = NULL;
@@ -91,14 +118,45 @@ void test_matrix_char(void)
 
 	char_matrix_destroy(mat);
 	mat = NULL;
-
 }
 
-void test_matrix_simple(void)
+void test_matrix_double(void)
 {
-	my_matrix_p mat = NULL;
+	double_matrix_p mat = NULL;
 	CU_ASSERT(NULL == mat);
-	mat = my_matrix_create("MATRIX", 10, 10);
+	mat = double_matrix_create("DOUBLE_MATRIX", 10, 10);
+	CU_ASSERT(NULL != mat);
+	CU_ASSERT(0 == strcmp("DOUBLE_MATRIX", mat->name));
+	double_matrix_print(mat);
+
+	double_matrix_init_all(mat, 0.0);
+	double_matrix_print(mat);
+
+	double arr[] = {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9};
+	int arr_size = sizeof(arr) / sizeof(*arr);
+	double_matrix_init_row(mat, 7, arr, arr_size);
+	double_matrix_print(mat);
+
+	CU_ASSERT(1.0 == mat->m[ 7][ 0]);
+	CU_ASSERT(1.1 == mat->m[ 7][ 1]);
+	CU_ASSERT(1.2 == mat->m[ 7][ 2]);
+	CU_ASSERT(1.3 == mat->m[ 7][ 3]);
+	CU_ASSERT(1.4 == mat->m[ 7][ 4]);
+	CU_ASSERT(1.5 == mat->m[ 7][ 5]);
+	CU_ASSERT(1.6 == mat->m[ 7][ 6]);
+	CU_ASSERT(1.7 == mat->m[ 7][ 7]);
+	CU_ASSERT(1.8 == mat->m[ 7][ 8]);
+	CU_ASSERT(1.9 == mat->m[ 7][ 9]);
+
+	double_matrix_destroy(mat);
+	mat = NULL;
+}
+
+void test_matrix_single(void)
+{
+	int_matrix_p mat = NULL;
+	CU_ASSERT(NULL == mat);
+	mat = int_matrix_create("MATRIX", 10, 10);
 	CU_ASSERT(NULL != mat);
 	CU_ASSERT(0 == strcmp("MATRIX", mat->name));
 	int_matrix_print(mat);
@@ -215,7 +273,7 @@ void test_matrix_simple(void)
 
 	int arr[] = {1,2,3,4,5,6,7,8,9,10};
 	int arr_size = sizeof(arr) / sizeof(*arr);
-	my_matrix_init_row(mat, 7, arr, arr_size);
+	int_matrix_init_row(mat, 7, arr, arr_size);
 	int_matrix_print(mat);
 
 	CU_ASSERT(1 == mat->m[ 7][ 0]);
@@ -229,17 +287,17 @@ void test_matrix_simple(void)
 	CU_ASSERT(9 == mat->m[ 7][ 8]);
 	CU_ASSERT(10 == mat->m[ 7][ 9]);
 
-	my_matrix_destroy(mat);
+	int_matrix_destroy(mat);
 	mat = NULL;
 }
 
 void test_matrix_multiple(void)
 {
-	my_matrix_p A = NULL;
-	A = my_matrix_create("A", 3, 2);
-	int a0[] = {1,2}; my_matrix_init_row(A, 0, a0, 2);
-	int a1[] = {3,4}; my_matrix_init_row(A, 1, a1, 2);
-	int a2[] = {5,6}; my_matrix_init_row(A, 2, a2, 2);
+	int_matrix_p A = NULL;
+	A = int_matrix_create("A", 3, 2);
+	int a0[] = {1,2}; int_matrix_init_row(A, 0, a0, 2);
+	int a1[] = {3,4}; int_matrix_init_row(A, 1, a1, 2);
+	int a2[] = {5,6}; int_matrix_init_row(A, 2, a2, 2);
 
 	CU_ASSERT(1 == A->m[ 0][ 0]);
 	CU_ASSERT(2 == A->m[ 0][ 1]);
@@ -248,10 +306,10 @@ void test_matrix_multiple(void)
 	CU_ASSERT(5 == A->m[ 2][ 0]);
 	CU_ASSERT(6 == A->m[ 2][ 1]);
 
-	my_matrix_p B = NULL;
-	B = my_matrix_create("B", 2, 3);
-	int b0[] = {1,2,3}; my_matrix_init_row(B, 0, b0, 3);
-	int b1[] = {4,5,6}; my_matrix_init_row(B, 1, b1, 3);
+	int_matrix_p B = NULL;
+	B = int_matrix_create("B", 2, 3);
+	int b0[] = {1,2,3}; int_matrix_init_row(B, 0, b0, 3);
+	int b1[] = {4,5,6}; int_matrix_init_row(B, 1, b1, 3);
 
 	CU_ASSERT(1 == B->m[ 0][ 0]);
 	CU_ASSERT(2 == B->m[ 0][ 1]);
@@ -263,15 +321,15 @@ void test_matrix_multiple(void)
 	int_matrix_print(A);
 	int_matrix_print(B);
 
-	my_matrix_destroy(A);
-	my_matrix_destroy(B);
+	int_matrix_destroy(A);
+	int_matrix_destroy(B);
 }
 
 void test_matrix_init(void)
 {
-	my_matrix_p M = NULL;
-	M = my_matrix_create("M", 3, 3);
-	my_matrix_init_all(M, 123);
+	int_matrix_p M = NULL;
+	M = int_matrix_create("M", 3, 3);
+	int_matrix_init_all(M, 123);
 	int_matrix_print(M);
 
 	CU_ASSERT(123 == M->m[ 0][ 0]);
@@ -283,6 +341,9 @@ void test_matrix_init(void)
 	CU_ASSERT(123 == M->m[ 2][ 0]);
 	CU_ASSERT(123 == M->m[ 2][ 1]);
 	CU_ASSERT(123 == M->m[ 2][ 2]);
+
+	int_matrix_destroy(M);
+	M = NULL;
 }
 
 int main(void)
@@ -302,8 +363,10 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "char matrix", test_matrix_char)
- 		TEST_append(pSuite, "matrix struct", test_matrix_simple) // */
+	TEST_start(pSuite, "matrix simple", test_matrix_simple)
+ 		TEST_append(pSuite, "char matrix", test_matrix_char) // */
+ 		TEST_append(pSuite, "double matrix", test_matrix_double) // */
+ 		TEST_append(pSuite, "matrix single", test_matrix_single) // */
  		TEST_append(pSuite, "matrix multiple", test_matrix_multiple) // */
 		TEST_append(pSuite, "matrix init", test_matrix_init) // */
 	TEST_end();

@@ -37,9 +37,9 @@
 			MATRIX_FAILURE_FUNC("allocation failed");	\
 		}							\
 									\
-		mat->m = malloc(nrows * sizeof(*mat->m));		\
+		mat->m = calloc(nrows, sizeof(*mat->m));		\
 		for (int idx = 0; idx < nrows; idx++) {			\
-			mat->m[idx] = malloc(ncols * sizeof(*mat->m));	\
+			mat->m[idx] = calloc(ncols, sizeof(**mat->m));	\
 			for (int jdx = 0; jdx < ncols; jdx++) {		\
 				mat->m[idx][jdx] = (TYPE) 0;		\
 			}						\
