@@ -28,7 +28,7 @@ void matrix_failure(const char* format, ...)
 }
 
 
-// utils
+// matrix
 matrix_p matrix_create(const char *name, int nrows, int ncols)
 {
 	matrix_p mat = malloc(sizeof(*mat));
@@ -36,14 +36,14 @@ matrix_p matrix_create(const char *name, int nrows, int ncols)
 		matrix_failure("allocation failed");
 	}
 
-	mat->m = malloc(nrows * sizeof(*mat->m));
+	mat->m = calloc(nrows, sizeof(*mat->m));
+
 	for (int idx = 0; idx < nrows; idx++) {
-		mat->m[idx] = malloc(ncols * sizeof(*mat->m));
+		mat->m[idx] = calloc(ncols, sizeof(**mat->m));
 		for (int jdx = 0; jdx < ncols; jdx++) {
-			mat->m[idx][jdx] = 0;
+			mat->m[idx][jdx] = (TYPE) 0;
 		}
 	}
-
 	if (strlen(name) >= MATRIX_NAME_SIZE) {
 		matrix_failure("matrix name overrun");
 	}
@@ -52,7 +52,6 @@ matrix_p matrix_create(const char *name, int nrows, int ncols)
 	mat->name[MATRIX_NAME_SIZE-1] = '\0';
 	mat->ncols = ncols;
 	mat->nrows = nrows;
-
 	return mat;
 }
 
@@ -69,7 +68,7 @@ void matrix_destroy(matrix_p mat)
 	free(mat);
 }
 
-void matrix_init_all(matrix_p mat, int value)
+void matrix_init_all(matrix_p mat, TYPE value)
 {
 	if (!mat) return;
 	for (int idx = 0; idx < mat->nrows; idx++) {
@@ -79,7 +78,7 @@ void matrix_init_all(matrix_p mat, int value)
 	}
 }
 
-void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size)
+void matrix_init_row(matrix_p mat, int rowidx, TYPE* vals, int vals_size)
 {
 	if (!mat) return;
 	if (rowidx >= mat->nrows) return;
@@ -90,7 +89,8 @@ void matrix_init_row(matrix_p mat, int rowidx, int* vals, int vals_size)
 	}
 }
 
-void matrix_print(matrix_p mat)
+
+void int_matrix_print(matrix_p mat)
 {
 #ifdef DEBUG
 	if (!mat) {
@@ -99,9 +99,42 @@ void matrix_print(matrix_p mat)
 	matrix_debug("\n%s =\n", mat->name);
 	for (int idx = 0; idx < mat->nrows; idx++) {
 		for (int jdx = 0; jdx < mat->ncols; jdx++) {
-			matrix_debug("%d ", mat->m[idx][jdx]);
+			matrix_debug("%d ", (int) mat->m[idx][jdx]);
 		}
 		matrix_debug("\n");
 	}
 #endif /* DEBUG */
 }
+
+void char_matrix_print(matrix_p mat)
+{
+#ifdef DEBUG
+	if (!mat) {
+		return;
+	}
+	matrix_debug("\n%s =\n", mat->name);
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		for (int jdx = 0; jdx < mat->ncols; jdx++) {
+			matrix_debug("%c ", (char) mat->m[idx][jdx]);
+		}
+		matrix_debug("\n");
+	}
+#endif /* DEBUG */
+}
+
+void double_matrix_print(matrix_p mat)
+{
+#ifdef DEBUG
+	if (!mat) {
+		return;
+	}
+	matrix_debug("\n%s =\n", mat->name);
+	for (int idx = 0; idx < mat->nrows; idx++) {
+		for (int jdx = 0; jdx < mat->ncols; jdx++) {
+			matrix_debug("%f ", (double) mat->m[idx][jdx]);
+		}
+		matrix_debug("\n");
+	}
+#endif /* DEBUG */
+}
+
