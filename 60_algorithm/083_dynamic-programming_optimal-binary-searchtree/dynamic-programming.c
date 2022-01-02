@@ -210,12 +210,6 @@ dynamic_programming_debug("%s(): w->m[idx+1][jdx] = w->m[idx+1][jdx-1] + p[jdx] 
 dynamic_programming_debug("%s(): rdx = %d [%d]\n", __func__, rdx, jdx);    
 		
 
-//*			
-dynamic_programming_debug("%s(): tval = e->m[idx][rdx-1] + e->m[rdx+1][jdx] + w->m[idx][jdx]   = e->m[%d][%d] + e->m[%d][%d] + w->m[%d][%d] = %f + %f + %f\n",
-	__func__, idx, rdx-1, rdx+1, jdx, idx, jdx-1,
-	e->m[idx][rdx-1], e->m[rdx+1][jdx], w->m[idx][jdx]);
-// */			
-
 //				double tval = e->m[idx][rdx-1]
 //					+ e->m[rdx+1][jdx]
 //					+ w->m[idx][jdx];
@@ -224,8 +218,22 @@ dynamic_programming_debug("%s(): tval = e->m[idx][rdx-1] + e->m[rdx+1][jdx] + w-
 					+ e->m[rdx+1][jdx-1]
 					+ w->m[idx][jdx-1];
 
+//*			
+dynamic_programming_debug("%s(): tval = e->m[idx][rdx-1] + e->m[rdx+1][jdx-1] + w->m[idx][jdx]   = e->m[%d][%d] + e->m[%d][%d] + w->m[%d][%d] = %f + %f + %f = %f\n",
+	__func__, idx, rdx-1, rdx+1, jdx-1, idx, jdx-1,
+	e->m[idx][rdx-1], e->m[rdx+1][jdx-1], w->m[idx][jdx-1],
+	tval);
+// */			
+
 				// compare them, take the min(vals..)
 //				if (tval < e->m[idx][jdx]) {
+
+//*					
+dynamic_programming_debug("%s(): if (tval = %f < e->m[%d][%d]) {\n",
+			  __func__, tval, idx, jdx-1);
+// */					
+
+
 				if (tval < e->m[idx][jdx-1]) {
 
 //*					

@@ -70,6 +70,48 @@ void test_optimal_binary_search_tree(void)
 	opti_bst = optimal_bst(pvals, qvals, len);
 
 	double_matrix_print(opti_bst->e);
+	CU_ASSERT(0.05 == opti_bst->e->m[1][0]);
+	CU_ASSERT(0.45 == opti_bst->e->m[1][1]);
+	CU_ASSERT(0.90 == opti_bst->e->m[1][2]);
+	CU_ASSERT(1.25 == opti_bst->e->m[1][3]);
+	CU_ASSERT(1.75 == opti_bst->e->m[1][4]);
+	CU_ASSERT(2.75 == opti_bst->e->m[1][5]);
+
+	CU_ASSERT(0.00 == opti_bst->e->m[2][0]);
+	CU_ASSERT(0.10 == opti_bst->e->m[2][1]);
+	CU_ASSERT(0.40 == opti_bst->e->m[2][2]);
+	CU_ASSERT(0.70 == opti_bst->e->m[2][3]);
+	CU_ASSERT(1.20 == opti_bst->e->m[2][4]);
+	CU_ASSERT(2.00 == opti_bst->e->m[2][5]);
+
+	CU_ASSERT(0.00 == opti_bst->e->m[3][0]);
+	CU_ASSERT(0.00 == opti_bst->e->m[3][1]);
+	CU_ASSERT(0.05 == opti_bst->e->m[3][2]);
+	CU_ASSERT(0.25 == opti_bst->e->m[3][3]);
+	CU_ASSERT(0.60 == opti_bst->e->m[3][4]);
+	CU_ASSERT(1.30 == opti_bst->e->m[3][5]);
+
+	CU_ASSERT(0.00 == opti_bst->e->m[4][0]);
+	CU_ASSERT(0.00 == opti_bst->e->m[4][1]);
+	CU_ASSERT(0.00 == opti_bst->e->m[4][2]);
+	CU_ASSERT(0.05 == opti_bst->e->m[4][3]);
+	CU_ASSERT(0.30 == opti_bst->e->m[4][4]);
+	CU_ASSERT(0.90 == opti_bst->e->m[4][5]);
+
+	CU_ASSERT(0.00 == opti_bst->e->m[5][0]);
+	CU_ASSERT(0.00 == opti_bst->e->m[5][1]);
+	CU_ASSERT(0.00 == opti_bst->e->m[5][2]);
+	CU_ASSERT(0.00 == opti_bst->e->m[5][3]);
+	CU_ASSERT(0.05 == opti_bst->e->m[5][4]);
+	CU_ASSERT(0.50 == opti_bst->e->m[5][5]);
+
+	CU_ASSERT(0.00 == opti_bst->e->m[6][0]);
+	CU_ASSERT(0.00 == opti_bst->e->m[6][1]);
+	CU_ASSERT(0.00 == opti_bst->e->m[6][2]);
+	CU_ASSERT(0.00 == opti_bst->e->m[6][3]);
+	CU_ASSERT(0.00 == opti_bst->e->m[6][4]);
+	CU_ASSERT(0.10 == opti_bst->e->m[6][5]);
+
 // TODO	          
 
 	double_matrix_print(opti_bst->w);
@@ -118,7 +160,7 @@ void test_optimal_binary_search_tree(void)
 
 	int_matrix_print(opti_bst->root);
 
-	CU_ASSERT(1 == opti_bst->root->m[1][1]);
+	CU_ASSERT(1 == opti_bst->root->m[1][1]);    
 	CU_ASSERT(1 == opti_bst->root->m[1][2]);
 	CU_ASSERT(2 == opti_bst->root->m[1][3]);
 	CU_ASSERT(2 == opti_bst->root->m[1][4]);
