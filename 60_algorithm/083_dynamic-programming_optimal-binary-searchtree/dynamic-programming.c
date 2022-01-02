@@ -30,7 +30,8 @@
 #include "dynamic-programming.h"
 #include "matrix.h"
 
-#include <limits.h>
+//#include <limits.h>
+#include <float.h>
 
 // some additional headers needed for matrix_create()
 #include <string.h>
@@ -134,9 +135,11 @@ optimal_bst_p optimal_bst(const double *p, const double *q, int len)
 
 	// all matrix indices start from 0, in case we just don't use
 	// them, when starting from 1 instead, thus the '+2'
-	e = double_matrix_create("E-table", len+2, len+1); /* [1..n+1][0..n] */
-	w = double_matrix_create("w-table", len+2, len+1); /* [1..n+1][0..n] */
-	root = int_matrix_create("root", len+1, len+2);        /* [1..n][1..n] */
+//	e = double_matrix_create("E-table", len+2, len+1); /* [1..n+1][0..n] */
+	e = double_matrix_create("E-table", len+2, len); /* [1..n+1][0..n] */
+	w = double_matrix_create("w-table", len+2, len); /* [1..n+1][0..n] */
+//	root = int_matrix_create("root", len+1, len+2);        /* [1..n][1..n] */
+	root = int_matrix_create("root", len, len);        /* [1..n][1..n] */
 	opt->e = e;
 	opt->w = w;
 	opt->root = root;
@@ -174,26 +177,66 @@ optimal_bst_p optimal_bst(const double *p, const double *q, int len)
 		e->m[idx][idx-1] = q[idx-1];
 		w->m[idx][idx-1] = q[idx-1];
 	}
+
 //	for (int ldx = 1; ldx < len; ldx++) {
 	for (int ldx = 1; ldx < len; ldx++) {
+		
+dynamic_programming_debug("%s(): ldx = %d [%d]\n", __func__, ldx, len);    
+		
+
 //		for (int idx = 1; idx < len - ldx + 1; idx++) {
-		for (int idx = 1; idx < len - ldx + 1; idx++) {
-			int jdx = idx + ldx;
-			e->m[idx][jdx] = INT_MAX;
-			w->m[idx][jdx] = w->m[idx][jdx-1]
-				+ p[jdx]
-				+ q[jdx];
+		for (int idx = 1; idx < len - ldx + 2; idx++) {
+			
+dynamic_programming_debug("%s(): idx = %d [%d]\n", __func__, idx, (len - ldx + 1));    
+			
+			int jdx = idx + ldx -1;  
+			
+dynamic_programming_debug("%s(): jdx = %d [idx + ldx]\n", __func__, jdx);    
+			
+
+			e->m[idx][jdx] = DBL_MAX;
+
+/*			
+dynamic_programming_debug("%s(): w->m[idx+1][jdx] = w->m[idx+1][jdx-1] + p[jdx] + q[jdx]   = w->m[%d][%d] = w->m[%d][%d] + p[%d] + q[%d] = %f + %f + %f;\n",
+			  __func__,
+			  idx, jdx, (idx), (jdx-1), jdx, jdx,
+			  w->m[idx][jdx-1], p[jdx], q[jdx]);
+// */			
+			w->m[idx][jdx] = w->m[idx][jdx-1] + p[jdx] + q[jdx];
 
 			// perform possible computations
 			for (int rdx = idx; rdx < jdx; rdx++) {
+		
+dynamic_programming_debug("%s(): rdx = %d [%d]\n", __func__, rdx, jdx);    
+		
+
+//*			
+dynamic_programming_debug("%s(): tval = e->m[idx][rdx-1] + e->m[rdx+1][jdx] + w->m[idx][jdx]   = e->m[%d][%d] + e->m[%d][%d] + w->m[%d][%d] = %f + %f + %f\n",
+	__func__, idx, rdx-1, rdx+1, jdx, idx, jdx-1,
+	e->m[idx][rdx-1], e->m[rdx+1][jdx], w->m[idx][jdx]);
+// */			
+
+//				double tval = e->m[idx][rdx-1]
+//					+ e->m[rdx+1][jdx]
+//					+ w->m[idx][jdx];
+
 				double tval = e->m[idx][rdx-1]
-					+ e->m[rdx+1][jdx]
-					+ w->m[idx][jdx];
+					+ e->m[rdx+1][jdx-1]
+					+ w->m[idx][jdx-1];
 
 				// compare them, take the min(vals..)
-				if (tval < e->m[idx][jdx]) {
-					e->m[idx][jdx] = tval;
-					root->m[idx][jdx] = rdx;
+//				if (tval < e->m[idx][jdx]) {
+				if (tval < e->m[idx][jdx-1]) {
+
+//*					
+dynamic_programming_debug("%s(): e->m[idx][jdx] = tval   = e->m[%d][%d] = %d\n",
+	__func__, idx, jdx, tval);
+// */					
+
+//					e->m[idx][jdx] = tval;
+					e->m[idx][jdx-1] = tval;
+//					root->m[idx][jdx] = rdx;
+					root->m[idx][jdx-1] = rdx;
 				}
 			}
 		}
