@@ -10,13 +10,13 @@ int main()
 	fprintf(stderr, "float and double - size and limits\n\n");
 
 	{
-		fprintf(stderr, "float: sizeof(float) = %d\n", sizeof(float));
+		fprintf(stderr, "float: sizeof(float) = %ld\n", sizeof(float));
 		fprintf(stderr, "float: max float = %f\n", FLT_MAX);
 
-		fprintf(stderr, "double: sizeof(double) = %d\n", sizeof(double));
+		fprintf(stderr, "double: sizeof(double) = %ld\n", sizeof(double));
 		fprintf(stderr, "double: max double = %f\n", DBL_MAX);
 
-		fprintf(stderr, "long double: sizeof(long double) = %d\n", sizeof(long double));
+		fprintf(stderr, "long double: sizeof(long double) = %ld\n", sizeof(long double));
 		fprintf(stderr, "long double: max double = %Lf\n", LDBL_MAX);
 	}
 
