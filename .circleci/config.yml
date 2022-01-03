@@ -119,7 +119,7 @@ jobs:
       - run: cd ./10_language-techniques/testing__cunit02 && make && ./*.exe
       - run: cd ./10_language-techniques/testing__cunit03 && make && ./*.exe
       - run: cd ./10_language-techniques/testing__cunit04-socket && make
-      - run: cd ./10_language-techniques/bitoperations-FIXME && make
+      - run: cd ./10_language-techniques/bitoperations && make
       - run: cd ./10_language-techniques/input && make
       - run: cd ./10_language-techniques/input__fgets-digit && make
       - run: cd ./10_language-techniques/input__fgets-number && make

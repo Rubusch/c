@@ -14,11 +14,10 @@
 
 #include "lotharlib/console_input.h"
 
-//#define INT_MAX 65535
 
 /*
   pOutSize needs one additional digit for '\0'
-//*/
+ */
 void bit_print_int(int var, char *pOut, const unsigned int pOutSize)
 {
 	unsigned int bitmask = 1;
