@@ -84,6 +84,7 @@ jobs:
       - run: cd ./00_language-basics/floating-point01 && make && ./*.exe
       - run: cd ./00_language-basics/floating-point02__initialization && make && ./*.exe
       - run: cd ./00_language-basics/floating-point03__calculating && make && ./*.exe
+      - run: cd ./00_language-basics/floating-point04__comparison-absolute-epsilon && make && ./*.exe
 
 ## needs extended GNU resources
 ##      - run: cd ./00_language-basics/types && make && ./*.exe
