@@ -71,7 +71,7 @@ jobs:
       - run: cd ./00_language-basics/2dim__pointer-to-array && make && ./*.exe
       - run: cd ./00_language-basics/void-pointer && make && ./*.exe
       - run: cd ./00_language-basics/allocation && make && ./*.exe
-      - run: cd ./00_language-basics/HelloWorld && make && ./*.exe
+      - run: cd ./00_language-basics/hello-world && make && ./*.exe
       - run: cd ./00_language-basics/string__cmp && make && ./*.exe
       - run: cd ./00_language-basics/string-to-int-to-string && make && ./*.exe
       - run: cd ./00_language-basics/struct && make && ./*.exe
