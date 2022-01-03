@@ -81,6 +81,8 @@ jobs:
       - run: cd ./00_language-basics/function-pointer__typedefed && make && ./*.exe
       - run: cd ./00_language-basics/compiler_configuration && make && ./*.exe
       - run: cd ./00_language-basics/printf__x32-x64 && make && ./*.exe
+      - run: cd ./00_language-basics/floating-point01 && make && ./*.exe
+
 ## needs extended GNU resources
 ##      - run: cd ./00_language-basics/types && make && ./*.exe
       - run: cd ./00_language-basics/c11__alignof && make && ./*.exe
