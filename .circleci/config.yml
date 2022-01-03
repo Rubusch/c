@@ -82,6 +82,7 @@ jobs:
       - run: cd ./00_language-basics/compiler_configuration && make && ./*.exe
       - run: cd ./00_language-basics/printf__x32-x64 && make && ./*.exe
       - run: cd ./00_language-basics/floating-point01 && make && ./*.exe
+      - run: cd ./00_language-basics/floating-point02__initialization && make && ./*.exe
 
 ## needs extended GNU resources
 ##      - run: cd ./00_language-basics/types && make && ./*.exe
