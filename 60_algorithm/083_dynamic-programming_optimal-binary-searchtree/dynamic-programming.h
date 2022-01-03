@@ -81,6 +81,7 @@
 // some additional headers needed for matrix_create()
 #include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 #include "matrix.h"
 
@@ -92,6 +93,7 @@
 // utils
 void dynamic_programming_debug(const char* format, ...);
 void dynamic_programming_failure(const char* format, ...);
+bool double_relatively_equal(double a, double b);
 
 create_matrix(int, int, 32, dynamic_programming_failure);
 create_matrix(double, double, 32, dynamic_programming_failure);

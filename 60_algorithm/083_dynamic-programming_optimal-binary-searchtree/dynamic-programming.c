@@ -32,6 +32,8 @@
 
 //#include <limits.h>
 #include <float.h>
+#include <math.h>
+#include <stdbool.h>
 
 // some additional headers needed for matrix_create()
 #include <string.h>
@@ -61,6 +63,22 @@ void dynamic_programming_failure(const char* format, ...)
 	va_end(arglist);
 	exit(EXIT_FAILURE);
 }
+
+bool double_relatively_equal(double a, double b)
+{
+        double max_rel_diff = DBL_EPSILON;
+        double diff = fabs(a - b);
+
+        a = fabs(a);
+        b = fabs(b);
+        double largest = (a > b) ? a : b;
+
+        if (diff <= largest * max_rel_diff)
+                return true;
+
+        return false;
+}
+
 
 // redundant scaffolding codes...
 void int_matrix_print(int_matrix_p mat)
