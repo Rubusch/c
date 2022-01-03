@@ -87,6 +87,7 @@ jobs:
       - run: cd ./00_language-basics/floating-point04__comparison-absolute-epsilon && make && ./*.exe
       - run: cd ./00_language-basics/floating-point05__comparison-relative-epsilon && make && ./*.exe
       - run: cd ./00_language-basics/floating-point06__comparison-ulp-float && make && ./*.exe
+      - run: cd ./00_language-basics/floating-point07__comparison-ulp-double && make && ./*.exe
 
 ## needs extended GNU resources
 ##      - run: cd ./00_language-basics/types && make && ./*.exe
