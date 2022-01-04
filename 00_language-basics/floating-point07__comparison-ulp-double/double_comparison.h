@@ -6,12 +6,12 @@ typedef union double_wrap_s
 {
     int64_t int_repr;
     double dbl;
-#ifdef _DEBUG
+#ifdef DEBUG
     struct {
         uint64_t mantissa : 52;
         uint64_t exponent : 11;
         uint64_t sign : 1;
-    } dbg_parts;
+    }__attribute__((__packed__)) dbg_parts;
 #endif
 } double_wrap_t;
 typedef double_wrap_t* double_wrap_p;
