@@ -18,8 +18,8 @@ void test_matrix_simple(void)
 	CU_ASSERT(0 == strcmp("MATRIX", mat->name));
 
 	// delete
-	matrix_destroy(mat);
-	mat = NULL;
+	matrix_destroy(&mat);
+	CU_ASSERT(NULL == mat);
 }
 
 /* // char matrix
@@ -51,9 +51,7 @@ void test_matrix_char(void)
 	CU_ASSERT('I' == mat->m[ 7][ 8]);
 	CU_ASSERT('J' == mat->m[ 7][ 9]);
 
-	matrix_destroy(mat);
-	mat = NULL;
-
+	matrix_destroy(&mat);
 }
 // */
 
@@ -86,8 +84,7 @@ void test_matrix_double(void)
 	CU_ASSERT(1.8 == mat->m[ 7][ 8]);
 	CU_ASSERT(1.9 == mat->m[ 7][ 9]);
 
-	matrix_destroy(mat);
-	mat = NULL;
+	matrix_destroy(&mat);
 }
 // */
 
@@ -227,8 +224,7 @@ void test_matrix_single(void)
 	CU_ASSERT(9 == mat->m[ 7][ 8]);
 	CU_ASSERT(10 == mat->m[ 7][ 9]);
 
-	matrix_destroy(mat);
-	mat = NULL;
+	matrix_destroy(&mat);
 }
 
 void test_matrix_multiple(void)
@@ -261,8 +257,8 @@ void test_matrix_multiple(void)
 	int_matrix_print(A);
 	int_matrix_print(B);
 
-	matrix_destroy(A);
-	matrix_destroy(B);
+	matrix_destroy(&A);
+	matrix_destroy(&B);
 }
 
 void test_matrix_init(void)
@@ -282,7 +278,7 @@ void test_matrix_init(void)
 	CU_ASSERT(123 == M->m[ 2][ 1]);
 	CU_ASSERT(123 == M->m[ 2][ 2]);
 
-	matrix_destroy(M);
+	matrix_destroy(&M);
 }
 // */
 

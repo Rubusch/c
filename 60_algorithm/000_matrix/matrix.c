@@ -55,17 +55,19 @@ matrix_p matrix_create(const char *name, int nrows, int ncols)
 	return mat;
 }
 
-void matrix_destroy(matrix_p mat)
+void matrix_destroy(matrix_p *mat)
 {
-	if (!mat) {
+	matrix_p deletee = *mat;
+	if (!deletee) {
 		return;
 	}
 
-	for (int idx = 0; idx < mat->nrows; idx++) {
-		free(mat->m[idx]);
+	for (int idx = 0; idx < deletee->nrows; idx++) {
+		free(deletee->m[idx]);
 	}
-	free(mat->m);
-	free(mat);
+	free(deletee->m);
+	free(*mat);
+	*mat = NULL;
 }
 
 void matrix_init_all(matrix_p mat, TYPE value)

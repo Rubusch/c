@@ -27,7 +27,7 @@ void matrix_failure(const char* format, ...);
 
 // independent
 matrix_p matrix_create(const char *name, int nrows, int ncols);
-void matrix_destroy(matrix_p mat);
+void matrix_destroy(matrix_p *mat);
 void matrix_init_all(matrix_p mat, TYPE value);
 void matrix_init_row(matrix_p mat, int rowidx, TYPE* vals, int vals_size);
 
