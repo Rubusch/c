@@ -6,12 +6,12 @@ typedef union float_wrap_s
 {
     int32_t int_repr;
     float flo;
-#ifdef _DEBUG
+#ifdef DEBUG
     struct {
         uint32_t mantissa : 23;
         uint32_t exponent : 8;
         uint32_t sign : 1;
-    } dbg_parts;
+    }__attribute__((__packed__)) dbg_parts;
 #endif
 } float_wrap_t;
 typedef float_wrap_t* float_wrap_p;
