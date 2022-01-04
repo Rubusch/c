@@ -28,7 +28,7 @@
 	static inline void NAME##_matrix_init_row(NAME##_matrix_p mat, int rowidx, \
 						  TYPE* vals, int vals_size); \
 									\
-	static inline void NAME##_matrix_destroy(NAME##_matrix_p mat);	\
+	static inline void NAME##_matrix_destroy(NAME##_matrix_p *mat);	\
 									\
 	NAME##_matrix_p NAME##_matrix_create(const char *name, int nrows, int ncols) \
 	{								\
@@ -57,17 +57,17 @@
 		return mat;						\
 	}								\
 									\
-	void NAME##_matrix_destroy(NAME##_matrix_p mat)			\
+	void NAME##_matrix_destroy(NAME##_matrix_p *mat)		\
 	{								\
-		if (!mat) {						\
-			return;						\
+		if (!mat) return;					\
+		NAME##_matrix_p deletee = *mat;				\
+		if (!deletee) return;					\
+		for (int idx = 0; idx < deletee->nrows; idx++) {	\
+			free(deletee->m[idx]);				\
 		}							\
-									\
-		for (int idx = 0; idx < mat->nrows; idx++) {		\
-			free(mat->m[idx]);				\
-		}							\
-		free(mat->m);						\
-		free(mat);						\
+		free(deletee->m);					\
+		free(*mat);						\
+		*mat = NULL;						\
 	}								\
 									\
 	void NAME##_matrix_init_all(NAME##_matrix_p mat, TYPE value)	\

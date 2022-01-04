@@ -84,8 +84,8 @@ void test_matrix_simple(void)
 	CU_ASSERT(0 == strcmp("MATRIX", mat->name));
 	int_matrix_print(mat);
 
-	int_matrix_destroy(mat);
-	mat = NULL;
+	int_matrix_destroy(&mat);
+	CU_ASSERT(NULL == mat);
 }
 
 void test_matrix_char(void)
@@ -116,8 +116,7 @@ void test_matrix_char(void)
 	CU_ASSERT('I' == mat->m[ 7][ 8]);
 	CU_ASSERT('J' == mat->m[ 7][ 9]);
 
-	char_matrix_destroy(mat);
-	mat = NULL;
+	char_matrix_destroy(&mat);
 }
 
 void test_matrix_double(void)
@@ -148,8 +147,7 @@ void test_matrix_double(void)
 	CU_ASSERT(1.8 == mat->m[ 7][ 8]);
 	CU_ASSERT(1.9 == mat->m[ 7][ 9]);
 
-	double_matrix_destroy(mat);
-	mat = NULL;
+	double_matrix_destroy(&mat);
 }
 
 void test_matrix_single(void)
@@ -287,8 +285,7 @@ void test_matrix_single(void)
 	CU_ASSERT(9 == mat->m[ 7][ 8]);
 	CU_ASSERT(10 == mat->m[ 7][ 9]);
 
-	int_matrix_destroy(mat);
-	mat = NULL;
+	int_matrix_destroy(&mat);
 }
 
 void test_matrix_multiple(void)
@@ -321,8 +318,8 @@ void test_matrix_multiple(void)
 	int_matrix_print(A);
 	int_matrix_print(B);
 
-	int_matrix_destroy(A);
-	int_matrix_destroy(B);
+	int_matrix_destroy(&A);
+	int_matrix_destroy(&B);
 }
 
 void test_matrix_init(void)
@@ -342,8 +339,7 @@ void test_matrix_init(void)
 	CU_ASSERT(123 == M->m[ 2][ 1]);
 	CU_ASSERT(123 == M->m[ 2][ 2]);
 
-	int_matrix_destroy(M);
-	M = NULL;
+	int_matrix_destroy(&M);
 }
 
 int main(void)
