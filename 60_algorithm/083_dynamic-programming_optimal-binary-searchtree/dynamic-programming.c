@@ -30,10 +30,7 @@
 #include "dynamic-programming.h"
 #include "matrix.h"
 
-//#include <limits.h>
 #include <float.h>
-#include <math.h>
-#include <stdbool.h>
 
 // some additional headers needed for matrix_create()
 #include <string.h>
@@ -63,22 +60,6 @@ void dynamic_programming_failure(const char* format, ...)
 	va_end(arglist);
 	exit(EXIT_FAILURE);
 }
-
-bool double_relatively_equal(double a, double b)
-{
-        double max_rel_diff = DBL_EPSILON;
-        double diff = fabs(a - b);
-
-        a = fabs(a);
-        b = fabs(b);
-        double largest = (a > b) ? a : b;
-
-        if (diff <= largest * max_rel_diff)
-                return true;
-
-        return false;
-}
-
 
 // redundant scaffolding codes...
 void int_matrix_print(int_matrix_p mat)
@@ -151,123 +132,77 @@ optimal_bst_p optimal_bst(const double *p, const double *q, int len)
 		dynamic_programming_failure("allocation failed");
 	}
 
-	// all matrix indices start from 0, in case we just don't use
-	// them, when starting from 1 instead, thus the '+2'
-//	e = double_matrix_create("E-table", len+2, len+1); /* [1..n+1][0..n] */
+	/*
+	  all matrix indices start from 0, in case we just don't use
+	  them, when starting from 1 instead, thus the '+2'
+	*/
 	e = double_matrix_create("E-table", len+2, len); /* [1..n+1][0..n] */
 	w = double_matrix_create("w-table", len+2, len); /* [1..n+1][0..n] */
-//	root = int_matrix_create("root", len+1, len+2);        /* [1..n][1..n] */
-	root = int_matrix_create("root", len, len);        /* [1..n][1..n] */
+	root = int_matrix_create("root", len, len);      /* [1..n][1..n] */
 	opt->e = e;
 	opt->w = w;
 	opt->root = root;
 
-/*
-	for (int idx = 1; idx < len+1; idx++) {
-		e->m[idx][idx-1] = q[idx-1];
-		w->m[idx][idx-1] = q[idx-1];
-	}
-	for (int ldx = 1; ldx < len; ldx++) {
-		for (int idx = 1; idx < len - ldx + 1; idx++) {
-			int jdx = idx + ldx - 1;  
-			e->m[idx][jdx] = INT_MAX;
-			w->m[idx][jdx] = w->m[idx][jdx-1]
-				+ p[jdx]
-				+ q[jdx];
-
-			// perform possible computations
-			for (int rdx = idx; rdx < jdx; rdx++) {
-				double tval = e->m[idx][rdx-1]
-					+ e->m[rdx+1][jdx]
-					+ w->m[idx][jdx];
-
-				// compare them, take the min(vals..)
-				if (tval < e->m[idx][jdx]) {
-					e->m[idx][jdx] = tval;
-					root->m[idx][jdx] = rdx;
-				}
-			}
-		}
-	}
-/*/
-//	for (int idx = 1; idx < len+1; idx++) {
 	for (int idx = 1; idx < len+2; idx++) {
 		e->m[idx][idx-1] = q[idx-1];
 		w->m[idx][idx-1] = q[idx-1];
 	}
 
-//	for (int ldx = 1; ldx < len; ldx++) {
-	for (int ldx = 1; ldx < len; ldx++) {
-		
-dynamic_programming_debug("%s(): ldx = %d [%d]\n", __func__, ldx, len);    
-		
+	for (int ldx = 1; ldx < len+1; ldx++) {
+/*
+  ldx: per diagonal traverse over idx/jdx combinations
+ */
 
-//		for (int idx = 1; idx < len - ldx + 1; idx++) {
 		for (int idx = 1; idx < len - ldx + 2; idx++) {
-			
-dynamic_programming_debug("%s(): idx = %d [%d]\n", __func__, idx, (len - ldx + 1));    
-			
-			int jdx = idx + ldx -1;  
-			
-dynamic_programming_debug("%s(): jdx = %d [idx + ldx]\n", __func__, jdx);    
-			
+/*
+  idx: row index, starting with 1, leaving 0 empty
+ */
+
+			int jdx = idx + ldx -1;
+/*
+  jdx: col index, starting at 1, through 5
+
+  ldx sets up rounds of idx X jdx
+ */
 
 			e->m[idx][jdx] = DBL_MAX;
-
-/*			
-dynamic_programming_debug("%s(): w->m[idx+1][jdx] = w->m[idx+1][jdx-1] + p[jdx] + q[jdx]   = w->m[%d][%d] = w->m[%d][%d] + p[%d] + q[%d] = %f + %f + %f;\n",
-			  __func__,
-			  idx, jdx, (idx), (jdx-1), jdx, jdx,
-			  w->m[idx][jdx-1], p[jdx], q[jdx]);
-// */			
 			w->m[idx][jdx] = w->m[idx][jdx-1] + p[jdx] + q[jdx];
 
-			// perform possible computations
+/*
+  perform possible computations
+
+  w[i;j] = w[i;r-1] + p[r] + w[r+1;j]
+
+  e[i;j] = { if j == i-1;   q[i-1]
+           { if i <= j;  min{  e[i;r-1] + e[r+1;j] + w[i;j]  }
+
+  e.g.
+  e[1;5], i = 1, j = 5
+    -> find min in:
+    e[1;0] + e[2;5] + w[1;5] = 0.05 + 2.0 + 1.0 = 3.05
+    e[1;1] + e[3;5] + w[1;5] = 0.45 + 1.3 + 1.0 = 2.75 <= or
+    e[1;2] + e[4;5] + w[1;5] = 0.9  + 0.9 + 1.0 = 2.80
+    e[1;3] + e[5;5] + w[1;5] = 1.25 + 0.5 + 1.0 = 2.75 <=
+    e[1;4] + e[6;5] + w[1;5] = 1.75 + 0.1 + 1.0 = 2.85
+
+  dynamic programming: creates several smaller problems as above, but
+  then typically something like a min() step needs to evaluate the
+  results; furter, the memoization of keeping the results allows for
+  just computing new fields without re-calculating already known
+  subproblems
+ */
 			for (int rdx = idx; rdx < jdx; rdx++) {
-		
-dynamic_programming_debug("%s(): rdx = %d [%d]\n", __func__, rdx, jdx);    
-		
-
-//				double tval = e->m[idx][rdx-1]
-//					+ e->m[rdx+1][jdx]
-//					+ w->m[idx][jdx];
-
 				double tval = e->m[idx][rdx-1]
 					+ e->m[rdx+1][jdx-1]
 					+ w->m[idx][jdx-1];
 
-//*			
-dynamic_programming_debug("%s(): tval = e->m[idx][rdx-1] + e->m[rdx+1][jdx-1] + w->m[idx][jdx]   = e->m[%d][%d] + e->m[%d][%d] + w->m[%d][%d] = %f + %f + %f = %f\n",
-	__func__, idx, rdx-1, rdx+1, jdx-1, idx, jdx-1,
-	e->m[idx][rdx-1], e->m[rdx+1][jdx-1], w->m[idx][jdx-1],
-	tval);
-// */			
-
-				// compare them, take the min(vals..)
-//				if (tval < e->m[idx][jdx]) {
-
-//*					
-dynamic_programming_debug("%s(): if (tval = %f < e->m[%d][%d]) {\n",
-			  __func__, tval, idx, jdx-1);
-// */					
-
-
 				if (tval < e->m[idx][jdx-1]) {
-
-//*					
-dynamic_programming_debug("%s(): e->m[idx][jdx] = tval   = e->m[%d][%d] = %d\n",
-	__func__, idx, jdx, tval);
-// */					
-
-//					e->m[idx][jdx] = tval;
 					e->m[idx][jdx-1] = tval;
-//					root->m[idx][jdx] = rdx;
 					root->m[idx][jdx-1] = rdx;
 				}
 			}
 		}
 	}
-// */
 
 	// return result tables (matrices)
 	return opt;

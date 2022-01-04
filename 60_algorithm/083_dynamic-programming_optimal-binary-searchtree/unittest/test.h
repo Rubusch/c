@@ -10,13 +10,15 @@
 #  define FALSE 0
 # endif
 
-#include "stdio.h"
+#include <stdio.h>
+#include <stdbool.h>
 
 #include "CUnit/Basic.h"
 #include "CUnit/Console.h"
 #include "CUnit/Automated.h"
 #include "CUnit/CUCurses.h"
 
+bool rel_eq_dbl(double a, double b);
 
 /*
   TEST helper macros
