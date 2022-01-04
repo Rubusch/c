@@ -57,10 +57,10 @@ matrix_p matrix_create(const char *name, int nrows, int ncols)
 
 void matrix_destroy(matrix_p *mat)
 {
+	if (!mat) return;
+
 	matrix_p deletee = *mat;
-	if (!deletee) {
-		return;
-	}
+	if (!deletee) return;
 
 	for (int idx = 0; idx < deletee->nrows; idx++) {
 		free(deletee->m[idx]);
