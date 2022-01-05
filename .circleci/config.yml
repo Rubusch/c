@@ -301,29 +301,32 @@ jobs:
       - run: cd 60_algorithm/006_divide-and-conquer && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/007_square-matrix-multiply && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/008_square-matrix-multiply-recursive_strassen-method && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/010_randomized-algorithm && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/020_heapsort && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/025_quicksort && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/030_countingsort && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/035_radixsort && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/040_bucketsort && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/045_order-statistics && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/050_linked-list && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/052_stack && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/053_stack-mini && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/054_stack-macro-lifo && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/055_queue && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/056_queue-mini && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/057_queue-macro-fifo && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/060_hashing && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/061_hashtable && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/010_randomized-algorithm && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/020_heapsort && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/025_quicksort && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/030_countingsort && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/035_radixsort && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/040_bucketsort && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/045_order-statistics && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/050_linked-list && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/052_stack && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/053_stack-mini && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/054_stack-macro-lifo && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/055_queue && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/056_queue-mini && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/057_queue-macro-fifo && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/060_hashing && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/061_hashtable && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/062_hashtable-extension_amortized-cost-analysis && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/070_binary-search-tree && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/075_red-black-tree && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/080_dynamic-programming_rod-cutting && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/081_dynamic-programming_matrix-chaining && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/082_dynamic-programming_longest-common-subsequence && make && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/083_dynamic-programming_optimal-binary-searchtree && make && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/070_binary-search-tree && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/075_red-black-tree && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/080_dynamic-programming_rod-cutting && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/081_dynamic-programming_matrix-chaining && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/082_dynamic-programming_longest-common-subsequence && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/083_dynamic-programming_optimal-binary-searchtree && make basictest.exe && ./*.exe
+
+## 77: fun
+      - run: cd 77_fun/number_speed_and_accuracy && make
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
