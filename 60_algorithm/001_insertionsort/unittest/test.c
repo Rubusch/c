@@ -42,8 +42,6 @@ void test_sort(void)
 // */
 }
 
-// TODO tests
-
 int main()
 {
 	CU_pSuite pSuite = NULL;
