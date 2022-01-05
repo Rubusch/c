@@ -1,7 +1,3 @@
-# Makefile
-#
-#
-
 SOURCE = filesize.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.exe)

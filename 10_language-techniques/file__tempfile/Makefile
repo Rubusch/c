@@ -1,9 +1,6 @@
-# Makefile
-#
-#
-
 SOURCE = tempfile.c
-OBJECTS = ${SOURCE:.c=.o}
+TARGET = tf.exe
+OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -11,12 +8,14 @@ CFLAGS = -g -Wall -Werror -std=c99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	$(CC) $(CFLAGS) -c $<
 
-tf.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-all: tf.exe
+all: $(TARGET)
 
 clean:
-	${RM} tf.exe ${OBJECTS} *~ *.txt core
+	$(RM) $(TARGET) $(OBJECTS) *~ *.txt
+
+.PHONY: all clean

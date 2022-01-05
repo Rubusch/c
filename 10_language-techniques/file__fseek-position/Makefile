@@ -1,24 +1,22 @@
-# Makefile
-#
-#
-
 SOURCE = fseek.c
-OBJECTS = ${SOURCE:.c=.o}
+TARGET = fseek.exe
+OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	$(CC) $(CFLAGS) -c $<
 
-fseek.exe: ${OBJECTS}
+$(TARGET): $(OBJECTS)
 	cp -f template.txt text.txt
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-all: fseek.exe
-
+all: $(TARGET)
 
 clean:
-	-${RM} fseek.exe *.o *~ core error.log text.txt
+	-$(RM) $(TARGET) *.o *~ core error.log text.txt
+
+.PHONY: clean all

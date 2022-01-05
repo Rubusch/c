@@ -1,25 +1,22 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
+TARGET = input.exe
 SOURCE = input.c
-OBJECTS = ${SOURCE:.c=.o}
+OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	$(CC) $(CFLAGS) -c $<
 
-input.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-all: input.exe
+all: $(TARGET)
 
 clean:
-	${RM} $(OBJECTS) input.exe *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 
+.PHONY: clean all

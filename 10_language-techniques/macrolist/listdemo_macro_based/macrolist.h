@@ -21,11 +21,11 @@
 		char data[DATASIZ];                                            \
 	} NAME##_t;                                                            \
                                                                                \
-	static NAME##_t *NAME##__first = NULL;                                 \
-	static NAME##_t *NAME##__last = NULL;                                  \
+	static inline NAME##_t *NAME##__first = NULL;			\
+	static inline NAME##_t *NAME##__last = NULL;			\
                                                                                \
 	/* append a new element containing data */                             \
-	static int NAME##__append(const char data[DATASIZ])                    \
+	static int NAME##__append(const char data[DATASIZ])		\
 	{                                                                      \
 		NAME##_t *elem;                                                \
                                                                                \
