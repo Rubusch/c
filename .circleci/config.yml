@@ -111,8 +111,6 @@ jobs:
 #      - run: cd ./10_language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe
       - run: cd ./10_language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe
       - run: cd ./10_language-techniques/debug__valgrind-uninitialized && make && ./*.exe
-      - run: cd ./10_language-techniques/macrolist/listdemo && make && ./*.exe
-      - run: cd ./10_language-techniques/macrolist/listdemo_macro_based && make && ./*.exe
 
   ## interactive and/or need fixes
       - run: cd ./10_language-techniques/testing__cunit01 && make
