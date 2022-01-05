@@ -1,13 +1,12 @@
 /*
   cunit - tests
  */
+#include <stdlib.h>
+#include <time.h>
 
 #include "dynamic-programming.h"
 #include "matrix.h"
-
 #include "test.h"
-#include "stdlib.h"
-#include "time.h"
 
 
 void test_matrix(void)
@@ -21,8 +20,7 @@ void test_matrix(void)
 	int arr_size = sizeof(arr) / sizeof(*arr);
 	matrix_init_row(mat, 7, arr, arr_size);
 	matrix_print(mat);
-	matrix_destroy(mat);
-	mat = NULL;
+	matrix_destroy(&mat);
 }
 
 void test_matrix_multiply(void)
@@ -66,9 +64,9 @@ void test_matrix_multiply(void)
 		CU_ASSERT(114 == C->m[2][1]);
 		CU_ASSERT(90 == C->m[2][2]);
 
-		matrix_destroy(A);
-		matrix_destroy(B);
-		matrix_destroy(C);
+		matrix_destroy(&A);
+		matrix_destroy(&B);
+		matrix_destroy(&C);
 	}
 }
 
@@ -147,8 +145,8 @@ void test_matrix_chain_order(void)
 	dynamic_programming_debug("\n");
 
 	// clean
-	matrix_destroy(memo->mtable_min_costs);
-	matrix_destroy(memo->mtable_solution_index);
+	matrix_destroy(&memo->mtable_min_costs);
+	matrix_destroy(&memo->mtable_solution_index);
 	free(memo);
 }
 
@@ -203,7 +201,7 @@ void test_recursive_matrix_chain(void)
 	CU_ASSERT(0 == memo->mtable_min_costs->m[5][5]);
 
 	// clean
-	matrix_destroy(memo->mtable_min_costs);
+	matrix_destroy(&memo->mtable_min_costs);
 	free(memo);
 }
 
@@ -257,7 +255,7 @@ void test_memoized_matrix_chain(void)
 	CU_ASSERT(0 == memo->mtable_min_costs->m[5][5]);
 
 	// clean
-	matrix_destroy(memo->mtable_min_costs);
+	matrix_destroy(&memo->mtable_min_costs);
 	free(memo);
 }
 

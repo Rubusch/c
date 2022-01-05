@@ -247,8 +247,8 @@ dynamic_programming_debug(
 	memo->mtable_solution_index = mtable_solution_index;
 
 	// NB: needs external
-	// matrix_destroy(memo->mtable_min_costs),
-	// matrix_destroy(memo->mtable_solution_index), and
+	// matrix_destroy(&memo->mtable_min_costs),
+	// matrix_destroy(&memo->mtable_solution_index), and
 	// free(memo)
 
 	return memo;

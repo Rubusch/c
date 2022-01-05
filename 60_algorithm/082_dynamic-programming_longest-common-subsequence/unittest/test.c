@@ -25,8 +25,7 @@ void test_matrix(void)
 		int_matrix_print(mat);
 
 		// delete
-		int_matrix_destroy(mat);
-		mat = NULL;
+		int_matrix_destroy(&mat);
 	}
 	{
 		char_matrix_p mat = NULL;
@@ -64,8 +63,7 @@ void test_matrix(void)
 		CU_ASSERT('C' == mat->m[ 7][9]);
 
 		// delete
-		char_matrix_destroy(mat);
-		mat = NULL;
+		char_matrix_destroy(&mat);
 	}
 
 }
@@ -107,8 +105,8 @@ void test_lcs_length(void)
 		CU_ASSERT('A' == res[3]);
 
 		// delete
-		int_matrix_destroy(lcs->c);
-		char_matrix_destroy(lcs->b);
+		int_matrix_destroy(&lcs->c);
+		char_matrix_destroy(&lcs->b);
 		free(lcs);
 	}
 }

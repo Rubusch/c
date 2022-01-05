@@ -40,8 +40,7 @@ void test_matrix(void)
 		int_matrix_print(mat);
 
 		// delete
-		int_matrix_destroy(mat);
-		mat = NULL;
+		int_matrix_destroy(&mat);
 	}
 
 	{
@@ -57,8 +56,7 @@ void test_matrix(void)
 		double_matrix_print(mat);
 
 		// delete
-		double_matrix_destroy(mat);
-		mat = NULL;
+		double_matrix_destroy(&mat);
 	}
 }
 
@@ -203,10 +201,10 @@ void test_optimal_binary_search_tree(void)
 
 
 	// delete
-// FIXME memory corruption in matrix deleter                     
-//	double_matrix_destroy(opti_bst->e);
-//	double_matrix_destroy(opti_bst->w);
-//	int_matrix_destroy(opti_bst->root);
+// FIXME broken deleter          
+//	double_matrix_destroy(&opti_bst->e);
+//	double_matrix_destroy(&opti_bst->w);
+//	int_matrix_destroy(&opti_bst->root);
 	free(opti_bst);
 }
 
