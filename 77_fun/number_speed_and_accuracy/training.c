@@ -183,7 +183,8 @@ void handle(int sig, siginfo_t *siginfo, void* context)
 	fprintf(stderr, "timeout...\n");
 
 	// result
-	fprintf(stderr, "result: %d out of %d.\n", ntests_success, ntests);
+	fprintf(stderr, "result: %d out of %d: %1.3f\n", ntests_success, ntests,
+		(((double) ntests_success) / ((double) ntests)));
 	fprintf(stderr, "READY.\n");
 
 	exit(EXIT_SUCCESS);
