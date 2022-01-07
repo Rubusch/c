@@ -1,0 +1,102 @@
+notes on floating point
+
+references:
+double precision (double)
+https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+
+c data types
+https://en.wikipedia.org/wiki/C_data_types
+
+Bruce Dawson - (awesome blog articles on floating point, here some
+                copied passages)
+https://randomascii.wordpress.com/2012/01/11/tricks-with-the-floating-point-format/
+
+
+
+notes
+
+    Float           Integer      Sign    Exponent  Exponent  Mantissa
+    value        representation  field   value     field
+    ----------------------------------------------------------------------------
+    0.0             0x00000000   0       0        -126       0
+    1.40129846e-45  0x00000001   0       0        -126       1
+    1.17549435e-38  0x00800000   0       1        -126       0
+    0.2             0x3E4CCCCD   0       124      -3         0x4CCCCD
+    1.0             0x3F800000   0       127       0         0
+    1.5             0x3FC00000   0       127       0         0x400000
+    1.75            0x3FE00000   0       127       0         0x600000
+    1.99999988      0x3FFFFFFF   0       127       0         0x7FFFFF
+    2.0             0x40000000   0       128       1         0
+    16,777,215      0x4B7FFFFF   0       150       23        0x7FFFFF
+    3.40282347e+38  0x7F7FFFFF   0       254       127       0x7FFFFF
+    Positive        0x7f800000   0       255       Infinite! 0
+    infinity
+
+Although these examples don’t show it, negative numbers are dealt with
+by setting the sign field to 1, which is called sign-and-magnitude
+form. All numbers, even zero and infinity, have negative versions.
+
+The numbers in this chart were chosen in order to demonstrate various
+things:
+
+ - 0.0: It’s handy that zero is represented by all zeroes. However
+   there is also a negative zero which has the sign bit set. Negative
+   zero is equal to positive zero.
+
+ - 1.40129846e-45: This is the smallest positive float, and its
+   integer representation is the smallest positive integer
+
+ - 1.17549435e-38: This is the smallest float with an implied leading
+   one, the smallest number with a non-zero exponent, the smallest
+   normalized float. This number is also FLT_MIN. Note that FLT_MIN is
+   not the smallest float. There are actually about 8 million positive
+   floats smaller than FLT_MIN.
+
+ - 0.2: This is an example of one of the many decimal numbers that
+   cannot be precisely represented with a binary floating-point
+   format. That mantissa wants to repeat ‘C’ forever.
+
+ - 1.0: Note the exponent and the mantissa, and memorize the integer
+   representation in case you see it in hex dumps.
+
+ - 1.5, 1.75: Just a couple of slightly larger numbers to show the
+   mantissa changing while the exponent stays the same.
+
+ - 1.99999988: This is the largest float that has the same exponent as
+   1.0, and the largest float that is smaller than 2.0.
+
+ - 2.0: Notice that the exponent is one higher than for 1.0, and the
+   integer representation and exponent are one higher than for
+   1.99999988.
+
+ - 16,777,215: This is the largest odd float. The next larger float
+   has an exponent value of 24, which means the mantissa is shifted
+   enough left that odd numbers are impossible. Note that this means
+   that above 16,777,216 a float has less precision than an int.
+
+ - 3.40282347e+38: FLT_MAX. The largest finite float, with the maximum
+   finite exponent and the maximum mantissa.
+
+ - Positive infinity: The papa bear of floats.
+
+
+We can now describe how to decode the float format:
+
+ - If the exponent field is 255 then the number is infinity (if the
+   mantissa is zero) or a NaN (if the mantissa is non-zero)
+
+ - If the exponent field is from 1 to 254 then the exponent is between
+   -126 and 127, there is an implied leading one, and the float’s
+   value is:
+ -- (1.0 + mantissa-field / 0x800000) * 2^(exponent-field-127)
+
+ - If the exponent field is zero then the exponent is -126, there is
+   no implied leading one, and the float’s value is:
+ -- (mantissa-field / 0x800000) * 2^-126
+
+ - If the sign bit is set then negate the value of the float
+
+The excess-127 exponent and the omitted leading one lead to some very
+convenient characteristics of floats, but I’ve rambled on too long so
+those must be saved for the next post.
+
