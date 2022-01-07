@@ -1,4 +1,20 @@
 /*
+  sockets
+
+  FAQ:
+  1. In a multithreaded server, do socket need mutex protection?
+
+  Generally no...
+  -> sockets are full duplex
+  -> write is an atomic operation
+
+  If messages are split and the order, etc is not otherwise protected
+  (sequence number, resent, timeout, ACK), a series of write syscalls
+  will need mutex protection
+*/
+
+
+/*
   Berkley Sockets - NOTES
 
 
@@ -936,5 +952,5 @@ fcntl(s, F_SETFL, O_NONBLOCK);
 /*
   Errors:
 
-  use errno() ???
+  use errno()  and threadsafe???
 //*/
