@@ -99,37 +99,37 @@ jobs:
 
 
 ## 10: techniques
-      - run: cd ./10_language-techniques/attribute__lto && make && ./*.exe
-      - run: cd ./10_language-techniques/attribute__unused && make && ./*.exe
-      - run: cd ./10_language-techniques/endianness && make && ./*.exe
-      - run: cd ./10_language-techniques/file__operations && make && ./*.exe
-      - run: cd ./10_language-techniques/file__tempfile && make && ./*.exe
-      - run: cd ./10_language-techniques/stdout__fflush-printf-order && make && ./*.exe
-      - run: cd ./10_language-techniques/debug__mtrace && make && ./*.exe
-#      - run: cd ./10_language-techniques/debug__valgrind-double-free && make && ./*.exe ## has to fail
-      - run: cd ./10_language-techniques/debug__valgrind-invalid-pointer && make && ./*.exe
-#      - run: cd ./10_language-techniques/debug__valgrind-mem-leak01 && make && ./*.exe
-      - run: cd ./10_language-techniques/debug__valgrind-mem-leak02 && make && ./*.exe
-      - run: cd ./10_language-techniques/debug__valgrind-uninitialized && make && ./*.exe
+      - run: cd ./00_language-basics/attribute__lto && make && ./*.exe
+      - run: cd ./00_language-basics/attribute__unused && make && ./*.exe
+      - run: cd ./00_language-basics/endianness && make && ./*.exe
+      - run: cd ./00_language-basics/file__operations && make && ./*.exe
+      - run: cd ./00_language-basics/file__tempfile && make && ./*.exe
+      - run: cd ./00_language-basics/stdout__fflush-printf-order && make && ./*.exe
+      - run: cd ./00_language-basics/debug__mtrace && make && ./*.exe
+#      - run: cd ./00_language-basics/debug__valgrind-double-free && make && ./*.exe ## has to fail
+      - run: cd ./00_language-basics/debug__valgrind-invalid-pointer && make && ./*.exe
+#      - run: cd ./00_language-basics/debug__valgrind-mem-leak01 && make && ./*.exe
+      - run: cd ./00_language-basics/debug__valgrind-mem-leak02 && make && ./*.exe
+      - run: cd ./00_language-basics/debug__valgrind-uninitialized && make && ./*.exe
 
   ## interactive and/or need fixes
-      - run: cd ./10_language-techniques/testing__cunit01 && make
-      - run: cd ./10_language-techniques/testing__cunit02 && make && ./*.exe
-      - run: cd ./10_language-techniques/testing__cunit03 && make && ./*.exe
-      - run: cd ./10_language-techniques/testing__cunit04-socket && make
-      - run: cd ./10_language-techniques/bitoperations && make
-      - run: cd ./10_language-techniques/input && make
-      - run: cd ./10_language-techniques/input__fgets-digit && make
-      - run: cd ./10_language-techniques/input__fgets-number && make
-      - run: cd ./10_language-techniques/input__fgetc-number && make
-      - run: cd ./10_language-techniques/input__fgetc-string && make
-      - run: cd ./10_language-techniques/input__choice && make
-      - run: cd ./10_language-techniques/file__filesize && make
-      - run: cd ./10_language-techniques/file__fseek-position && make
-      - run: cd ./10_language-techniques/stdin__fflush-undefined && make
-      - run: cd ./10_language-techniques/file__fsetpos && make
-      - run: cd ./10_language-techniques/file__move && make
-      - run: cd ./10_language-techniques/input__getch && make
+      - run: cd ./00_language-basics/testing__cunit01 && make
+      - run: cd ./00_language-basics/testing__cunit02 && make && ./*.exe
+      - run: cd ./00_language-basics/testing__cunit03 && make && ./*.exe
+      - run: cd ./00_language-basics/testing__cunit04-socket && make
+      - run: cd ./00_language-basics/bitoperations && make
+      - run: cd ./00_language-basics/input && make
+      - run: cd ./00_language-basics/input__fgets-digit && make
+      - run: cd ./00_language-basics/input__fgets-number && make
+      - run: cd ./00_language-basics/input__fgetc-number && make
+      - run: cd ./00_language-basics/input__fgetc-string && make
+      - run: cd ./00_language-basics/input__choice && make
+      - run: cd ./00_language-basics/file__filesize && make
+      - run: cd ./00_language-basics/file__fseek-position && make
+      - run: cd ./00_language-basics/stdin__fflush-undefined && make
+      - run: cd ./00_language-basics/file__fsetpos && make
+      - run: cd ./00_language-basics/file__move && make
+      - run: cd ./00_language-basics/input__getch && make
 
 ## 20: ipc
       - run: cd ./20_interprocess-communication/pipe__formatted_pinging/itchy && make
