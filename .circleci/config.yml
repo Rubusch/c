@@ -323,9 +323,6 @@ jobs:
       - run: cd 60_algorithm/082_dynamic-programming_longest-common-subsequence && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/083_dynamic-programming_optimal-binary-searchtree && make basictest.exe && ./*.exe
 
-## 77: fun
-      - run: cd 77_fun/number_speed_and_accuracy && make
-
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
       - run: cd 99_linux/ptrace__020-fork-syswrite-peekuser && make
