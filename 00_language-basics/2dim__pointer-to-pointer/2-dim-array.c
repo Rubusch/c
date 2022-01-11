@@ -7,7 +7,7 @@
 
   a structure pointer to pointer is not necessary the same like a
   2-dim-array - why?
-  the size of the second arrays refered by the first pointer can vary,
+  The size of the second arrays refered by the first pointer can vary,
   therefore the number of all elements in the structure is not
   necessary the multiplication of the size of array A by array B.
   Furthermore, since the pointers work with allocated space the size
@@ -20,8 +20,9 @@
   only the refered memory is a statical one.
 
   Example:
-  char** ptr = variable; // means ptr->ptr, we'll call them 1. poitner and
-  2. pointer
+  char** ptr = variable; // means ptr->ptr, we'll call them
+    1. pointer and
+    2. pointer
 
   The type of the first pointer is long unsigned int - why?
 
@@ -33,7 +34,7 @@
   pointer) is the named type, here "char" - it points to somewhere
   where a char is stored (8 bit).
 
-  this is important, since storing an 64 bit value in a variable of 8
+  This is important, since storing an 64 bit value in a variable of 8
   bit will only store one part, the rest will disappear, reading out
   that value gives something completely diferent (a common error -
   therefore the compiler gives warinings about implicit type
