@@ -322,6 +322,7 @@ jobs:
       - run: cd 60_algorithm/081_dynamic-programming_matrix-chaining && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/082_dynamic-programming_longest-common-subsequence && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/083_dynamic-programming_optimal-binary-searchtree && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/090_greedy_huffman-codes && make basictest.exe && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
