@@ -82,7 +82,7 @@ void huffman_heapify(huffman_heap_p heap, int idx);
 int is_leaf(huffman_node_p root);
 
 huffman_node_p build_huffman_tree(char data[], int freq[], int size);
-void huffman(char data[], int freq[], int size);
+void huffman(huffman_node_p *root, char data[], int freq[], int size);
 
 
 #endif /* GREEDY_H */

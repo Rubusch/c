@@ -2,17 +2,12 @@
   cunit - tests
  */
 #include <stdlib.h>
-//#include <stdbool.h>
 
 #include "greedy-huffman.h"
 
 #include "test.h"
 
 
-/*
-  example taken from
-  
-*/
 void test_huffman(void)
 {
     char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
@@ -20,9 +15,15 @@ void test_huffman(void)
     int size = sizeof(arr) / sizeof(arr[0]);
 
     greedy_debug("\n");
-    huffman(arr, freq, size);
+    huffman_node_p root = NULL;
+    huffman(&root, arr, freq, size);
 
-// TODO verification
+    CU_ASSERT(root->right->right->left->left->data == 'a');
+    CU_ASSERT(root->right->right->left->right->data == 'b');
+    CU_ASSERT(root->right->left->left->data == 'c');
+    CU_ASSERT(root->right->left->right->data == 'd');
+    CU_ASSERT(root->right->right->right->data == 'e');
+    CU_ASSERT(root->left->data == 'f');
 }
 
 
@@ -45,8 +46,6 @@ int main(void)
 
 	/* utilities */
 	TEST_start(pSuite, "huffman codes", test_huffman)
-/* 		TEST_append(pSuite, "optimal binary search tree",
-			    test_optimal_binary_search_tree) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -49,6 +49,71 @@
   fixed-length code, by giving frequent characters short codewords and
   infrequent characters long codewords.
 
+
+  Example
+
+  X = { a, b, c, d, e, f } with binary alphabet C = { 1, 0 } shall be
+  compressed without losss, at a given text we discover the following
+  frequency of each element of X.
+
+   letter | a    | b    | c    | d    | e    | f
+  --------+------+------+------+------+------+----
+   freq   | 0.05 | 0.09 | 0.12 | 0.13 | 0.16 | 0.45
+
+
+   this builds up the following huffman tree, each node also stored in
+   the heap (array)
+
+  a:0.05 --+ 0
+           +-0.14-+ 0
+  b:0.09 --+ 1    |
+                  +---0.30--+ 1
+  e:0.16 ---------+ 1       |
+                            +--0.55---+ 1
+  c:0.12 ------+ 0          |         |
+               +----0.25----+ 0       |
+  d:0.13 ------+ 1                    +---1.00-
+                                      |
+  f:0.45 -----------0.45--------------+ 0
+
+
+  going through the tree, we build up the following codebook, where
+  more frequent letters have smaller codes and less frequent letters
+  have longer codes
+
+  codebook:
+
+  f: 0
+  c: 100
+  d: 101
+  a: 1100
+  b: 1101
+  e: 111
+
+  at naive encoding we would need
+    ln(6)/ln(2) = 2.58 bit per symbol
+
+  where at huffman we need:
+    0.05 * 4 + 0.09 * 4 + 0.12 * 3 + 0.13 * 3 + 0.16 * 3 + 0.45 * 1 =
+    = 2.24 bit per symbol
+
+  entropy H(X) = -(0.05 * ln(0.05)/ln(2)
+                 + 0.09 * ln(0.09)/ln(2)
+                 + 0.12 * ln(0.12)/ln(2)
+                 + 0.13 * ln(0.13)/ln(2)
+                 + 0.16 * ln(0.16)/ln(2)
+                 + 0.45 * ln(0.45)/ln(2)) =
+
+	       = -(-0.2161 -0.3127 -0.3671 -0.3826 -0.4230 -0.5184 =
+               = 2.22 bit per symbol
+
+
+  encoding/decoding
+
+  encoding and decoding work based on the codebook, but is not
+  implemented here
+
+
   references:
   https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
   https://en.wikipedia.org/wiki/Huffman_coding
@@ -272,12 +337,11 @@ huffman_node_p build_huffman_tree(char data[], int freq[], int size)
 }
 
 /* starting point is here */
-void huffman(char data[], int freq[], int size)
+void huffman(huffman_node_p *root, char data[], int freq[], int size)
 {
-    huffman_node_p root;
-    root = build_huffman_tree(data, freq, size);
+    *root = build_huffman_tree(data, freq, size);
 
     int arr[MAX_TREE_HT], top = 0;
-    greedy_huffman_print(root, arr, top);
+    greedy_huffman_print(*root, arr, top);
 }
 
