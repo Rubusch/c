@@ -1,5 +1,5 @@
 /*
-  B-tree
+  B-Tree (Bayer-Tree)
 
   In computer science, a B-tree is a self-balancing tree data
   structure that maintains sorted data and allows searches, sequential
@@ -71,9 +71,12 @@
 #  define DEBUG 1
 # endif /* DEBUG */
 
+#define content_t int
+
 // data
 typedef btree_node_s {
-	void* data;
+	content_t* data;
+	int* key;
 	int size;
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
