@@ -309,10 +309,10 @@ jobs:
       - run: cd 60_algorithm/050_linked-list && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/052_stack && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/053_stack-mini && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/054_stack-macro-lifo && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/000_stack-macro-lifo && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/055_queue && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/056_queue-mini && make basictest.exe && ./*.exe
-      - run: cd 60_algorithm/057_queue-macro-fifo && make basictest.exe && ./*.exe
+      - run: cd 60_algorithm/000_queue-macro-fifo && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/060_hashing && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/061_hashtable && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/062_hashtable-extension_amortized-cost-analysis && make && make basictest.exe && ./*.exe
