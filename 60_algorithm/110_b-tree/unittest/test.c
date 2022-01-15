@@ -10,6 +10,7 @@
 
 void test_btree(void)
 {
+	btree_create();
 // TODO        
 }
 

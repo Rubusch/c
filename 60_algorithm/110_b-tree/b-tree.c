@@ -34,7 +34,33 @@ void btree_failure(const char* format, ...)
 }
 
 
+btree_node_p _btree_allocate_node()
+{
+	btree_node_p ptr = NULL;
+	ptr = malloc(sizeof(*ptr));
+	if (!ptr) {
+		btree_failure("%s [%d]: %s() - allocation failed",
+			      __FILE__, __LINE__, __func__);
+	}
+
+	ptr->data = malloc(sizeof(*ptr->data));
+// TODO size?
+	if (!ptr->data) {
+		btree_failure("%s [%d]: %s() - allocation failed",
+			      __FILE__, __LINE__, __func__);
+	}
+
+	return ptr;
+}
+
+void _btree_write(btree_node_p pnode)
+{
+	// mock / dummy
+	btree_debug("...write\n");
+}
+
 // b-tree
+
 /*
   B-TREE-SEARCH(x, k)
 
@@ -64,7 +90,12 @@ void btree_search()
 */
 void btree_create()
 {
-	// TODO
+	btree_node_p x = NULL;
+	x = _btree_allocate_node();
+	x.leaf = true;
+	x.nkeys = 0;
+	_btree_write(x);
+	root = x;
 }
 
 /*

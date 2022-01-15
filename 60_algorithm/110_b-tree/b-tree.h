@@ -60,10 +60,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// some additional headers needed for matrix_create()
-#include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 
 // enable debug printout
@@ -72,15 +70,22 @@
 # endif /* DEBUG */
 
 #define content_t int
+#define T 4
 
 // data
-typedef btree_node_s {
+typedef struct btree_node_s {
+	int[T] key;
 	content_t* data;
-	int* key;
+	struct btree_node_s[T] next;
+// TODO 	
+	bool leaf;
+	int nkeys;
 	int size;
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
+
+static inline btree_node_p root = NULL;
 
 // TODO     
 
@@ -90,6 +95,7 @@ void btree_failure(const char* format, ...);
 // TODO     
 
 // b-tree
+void btree_create();
 // TODO     
 
 
