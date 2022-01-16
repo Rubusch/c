@@ -59,6 +59,13 @@ void _btree_write(btree_node_p pnode)
 	btree_debug("...write\n");
 }
 
+void _btree_read(btree_node_p pnode)
+{
+	// mock / dummy
+	btree_debug("...write\n");
+}
+
+
 // b-tree
 
 /*
@@ -74,9 +81,22 @@ void _btree_write(btree_node_p pnode)
   else DISK-READ(x.c[i])
     return B-TREE-SEARCH(x.c[i], k)
 */
-void btree_search()
+btree_node_p btree_search(btree_node_p node, int key)
 {
-	// TODO
+	int idx;
+
+	idx = 1;
+	while (idx <= node->nkeys && key > node->key[idx]) {
+		idx++;
+	}
+	if (idx <= node->nkeys && key == node->key[idx]) {
+		return; /* TODO (node, idx) */
+	} else if (node->leaf) {
+		return NULL;
+	} else {
+		_btree_read(node->c[idx]);
+		return btree_search(node->c[idx], key);
+	}
 }
 
 /*
@@ -90,12 +110,12 @@ void btree_search()
 */
 void btree_create()
 {
-	btree_node_p x = NULL;
-	x = _btree_allocate_node();
-	x.leaf = true;
-	x.nkeys = 0;
-	_btree_write(x);
-	root = x;
+	btree_node_p node = NULL;
+	node = _btree_allocate_node();
+	node->leaf = true;
+	node->nkeys = 0;
+	_btree_write(node);
+	root = node;
 }
 
 /*

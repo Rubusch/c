@@ -96,6 +96,7 @@ void btree_failure(const char* format, ...);
 
 // b-tree
 void btree_create();
+btree_node_p btree_search(btree_node_p node, int key);
 // TODO     
 
 
