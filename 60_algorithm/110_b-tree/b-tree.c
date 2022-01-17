@@ -90,12 +90,12 @@ btree_node_p btree_search(btree_node_p node, int key)
 		idx++;
 	}
 	if (idx <= node->nkeys && key == node->key[idx]) {
-		return; /* TODO (node, idx) */
+		return; /* TODO (node, idx) */                 
 	} else if (node->leaf) {
 		return NULL;
 	} else {
-		_btree_read(node->c[idx]);
-		return btree_search(node->c[idx], key);
+		_btree_read(node->c[idx]); // TODO c?        
+		return btree_search(node->c[idx], key); // TODO c?            
 	}
 }
 
@@ -142,8 +142,11 @@ void btree_create()
   DISK-WRITE(z)
   DISK-WRITE(x)
 */
-void btree_split_child()
+void btree_split_child(btree_node_p node, int idx)
 {
+	btree_node_p z = _btree_allocate_node();
+	y = node.c[idx];
+	
 	// TODO
 }
 

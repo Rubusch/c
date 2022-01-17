@@ -17,39 +17,87 @@
   accesses.
 
 
-  Properties of the B-tree
+  Properties of the B-tree (CLRS terminology in brackets)
 
-  1. All leaves are at the same level.
+  1. Every node x has the following attributes:
 
-  2. A B-Tree is defined by the term minimum degree 't'. The value of
-     t depends upon disk block size.
+     a.) x.nkeys, [x.n] the numer of keys currently stored in node x
 
-  3. Every node except root must contain at least t-1 keys. The root
-     may contain minimum 1 key.
+     b.) x.key[], [x.key] the keys themselves stored in non-decreasing
+         order (!), so that x.key[0] <= x.key[1] <= ... <=
+         x.key[x.nkeys-1];
 
-  4. All nodes (including root) may contain at most 2*t - 1 keys.
+     c.) x.leaf, a boolean value that is TRUE if x is a leaf and FALSE
+         if x is an internal node
 
-  5. Number of children of a node is equal to the number of keys in it
-     plus 1.
-
-  6. All keys of a node are sorted in increasing order. The child
+  -> All keys of a node are sorted in increasing order. The child
      between two keys k1 and k2 contains all keys in the range from k1
      and k2.
 
-  7. B-Tree grows and shrinks from the root which is unlike Binary
+
+  2. [x.c], Each internal node x also contains x.nkeys + 1 pointers
+     x.child[0], x.child[1], ..., x.child[x.nkeys - 1] to its
+     children. Leaf nodes have no children, and so their child[i]
+     attributes are undefined
+
+     -> Number of children of a node is equal to the number of keys in
+     it plus 1
+
+
+  3. The keys x.key[i] separate the ranges of keys stored in each
+     subtree: if key_i is any key stored in the subtree with root
+     x.child[i], then
+
+     key_1 <= x.key[0] <= key_2 <= x.key[1] <= ... <= x.key[x.nkeys-1]
+
+
+  4. All leaves have the same depth, which is the tree's height h
+
+     ->  All leaves are at the same level
+
+
+  5. Nodes have lower and upper bounds on the number of keys they can
+     contain.
+     We express these bounds in terms of a fixed integer t >= 2 called
+     the minimum degree of the B-tree:
+
+     a.) Every node other than the root must have a t least t - 1
+         keys.  Every internal node other than the root thus has at
+         least t children. If the tree is nonempty, the root must have
+         at least one key
+
+     b.) Every node may contain ata most 2t - 1 keys. Therefore, an
+         internal node may have at most 2t children. We say that a
+         node is full if it contains exactly 2t - 1 keys
+
+  -> A B-Tree is defined by the term minimum degree 't'.
+     The value of t depends upon disk block size.
+
+  -> Every node except root must contain at least t-1 keys. The root
+     may contain minimum 1 key
+
+  -> All nodes (including root) may contain at most 2*t - 1 keys
+
+  -> B-Tree grows and shrinks from the root which is unlike Binary
      Search Tree. Binary Search Trees grow downward and also shrink
      from downward.
 
-  8. Like other balanced Binary Search Trees, time complexity to
+  -> Like other balanced Binary Search Trees, time complexity to
      search, insert and delete is O(log n).
 
-  9. Insertion of a Node in B-Tree happens only at Leaf Node.
+  -> Insertion of a Node in B-Tree happens only at Leaf Node
 
+  The simplest B-tree occurs when t = 2. Every internal node then has
+  either 2, 3 or 4 children, and we have a 2-3-4 tree. In practice,
+  however, much larger values of t yield B-trees with smaller height
+
+
+  ---
   Example usages are disk read, disk write..
 
 
   REFERENCES
-  - Algorigthms [Cormen, Leiserson, Rivest, Stein]
+  - Algorigthms [Cormen, Leiserson, Rivest, Stein] - CLRS
   - https://www.geeksforgeeks.org/introduction-of-b-tree-2/
   - https://en.wikipedia.org/wiki/B-tree
  */
@@ -76,11 +124,9 @@
 typedef struct btree_node_s {
 	int[T] key;
 	content_t* data;
-	struct btree_node_s[T] next;
-// TODO 	
+	struct btree_node_s[T] *child;
 	bool leaf;
 	int nkeys;
-	int size;
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
