@@ -53,15 +53,15 @@ btree_node_p _btree_allocate_node()
 	return ptr;
 }
 
-void _btree_write(btree_node_p pnode)
+void _btree_write(btree_node_p node)
 {
-	// mock / dummy
+	// mock / dummy - use queue to "serialize" tree structure
 	btree_debug("...write\n");
 }
 
-void _btree_read(btree_node_p pnode)
+void _btree_read(btree_node_p node)
 {
-	// mock / dummy
+	// mock / dummy - use queue to "de-serialize" queue into b-tree
 	btree_debug("...write\n");
 }
 
@@ -147,16 +147,16 @@ void btree_split_child(btree_node_p node, int idx)
 	btree_node_p z = _btree_allocate_node();
 	btree_node_p y = node.child[idx];
 	z->leaf = y.leaf;
-	z.nkeys = T - 1;
-	for (int jdx = 1; jdx < T - 1; jdx++) { // TODO jdx = 0    
-		z.key[jdx] = y.key[jdx + T];
+	z.nkeys = TSIZE - 1;
+	for (int jdx = 1; jdx < TSIZE - 1; jdx++) { // TODO jdx = 0    
+		z.key[jdx] = y.key[jdx + TSIZE];
 	}
 	if (!y.leaf) {
-		for (int jdx = 1; jdx < T; jdx++) {
-			z.child[jdx] = y.child[jdx + T];
+		for (int jdx = 1; jdx < TSIZE; jdx++) {
+			z.child[jdx] = y.child[jdx + TSIZE];
 		}
 	}
-	y.nkeys = T - 1;
+	y.nkeys = TSIZE - 1;
 	for (int jdx = x.nkeys + 1; jdx >= idx + 1; jdx--) {
 		x.child[jdx + 1] = x.child[jdx];
 	}
@@ -164,7 +164,7 @@ void btree_split_child(btree_node_p node, int idx)
 	for (int jdx = x.nkeys; jdx >= idx; jdx--) {
 		x.key[jdx + 1] = x.key[jdx];
 	}
-	x.key[idx] = x.key[T]; // TODO T-1
+	x.key[idx] = x.key[TSIZE]; // TODO TSIZE-1
 	x.nkeys = x.nkeys + 1;
 	_btree_write(y);
 	_btree_write(z);
@@ -188,7 +188,7 @@ void btree_split_child(btree_node_p node, int idx)
 void btree_insert(int key)
 {
 	btree_node_p r = root;
-	if (r.nkeys == 2*t-1) {
+	if (r.nkeys == 2 * TSIZE - 1) {
 		btree_node_p s = _btree_allocate_node();
 		root = s;
 		s.leaf = false;
@@ -239,7 +239,7 @@ void btree_insert_nonfull(btree_node_p node, int key)
 		}
 		idx++;
 		_btree_read(node->child[idx]);
-		if (node->child[idx]->nkeys == 2*T -1) {
+		if (node->child[idx]->nkeys == 2 * TSIZE - 1) {
 			btree_split_child(node, idx);
 			if (key > node->key[idx]) {
 				idx++;

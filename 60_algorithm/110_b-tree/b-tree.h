@@ -118,32 +118,30 @@
 # endif /* DEBUG */
 
 #define content_t int
-#define T 4
+#define TSIZE 4
 
 // data
 typedef struct btree_node_s {
-	int[T] key;
+	int[TSIZE] key;
 	content_t* data;
-	struct btree_node_s[T] *child;
+	struct btree_node_s[TSIZE] *child;
 	bool leaf;
 	int nkeys;
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
-
 static inline btree_node_p root = NULL;
-
-// TODO     
 
 // utils
 void btree_debug(const char* format, ...);
 void btree_failure(const char* format, ...);
-// TODO     
 
 // b-tree
-void btree_create();
 btree_node_p btree_search(btree_node_p node, int key);
-// TODO     
+void btree_create();
+void btree_split_child(btree_node_p node, int idx);
+void btree_insert(int key);
+void btree_insert_nonfull(btree_node_p node, int key);
 
 
 #endif /* B_TREE_H */
