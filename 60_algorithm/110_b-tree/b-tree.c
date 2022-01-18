@@ -145,9 +145,30 @@ void btree_create()
 void btree_split_child(btree_node_p node, int idx)
 {
 	btree_node_p z = _btree_allocate_node();
-	y = node.c[idx];
-	
-	// TODO
+	btree_node_p y = node.child[idx];
+	z->leaf = y.leaf;
+	z.nkeys = T - 1;
+	for (int jdx = 1; jdx < T - 1; jdx++) { // TODO jdx = 0    
+		z.key[jdx] = y.key[jdx + T];
+	}
+	if (!y.leaf) {
+		for (int jdx = 1; jdx < T; jdx++) {
+			z.child[jdx] = y.child[jdx + T];
+		}
+	}
+	y.nkeys = T - 1;
+	for (int jdx = x.nkeys + 1; jdx >= idx + 1; jdx--) {
+		x.child[jdx + 1] = x.child[jdx];
+	}
+	x.child[idx + 1] = z;
+	for (int jdx = x.nkeys; jdx >= idx; jdx--) {
+		x.key[jdx + 1] = x.key[jdx];
+	}
+	x.key[idx] = x.key[T]; // TODO T-1
+	x.nkeys = x.nkeys + 1;
+	_btree_write(y);
+	_btree_write(z);
+	_btree_write(x);
 }
 
 /*
@@ -164,9 +185,20 @@ void btree_split_child(btree_node_p node, int idx)
     B-TREE-INSERT-NONFULL(s, k)
   else B-TREE-INSERT-NONFULL(r, k)
 */
-void btree_insert()
+void btree_insert(int key)
 {
-	// TODO
+	btree_node_p r = root;
+	if (r.nkeys == 2*t-1) {
+		btree_node_p s = _btree_allocate_node();
+		root = s;
+		s.leaf = false;
+		s.nkeys = 0;
+		s.c[0] = r;
+		btree_split_child(s, 1);
+		btree_insert_nonfull(s, key); // TODO 
+	} else {
+		btree_insert_nonfull(r, key); // TOOD  
+	}
 }
 
 /*
@@ -190,7 +222,29 @@ void btree_insert()
         i = i + 1
     B-TREE-INSERT-NONFULL(x.c[i], k)
 */
-void btree_insert_nonfull()
+void btree_insert_nonfull(btree_node_p node, int key)
 {
-	// TODO
+	int idx = node->nkeys;
+	if (node->leaf) {
+		while (idx >= 1 && key < node->key[idx]) {
+			node->key[idx + 1] = node->key[idx];
+			idx--;
+		}
+		node->key[idx + 1] = key;
+		node->nkeys++;
+		_btree_write(node);
+	} else {
+		while (idx >= 1 && key < node->key[idx]) {
+			idx--;
+		}
+		idx++;
+		_btree_read(node->child[idx]);
+		if (node->child[idx]->nkeys == 2*T -1) {
+			btree_split_child(node, idx);
+			if (key > node->key[idx]) {
+				idx++;
+			}
+		}
+		btree_insert_nonfull(node->child[idx], key);
+	}
 }
