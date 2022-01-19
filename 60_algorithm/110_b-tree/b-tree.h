@@ -130,15 +130,13 @@ typedef struct btree_node_s {
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
-static btree_node_p root = NULL;
-
 // utils
 void btree_debug(const char* format, ...);
 void btree_failure(const char* format, ...);
 
 // b-tree
 btree_node_p btree_root();
-btree_node_p btree_search(btree_node_p node, int key);
+btree_node_p btree_search(btree_node_p node, int key, int* idx_result);
 void btree_create();
 void btree_split_child(btree_node_p node, int idx);
 void btree_insert(int key);

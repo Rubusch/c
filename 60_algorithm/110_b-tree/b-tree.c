@@ -34,7 +34,11 @@ void btree_failure(const char* format, ...)
 }
 
 
-btree_node_p _btree_allocate_node()
+// b-tree private
+
+static btree_node_p root = NULL;
+
+static btree_node_p _btree_allocate_node()
 {
 	btree_node_p ptr = NULL;
 	ptr = malloc(sizeof(*ptr));
@@ -53,13 +57,13 @@ btree_node_p _btree_allocate_node()
 	return ptr;
 }
 
-void _btree_write(btree_node_p node)
+static void _btree_write(btree_node_p node)
 {
 	// mock / dummy - use queue to "serialize" tree structure
 	btree_debug("...write\n");
 }
 
-void _btree_read(btree_node_p node)
+static void _btree_read(btree_node_p node)
 {
 	// mock / dummy - use queue to "de-serialize" queue into b-tree
 	btree_debug("...write\n");
@@ -87,21 +91,27 @@ btree_node_p btree_root()
   else DISK-READ(x.c[i])
     return B-TREE-SEARCH(x.c[i], k)
 */
-btree_node_p btree_search(btree_node_p node, int key)
+btree_node_p btree_search(btree_node_p node, int key, int* idx_result)
 {
 	int idx;
+	if (!idx_result) {
+		btree_failure("%s [%d]: %s() - called with NULL argument",
+			      __FILE__, __LINE__, __func__);
+	}
 
 	idx = 1;
 	while (idx <= node->nkeys && key > node->key[idx]) {
 		idx++;
 	}
 	if (idx <= node->nkeys && key == node->key[idx]) {
-		return; /* TODO (node, idx) */                 
+		// found, return node (and idx)
+		*idx_result = idx;
+		return node;
 	} else if (node->is_leaf) {
 		return NULL;
 	} else {
 		_btree_read(node->child[idx]);
-		return btree_search(node->child[idx], key);
+		return btree_search(node->child[idx], key, idx_result);
 	}
 }
 
