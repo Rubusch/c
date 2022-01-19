@@ -10,7 +10,9 @@
 
 void test_btree(void)
 {
-	btreebtree_create();
+	CU_ASSERT(NULL == btree_root());
+	btree_create();
+	CU_ASSERT(NULL != btree_root());
 // TODO        
 }
 

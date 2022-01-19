@@ -27,8 +27,8 @@
          order (!), so that x.key[0] <= x.key[1] <= ... <=
          x.key[x.nkeys-1];
 
-     c.) x.leaf, a boolean value that is TRUE if x is a leaf and FALSE
-         if x is an internal node
+     c.) x.is_leaf, [x.leaf] a boolean value that is TRUE if x is a
+         leaf and FALSE if x is an internal node
 
   -> All keys of a node are sorted in increasing order. The child
      between two keys k1 and k2 contains all keys in the range from k1
@@ -122,21 +122,22 @@
 
 // data
 typedef struct btree_node_s {
-	int[TSIZE] key;
-	content_t* data;
-	struct btree_node_s[TSIZE] *child;
-	bool leaf;
+	int key[TSIZE];
+	struct btree_node_s *child[TSIZE];
+	bool is_leaf;
 	int nkeys;
+	content_t* data;
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
-static inline btree_node_p root = NULL;
+static btree_node_p root = NULL;
 
 // utils
 void btree_debug(const char* format, ...);
 void btree_failure(const char* format, ...);
 
 // b-tree
+btree_node_p btree_root();
 btree_node_p btree_search(btree_node_p node, int key);
 void btree_create();
 void btree_split_child(btree_node_p node, int idx);

@@ -68,6 +68,12 @@ void _btree_read(btree_node_p node)
 
 // b-tree
 
+btree_node_p btree_root()
+{
+	return root;
+}
+
+
 /*
   B-TREE-SEARCH(x, k)
 
@@ -91,11 +97,11 @@ btree_node_p btree_search(btree_node_p node, int key)
 	}
 	if (idx <= node->nkeys && key == node->key[idx]) {
 		return; /* TODO (node, idx) */                 
-	} else if (node->leaf) {
+	} else if (node->is_leaf) {
 		return NULL;
 	} else {
-		_btree_read(node->c[idx]); // TODO c?        
-		return btree_search(node->c[idx], key); // TODO c?            
+		_btree_read(node->child[idx]);
+		return btree_search(node->child[idx], key);
 	}
 }
 
@@ -112,7 +118,7 @@ void btree_create()
 {
 	btree_node_p node = NULL;
 	node = _btree_allocate_node();
-	node->leaf = true;
+	node->is_leaf = true;
 	node->nkeys = 0;
 	_btree_write(node);
 	root = node;
@@ -145,30 +151,30 @@ void btree_create()
 void btree_split_child(btree_node_p node, int idx)
 {
 	btree_node_p z = _btree_allocate_node();
-	btree_node_p y = node.child[idx];
-	z->leaf = y.leaf;
-	z.nkeys = TSIZE - 1;
+	btree_node_p y = node->child[idx];
+	z->is_leaf = y->is_leaf;
+	z->nkeys = TSIZE - 1;
 	for (int jdx = 1; jdx < TSIZE - 1; jdx++) { // TODO jdx = 0    
-		z.key[jdx] = y.key[jdx + TSIZE];
+		z->key[jdx] = y->key[jdx + TSIZE];
 	}
-	if (!y.leaf) {
+	if (!y->is_leaf) {
 		for (int jdx = 1; jdx < TSIZE; jdx++) {
-			z.child[jdx] = y.child[jdx + TSIZE];
+			z->child[jdx] = y->child[jdx + TSIZE];
 		}
 	}
-	y.nkeys = TSIZE - 1;
-	for (int jdx = x.nkeys + 1; jdx >= idx + 1; jdx--) {
-		x.child[jdx + 1] = x.child[jdx];
+	y->nkeys = TSIZE - 1;
+	for (int jdx = node->nkeys + 1; jdx >= idx + 1; jdx--) {
+		node->child[jdx + 1] = node->child[jdx];
 	}
-	x.child[idx + 1] = z;
-	for (int jdx = x.nkeys; jdx >= idx; jdx--) {
-		x.key[jdx + 1] = x.key[jdx];
+	node->child[idx + 1] = z;
+	for (int jdx = node->nkeys; jdx >= idx; jdx--) {
+		node->key[jdx + 1] = node->key[jdx];
 	}
-	x.key[idx] = x.key[TSIZE]; // TODO TSIZE-1
-	x.nkeys = x.nkeys + 1;
+	node->key[idx] = node->key[TSIZE]; // TODO TSIZE-1
+	node->nkeys = node->nkeys + 1;
 	_btree_write(y);
 	_btree_write(z);
-	_btree_write(x);
+	_btree_write(node);
 }
 
 /*
@@ -188,12 +194,12 @@ void btree_split_child(btree_node_p node, int idx)
 void btree_insert(int key)
 {
 	btree_node_p r = root;
-	if (r.nkeys == 2 * TSIZE - 1) {
+	if (r->nkeys == 2 * TSIZE - 1) {
 		btree_node_p s = _btree_allocate_node();
 		root = s;
-		s.leaf = false;
-		s.nkeys = 0;
-		s.c[0] = r;
+		s->is_leaf = false;
+		s->nkeys = 0;
+		s->child[0] = r;
 		btree_split_child(s, 1);
 		btree_insert_nonfull(s, key); // TODO 
 	} else {
@@ -225,7 +231,7 @@ void btree_insert(int key)
 void btree_insert_nonfull(btree_node_p node, int key)
 {
 	int idx = node->nkeys;
-	if (node->leaf) {
+	if (node->is_leaf) {
 		while (idx >= 1 && key < node->key[idx]) {
 			node->key[idx + 1] = node->key[idx];
 			idx--;
