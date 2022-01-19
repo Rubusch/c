@@ -47,14 +47,28 @@ static btree_node_p _btree_allocate_node()
 			      __FILE__, __LINE__, __func__);
 	}
 
+/* // TODO needed?        
 	ptr->data = malloc(sizeof(*ptr->data));
 // TODO size?
 	if (!ptr->data) {
 		btree_failure("%s [%d]: %s() - allocation failed",
 			      __FILE__, __LINE__, __func__);
 	}
+// */
 
 	return ptr;
+}
+
+static void _btree_destroy_node(btree_node_p* node)
+{
+	if (!node) {
+		return;
+	}
+
+	
+// TODO                 
+	free(*node);
+	*node = NULL;
 }
 
 static void _btree_write(btree_node_p node)
@@ -132,6 +146,12 @@ void btree_create()
 	node->nkeys = 0;
 	_btree_write(node);
 	root = node;
+}
+
+void btree_destroy()
+{
+	// TODO       
+	_btree_destroy_node(&root);
 }
 
 /*

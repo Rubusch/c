@@ -135,9 +135,10 @@ void btree_debug(const char* format, ...);
 void btree_failure(const char* format, ...);
 
 // b-tree
+void btree_create();
+void btree_destroy();
 btree_node_p btree_root();
 btree_node_p btree_search(btree_node_p node, int key, int* idx_result);
-void btree_create();
 void btree_split_child(btree_node_p node, int idx);
 void btree_insert(int key);
 void btree_insert_nonfull(btree_node_p node, int key);
