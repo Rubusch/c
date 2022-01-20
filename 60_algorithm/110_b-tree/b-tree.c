@@ -91,6 +91,34 @@ btree_node_p btree_root()
 	return root;
 }
 
+element_p create_key(int *data, int key)
+{
+	element_p elem = NULL;
+
+	elem = malloc(sizeof(*elem));
+	if (!elem) {
+		btree_failure("%s [%d]: %s() - allocation failed",
+			      __FILE__, __LINE__, __func__);
+	}
+	elem->data = data;
+	elem->val = key;
+
+	return elem;
+}
+
+void* destroy_key(element_p *key)
+{
+	if (!key) {
+		return NULL;
+	}
+	void* ptr = NULL;
+	ptr = (*key)->data;
+	free(*key);
+	*key = NULL;
+
+	return ptr;
+}
+
 
 /*
   B-TREE-SEARCH(x, k)
@@ -105,7 +133,7 @@ btree_node_p btree_root()
   else DISK-READ(x.c[i])
     return B-TREE-SEARCH(x.c[i], k)
 */
-btree_node_p btree_search(btree_node_p node, int key, int* idx_result)
+btree_node_p btree_search(btree_node_p node, element_p key, int* idx_result)
 {
 	int idx;
 	if (!idx_result) {
@@ -114,10 +142,10 @@ btree_node_p btree_search(btree_node_p node, int key, int* idx_result)
 	}
 
 	idx = 1;
-	while (idx <= node->nkeys && key > node->key[idx]) {
+	while (idx <= node->nkeys && key->val > node->key[idx]->val) {
 		idx++;
 	}
-	if (idx <= node->nkeys && key == node->key[idx]) {
+	if (idx <= node->nkeys && key->val == node->key[idx]->val) {
 		// found, return node (and idx)
 		*idx_result = idx;
 		return node;
@@ -221,7 +249,7 @@ void btree_split_child(btree_node_p node, int idx)
     B-TREE-INSERT-NONFULL(s, k)
   else B-TREE-INSERT-NONFULL(r, k)
 */
-void btree_insert(int key)
+void btree_insert(element_p key)
 {
 	btree_node_p r = root;
 	if (r->nkeys == 2 * TSIZE - 1) {
@@ -258,11 +286,11 @@ void btree_insert(int key)
         i = i + 1
     B-TREE-INSERT-NONFULL(x.c[i], k)
 */
-void btree_insert_nonfull(btree_node_p node, int key)
+void btree_insert_nonfull(btree_node_p node, element_p key)
 {
 	int idx = node->nkeys;
 	if (node->is_leaf) {
-		while (idx >= 1 && key < node->key[idx]) {
+		while (idx >= 1 && key->val < node->key[idx]->val) {
 			node->key[idx + 1] = node->key[idx];
 			idx--;
 		}
@@ -270,14 +298,14 @@ void btree_insert_nonfull(btree_node_p node, int key)
 		node->nkeys++;
 		_btree_write(node);
 	} else {
-		while (idx >= 1 && key < node->key[idx]) {
+		while (idx >= 1 && key->val < node->key[idx]->val) {
 			idx--;
 		}
 		idx++;
 		_btree_read(node->child[idx]);
 		if (node->child[idx]->nkeys == 2 * TSIZE - 1) {
 			btree_split_child(node, idx);
-			if (key > node->key[idx]) {
+			if (key->val > node->key[idx]->val) {
 				idx++;
 			}
 		}

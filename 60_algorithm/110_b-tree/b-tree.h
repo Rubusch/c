@@ -117,16 +117,20 @@
 #  define DEBUG 1
 # endif /* DEBUG */
 
-#define content_t int
 #define TSIZE 4
 
 // data
+typedef struct element_s {
+	int val;
+	void* data;
+} element_t;
+typedef element_t* element_p;
+
 typedef struct btree_node_s {
-	int key[TSIZE];
+	element_p key[TSIZE];
 	struct btree_node_s *child[TSIZE];
 	bool is_leaf;
 	int nkeys;
-	content_t* data;
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
@@ -134,14 +138,18 @@ typedef btree_node_t* btree_node_p;
 void btree_debug(const char* format, ...);
 void btree_failure(const char* format, ...);
 
+// element
+element_p create_key(int *data, int key);
+void* destroy_key(element_p *key);
+
 // b-tree
 void btree_create();
 void btree_destroy();
 btree_node_p btree_root();
-btree_node_p btree_search(btree_node_p node, int key, int* idx_result);
+btree_node_p btree_search(btree_node_p node, element_p key, int* idx_result);
 void btree_split_child(btree_node_p node, int idx);
-void btree_insert(int key);
-void btree_insert_nonfull(btree_node_p node, int key);
+void btree_insert(element_p key);
+void btree_insert_nonfull(btree_node_p node, element_p key);
 
 
 #endif /* B_TREE_H */
