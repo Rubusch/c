@@ -178,7 +178,7 @@ void btree_create()
 
 void btree_destroy()
 {
-	// TODO       
+	// TODO destroy element types       
 	_btree_destroy_node(&root);
 }
 

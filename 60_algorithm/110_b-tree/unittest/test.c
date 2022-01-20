@@ -8,7 +8,7 @@
 #include "test.h"
 
 
-void test_btree(void)
+void test_btree_create(void)
 {
 	CU_ASSERT(NULL == btree_root());
 	btree_create();
@@ -16,6 +16,22 @@ void test_btree(void)
 	btree_destroy();
 	CU_ASSERT(NULL == btree_root());
 }
+
+void test_btree_insert(void)
+{
+	CU_ASSERT(NULL == btree_root());
+	btree_create();
+	CU_ASSERT(NULL != btree_root());
+
+	element_p key;
+	key = create_key(NULL, 7);
+	btree_insert(key);
+
+	// TODO       
+	btree_destroy();
+	CU_ASSERT(NULL == btree_root());
+}
+
 
 
 int main(void)
@@ -36,7 +52,9 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "b-tree", test_btree)
+	TEST_start(pSuite, "b-tree-create", test_btree_create)
+ 		TEST_append(pSuite, "b-tree-insert",
+			    test_btree_insert) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
