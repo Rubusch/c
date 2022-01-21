@@ -46,15 +46,13 @@ static btree_node_p _btree_allocate_node()
 		btree_failure("%s [%d]: %s() - allocation failed",
 			      __FILE__, __LINE__, __func__);
 	}
-
-/* // TODO needed?        
-	ptr->data = malloc(sizeof(*ptr->data));
-// TODO size?
-	if (!ptr->data) {
-		btree_failure("%s [%d]: %s() - allocation failed",
-			      __FILE__, __LINE__, __func__);
+	for (int idx = 0; idx < TSIZE; idx++) {
+		ptr->key[idx] = NULL;
 	}
-// */
+	for (int idx = 0; idx < TSIZE; idx++) {
+		ptr->child[idx] = NULL;
+	}
+	ptr->is_leaf = true;
 
 	return ptr;
 }

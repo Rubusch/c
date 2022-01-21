@@ -8,6 +8,42 @@
 #include "test.h"
 
 
+void test_element(void)
+{
+	const int expected_key = 123;
+	int key = expected_key;
+	int *pdata = NULL;
+	int *pdata_remain = NULL;
+	const int expected_pdata = 7;
+	element_p elem = NULL;
+
+	pdata = malloc(sizeof(*pdata));
+	if (!pdata) {
+		btree_failure("%s [%d]: %s() - allocation failed",
+			      __FILE__, __LINE__, __func__);
+	}
+	*pdata = expected_pdata;
+
+	CU_ASSERT(NULL == pdata_remain);
+	CU_ASSERT(NULL == elem);
+	elem = create_key(pdata, key);
+	CU_ASSERT(NULL != elem);
+	if (!elem) {
+		goto cleanup;
+	}
+
+	CU_ASSERT(expected_key == elem->val);
+	CU_ASSERT(expected_pdata == *(int*) elem->data);
+
+	pdata_remain = (int*) destroy_key(&elem);
+	CU_ASSERT(NULL == elem);
+	CU_ASSERT(expected_pdata == *pdata_remain);
+
+cleanup:
+	free(pdata);
+	pdata = NULL;
+}
+
 void test_btree_create(void)
 {
 	CU_ASSERT(NULL == btree_root());
@@ -52,9 +88,9 @@ int main(void)
 	}
 
 	/* utilities */
-	TEST_start(pSuite, "b-tree-create", test_btree_create)
- 		TEST_append(pSuite, "b-tree-insert",
-			    test_btree_insert) // */
+	TEST_start(pSuite, "element", test_element)
+		TEST_append(pSuite, "b-tree-create", test_btree_create) // */
+ 		TEST_append(pSuite, "b-tree-insert", test_btree_insert) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
