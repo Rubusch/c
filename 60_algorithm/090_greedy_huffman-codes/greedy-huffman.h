@@ -83,6 +83,7 @@ int is_leaf(huffman_node_p root);
 
 huffman_node_p build_huffman_tree(char data[], int freq[], int size);
 void huffman(huffman_node_p *root, char data[], int freq[], int size);
+void greedy_huffman_destroy(huffman_node_p root/*, int arr[], int top*/);
 
 
 #endif /* GREEDY_H */

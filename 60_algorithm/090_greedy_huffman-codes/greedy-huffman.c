@@ -174,6 +174,21 @@ void greedy_huffman_print(huffman_node_p root, int arr[], int top)
 	}
 }
 
+void greedy_huffman_destroy(huffman_node_p root)
+{
+	if (root->left) {
+		greedy_huffman_destroy(root->left);
+	}
+
+	if (root->right) {
+		greedy_huffman_destroy(root->right);
+	}
+
+	if (is_leaf(root)) {
+		free(root); root = NULL;
+	}
+}
+
 void swap(huffman_node_p *a, huffman_node_p *b)
 {
 	huffman_node_p tmp;
@@ -219,6 +234,14 @@ huffman_heap_p create_heap(unsigned capacity)
 	}
 
 	return heap;
+}
+
+void destroy_heap(huffman_heap_p *heap)
+{
+	if (!*heap) {
+		return;
+	}
+	free(*heap); *heap = NULL;
 }
 
 void huffman_heapify(huffman_heap_p heap, int idx)
@@ -333,7 +356,10 @@ huffman_node_p build_huffman_tree(char data[], int freq[], int size)
 
     // step4: the remaining node is the root node and the tree is
     // complete
-    return extract_min(heap);
+    huffman_node_p node_min = extract_min(heap);
+    destroy_heap(&heap);
+
+    return node_min;
 }
 
 /* starting point is here */

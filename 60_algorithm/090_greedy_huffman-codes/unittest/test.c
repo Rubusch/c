@@ -24,6 +24,8 @@ void test_huffman(void)
     CU_ASSERT(root->right->left->right->data == 'd');
     CU_ASSERT(root->right->right->right->data == 'e');
     CU_ASSERT(root->left->data == 'f');
+
+    greedy_huffman_destroy(root);
 }
 
 
