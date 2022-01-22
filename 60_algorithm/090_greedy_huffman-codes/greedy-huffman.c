@@ -241,6 +241,14 @@ void destroy_heap(huffman_heap_p *heap)
 	if (!*heap) {
 		return;
 	}
+	huffman_heap_p pheap = *heap;
+	if (pheap->array) {
+		for (int idx = pheap->size-1; idx >= 0; idx--) {
+			free(pheap->array[idx]);
+		}
+		free(pheap->array);
+		pheap->array = NULL;
+	}
 	free(*heap); *heap = NULL;
 }
 
