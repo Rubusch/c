@@ -144,7 +144,7 @@ void* destroy_key(element_p *key);
 
 // b-tree
 void btree_create();
-void btree_destroy();
+void btree_destroy(btree_node_p node);
 btree_node_p btree_root();
 btree_node_p btree_search(btree_node_p node, element_p key, int* idx_result);
 void btree_split_child(btree_node_p node, int idx);

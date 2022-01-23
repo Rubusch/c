@@ -174,10 +174,22 @@ void btree_create()
 	root = node;
 }
 
-void btree_destroy()
+//*
+void btree_destroy(btree_node_p node)
 {
+	if (!node) {
+		return;
+	}
 	// TODO destroy element types       
-	_btree_destroy_node(&root);
+	for (int idx = node->nkeys; idx > 0; idx--) {
+		btree_destroy(node);
+	}
+	if (node == root) {
+		_btree_destroy_node(&node);
+		root = NULL;
+	} else {
+		_btree_destroy_node(&node);
+	}
 }
 
 /*
