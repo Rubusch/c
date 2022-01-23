@@ -184,9 +184,7 @@ void greedy_huffman_destroy(huffman_node_p root)
 		greedy_huffman_destroy(root->right);
 	}
 
-	if (is_leaf(root)) {
-		free(root); root = NULL;
-	}
+	free(root); root = NULL;
 }
 
 void swap(huffman_node_p *a, huffman_node_p *b)
