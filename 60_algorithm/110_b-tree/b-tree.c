@@ -33,6 +33,56 @@ void btree_failure(const char* format, ...)
 	exit(EXIT_FAILURE);
 }
 
+/*
+  INORDER-TREE-WALK(x)
+
+  if x != NIL
+    INORDER-TREE-WALK(x.left)
+    print x.key
+    INORDER-TREE-WALK(x.right)
+ */
+#ifdef DEBUG
+static void _btree_inorder_walk(FILE *fp, btree_node_p node, const char* label)
+{
+	if (node) {
+		
+		_tree_inorder_walk(fp, node->left, "L");
+		if (node->parent) {
+			fprintf(fp, "%lld -- %lld [ label=\"%s\" ];\n",
+				node->parent->key, node->key, label);
+		} else {
+			fprintf(fp, "%lld;\n", node->key);
+		}
+		_tree_inorder_walk(fp, node->right, "R");
+	}
+}
+#endif
+
+void btree_print_dot(const char* filename, btree_node_p node)
+{
+#ifdef DEBUG
+	if (!filename) return;
+	if (!node) return;
+	FILE *fp = fopen(filename, "w");
+	fprintf(fp, "graph %s\n", "tree");
+	fprintf(fp, "{\n");
+/*
+	if (node->left) _tree_inorder_walk(fp, node->left, "L");
+	if (node->right) _tree_inorder_walk(fp, node->right, "R");
+	if (!node->left && !node->right) fprintf(fp, "%lld;\n", node->key);
+/*/
+	for (int idx = 0; idx < node->nkeys; idx++) {
+		char buf[16]; memset(buf, '\0', sizeof(buf)-1);
+		sprintf(buf, "%d", idx);
+		_btree_inorder_walk(fp, node->child[idx], buf);
+	}
+// */
+	fprintf(fp, "}\n");
+	fclose(fp);
+#endif
+}
+
+
 
 // b-tree private
 
@@ -174,7 +224,6 @@ void btree_create()
 	root = node;
 }
 
-//*
 void btree_destroy(btree_node_p node)
 {
 	if (!node) {
@@ -261,17 +310,17 @@ void btree_split_child(btree_node_p node, int idx)
 */
 void btree_insert(element_p key)
 {
-	btree_node_p r = root;
-	if (r->nkeys == 2 * TSIZE - 1) {
-		btree_node_p s = _btree_allocate_node();
-		root = s;
-		s->is_leaf = false;
-		s->nkeys = 0;
-		s->child[0] = r;
-		btree_split_child(s, 1);
-		btree_insert_nonfull(s, key); // TODO 
+	btree_node_p root_bk = root;
+	if (root_bk->nkeys == 2 * TSIZE - 1) {
+		btree_node_p root_new = _btree_allocate_node();
+		root = root_new;
+		root_new->is_leaf = false;
+		root_new->nkeys = 0;
+		root_new->child[0] = root_bk;
+		btree_split_child(root_new, 1);
+		btree_insert_nonfull(root_new, key);
 	} else {
-		btree_insert_nonfull(r, key); // TOOD  
+		btree_insert_nonfull(root_bk, key);
 	}
 }
 

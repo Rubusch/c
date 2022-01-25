@@ -52,7 +52,7 @@ void test_btree_create(void)
 	btree_destroy(btree_root());
 	CU_ASSERT(NULL == btree_root());
 }
-/*
+
 void test_btree_insert(void)
 {
 	CU_ASSERT(NULL == btree_root());
@@ -61,14 +61,16 @@ void test_btree_insert(void)
 
 	element_p key;
 	key = create_key(NULL, 7);
+
 	btree_insert(key);
+	CU_ASSERT(NULL != btree_root());
 
 	// TODO       
-	btree_destroy(&btree_root());
+/*
+	btree_destroy(btree_root());
 	CU_ASSERT(NULL == btree_root());
-}
 // */
-
+}
 
 int main(void)
 {
@@ -90,7 +92,7 @@ int main(void)
 	/* utilities */
 	TEST_start(pSuite, "element", test_element)
 		TEST_append(pSuite, "b-tree-create", test_btree_create) // */
-// 		TEST_append(pSuite, "b-tree-insert", test_btree_insert) // */
+ 		TEST_append(pSuite, "b-tree-insert", test_btree_insert) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
