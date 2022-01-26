@@ -65,6 +65,8 @@ void test_btree_insert(void)
 	btree_insert(key);
 	CU_ASSERT(NULL != btree_root());
 
+btree_print_dot("test.dot", btree_root());
+
 	// TODO       
 /*
 	btree_destroy(btree_root());

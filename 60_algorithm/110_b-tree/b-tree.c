@@ -42,18 +42,46 @@ void btree_failure(const char* format, ...)
     INORDER-TREE-WALK(x.right)
  */
 #ifdef DEBUG
-static void _btree_inorder_walk(FILE *fp, btree_node_p node, const char* label)
+static void _btree_print_key(btree_node_p node, char buf[64])
 {
-	if (node) {
-		
-		_tree_inorder_walk(fp, node->left, "L");
-		if (node->parent) {
-			fprintf(fp, "%lld -- %lld [ label=\"%s\" ];\n",
-				node->parent->key, node->key, label);
+	char tmp[64]; memset(tmp, '\0', 64);
+//fprintf(stderr, "%s [%d]: %s() - XXX buf '%s', nkeys %d\n",
+//	__FILE__, __LINE__,  __func__, buf, node->nkeys);
+
+	for (int idx=0; idx < node->nkeys && idx < 64/4; idx++) {
+// NB: the debug printer is supposed just for small tree nkey sizes!
+		if (0 == idx) {
+			sprintf(tmp, "%d", node->key[idx]->val);
 		} else {
-			fprintf(fp, "%lld;\n", node->key);
+			sprintf(tmp, "%s, %d", buf, node->key[idx]->val);
 		}
-		_tree_inorder_walk(fp, node->right, "R");
+		strcpy(buf, tmp);
+	}
+//fprintf(stderr, "%s [%d]: %s() - XXX buf %s, tmp %s\n",
+//	__FILE__, __LINE__,  __func__, buf, tmp);
+}
+
+static void _btree_inorder_walk(FILE *fp, btree_node_p node, char parent_key[64])
+{
+	if (!node) {
+		return;
+	}
+
+	char buf[64]; memset(buf, '\0', sizeof(buf)-1);
+	_btree_print_key(node, buf);
+
+	if (strlen(parent_key)) {
+//fprintf(stderr, "%s [%d]: %s() - AAA - has parent\n",
+//	__FILE__, __LINE__,  __func__);
+		fprintf(fp, "%s -- %s;\n", parent_key, buf);
+	} else {
+//fprintf(stderr, "%s [%d]: %s() - BBB - is parent\n",
+//	__FILE__, __LINE__,  __func__);
+		fprintf(fp, "%s;\n", buf);
+	}
+
+	for (int idx = 0; idx < node->nkeys; idx++) {
+		_btree_inorder_walk(fp, node->child[idx], buf);
 	}
 }
 #endif
@@ -66,17 +94,12 @@ void btree_print_dot(const char* filename, btree_node_p node)
 	FILE *fp = fopen(filename, "w");
 	fprintf(fp, "graph %s\n", "tree");
 	fprintf(fp, "{\n");
-/*
-	if (node->left) _tree_inorder_walk(fp, node->left, "L");
-	if (node->right) _tree_inorder_walk(fp, node->right, "R");
-	if (!node->left && !node->right) fprintf(fp, "%lld;\n", node->key);
-/*/
-	for (int idx = 0; idx < node->nkeys; idx++) {
-		char buf[16]; memset(buf, '\0', sizeof(buf)-1);
-		sprintf(buf, "%d", idx);
-		_btree_inorder_walk(fp, node->child[idx], buf);
-	}
-// */
+
+	char buf[64]; memset(buf, '\0', sizeof(buf)-1);
+	_btree_print_key(node, buf);
+
+	_btree_inorder_walk(fp, node, "");
+
 	fprintf(fp, "}\n");
 	fclose(fp);
 #endif
@@ -347,7 +370,8 @@ void btree_insert(element_p key)
 */
 void btree_insert_nonfull(btree_node_p node, element_p key)
 {
-	int idx = node->nkeys;
+//	int idx = node->nkeys; // TODO rm
+	int idx = node->nkeys-1;
 	if (node->is_leaf) {
 		while (idx >= 1 && key->val < node->key[idx]->val) {
 			node->key[idx + 1] = node->key[idx];

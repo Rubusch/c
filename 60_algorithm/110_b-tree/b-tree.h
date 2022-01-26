@@ -137,6 +137,7 @@ typedef btree_node_t* btree_node_p;
 // utils
 void btree_debug(const char* format, ...);
 void btree_failure(const char* format, ...);
+void btree_print_dot(const char* filename, btree_node_p node);
 
 // element
 element_p create_key(int *data, int key);
