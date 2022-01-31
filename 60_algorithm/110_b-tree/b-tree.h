@@ -118,6 +118,8 @@
 # endif /* DEBUG */
 
 #define TSIZE 4
+// TODO capacity
+#define TCAPACITY (2*TSIZE)
 
 // data
 typedef struct element_s {
@@ -127,8 +129,12 @@ typedef struct element_s {
 typedef element_t* element_p;
 
 typedef struct btree_node_s {
-	element_p key[TSIZE];
-	struct btree_node_s *child[TSIZE];
+//	element_p key[TSIZE]; // TODO re-implement differently: a fixed size array cannot hold more than size, being split into half, redistributed, etc.. use container!
+	element_p key[TCAPACITY];
+//	struct btree_node_s *child[TSIZE];
+	struct btree_node_s *child[TCAPACITY];
+// TODO improve this redundancy       
+
 	bool is_leaf;
 	int nkeys;
 } btree_node_t;

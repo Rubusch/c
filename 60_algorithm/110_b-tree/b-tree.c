@@ -334,7 +334,7 @@ void btree_split_child(btree_node_p node, int idx)
 void btree_insert(element_p key)
 {
 	btree_node_p root_bk = root;
-	if (root_bk->nkeys == 2 * TSIZE - 1) {
+	if (root_bk->nkeys == 2 * TSIZE - 1) { // TODO how should grow to 2 * TSIZE -1??
 		btree_node_p root_new = _btree_allocate_node();
 		root = root_new;
 		root_new->is_leaf = false;
@@ -370,10 +370,20 @@ void btree_insert(element_p key)
 */
 void btree_insert_nonfull(btree_node_p node, element_p key)
 {
+	if (!node) {
+		btree_failure("%s [%d]: %s() - node was passed NULL",
+			      __FILE__, __LINE__, __func__);
+	}
+	if (!key) {
+		btree_failure("%s [%d]: %s() - key was passed NULL",
+			      __FILE__, __LINE__, __func__);
+	}
+
 //	int idx = node->nkeys; // TODO rm
-	int idx = node->nkeys-1;
+	int idx = node->nkeys - 1;
 	if (node->is_leaf) {
-		while (idx >= 1 && key->val < node->key[idx]->val) {
+//		while (idx >= 1 && key->val < node->key[idx]->val) {
+		while (idx >= 0 && key->val < node->key[idx]->val) {
 			node->key[idx + 1] = node->key[idx];
 			idx--;
 		}
