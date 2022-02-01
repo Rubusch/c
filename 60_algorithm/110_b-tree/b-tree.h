@@ -132,7 +132,7 @@ typedef struct btree_node_s {
 //	element_p key[TSIZE]; // TODO re-implement differently: a fixed size array cannot hold more than size, being split into half, redistributed, etc.. use container!
 	element_p key[TCAPACITY];
 //	struct btree_node_s *child[TSIZE];
-	struct btree_node_s *child[TCAPACITY];
+	struct btree_node_s **child; // TODO make "unlimited", alloc/realloc    
 // TODO improve this redundancy       
 
 	bool is_leaf;
