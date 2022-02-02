@@ -136,7 +136,10 @@ typedef struct btree_node_s {
 // TODO improve this redundancy       
 
 	bool is_leaf;
-	int nkeys;
+
+	// all nodes (including root) may contain at most 2*t – 1 keys
+        // Number of children of a node is equal to the number of keys in it plus 1
+	int nkeys; // TODO rename or relate to nchild!!!        
 } btree_node_t;
 typedef btree_node_t* btree_node_p;
 
