@@ -122,7 +122,14 @@ static btree_node_p _btree_allocate_node()
 	for (int idx = 0; idx < TSIZE; idx++) {
 		ptr->key[idx] = NULL;
 	}
-	for (int idx = 0; idx < TSIZE; idx++) {
+
+	ptr->child = malloc(2 * TSIZE * sizeof(*ptr->child));
+	if (!ptr->child) {
+		btree_failure("%s [%d]: %s() - allocation failed",
+			      __FILE__, __LINE__, __func__);
+	}
+
+	for (int idx = 0; idx < (2 * TSIZE); idx++) {
 		ptr->child[idx] = NULL;
 	}
 	ptr->is_leaf = true;
@@ -136,8 +143,11 @@ static void _btree_destroy_node(btree_node_p* node)
 		return;
 	}
 
-	
-// TODO                 
+	for (int idx = (*node)->nkeys - 1; idx >= 0; idx--) {
+		_btree_destroy_node(&(*node)->child[idx]);
+	}
+	free((*node)->child);
+
 	free(*node);
 	*node = NULL;
 }
@@ -334,7 +344,8 @@ void btree_split_child(btree_node_p node, int idx)
 void btree_insert(element_p key)
 {
 	btree_node_p root_bk = root;
-	if (root_bk->nkeys == 2 * TSIZE - 1) { // TODO how should grow to 2 * TSIZE -1??
+	if (root_bk->nkeys == 2 * TSIZE - 1) {
+		// root node is full, split and insert into new root
 		btree_node_p root_new = _btree_allocate_node();
 		root = root_new;
 		root_new->is_leaf = false;
@@ -343,6 +354,7 @@ void btree_insert(element_p key)
 		btree_split_child(root_new, 1);
 		btree_insert_nonfull(root_new, key);
 	} else {
+		// root node is not full
 		btree_insert_nonfull(root_bk, key);
 	}
 }
@@ -387,15 +399,19 @@ void btree_insert_nonfull(btree_node_p node, element_p key)
 			node->key[idx + 1] = node->key[idx];
 			idx--;
 		}
+// TODO what to do, if idx < 0?
 		node->key[idx + 1] = key;
+// TODO is it really 'idx + 1' or just 'idx'?
 		node->nkeys++;
 		_btree_write(node);
 	} else {
-		while (idx >= 1 && key->val < node->key[idx]->val) {
+//		while (idx >= 1 && key->val < node->key[idx]->val) {
+		while (idx >= 0 && key->val < node->key[idx]->val) {
 			idx--;
 		}
+// TODO what to do, if idx < 0?
 		idx++;
-		_btree_read(node->child[idx]);
+		_btree_read(node->child[idx]); // TODO why? here??
 		if (node->child[idx]->nkeys == 2 * TSIZE - 1) {
 			btree_split_child(node, idx);
 			if (key->val > node->key[idx]->val) {

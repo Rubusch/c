@@ -119,7 +119,7 @@
 
 #define TSIZE 4
 // TODO capacity
-#define TCAPACITY (2*TSIZE)
+#define TCAPACITY (2*TSIZE-1)
 
 // data
 typedef struct element_s {
