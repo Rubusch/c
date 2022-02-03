@@ -343,7 +343,9 @@ void btree_split_child(btree_node_p node, int idx)
 */
 void btree_insert(element_p key)
 {
+/*
 	btree_node_p root_bk = root;
+// TODO check if root is NULL
 	if (root_bk->nkeys == 2 * TSIZE - 1) {
 		// root node is full, split and insert into new root
 		btree_node_p root_new = _btree_allocate_node();
@@ -357,6 +359,30 @@ void btree_insert(element_p key)
 		// root node is not full
 		btree_insert_nonfull(root_bk, key);
 	}
+/*/
+	if (NULL == root) { // root is not
+		root = _btree_allocate_node();
+		root->key[0] = key;
+		root->nkeys = 1;
+	} else {
+		if (root->nkeys >= 2 * TSIZE -1) { // root is full
+			btree_node_p root_new = _btree_allocate_node();
+			root_new->child[0] = root;
+			btree_split_child(root_new, 1); // TODO use key instead  
+
+			int idx = 0;
+			if (root_new->key[0] < key) {
+				idx++;
+			}
+			btree_insert_nonfull(root_new->child[idx], key);
+
+			root = root_new;
+		} else {
+			// root node is not full
+			btree_insert_nonfull(root, key);
+		}
+	}
+// */
 }
 
 /*

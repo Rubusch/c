@@ -117,7 +117,7 @@
 #  define DEBUG 1
 # endif /* DEBUG */
 
-#define TSIZE 4
+#define TSIZE 2
 // TODO capacity
 #define TCAPACITY (2*TSIZE-1)
 

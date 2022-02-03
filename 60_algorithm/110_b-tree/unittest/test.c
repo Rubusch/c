@@ -60,19 +60,20 @@ void test_btree_insert(void)
 	CU_ASSERT(NULL != btree_root());
 
 	element_p key;
-	key = create_key(NULL, 7);
 
+	key = create_key(NULL, 10);
 	btree_insert(key);
+
 	CU_ASSERT(NULL != btree_root());
 
-	key = create_key(NULL, 8);
+	key = create_key(NULL, 20);
 	btree_insert(key);
 
-	key = create_key(NULL, 6);
+	key = create_key(NULL, 30);
 	btree_insert(key);
 
 
-
+/*
 	key = create_key(NULL, 1);
 	btree_insert(key);
 
@@ -93,6 +94,32 @@ btree_print_dot("test.dot", btree_root());
 	CU_ASSERT(NULL == btree_root());
 // */
 }
+
+void test_btree_insert_inverse(void)
+{
+	CU_ASSERT(NULL == btree_root());
+	btree_create();
+	CU_ASSERT(NULL != btree_root());
+
+	element_p key;
+
+	key = create_key(NULL, 20);
+	btree_insert(key);
+
+	CU_ASSERT(NULL != btree_root());
+
+	key = create_key(NULL, 10);
+	btree_insert(key);
+
+//btree_print_dot("test.dot", btree_root());
+
+	// TODO       
+/*
+	btree_destroy(btree_root());
+	CU_ASSERT(NULL == btree_root());
+// */
+}
+
 
 int main(void)
 {
@@ -115,6 +142,7 @@ int main(void)
 	TEST_start(pSuite, "element", test_element)
 		TEST_append(pSuite, "b-tree-create", test_btree_create) // */
  		TEST_append(pSuite, "b-tree-insert", test_btree_insert) // */
+/* 		TEST_append(pSuite, "b-tree-insert-inverse", test_btree_insert_inverse) // */
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
