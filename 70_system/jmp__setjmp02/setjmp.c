@@ -1,34 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
-#include <stdnoreturn.h>
+//#include <stdnoreturn.h>
 
 /*
-  demo taken from:
-  https://en.cppreference.com/w/c/program/setjmp
+  based on: The Linux Programming Interface, Michael Kerrisk, 2010, p. 134
+
+  no args, enters func1() and will return env with '1'
+  -> func1()
+     -> <longjmp>
+
+  one or more args, env == '2'
+  -> func2()
+     -> <longjump>
 */
 
-jmp_buf jump_buffer;
+static jmp_buf env;
 
-noreturn void func(int count)
+static void func2(void)
 {
-	printf("call: %s(count = %d)\n", __func__, count);
-
-	printf("\tlongjmp(jump_buffer, count+1 = %d)\n", count + 1);
-	longjmp(jump_buffer, count + 1); // will return count+1 out of setjmp
+	longjmp(env, 2);
 }
 
-int main(void)
+static void func1(int argc)
 {
-	volatile int count =
-		0; // modified local vars in setjmp scope must be volatile
-
-	if (setjmp(jump_buffer) !=
-	    9) { // compare against constant in an if-condition
-		printf("\tsetjmp(jump_buffer) != 9\n");
-		func(++count);
+	if (argc == 1) {
+		longjmp(env, 1);
 	}
-	printf("\tsetjmp(jump_buffer) == 9 ---> EXIT\n");
+	func2();
+}
+
+int main(int argc, char *argv[])
+{
+	switch(setjmp(env)) {
+		case 0:
+			fprintf(stderr, "initial setjump\n");
+			func1(argc); // never returns
+			break;
+
+		case 1:
+			fprintf(stderr, "jumped back from func1()\n");
+			break;
+
+		case 2:
+			fprintf(stderr, "jumped back from func2()\n");
+			break;
+	}
 
 	puts("READY.");
 	exit(EXIT_SUCCESS);
