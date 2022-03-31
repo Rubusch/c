@@ -286,7 +286,6 @@ jobs:
       #- run: cd 50_embedded/150__x86-gas__booting__print-string && make && ./*.exe
       #- run: cd 50_embedded/160__x86-gas__booting__print-string-loop && make && ./*.exe
       #- run: cd 50_embedded/170__x86-gas__booting__nasm-print-string && make && ./*.exe
-      - run: cd 50_embedded/jmp__setjmp && make && ./*.exe
 
 ## 60: algorithms
 ## (instead of a main, mostly a unittest based on cunit is implemented)
@@ -323,6 +322,10 @@ jobs:
       - run: cd 60_algorithm/082_dynamic-programming_longest-common-subsequence && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/083_dynamic-programming_optimal-binary-searchtree && make basictest.exe && ./*.exe
       - run: cd 60_algorithm/090_greedy_huffman-codes && make basictest.exe && ./*.exe
+
+## 70: system
+      - run: cd 70_embedded/jmp__setjmp01 && make && ./*.exe
+      - run: cd 70_embedded/jmp__setjmp02 && make && ./*.exe
 
 ## 99: linux (all just built, since execution in case needs runs in parallel
       - run: cd 99_linux/ptrace__010-fork-show-all-instructions && make
