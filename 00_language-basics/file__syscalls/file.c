@@ -27,7 +27,6 @@ void usage(const char *nam)
 	fprintf(stderr, "$ ./%s orig.txt petzi.txt\n", nam);
 	fprintf(stderr, "$ cat ./petzi.txt\n");
 	fprintf(stderr, "	Rasmus Klump\n");
-
 }
 
 int main(int argc, char *argv[])
@@ -39,7 +38,7 @@ int main(int argc, char *argv[])
 
 	if (argc <= 1) {
 		usage(argv[0]);
-		goto err;
+		exit(EXIT_SUCCESS);
 	}
 
 	// read
