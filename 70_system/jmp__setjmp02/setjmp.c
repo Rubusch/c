@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
-//#include <stdnoreturn.h>
 
 /*
   based on: The Linux Programming Interface, Michael Kerrisk, 2010, p. 134
