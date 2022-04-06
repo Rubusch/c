@@ -383,9 +383,10 @@ jobs:
       - run: cd ./99_linux/sharedobject__dynamic-fixed && make
       - run: cd ./99_linux/sharedobject__dynamic-shared && make
       - run: cd ./99_linux/sharedobject__static-lib && make
-      - run: cd ./99_linux/timer && make
-      - run: cd ./99_linux/timer__measuring && make
+      - run: cd ./99_linux/time__timer && make
+      - run: cd ./99_linux/time__timer-measuring && make
       - run: cd ./99_linux/time__calender-time && make
+      - run: cd ./99_linux/time__timezones && make
       - run: cd ./99_linux/rc5_inputstring && make
       - run: cd ./99_linux/select01 && make
 
