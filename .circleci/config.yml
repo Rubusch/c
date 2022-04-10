@@ -385,7 +385,7 @@ jobs:
       - run: cd ./70_system/time__timer-measuring && make
       - run: cd ./70_system/time__calender-time && make
       - run: cd ./70_system/time__timezones && make
-      - run: cd ./70_system/time__timezone-locale && make
+      - run: cd ./70_system/time__timezones-locale && make
       - run: cd ./70_system/rc5_inputstring && make
       - run: cd ./70_system/select01 && make
 
