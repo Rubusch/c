@@ -11,7 +11,6 @@
 #include <string.h>
 #include <locale.h>
 #include <time.h>
-#include <sys/time.h>
 
 #define SBUF_SIZE 1000
 
