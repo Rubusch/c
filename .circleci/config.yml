@@ -390,5 +390,6 @@ jobs:
       - run: cd ./70_system/select01 && make
 
 ## devkit lib
+      - run: cd ./lothars-devkit-library/tlpi && make basictest.exe && ./*.exe
       - run: cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ./${item}; done
 
