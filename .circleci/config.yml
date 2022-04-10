@@ -388,6 +388,7 @@ jobs:
       - run: cd ./70_system/time__timezones && make
       - run: cd ./70_system/time__timezones-locale && make
       - run: cd ./70_system/sysconf && make && ./*.elf
+      - run: cd ./70_system/uname && make && ./*.elf
       - run: cd ./70_system/rc5_inputstring && make
       - run: cd ./70_system/select01 && make
 
