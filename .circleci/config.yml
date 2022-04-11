@@ -105,6 +105,7 @@ jobs:
       - run: cd ./00_language-basics/file__syscalls && make && ./*.exe
       - run: cd ./00_language-basics/file__operations && make && ./*.exe
       - run: cd ./00_language-basics/file__tempfile && make && ./*.exe
+      - run: cd ./00_language-basics/file__bypass-buffer-cache && make
       - run: cd ./00_language-basics/stdout__fflush-printf-order && make && ./*.exe
       - run: cd ./00_language-basics/debug__mtrace && make && ./*.exe
 #      - run: cd ./00_language-basics/debug__valgrind-double-free && make && ./*.exe ## has to fail
