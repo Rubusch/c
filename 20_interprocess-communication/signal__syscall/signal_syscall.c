@@ -13,6 +13,11 @@
 
 void catch_int(int sig)
 {
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
+
 	//  puts("Eh eh that tickles...\n");
 	printf("Eh eh that tickles...\n");
 	fflush(stdout);

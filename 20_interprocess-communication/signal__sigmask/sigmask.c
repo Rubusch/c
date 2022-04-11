@@ -72,6 +72,11 @@ void catch_int(int sig)
 	if (ctrl_c_count >= CTRL_C_THRESHOLD) {
 		char answer[30];
 
+		// ATTENTION:
+		// using stdio in signal handler is not async-signal-safe
+		// ref.:
+		// Linux Programming Interface, Michael Kerrisk, 2010, p.426
+
 		// prompt the user to tell us if to really exit or not
 		printf("\nReally Exit? [y/n]: ");
 		fflush(stdout);
@@ -129,7 +134,8 @@ void catch_sig(int sig)
 		break;
 	default:
 		fprintf(stderr, "invalid signal");
-		exit(EXIT_FAILURE);
+		// ATTENTION: don't use exit() in signal handler
+		raise(SIGKILL);
 	}
 }
 

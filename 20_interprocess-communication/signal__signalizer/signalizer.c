@@ -22,7 +22,6 @@ static sighandler_t connect_signal(int signum,
 
 	ret = sigaction(signum, &sa_new, &sa_old);
 	if (0 > ret) {
-		perror("sigaction failed");
 		return SIG_ERR;
 	}
 
@@ -64,7 +63,6 @@ static sighandler_t signal_del(int signum) {
 
 	ret = sigaction(signum, NULL, &sa);
 	if (0 > ret) {
-		perror("sigaction failed");
 		return SIG_ERR;
 	}
 
@@ -74,7 +72,6 @@ static sighandler_t signal_del(int signum) {
 
 	ret = sigaction(signum, &sa, NULL);
 	if (0 > ret) {
-		perror("sigaction failed");
 		return SIG_ERR;
 	}
 
@@ -91,6 +88,10 @@ static void check_signal(int signum)
 		return;
 	}
 
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
 	printf("Action at signal %d: ", signum);
 
 	if (sa.sa_handler == SIG_DFL) {

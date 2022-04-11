@@ -30,11 +30,18 @@ void sigint(int signum __attribute__((unused)))
 void sigquit(int signum __attribute__((unused)))
 {
 	puts("child - I have received a SIGQUIT");
-	exit(EXIT_SUCCESS);
+	// ATTENTION:
+	// never use exit() in signal handlers
+	raise(SIGKILL);
 }
 
 void sig_handler(int signum)
 {
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
+
 	switch (signum) {
 	case SIGHUP:
 		sighup(signum);

@@ -64,6 +64,10 @@
 
 static void sig_handler(int sig, siginfo_t *siginfo, void *context)
 {
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
 	fprintf(stdout, "%s() - signal: %d, pid: %ld, uid: %ld\n", __func__,
 		sig, (long)siginfo->si_pid, (long)siginfo->si_uid);
 	exit(EXIT_SUCCESS);

@@ -26,7 +26,9 @@
 #include <stdio.h>
 #include <signal.h>
 #include <execinfo.h>
-#include <ucontext.h>
+#include <ucontext.h> /* note: ucontext.h and content might not
+		       * compile with all libs/compilers */
+#include <signal.h>
 
 /*
   get the context of the caller, to obtain its backtrace i.e. it's
@@ -39,6 +41,10 @@ void sig_handler_backtrace(int sig, siginfo_t *info, void *secret)
 	int i, trace_size = 0;
 	ucontext_t *uc = (ucontext_t *)secret;
 
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
 	if (sig == SIGSEGV) {
 		fprintf(stdout,
 			"%s() - signal %d, faulty address is %p, from %p\n",
@@ -62,7 +68,11 @@ void sig_handler_backtrace(int sig, siginfo_t *info, void *secret)
 	}
 
 	fprintf(stdout, "READY.\n");
-	exit(EXIT_SUCCESS);
+
+	// ATTENTION:
+	// never use exit() in signal handler
+	//exit(EXIT_SUCCESS);
+	raise(SIGKILL);
 }
 
 /*

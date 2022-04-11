@@ -14,19 +14,24 @@
 void handler_int(int dummy)
 {
 	puts("you have pressed CTRL-c");
-	exit(EXIT_SUCCESS);
+	raise(SIGKILL);
 }
 
 void handler_quit(int dummy)
 {
 	// here no action to be done due to the reset..
 	puts("CTRL-\\ pressed to quit");
-	exit(EXIT_SUCCESS);
+	raise(SIGKILL);
 }
 
 // 2. handler multiplexer
 void handler(int signum)
 {
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
+
 	switch (signum) {
 	case SIGINT:
 		handler_int(signum);

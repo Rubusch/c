@@ -13,7 +13,10 @@
 // signalhandler
 void handle_alarm(int dummy)
 {
-	// to prevent signal resetting
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
 	fprintf(stderr, "%s SIGALRM received - eh eh, that tickles!\n", ME);
 }
 

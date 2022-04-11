@@ -19,6 +19,10 @@ int running = 0;
 
 void sighandler()
 {
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
 	fprintf(stderr, "\n%s()\n", __func__);
 	running = 0;
 }

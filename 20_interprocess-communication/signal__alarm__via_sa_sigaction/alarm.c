@@ -58,6 +58,10 @@
 
 void handle_alarm(int sig, siginfo_t *siginfo, void *context)
 {
+	// ATTENTION:
+	// using stdio in signal handler is not async-signal-safe
+	// ref.:
+	// Linux Programming Interface, Michael Kerrisk, 2010, p.426
 	fprintf(stderr, "%s(): Operation timed out. Exiting..\n", __func__);
 	exit(EXIT_SUCCESS);
 }
