@@ -55,6 +55,52 @@
 #include <unistd.h> /* alarm() */
 #include <string.h> /* memset() */
 
+/*
+  by SUSv2 and SUSv3 / POSIX.1-1990, the following functions are
+  required to be async-signal-safe - only the following functions are
+  supposed to be used inside a signal handler
+
+  _Exit()          getpid()           sigdelset()
+  _exit()          getppid()          sigemptyset()
+  abort()          getsockname()      sigfillset()
+  accept()         getsockopt()       sigismember()
+  access()         getuid()           signal()
+  aio_error()      kill()             sigpause()
+  aio_return()     link()             sigpending()
+  aio_suspend()    listen()           sigprocmask()
+  alarm()          lseek()            sigqueue()
+  bind()           lstat()            sigset()
+  cfgetispeed()    mkdir()            sigsuspend()
+  cfgetospeed()    mkfifo()           sleep()
+  cfsetispeed()    open()             socket()
+  cfsetospeed()    pathconfig()       sockatmark()
+  chdir()          pause()            socketpair()
+  chmod()          pipe()             stat()
+  chown()          poll()             symlink()
+  clock_gettime()  posix_trace_event() sysconf()
+  close()          pselect()           tcdrain()
+  connect()        raise()             tcflow()
+  creat()          read()              tcflush()
+  dup()            readlink()          tcgetattr()
+  dup2()           recv()              tcgetpgrp()
+  execle()         recvfrom()          tcsendbreak()
+  execve()         recvmsg()           tcsetattr()
+  fchmod()         rename()            tcsetpgrp()
+  fchown()         rmdir()             time()
+  fcntl()          select()            timer_getoverrun()
+  fdatasync()      sem_post()          timer_gettime()
+  fork()           send()              timer_settime()
+  fpathconf()      sendmsg()           times()
+  fstat()          sendto()            umask()
+  fsync()          setgid()            uname()
+  ftruncate()      setpgid()           unlink()
+  getegid()        setsid()            utime()
+  geteuid()        setsockopt()        wait()
+  getgid()         setuid()            waitpid()
+  getgroups()      shutdown()          write()
+  getpeername()    sigaction()
+  getpgrp()        sigaddset()
+*/
 
 void handle_alarm(int sig)
 {
