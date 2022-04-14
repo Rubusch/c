@@ -17,6 +17,6 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	-$(RM) $(TARGET) $(OBJECTS) text.txt *~
+	-$(RM) $(TARGET) $(OBJECTS) file_perms.o text.txt *~
 
 .PHONY: clean all
