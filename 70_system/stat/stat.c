@@ -36,8 +36,8 @@ display_stat_info(const struct stat *sb)
 	fprintf(stderr, "i-node number:\t\t%ld\n",
 		(long) sb->st_ino);
 
-//	fprintf(stderr, "mode:\t\t%lo (%s)\n",
-//		(unsigned long) sb->st_mode, file_perm_str(sb->st_mode, 0));
+	fprintf(stderr, "mode:\t\t%lo (%s)\n",
+		(unsigned long) sb->st_mode, file_perm_str(sb->st_mode, 0));
 
 	if (sb->st_mode & (S_ISUID | S_ISGID | S_ISVTX)) {
 		fprintf(stderr, "\tspecial bits set:\t%s%s%s\n",
@@ -79,16 +79,14 @@ main(int argc, char *argv[])
 	bool stat_link; // True if -1 specified, i.e. lstat
 	int fname; // location of filename argument in argv[]
 
-
+	// accept provided argument if valid
 	if (argc != 2) {
 		fprintf(stderr, "usage:\n");
 		fprintf(stderr, "$ %s <filename>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
-
-	stat_link = 1; // TODO
-
-	fname = stat_link ? 2 : 1; // TODO
+	stat_link = (argc > 1) && strcmp(argv[1], "-1") == 0;
+	fname = stat_link ? 2 : 1;
 
 	if (stat_link) {
 		if (-1 == lstat(argv[fname], &sb)) {
