@@ -392,6 +392,7 @@ jobs:
       - run: cd ./70_system/uname && make && ./*.elf
       - run: cd ./70_system/rc5_inputstring && make
       - run: cd ./70_system/select01 && make
+      - run: cd ./70_system/stat && make
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
