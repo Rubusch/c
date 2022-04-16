@@ -19,6 +19,11 @@ jobs:
           name: Installing BUILD-ESSENTIAL
           command: 'apt-get update && apt-get install -y build-essential'
 
+      - run:
+          name: Installing ACL lib
+          command: 'apt-get update && apt-get install -y libacl1-dev'
+
+
 #      - run:
 #          name: Installing GIT
 #          environment:
