@@ -394,6 +394,7 @@ jobs:
       - run: cd ./70_system/select01 && make
       - run: cd ./70_system/stat && make && ./*.elf ./text.txt
       - run: cd ./70_system/acl && make
+      - run: cd ./70_system/directory && make
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
