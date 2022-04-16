@@ -29,6 +29,10 @@
   NB: to build this demo, you must have the ACL library package
   installed on your system, e.g. libacl1-dev (debian)
 
+  NB: the output should be simliar to the "getfactl" command,
+  anyway might not work out. Verify with directory, and play
+  with ACL_ flags (e.g. DEFAULT), also "mount -o remount,acl"
+
   references:
   based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 335
   https://man7.org/tlpi/index.html
@@ -71,6 +75,20 @@ group_name_from_id(gid_t gid)
 	return (grp == NULL) ? NULL : grp->gr_name;
 }
 
+void
+get_perm(acl_permset_t permset, int acl_perm, const char* acl_perm_name, char acl_opt)
+{
+	int perm_val;
+
+	perm_val = acl_get_perm(permset, acl_perm);
+	if (-1 == perm_val) {
+		fprintf(stderr, "acl_get_perm - %s", acl_perm_name);
+		exit(EXIT_FAILURE);
+	}
+	fprintf(stderr, "%c", (perm_val == 1) ? acl_opt : '-');
+}
+
+
 int
 main(int argc, char *argv[])
 {
@@ -82,7 +100,7 @@ main(int argc, char *argv[])
 	gid_t *pgid;
 	acl_permset_t permset;
 	char *name;
-	int entry_id, perm_val;
+	int entry_id;
 
 	type = ACL_TYPE_ACCESS;
 	if (argc < 2) {
@@ -100,7 +118,6 @@ main(int argc, char *argv[])
 	}
 
 	// walk through each entry in this ACL
-
 	for (entry_id = ACL_FIRST_ENTRY; ; entry_id = ACL_NEXT_ENTRY) {
 		if (-1 != acl_get_entry(acl, entry_id, &entry)) {
 			break; // exit on error, or no more entries
@@ -167,28 +184,11 @@ main(int argc, char *argv[])
 			perror("acl_get_permset failed");
 			exit(EXIT_FAILURE);
 		}
-		
-		perm_val = acl_get_perm(permset, ACL_READ);
-		if (-1 == perm_val) {
-			perror("acl_get_perm - ACL_READ");
-			exit(EXIT_FAILURE);
-		}
-		fprintf(stderr, "%c", (perm_val == 1) ? 'r' : '-');
-		
-		perm_val = acl_get_perm(permset, ACL_WRITE);
-		if (-1 == perm_val) {
-			perror("acl_get_perm - ACL_WRITE");
-			exit(EXIT_FAILURE);
-		}
-		fprintf(stderr, "%c", (perm_val == 1) ? 'w' : '-');
-		
-		perm_val = acl_get_perm(permset, ACL_EXECUTE);
-		if (-1 == perm_val) {
-			perror("acl_get_perm - ACL_EXECUTE");
-			exit(EXIT_FAILURE);
-		}
-		fprintf(stderr, "%c", (perm_val == 1) ? 'x' : '-');
-		
+
+		get_perm(permset, ACL_READ, "ACL_READ", 'r');
+		get_perm(permset, ACL_WRITE, "ACL_WRITE", 'w');
+		get_perm(permset, ACL_EXECUTE, "ACL_EXECUTE", 'x');
+
 		fprintf(stderr, "\n");
 	} // for()
 
