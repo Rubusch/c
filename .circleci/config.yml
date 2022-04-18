@@ -401,6 +401,7 @@ jobs:
       - run: cd ./70_system/acl && make
       - run: cd ./70_system/directory && make
       - run: cd ./70_system/directory__nftw && make
+      - run: cd ./70_system/directory__realpath && make
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
