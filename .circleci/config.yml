@@ -403,6 +403,7 @@ jobs:
       - run: cd ./70_system/directory__nftw && make
       - run: cd ./70_system/directory__realpath && make
       - run: cd ./70_system/directory__dirname-basename && make
+      - run: cd ./70_system/inotify && make
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
