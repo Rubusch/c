@@ -400,6 +400,7 @@ jobs:
       - run: cd ./70_system/stat && make && ./*.elf ./text.txt
       - run: cd ./70_system/acl && make
       - run: cd ./70_system/directory && make
+      - run: cd ./70_system/directory__nftw && make
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
