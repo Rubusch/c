@@ -10,12 +10,11 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	cp -f template.txt text.txt
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 all: $(TARGET)
 
 clean:
-	-$(RM) $(TARGET) $(OBJECTS) text.txt *~
+	-$(RM) $(TARGET) $(OBJECTS) *~
 
 .PHONY: clean all
