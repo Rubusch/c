@@ -33,7 +33,6 @@
         si_pid = 5748, si_uid = 1000
 
 
-
   demostrates a signal handler dealing with asynchronous signals
   i.e. "realtime" signals, this demonstrates a regular signalhandler
 
@@ -44,7 +43,7 @@
 
 
   references:
-  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 462
+  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 459
   https://man7.org/tlpi/index.html
 
   tpli codes, distribution version e.g. here:
