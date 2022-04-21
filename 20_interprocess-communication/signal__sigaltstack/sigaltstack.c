@@ -83,7 +83,8 @@ main(int argc, char* argv[])
 	sa.sa_handler = sigsegv_handler; // establish handler for sigsegv
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_ONSTACK;
-	if (-1 == sigaction(SIGSEGV, &sa, NULL)) {
+	if (-1 == sigaction(SIGSEGV, &sa, NULL)) { // handler uses alternate stack
+		// NB: SIGSEGV probably can't be caught
 		perror("sigaction() failed");
 		exit(EXIT_FAILURE);
 	}
