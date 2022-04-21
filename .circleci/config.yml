@@ -180,6 +180,7 @@ jobs:
       - run: cd ./20_interprocess-communication/signal__sighandler && make
       - run: cd ./20_interprocess-communication/signal__sighandler__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__sighandler-nonlocal-goto && make
+      - run: cd ./20_interprocess-communication/signal__sigaltstack && make
       - run: cd ./20_interprocess-communication/signal__signalizer && make
       - run: cd ./20_interprocess-communication/signal__sigmask && make
       - run: cd ./20_interprocess-communication/signal__sigmask__DEPRECATED && make
