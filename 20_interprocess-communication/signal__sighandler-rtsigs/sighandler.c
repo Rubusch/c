@@ -7,6 +7,8 @@
 
   use SIGINT or SIGTERM to terminate program
 
+  NB: make sure "sighandler" zombies are removed properly!
+
 
   references:
   based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 462
