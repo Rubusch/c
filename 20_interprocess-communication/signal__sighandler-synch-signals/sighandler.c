@@ -11,7 +11,7 @@
 
 
   references:
-  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 462
+  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 470
   https://man7.org/tlpi/index.html
 
   tpli codes, distribution version e.g. here:
@@ -19,7 +19,6 @@
  */
 
 #define _GNU_SOURCE /* strsinal() dclaration from <string.h> */
-//#define _XOPEN_SOURCE 600
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,34 +29,6 @@
 #include <unistd.h>
 
 #include "tlpi/get_num.h"
-
-/*
-static volatile int handler_sleep_time;
-static volatile int sig_cnt = 0;
-static volatile sig_atomic_t done = 0;
-
-static void
-siginfo_handler(int sig, siginfo_t *si, void *ucontext)
-{
-	// UNSAFE: don't use stdio inside signalhandlers
-	if (sig == SIGINT || sig == SIGTERM) {
-		done = 1;
-		return;
-	}
-
-	sig_cnt++;
-	fprintf(stderr, "caught signal %d\n", sig);
-	fprintf(stderr, "\tsi_signo = %d, si_code = %d (%s), ",
-		si->si_signo, si->si_code,
-		(si->si_code == SI_USER) ? "SI_USER" :
-		(si->si_code == SI_QUEUE) ? "SI_QUEUE" : "other");
-	fprintf(stderr, "si_value = %d\n", si->si_value.sival_int);
-	fprintf(stderr, "\tsi_pid = %ld, si_uid = %ld\n",
-		(long) si->si_pid, (long) si->si_uid);
-
-	sleep(handler_sleep_time);
-}
-// */
 
 int
 main(int argc, char* argv[])
