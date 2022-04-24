@@ -1,5 +1,36 @@
 /*
-  usage: see in sigqueue.c
+  usage of ./sighandler.elf and sigqueue.elf
+
+  $ ./sighandler.elf 60 &
+  [8] 5732
+
+  $ ./sighandler.elf: PID is 5732
+      ./sighandler.elf: signals blocked - sleeping 60 seconds
+
+  $ ./sigqueue.elf 5732 40 200
+      ./sigqueue.elf: PID is 5736, UID is 1000
+      main() - READY.
+
+  $ ./sigqueue.elf 5732 43 300
+      ./sigqueue.elf: PID is 5744, UID is 1000
+      main() - READY.
+
+  $ ./sigqueue.elf 5732 50 100
+      ./sigqueue.elf: PID is 5748, UID is 1000
+      main() - READY.
+
+  --> after a while, sighandler will report the caught signals...
+
+  $ ./sighandler.elf: sleep complete
+      caught signal 40
+        si_signo = 40, si_code = -1 (SI_QUEUE), si_value = 200
+        si_pid = 5736, si_uid = 1000
+      caught signal 43
+        si_signo = 43, si_code = -1 (SI_QUEUE), si_value = 300
+        si_pid = 5744, si_uid = 1000
+      caught signal 50
+        si_signo = 50, si_code = -1 (SI_QUEUE), si_value = 100
+        si_pid = 5748, si_uid = 1000
 
 
   demostrates a signal handler dealing with asynchronous signals

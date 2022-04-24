@@ -1,5 +1,47 @@
 /*
-  usage: see in sigqueue.c
+  usage of ./sighandler.elf and sigqueue.elf
+
+--> start signal handler
+  $ ./sighandler.elf 60 &
+    [1] 24089
+    ./sighandler.elf: PID is 24089
+    ./sighandler.elf: signals blocked
+    ./sighandler.elf: about to delay 60 seconds
+    ./sigqueue.elf 24089 43 100
+    ./sigqueue.elf: PID is 24094, UID is 1000
+    main() - READY.
+
+--> start sigqueue.elf
+  $ ./sigqueue.elf 24089 42 200
+    ./sigqueue.elf: PID is 24099, UID is 1000
+    main() - READY.
+
+  $ ./sighandler.elf: finished delay
+    got signal: 42 (Real-time signal 8)
+            si_signo=42, si_code=-1 (SI_QUEUE), si_value=200
+            si_pid=24099, si_uid=1000
+    got signal: 43 (Real-time signal 9)
+            si_signo=43, si_code=-1 (SI_QUEUE), si_value=100
+            si_pid=24094, si_uid=1000
+    ./
+
+  $ echo $$
+    1357
+
+  $ kill -USR1 24089
+
+  $ got signal: 10 (User defined signal 1)
+          si_signo=10, si_code=0 (SI_USER), si_value=0
+          si_pid=1357, si_uid=1000
+
+--> ENTER
+  $ kill %1
+    EXIT: sig was SIGINT or SIGTERM
+    [1]+  Done                    ./sighandler.elf 60
+
+--> ENTER
+  $
+
 
 
   demostrates a signal handler dealing with asynchronous signals
