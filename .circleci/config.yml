@@ -181,6 +181,7 @@ jobs:
       - run: cd ./20_interprocess-communication/signal__sighandler__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__sighandler-nonlocal-goto && make
       - run: cd ./20_interprocess-communication/signal__sighandler-asynch-rt-signals && make
+      - run: cd ./20_interprocess-communication/signal__sighandler-synch-signals && make
       - run: cd ./20_interprocess-communication/signal__sigaltstack && make
       - run: cd ./20_interprocess-communication/signal__sigsuspend && make
       - run: cd ./20_interprocess-communication/signal__signalizer && make
