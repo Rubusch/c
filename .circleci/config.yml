@@ -394,8 +394,8 @@ jobs:
       - run: cd ./70_system/sharedobject__dynamic-shared && make
       - run: cd ./70_system/sharedobject__static-lib && make
       - run: cd ./70_system/timer && make
+      - run: cd ./70_system/timer__time-measuring && make
       - run: cd ./70_system/time__process-cpu-times && make && ./*.elf
-      - run: cd ./70_system/time__timer-measuring && make
       - run: cd ./70_system/time__calender-time && make
       - run: cd ./70_system/time__timezones && make
       - run: cd ./70_system/time__timezones-locale && make
