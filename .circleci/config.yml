@@ -396,6 +396,7 @@ jobs:
       - run: cd ./70_system/timer && make
       - run: cd ./70_system/timer__time-measuring && make
       - run: cd ./70_system/timer__real-time && make
+      - run: cd ./70_system/timer__timed-read && make
       - run: cd ./70_system/time__process-cpu-times && make && ./*.elf
       - run: cd ./70_system/time__calender-time && make
       - run: cd ./70_system/time__timezones && make
