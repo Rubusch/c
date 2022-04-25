@@ -4,7 +4,7 @@
 
 
 SOURCE = timemeasuring.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
@@ -15,7 +15,7 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -lrt
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lrt
 # linked against librt for the time.h functions -> -lrt
 
 all: $(TARGET)

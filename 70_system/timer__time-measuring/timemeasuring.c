@@ -1,8 +1,8 @@
 // timemeasuring.c
 /*
-  the example shows how to set two timestamps and how to compute the difference
-  in human readable time
-//*/
+  the example shows how to set two timestamps and how to compute the
+  difference in human readable time
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,15 +17,15 @@ int main()
 	// 1. set up the clock resolution
 	clock_getres(CLOCK_MONOTONIC, &ts_resolution);
 
-	printf("clock resolution set up to %lus and %lins\n",
+	fprintf(stderr, "clock resolution set up to %lus and %lins\n",
 	       ts_resolution.tv_sec, ts_resolution.tv_nsec);
 
 	// 2. measurement start
 	clock_gettime(CLOCK_MONOTONIC, &ts_start);
 
 	/*
-    operation
-  //*/
+	  operation
+	//*/
 	int cnt = 0;
 	for (cnt = 0; cnt < 10; ++cnt) {
 		puts("foobar");
@@ -38,7 +38,7 @@ int main()
 	difference = (ts_end.tv_sec - ts_start.tv_sec) * 1000000000 +
 		     ts_end.tv_nsec - ts_start.tv_nsec;
 
-	printf("Elapsed time: %luns\n", difference);
+	fprintf(stderr, "Elapsed time: %luns\n", difference);
 
 	puts("READY.");
 	exit(EXIT_SUCCESS);
