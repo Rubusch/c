@@ -6,7 +6,7 @@
   Here is where greedy algorithms differ from dynamic programming. In
   dynamic programming, we make a choice at each step, but the choice
   usually depends on the solutions to subproblems. Consequently, we
-  typically solv dynamic-programming problems in a bottom-up manner,
+  typically solve dynamic-programming problems in a bottom-up manner,
   progressing from smaller subproblmes to larget
   subproblems. (Alternatively, we can solve them top down, but
   memoizing. Of course, even though the coe works top down, we still

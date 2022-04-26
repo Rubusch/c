@@ -26,11 +26,11 @@ $(TARGET_BASIC_TEST): $(OBJECTS)
 
 ## memory checks (address sanitizer)
 ##
-## to be started as follows (or similar):
-## $ export LD_PRELOAD=libasan.so.5 && ./basictest_and_memory.exe
-##
 ## compile then as follows
 ## $ unset LD_PRELOAD && make clean && make basictest_and_memory.exe
+##
+## to be started as follows (or similar):
+## $ export LD_PRELOAD=libasan.so.6 && ./basictest_and_memory.exe
 $(TARGET_BASIC_TEST_AND_MEMORY): $(OBJECTS)
 	$(CC) $(CFLAGS) -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(OBJECTS) $(LDFLAGS) -fsanitize=address -fno-omit-frame-pointer
 
