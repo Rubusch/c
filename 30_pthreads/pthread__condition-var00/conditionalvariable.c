@@ -93,7 +93,6 @@ int main()
 	 */
 
 	//  puts("MAIN: now suspending the thread...");
-// TODO    
 
 	// wait - this simulates some action in this thread..
 	sleep(1);

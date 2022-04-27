@@ -1,10 +1,5 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = conditionalvariable.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
 
 CC = gcc
@@ -15,7 +10,7 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -pthread
 
 all: $(TARGET)
 
