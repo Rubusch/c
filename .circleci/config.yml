@@ -399,6 +399,7 @@ jobs:
       - run: cd ./70_system/timer__realtime && make
       - run: cd ./70_system/timer__timed-read && make
       - run: cd ./70_system/timer__notification && make
+      - run: cd ./70_system/timer__timerfd && make && ./*.elf 1:1 10
       - run: cd ./70_system/time__process-cpu-times && make && ./*.elf
       - run: cd ./70_system/time__calender-time && make
       - run: cd ./70_system/time__timezones && make
