@@ -207,7 +207,7 @@ jobs:
       - run: cd ./30_pthreads/pthread__condition-var00 && make && ./*.elf
       - run: cd ./30_pthreads/pthread__condition-var01 && make && ./*.elf
       - run: cd ./30_pthreads/pthread__condition-var02 && make && ./*.elf
-      - run: cd ./30_pthreads/pthread__condition-timed && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__condition-timed && make
       - run: cd ./30_pthreads/pthread__mutex01 && make && ./*.exe
       - run: cd ./30_pthreads/pthread__restaurant && make && ./*.exe
       - run: cd ./30_pthreads/pthread__signalhandler01 && make && ./*.exe
