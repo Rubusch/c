@@ -375,6 +375,7 @@ jobs:
       - run: cd ./70_system/asm__09-syscall-generic && make
       - run: cd ./70_system/asm__10-string-section && make
       - run: cd ./70_system/fork__simple && make
+      - run: cd ./70_system/fork__sharing && make
       - run: cd ./70_system/fork__cli-command && make
       - run: cd ./70_system/fork && make
       - run: cd ./70_system/execl && make
