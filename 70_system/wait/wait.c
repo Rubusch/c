@@ -46,7 +46,7 @@ int main()
 	puts("fork()");
 	if (0 > (pid = fork())) {
 		perror("fork() failed");
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 
 	} else if (pid == 0) {
 		// child process
@@ -59,7 +59,7 @@ int main()
 		sleep(5);
 		printf("%sawakes\r\n", identifier);
 		printf("%sdone\r\n", identifier);
-		exit(EXIT_SUCCESS);
+		_exit(EXIT_SUCCESS);
 
 	} else {
 		// parent process
