@@ -112,7 +112,7 @@ int main()
 		sleep(5);
 		printf("%sawakes\r\n", identifier);
 		printf("%sdone\r\n", identifier);
-		exit(EXIT_SUCCESS);
+		_exit(EXIT_SUCCESS);
 
 	} else {
 		// parent code
@@ -120,26 +120,26 @@ int main()
 		printf("%swaiting on pid %i\r\n", identifier, pid);
 
 		/*
-      1. set wait condition
-    //*/
+		  1. set wait condition
+		*/
 		pid_t pid_wait = -1;
 
 		/*
-      2. child exit status
-    //*/
+		  2. child exit status
+		*/
 		int childExitStatus = 0;
 
 		/*
-      3. wait on child, pid_wait = -1, wait on all childs
-    //*/
+		  3. wait on child, pid_wait = -1, wait on all childs
+		*/
 		pid_wait = pid;
 		while (0 == waitpid(pid_wait, &childExitStatus, 0))
 			;
 		printf("%swaiting done\r\n", identifier);
 
 		/*
-      in case: 4. evaluation of term conditions of the child
-    //*/
+		  in case: 4. evaluation of term conditions of the child
+		*/
 		if (WIFEXITED(childExitStatus)) {
 			printf("%schild exited with exit(): %i\r\n", identifier,
 			       WEXITSTATUS(childExitStatus));
