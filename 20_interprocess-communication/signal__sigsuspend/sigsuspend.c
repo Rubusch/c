@@ -84,7 +84,6 @@
 #include <time.h>
 #include <errno.h>
 
-//#include "tlpi/get_num.h"
 static volatile sig_atomic_t got_sigquit = 0;
 
 void
