@@ -384,6 +384,7 @@ jobs:
       - run: cd ./70_system/execv && make
       - run: cd ./70_system/execve && make
       - run: cd ./70_system/execvp && make
+      - run: cd ./70_system/exit__exit-handler && make
       - run: cd ./70_system/gid-and-pid && make
       - run: cd ./70_system/kill && make
       - run: cd ./70_system/killpg && make
