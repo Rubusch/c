@@ -72,7 +72,7 @@
   ECHILD         child does not exist or pid is not a child
   EINVAL         invalid "option"
   EINTR          func was interrupted by a signal
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -100,7 +100,7 @@ int main()
 	// fork()
 	if (0 > (pid = fork())) {
 		perror("fork failed");
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 
 	} else if (pid == 0) {
 		// child code
