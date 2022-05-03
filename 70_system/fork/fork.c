@@ -64,19 +64,19 @@ int main()
 	if (NULL ==
 	    (identifier = calloc(IDENTIFIER_SIZE, sizeof(*identifier)))) {
 		perror("malloc() failed");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	memset(identifier, '\0', IDENTIFIER_SIZE);
 
 	/*
-    START HERE
-  //*/
+	  START HERE
+	*/
 
 	// try to generate child
 	if (0 > (pid = fork())) {
 		// fork failed
 		perror("fork() failed");
-		exit(1);
+		exit(EXIT_FAILURE);
 
 	} else if (pid == 0) {
 		// code only executed by CHILD process
@@ -95,5 +95,5 @@ int main()
 	       identifier, varGlobal, varStack);
 
 	free(identifier);
-	exit(0);
+	exit(EXIT_SUCCESS);
 }

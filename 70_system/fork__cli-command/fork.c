@@ -121,6 +121,7 @@ void freeAndExit(char **buf_list, unsigned int size, int error)
 			free(buf_list[cnt]);
 		}
 	}
+	// NOTE: child should not exit(), but _exit() to be signal safe
 	exit(error);
 }
 
