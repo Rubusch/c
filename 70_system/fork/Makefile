@@ -4,7 +4,7 @@
 
 
 SOURCE = fork.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o
@@ -18,7 +18,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
