@@ -15,7 +15,7 @@ RM = rm -f
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
-$(TARGEt): $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 all: $(TARGET)
