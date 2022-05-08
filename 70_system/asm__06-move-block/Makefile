@@ -1,13 +1,6 @@
-## Makefile
-##
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3 2013
-##
-## use -O, -O1, -O2 for optimization
 SOURCE = asm.c
 OBJECTS = $(SOURCE:%.c=%.o)
-TARGET = $(SOURCE:%.c=%.exe)
+TARGET = $(SOURCE:%.c=%.elf)
 CC = gcc
 CFLAGS += -g -Wall -std=c99 -pedantic
 RM = rm -f
@@ -19,7 +12,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 
 clean:

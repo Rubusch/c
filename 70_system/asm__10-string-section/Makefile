@@ -1,14 +1,6 @@
-## Makefile
-##
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3 2013
-##
-## use -O, -O1, -O2 for optimization
-
 SOURCE = rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
-TARGET = $(SOURCE:%.c=%.exe)
+TARGET = $(SOURCE:%.c=%.elf)
 CC = gcc
 ## NOTE: rabbit.o: relocation R_X86_64_32S against `.text' can not be used when making a PIE object; recompile with -fPIC - check ".forward:" with dot, check "\\0" at end of string
 ## NOTE: -pedantic: a member of a structure or union cannot have a variably modified type (used to convert long into char array)

@@ -1,12 +1,6 @@
-## Makefile
-##
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3 2013
-
 SOURCE = rabbit.c
 OBJECTS = $(SOURCE:%.c=%.o)
-TARGET = $(SOURCE:%.c=%.exe)
+TARGET = $(SOURCE:%.c=%.elf)
 CC = gcc
 CFLAGS += -g -Wall -std=gnu99 -pedantic
 RM = rm -f
@@ -17,7 +11,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $< -lm
+	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
