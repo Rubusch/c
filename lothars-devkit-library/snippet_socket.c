@@ -305,7 +305,7 @@ char **my_addrs(int *addrtype)
 		return NULL;
 	}
 
-	if (NULL == (hptr = gethostbyname(myname.nodename))) {
+	if (NULL == (hptr = gethostbyname(myname.nodename))) { // FIXME: replace by getaddrinfo()
 		return NULL;
 	}
 

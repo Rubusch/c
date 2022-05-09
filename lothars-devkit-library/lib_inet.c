@@ -66,53 +66,6 @@ void lothars__inet_pton(int family, const char *strptr, void *addrptr)
 }
 
 /*
-  DEPRECATED: use inet_pton()
-
-  inet_aton() converts the Internet host address cp from the IPv4
-  numbers-and-dots notation into binary form (in network byte order)
-  and stores it in the structure that inp points to. inet_aton()
-  returns nonzero if the address is valid, zero if not. The address
-  supplied in cp can have one of the following forms:
-
-  a.b.c.d, a.b.c, a.b., a
-
-  An example of the use of inet_aton() and inet_ntoa() is shown
-  below. Here are some example runs:
-
-    $ ./a.out 226.000.000.037      # Last byte is in octal
-    226.0.0.31
-    $ ./a.out 0x7f.1               # First byte is in hex
-    127.0.0.1
-
-  #if defined(_BSD_SOURCE) || _SVID_SOURCE
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-
-  @cp: The Internet host address in numbers-and-dots notation.
-  @inp: A pointer to a structure which contains the binary Internet
-  address.
-
-  Return is phony for compatibility.
-*/
-// TODO deprecated
-int lothars__inet_aton(const char *cp, struct in_addr *inp)
-{
-	int res;
-	if (0 == (res = inet_aton(cp, inp))) {
-		err_sys("%s() invalid address", __func__);
-	}
-	/*
-	  NB: in case of failure there's no close(fd_sock)
-	  when the program exits, resources are going to be freed by OS, anyway
-
-	  take care if this might be not the (regular) case e.g. due
-	  to some socket options
-	*/
-	return res;
-}
-
-/*
   sock_ntop_host() - wrapper of inet_ntop() to return hostname.
 
   inet_ntop() extends the inet_ntoa(3) function to support multiple

@@ -21,11 +21,11 @@ TEST__BEGIN(lothars__inet_pton)
 }
 TEST__END
 
-TEST__BEGIN(lothars__inet_aton)
-{
-	// TODO
-}
-TEST__END
+//TEST__BEGIN(lothars__inet_aton) // DEPRECATED
+//{
+//	// TODO
+//}
+//TEST__END
 
 TEST__BEGIN(lothars__sock_ntop)
 {
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 {
 	test__lothars__inet_ntop();
 	test__lothars__inet_pton();
-	test__lothars__inet_aton();
+//	test__lothars__inet_aton();
 	test__lothars__sock_ntop();
 	test__lothars__sock_ntop_host();
 

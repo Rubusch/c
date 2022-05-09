@@ -295,7 +295,7 @@ int main(int argc, char *argv[])
 	fprintf(stdout, "connect()");
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET; // AF_INET for addresses
-	serveraddr.sin_addr.s_addr = inet_addr(serverip);
+	serveraddr.sin_addr.s_addr = inet_addr(serverip); // FIXME: replace by inet_ntop()
 	serveraddr.sin_port = htons(atoi(port));
 	lothars__connect(fd_sock, (struct sockaddr *)&serveraddr,
 			 sizeof(serveraddr));

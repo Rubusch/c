@@ -409,9 +409,9 @@ int main(int argc, char *argv[])
 	ip->iph_ttl = 64;
 	ip->iph_protocol = 6; // TCP
 	ip->iph_chksum = 0; // done by kernel
-	ip->iph_sourceip = inet_addr(
+	ip->iph_sourceip = inet_addr( // FIXME: replace by inet_ntop()
 		source_ip); // source ip can be set and also spoofed here!!!
-	ip->iph_destip = inet_addr(
+	ip->iph_destip = inet_addr( // FIXME: replace by inet_ntop()
 		destination_ip); // destination ip can be set and also spoofed here!!!
 
 	tcp->tcph_srcport =

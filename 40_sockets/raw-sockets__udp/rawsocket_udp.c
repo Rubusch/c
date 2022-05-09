@@ -386,9 +386,9 @@ int main(int argc, char *argv[])
 	ip->iph_ident = htons(54321);
 	ip->iph_ttl = 64; // hops
 	ip->iph_protocol = 17; // udp type
-	ip->iph_sourceip = inet_addr(
+	ip->iph_sourceip = inet_addr( // FIXME: replace by inet_ntop()
 		source_ip); // source ip, could be used now to spoof address here!!!
-	ip->iph_destip = inet_addr(destination_ip);
+	ip->iph_destip = inet_addr(destination_ip); // FIXME: replace by inet_ntop()
 
 	udp->udph_srcport = htons(atoi(source_port)); // udp header
 	udp->udph_destport = htons(atoi(destination_port));

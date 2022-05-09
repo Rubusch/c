@@ -258,7 +258,7 @@ int main(int argc, char **argv)
 		if (0 == connect(sd, (struct sockaddr *)&addr_target,
 				 sizeof(addr_target))) {
 			fprintf(stdout, "\t%lu ", port);
-			if (NULL != (servServer = getservbyport(
+			if (NULL != (servServer = getservbyport( // FIXME: replace by getnameinfo()
 					     addr_target.sin_port, "tcp"))) {
 				fprintf(stdout, "(%s)", servServer->s_name);
 			} else {

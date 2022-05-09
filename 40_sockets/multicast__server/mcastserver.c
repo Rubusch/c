@@ -349,7 +349,7 @@ int main(int argc, char *argv[])
 	// address and port
 	memset((char *)&saddr_group, 0, sizeof(saddr_group));
 	saddr_group.sin_family = AF_INET;
-	saddr_group.sin_addr.s_addr = inet_addr(groupip); // e.g. "226.1.1.1"
+	saddr_group.sin_addr.s_addr = inet_addr(groupip); // e.g. "226.1.1.1" // FIXME: replace by inet_ntop()
 	saddr_group.sin_port = htons(atoi(port)); // e.g. 4321
 
 	/* disable loopback so you do not receive your own datagrams

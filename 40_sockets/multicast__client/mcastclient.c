@@ -311,9 +311,9 @@ int main(int argc, char *argv[])
 	// option must be called for each local interface over which
 	// the multicast datagrams are to be received
 	mreq_group.imr_multiaddr.s_addr =
-		inet_addr(groupip); // e.g. "226.1.1.1"
+		inet_addr(groupip); // e.g. "226.1.1.1"   // FIXME replace by inet_ntop()
 	mreq_group.imr_interface.s_addr =
-		inet_addr(senderip); // e.g. "203.106.93.94"
+		inet_addr(senderip); // e.g. "203.106.93.94" // FIXME replace by inet_notp()
 	lothars__setsockopt(fd_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,
 			    (char *)&mreq_group, sizeof(mreq_group));
 	fprintf(stdout, "Adding multicast group...OK.\n");

@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 	}
 
 	i = (struct sockaddr_in *)&ifa.ifr_addr;
-	puts(inet_ntoa(i->sin_addr));
+	puts(inet_ntoa(i->sin_addr)); // FIXME: replace by inet_ntop()
 
 	exit(EXIT_SUCCESS);
 }

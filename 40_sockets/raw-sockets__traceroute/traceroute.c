@@ -301,10 +301,6 @@ void *lothars__malloc(size_t size)
 /*
   sock_ntop_host() - wrapper of inet_ntop() to return hostname.
 
-  inet_ntop() extends the inet_ntoa(3) function to support multiple
-  address families, inet_ntoa(3) is now considered to be deprecated in
-  favor of inet_ntop().
-
   @sa: The server address object.
   @salen: The length of the server address object.
 
