@@ -847,8 +847,8 @@ int setsockopt(int s, int level, int optname, const void *optval,
 int inet_aton(const char *cp, struct in_addr *pin);
 /*
   const char* cp                       // internet host address to binary data
-and stores it in struct in_addr* pin                  // ...this address
-structure
+  and stores it in struct in_addr* pin                  // ...this address
+  structure
 //*/
 
 #include <arpa/inet.h>
@@ -856,10 +856,13 @@ structure
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-in_addr_t inet_addr(const char *cp);
+in_addr_t inet_addr(const char *cp); // DEPRECATED
 /*
-  const char* cp                       // string to internet standard dot
-notation
+  args:
+  const char* cp                       // string to internet standard dot notation
+
+  NB: inet_addr() is deprecated!!
+  -> use inet_pton() instead!!!
 //*/
 
 #include <arpa/inet.h>
@@ -867,9 +870,14 @@ notation
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-char *inet_ntoa(struct in_addr in);
+char *inet_ntoa(struct in_addr in); // DEPRECATED
 /*
+  args:
   struct in_addr in                    // internet host address to string
+
+  NB: inet_ntoa() is deprecated!!
+  -> use inet_ntop() instead!!! also getnameinfo() would be an alternative
+
 //*/
 
 // EXAMPLES
@@ -952,5 +960,9 @@ fcntl(s, F_SETFL, O_NONBLOCK);
 /*
   Errors:
 
-  use errno()  and threadsafe???
+  use of errno() and threadsafety, in case use _r co-named functions for
+  asynch-signal-safe and/or thread-safe implementations
+
+  a function is not threadsafe if it returns pointer to memory, uses
+  globals or statics
 //*/
