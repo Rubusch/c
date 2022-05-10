@@ -338,8 +338,8 @@ jobs:
       - run: cd ./60_algorithm/090_greedy_huffman-codes && make basictest.exe && ./*.exe
 
 ## 70: system
-      - run: cd ./70_system/jmp__setjmp01 && make && ./*.exe
-      - run: cd ./70_system/jmp__setjmp02 && make && ./*.exe
+      - run: cd ./70_system/jmp__setjmp01 && make && ./*.elf
+      - run: cd ./70_system/jmp__setjmp02 && make && ./*.elf
       - run: cd ./70_system/jmp__setjmp03 && make && ./*.elf
       - run: cd ./70_system/pid_credentials && make && ./*elf
       - run: cd ./70_system/ptrace__010-fork-show-all-instructions && make
