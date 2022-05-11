@@ -145,6 +145,7 @@ print_wait_status(const char* msg, int status)
 			(unsigned int) status);
 	}
 }
+/* --- */
 
 int
 main(int argc, char *argv[])
