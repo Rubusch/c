@@ -427,7 +427,7 @@ void FD_ZERO(fd_set *set);    // This macro clears (removes all file
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	   struct timeval *timeout);
 
-// a more elaborated pselect() exists
+  // select() with additional signal handling
 #define _POSIX_C_SOURCE 200112L
 #include <sys/select.h>
 int pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
@@ -480,6 +480,10 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 
   - poll(): see select()
 
+  - pselect(): select() additionally signal handling, to avoid the
+              situation of race conditions between signal handling and
+              FD handling
+
   - signal-driven IO: better performance for large sets of FDs; uses
               SIGIO and fcntl() approach
 
@@ -487,7 +491,7 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
              (i.e. not portable among Unix, since not POSIX
              standardized)
 
-  - pselect(): based on epoll syscall => PREFERRED approach
+
 
   - asynch IO: needs kernel support, (?)
 */
