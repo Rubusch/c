@@ -1,8 +1,3 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = system.c
 TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
@@ -20,6 +15,6 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ 
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 
