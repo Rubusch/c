@@ -7,7 +7,16 @@
     ls: write error: Bad file descriptor
 
 
-  close-on-exit
+  close-on-exit FD_CLOEXEC
+
+  Sometimes, it may be desirable to ensure that certain file
+  descriptors are closed before an exec(). In particular, if we exec()
+  an unknown program (i.e., one that we did not write) from a
+  privileged process, or a program that doesn't need descriptors for
+  files we have already opened, then it is secure programming practice
+  to ensure that all unnecessary file descriptors are closed before
+  the new program is loaded.
+
   it is secure program practice to ensure that all unnecessary file
   descriptors are closed before the new program (exec) is loaded
 
@@ -20,7 +29,6 @@
     file descriptors open. If they are already closed, it may be
     difficult, or impossible to reopen them so that they refer to the
     same files
-
 
 
   based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 576
