@@ -78,8 +78,8 @@
   4. write()    | read()       - syscalls
      send()     | recv()       - elaborated
      sendto()   | recvfrom()   - connection oriented
-     writev()   | readv()      - TODO    
-     sendmsg()  | recvmsg()    - TODO    
+     writev()   | readv()      - scatter-gather I/O on connected datagram socket
+     sendmsg()  | recvmsg()    - scatter-gather I/O on socket
 
   5. close()
 
@@ -588,8 +588,17 @@ ssize_t send(int sockfd, const void *data, size_t data_len, int flags);
   size_t data_len             // length of data in bytes
   int flags                   // transmission control
 
-  sends formated to the other socket that already is connected
+  Sends formated to the other socket that already is connected
   if flags is 0, behaves like read() - only when connected!
+
+  Receives formated from the other socket that already is connected
+  if flags is 0, behaves like write() - only when connected!
+
+  The recv() and send() system calls perform I/O on connected
+  sockets. They provide socket-specific functionality that is not
+  available with the traditional read() and write() system calls.
+
+  The linux Programming Interface, Kerrisk, 2010, p.1259
 */
 
 // Example: send()
@@ -620,11 +629,20 @@ dsize_t recv(int sockfd, void *data, size_t data_len, int flags);
   size_t data_len             // length of data in bytes
   int flags                   // transmission control
 
+  The return value and the first three arguments to recv() and send()
+  are the same as for read() and write().
+
   errors:
     some - man 2 recv
 
-  receives formated from the other socket that already is connected
+  Receives formated from the other socket that already is connected
   if flags is 0, behaves like write() - only when connected!
+
+  The recv() and send() system calls perform I/O on connected
+  sockets. They provide socket-specific functionality that is not
+  available with the traditional read() and write() system calls.
+
+  The linux Programming Interface, Kerrisk, 2010, p.1259
 */
 
 // Example: recv()
@@ -648,45 +666,6 @@ int get_banner(int s)
 
 
 /*
-  sendto()
-*/
-#include <sys/types.h>
-#include <sys/socket.h>
-ssize_t sendto(int sockfd, const void *data, size_t data_len, int flags,
-	       struct sockaddr *destaddr, int destLen);
-/*
-  int sockfd                  // socket descriptor
-  const void* data            // data to send
-  size_t data_len             // length of data in bytes
-  int flags                   // transmission controll
-  struct sockaddr* destaddr   // pointer to sockaddr
-  int destLen                 // length of the destination
-
-  errors:
-    see "man 2 send"
-
-  sends to a socket FD that needs to be specified in the function
-  sends to the net - allways possible
-*/
-
-// Example: sendto()
-struct sockaddr_in addr;
-int s;
-char text[] = "Hello World!\r\n";
-s = ...; // socket() e.g. using SOCK_DGRAM
-inet_pton(AF_INET, "192.168.1.1", &addr.sin_addr.sin_addr);
-addr.sin_family = AF_INET;
-addr.sin_port = htons(4711);
-if (sendto(s, text, strlen(text), 0, (struct sockaddr *)&addr, sizeof(addr)) ==
-    -1) {
-	perror("sendto() failed");
-	return 1;
-}
-// */
-
-
-
-/*
   recvfrom()
 */
 #include <sys/types.h>
@@ -701,11 +680,16 @@ size_t recvfrom(int sockfd, void *data, size_t data_len, unsigned int flags,
   struct sockaddr* fromaddr   // pointer to sockaddr
   int addrlen                 // length of the destination
 
+  Returns number of bytes received, 0 on EOF, or -1 on error
+
   errors:
     some - man 2 recvfrom
 
-  receives from another socket that has to be specified in the
-  function receives from the net - allways possible
+  The recvform() and sendto(0 system calls receive and send datagrams
+  on a datagram socket. The socket does not need to be connected
+  (datagram = connectionless)
+
+  The linux Programming Interface, Kerrisk, 2010, p.1161
 */
 
 // Example: recvfrom()
@@ -729,6 +713,51 @@ int get_banner_from_localhost(int s)
 // */
 
 
+
+/*
+  sendto()
+*/
+#include <sys/types.h>
+#include <sys/socket.h>
+ssize_t sendto(int sockfd, const void *data, size_t data_len, int flags,
+	       struct sockaddr *destaddr, int destLen);
+/*
+  int sockfd                  // socket descriptor
+  const void* data            // data to send
+  size_t data_len             // length of data in bytes
+  int flags                   // transmission controll
+  struct sockaddr* destaddr   // pointer to sockaddr
+  int destLen                 // length of the destination
+
+  Returns number of bytes sent, or -1 on error
+
+  errors:
+    see "man 2 send"
+
+  The recvform() and sendto(0 system calls receive and send datagrams
+  on a datagram socket. The socket does not need to be connected
+  (datagram = connectionless)
+
+  The linux Programming Interface, Kerrisk, 2010, p.1161
+*/
+
+// Example: sendto()
+struct sockaddr_in addr;
+int s;
+char text[] = "Hello World!\r\n";
+s = ...; // socket() e.g. using SOCK_DGRAM
+inet_pton(AF_INET, "192.168.1.1", &addr.sin_addr.sin_addr);
+addr.sin_family = AF_INET;
+addr.sin_port = htons(4711);
+if (sendto(s, text, strlen(text), 0, (struct sockaddr *)&addr, sizeof(addr)) ==
+    -1) {
+	perror("sendto() failed");
+	return 1;
+}
+// */
+
+
+
 /*
   readev()
 */
@@ -740,7 +769,11 @@ int readv(int sockfd, const struct iovec *vector, size_t count);
   sonst struct iovec* vector  // vector of data to send
   size_t count                // size of that vector
 
-           
+  Instead of accepting a single buffer of data to be read or written,
+  these functions transfer multiple buffers of data in a single system
+  call.
+
+  The linux Programming Interface, Kerrisk, 2010, p.99
 */
 
 
@@ -756,7 +789,65 @@ int writev(int sockfd, const struct iovec *vector, size_t count);
   sonst struct iovec* vector  // vector of data to send
   size_t count                // size of that vector
 
-            
+  Instead of accepting a single buffer of data to be read or written,
+  these functions transfer multiple buffers of data in a single system
+  call.
+
+  The linux Programming Interface, Kerrisk, 2010, p.99
+*/
+
+
+
+/*
+  pread()
+*/
+#include <unistd.h>
+ssize_t pread(int fd, void *buf, size_t count, off_t offset);
+/*
+  int fd                      // TODO   
+  void *buf                   // 
+  size_t count                // 
+  off_t offset                // 
+
+  Returns a number of bytes read, 0 on EOF or -1 on error
+
+  The pread() and pwrite() system calls operate just like read() and
+  write(), except that the file I/O is performed at the location
+  specified by offset, rather than at the current file offset. The
+  file offset is left unchanged by these calls.
+
+  Using pread() and pwrite(), multiple threads can simultaneously
+  perform I/O on the same file descriptor (FD) without being affected
+  by changes made to the file offset by other threads.
+
+  The linux Programming Interface, Kerrisk, 2010, p.98
+*/
+
+
+
+/*
+  pread()
+*/
+#include <unistd.h>
+ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
+/*
+  int fd                      // TODO   
+  void *buf                   // 
+  size_t count                // 
+  off_t offset                // 
+
+  Returns a number of bytes written, or -1 on error
+
+  The pread() and pwrite() system calls operate just like read() and
+  write(), except that the file I/O is performed at the location
+  specified by offset, rather than at the current file offset. The
+  file offset is left unchanged by these calls.
+
+  Using pread() and pwrite(), multiple threads can simultaneously
+  perform I/O on the same file descriptor (FD) without being affected
+  by changes made to the file offset by other threads.
+
+  The linux Programming Interface, Kerrisk, 2010, p.98
 */
 
 
@@ -772,7 +863,24 @@ int sendmsg(int sockfd, const struct msghdr *msg, int flags);
   const struct msghdr* msg    // message header
   int flags                   // transmission control
 
-              
+  The sendmsg() and recvmsg() system calls are the most general
+  purpose of the socket I/O system calls. The sendmsg() system call
+  can do everything that is done by write(), send() and sendto(); the
+  recvmsg() system call can do everything that is done by read recv()
+  and recvfrom().
+
+  In addition:
+  - perform scatter-gather I/O as with readv() and
+    writev()
+  - transmit messages containing domain-specific anciallary
+    data (also known as control information).
+
+  NB: there are more recent calls for sending / receiveing multiple
+  datagrams:
+  - sendmmsg()
+  - recvmmsg()
+
+  The linux Programming Interface, Kerrisk, 2010, p.1284
 */
 
 
@@ -788,7 +896,44 @@ int recvmsg(int sockfd, struct msghdr *msg, int flags);
   const struct msghdr* msg    // message header
   int flags                   // transmission control
 
-                
+  The sendmsg() and recvmsg() system calls are the most general
+  purpose of the socket I/O system calls. The sendmsg() system call
+  can do everything that is done by write(), send() and sendto(); the
+  recvmsg() system call can do everything that is done by read recv()
+  and recvfrom().
+
+  In addition:
+  - perform scatter-gather I/O as with readv() and
+    writev()
+  - transmit messages containing domain-specific anciallary
+    data (also known as control information).
+
+  The linux Programming Interface, Kerrisk, 2010, p.1284
+*/
+
+
+/*
+  sendfile()
+*/
+#include <sys/sendfile.h>
+ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
+/*
+  int out_fd                  // TODO   
+  int in_fd                   //  
+  off_t *offset               //  
+  size_t count                //  
+
+  Returns number of bytes transferred, or -1 on error
+
+  The sendfile() system call transfers bytes from the file referred to
+  by the descriptor in_fd to the file referred to by the descriptor
+  out_fd. The out_fd descriptor must refer to a socket. The in_fd
+  argument must refer to a file to which mmap() can be applied; in
+  practice this usually means a regular file. This somewhat restricts
+  the use of sendfile(). We can use it to pass data from a file to a
+  socket, but not vice versa.
+
+  The linux Programming Interface, Kerrisk, 2010, p.1261
 */
 
 
