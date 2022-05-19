@@ -109,6 +109,24 @@
 // STRUCTS
 
 /*
+  struct addrinfo
+*/
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+struct addrinfo {
+	int              ai_flags;
+	int              ai_family;
+	int              ai_socktype;
+	int              ai_protocol;
+	socklen_t        ai_addrlen;
+	struct sockaddr *ai_addr;
+	char            *ai_canonname;
+	struct addrinfo *ai_next;
+};
+
+
+/*
   struct sockaddr
 */
 #include <sys/types.h>
@@ -207,6 +225,7 @@ struct hostent {
 #include <sys/socket.h>
 int socket(int domain, int type, int protocol);
 /*
+  Parameters:
   int domain                  // Address family:
       AF_UNIX        UNIX Domain Sockets; local interprocess communication
       AF_INET        Internet IP-Protocol version 4 (IPv4)
@@ -245,11 +264,14 @@ if (s == -1) {
 #include <sys/socket.h>
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrLen);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   struct sockaddr *addr       // pointer to the target structur
                               //   to connect the socket
   socklen_t addrLen           // length of the address
                               //   in byte (int?)
+
+  Returns 0 on success, or -1 on error
 
   errors:
     see man pages - lots...
@@ -276,9 +298,12 @@ if (connect(s, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
 #include <sys/socket.h>
 int bind(int sockfd, const struct sockaddr *my_addr, socklen_t addrLen);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   struct sockaddr* my_addr    // address to connect to
   socklen_t addrLen           // length of the address
+
+  Returns 0 on success, or -1 on error
 
   errors:
     EACCES                    // address is protected
@@ -310,9 +335,12 @@ if (-1 == (bind(hSocket, (struct sockaddr *)&addr, sizeof(addr)))) {
 #include <sys/socket.h>
 int listen(int sockfd, int backlog);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   int backlog                 // maximum number of possible
                               //   tries to connect, 5 is common
+
+  Returns 0 on success, or -1 on error
 
   errors:
     EADDRINUSE                // another socket already listening
@@ -338,11 +366,14 @@ if (listen(s, 3) == -1) {
 #include <sys/socket.h>
 int accept(int socket, struct sockaddr *peer, socklen_t *addrLen);
 /*
+  Parameters:
   int socket                  // socket descriptor
   struct sockaddr* peer       // pointer on the already allocated
                               //   memory to store the other address
   socklen_t* addrLen          // length of the allocated memory
 
+
+  Returns a file descriptor on success, or -1 on error
 
   errors:
     EAGAIN / EWOULDBLOCK      // socket is marked non-blocking and no
@@ -383,10 +414,11 @@ int accept(int socket, struct sockaddr *peer, socklen_t *addrLen);
 */
 
 // Example: accept()
+int fd;
 struct sockaddr_in cli;
 socklen_t cli_size;
 cli_size = sizeof(cli);
-if ((c = accept(s, (struct sockaddr *)&cli, &cli_size)) == -1) {
+if ((fd = accept(s, (struct sockaddr *)&cli, &cli_size)) == -1) {
   /* in case of no automatically restarting systemcalls
      if(errno == EINTR) ...
   */
@@ -434,10 +466,7 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	    const struct timespec *timeout, const sigset_t *sigmask);
 
 /*
-  IO multiplexing, wait/block on FD to become "ready" or timeout, can
-  handle up to a limited amount of FDs;
-  timing at non-blocking sockets: basically to avoid blocking
-
+  Parameters:
   int nfds                    // highest numbered file descriptor
                               //   plus one
   fd_set* readfds             // read file descriptor
@@ -451,6 +480,11 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
     EINVAL                    // file descriptor negativ or timeout invalid
     ENOMEM                    // unable to allocate memory
 
+
+  IO multiplexing, wait/block on FD to become "ready" or timeout, can
+  handle up to a limited amount of FDs;
+
+  timing at non-blocking sockets: basically to avoid blocking
 
   select() - pselect()
 
@@ -541,7 +575,20 @@ tv.tv_usec = 35000; // 35000 microsecs - 35 millisecs
 select(0, NULL, NULL, NULL, &tv);
 // */
 
+/*
+  poll
+*/
+// TODO           
 
+/*
+  epoll
+*/
+// TODO           
+
+
+
+                     
+// read / write
 
 /*
   read()
@@ -550,11 +597,19 @@ select(0, NULL, NULL, NULL, &tv);
 #include <sys/socket.h>
 size_t read(int sockfd, void *data, size_t data_len);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   const void* data            // data to send
   size_t data_len             // length of data in bytes
 
-  sends to the other socket without flags, only when connected!
+  Returns...
+  - If no process has the pipe open for writing, read() shall return 0
+    to indicate end-of-file.
+  - If O_NONBLOCK is set, read() shall return -1 and set errno to
+    [EAGAIN].
+
+  Syscall - Attempts to read nbyte bytes from the file associated with
+  the open file descriptor, only when connected!
 */
 
 
@@ -566,56 +621,27 @@ size_t read(int sockfd, void *data, size_t data_len);
 #include <sys/socket.h>
 size_t write(int sockfd, void *data, size_t data_len);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   const void* data            // data to send
   size_t data_len             // length of data in bytes
 
-  receives from the other socket
-  without flags, only when connected!
+  Returns...
+  Upon successful completion, these functions shall return the number
+  of bytes actually written to the file associated with.
+  - If write() is interrupted by a signal before it writes any data,
+    it shall return -1 with errno set to [EINTR].
+  - If write() is interrupted by a signal after it successfully writes
+    some data, it shall return the number of bytes written.
+
+  Syscall - Attempts to write nbyte bytes from the buffer pointed to
+  by buf to the file associated with the open file descriptor, only
+  when connected!
 */
 
 
 
-/*
-  send()
-*/
-#include <sys/types.h>
-#include <sys/socket.h>
-ssize_t send(int sockfd, const void *data, size_t data_len, int flags);
-/*
-  int sockfd                  // socket descriptor
-  const void* data            // data to send
-  size_t data_len             // length of data in bytes
-  int flags                   // transmission control
-
-  Sends formated to the other socket that already is connected
-  if flags is 0, behaves like read() - only when connected!
-
-  Receives formated from the other socket that already is connected
-  if flags is 0, behaves like write() - only when connected!
-
-  The recv() and send() system calls perform I/O on connected
-  sockets. They provide socket-specific functionality that is not
-  available with the traditional read() and write() system calls.
-
-  The linux Programming Interface, Kerrisk, 2010, p.1259
-*/
-
-// Example: send()
-int send_banner(int s)
-{
-	int bytes;
-	char banner[] = "Welcome to the Foobar server!\r\n";
-	bytes = send(s, banner, strlen(banner), 0);
-	if (bytes == -1) {
-		perror("send() failed");
-		return 1;
-	}
-	return 0;
-}
-// */
-
-
+// recv() / send()
 
 /*
   recv()
@@ -624,6 +650,7 @@ int send_banner(int s)
 #include <sys/socket.h>
 dsize_t recv(int sockfd, void *data, size_t data_len, int flags);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   const void* data            // data to send
   size_t data_len             // length of data in bytes
@@ -666,6 +693,50 @@ int get_banner(int s)
 
 
 /*
+  send()
+*/
+#include <sys/types.h>
+#include <sys/socket.h>
+ssize_t send(int sockfd, const void *data, size_t data_len, int flags);
+/*
+  Parameters:
+  int sockfd                  // socket descriptor
+  const void* data            // data to send
+  size_t data_len             // length of data in bytes
+  int flags                   // transmission control
+
+  Sends formated to the other socket that already is connected
+  if flags is 0, behaves like read() - only when connected!
+
+  Receives formated from the other socket that already is connected
+  if flags is 0, behaves like write() - only when connected!
+
+  The recv() and send() system calls perform I/O on connected
+  sockets. They provide socket-specific functionality that is not
+  available with the traditional read() and write() system calls.
+
+  The linux Programming Interface, Kerrisk, 2010, p.1259
+*/
+
+// Example: send()
+int send_banner(int s)
+{
+	int bytes;
+	char banner[] = "Welcome to the Foobar server!\r\n";
+	bytes = send(s, banner, strlen(banner), 0);
+	if (bytes == -1) {
+		perror("send() failed");
+		return 1;
+	}
+	return 0;
+}
+// */
+
+
+
+// recvfrom() / sendto()
+
+/*
   recvfrom()
 */
 #include <sys/types.h>
@@ -673,6 +744,7 @@ int get_banner(int s)
 size_t recvfrom(int sockfd, void *data, size_t data_len, unsigned int flags,
 		struct sockaddr *fromaddr, int addrlen);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   void* data                  // data to send
   size_t data_len             // length of data in bytes
@@ -722,6 +794,7 @@ int get_banner_from_localhost(int s)
 ssize_t sendto(int sockfd, const void *data, size_t data_len, int flags,
 	       struct sockaddr *destaddr, int destLen);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   const void* data            // data to send
   size_t data_len             // length of data in bytes
@@ -758,6 +831,8 @@ if (sendto(s, text, strlen(text), 0, (struct sockaddr *)&addr, sizeof(addr)) ==
 
 
 
+// readev() / writev()
+
 /*
   readev()
 */
@@ -765,10 +840,12 @@ if (sendto(s, text, strlen(text), 0, (struct sockaddr *)&addr, sizeof(addr)) ==
 #include <sys/socket.h>
 int readv(int sockfd, const struct iovec *vector, size_t count);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   sonst struct iovec* vector  // vector of data to send
   size_t count                // size of that vector
 
+  scatter-gather-read...
   Instead of accepting a single buffer of data to be read or written,
   these functions transfer multiple buffers of data in a single system
   call.
@@ -785,6 +862,7 @@ int readv(int sockfd, const struct iovec *vector, size_t count);
 #include <sys/socket.h>
 int writev(int sockfd, const struct iovec *vector, size_t count);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   sonst struct iovec* vector  // vector of data to send
   size_t count                // size of that vector
@@ -798,18 +876,26 @@ int writev(int sockfd, const struct iovec *vector, size_t count);
 
 
 
+// pread() / pwrite()
+
 /*
   pread()
 */
 #include <unistd.h>
 ssize_t pread(int fd, void *buf, size_t count, off_t offset);
 /*
-  int fd                      // TODO   
-  void *buf                   // 
-  size_t count                // 
-  off_t offset                // 
+  Parameters:
+  int fd                      // file descriptor
+  void *buf                   // read into buf
+  size_t count                // number of bytes to read
+  off_t offset                // offset, from where to read
 
   Returns a number of bytes read, 0 on EOF or -1 on error
+
+
+  pread() reads up to count bytes from file descriptor fd at offset
+  offset (from the start of the file) into the buffer starting at
+  buf. The file offset is not changed.
 
   The pread() and pwrite() system calls operate just like read() and
   write(), except that the file I/O is performed at the location
@@ -826,17 +912,23 @@ ssize_t pread(int fd, void *buf, size_t count, off_t offset);
 
 
 /*
-  pread()
+  pwrite()
 */
 #include <unistd.h>
 ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
 /*
-  int fd                      // TODO   
-  void *buf                   // 
-  size_t count                // 
-  off_t offset                // 
+  Parameters:
+  int fd                      // file descriptor
+  void *buf                   // from where to write
+  size_t count                // number of bytes to write
+  off_t offset                // offset in file, to start writing
 
   Returns a number of bytes written, or -1 on error
+
+
+  pwrite() writes up to count bytes from the buffer starting at buf to
+  the file descriptor fd at offset offset. The file offset is not
+  changed.
 
   The pread() and pwrite() system calls operate just like read() and
   write(), except that the file I/O is performed at the location
@@ -848,6 +940,47 @@ ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
   by changes made to the file offset by other threads.
 
   The linux Programming Interface, Kerrisk, 2010, p.98
+*/
+
+
+
+// recvmsg() / sendmsg()
+
+/*
+  recvmsg()
+*/
+#include <sys/types.h>
+#include <sys/socket.h>
+int recvmsg(int sockfd, struct msghdr *msg, int flags);
+/*
+  Parameters:
+  int sockfd                  // socket descriptor
+  const struct msghdr* msg    // message header
+  int flags                   // transmission control
+
+  Returns...
+  Upon successful completion, recvmsg() shall return the length of the
+  message in bytes, -1 on error
+
+
+  The recvmsg() function shall receive a message from a
+  connection-mode or connectionless-mode socket. It is normally used
+  with connectionless-mode sockets because it permits the application
+  to retrieve the source address of received data.
+
+  The sendmsg() and recvmsg() system calls are the most general
+  purpose of the socket I/O system calls. The sendmsg() system call
+  can do everything that is done by write(), send() and sendto(); the
+  recvmsg() system call can do everything that is done by read recv()
+  and recvfrom().
+
+  In addition:
+  - perform scatter-gather I/O as with readv() and
+    writev()
+  - transmit messages containing domain-specific anciallary
+    data (also known as control information).
+
+  The linux Programming Interface, Kerrisk, 2010, p.1284
 */
 
 
@@ -857,11 +990,17 @@ ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
 */
 #include <sys/types.h>
 #include <sys/socket.h>
-int sendmsg(int sockfd, const struct msghdr *msg, int flags);
+ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags);
 /*
+  Parameters:
   int sockfd                  // socket descriptor
   const struct msghdr* msg    // message header
   int flags                   // transmission control
+
+  Returns...
+  Upon successful completion, sendmsg() shall return the number of
+  bytes sent. Otherwise, -1
+
 
   The sendmsg() and recvmsg() system calls are the most general
   purpose of the socket I/O system calls. The sendmsg() system call
@@ -886,44 +1025,19 @@ int sendmsg(int sockfd, const struct msghdr *msg, int flags);
 
 
 /*
-  recvmsg()
-*/
-#include <sys/types.h>
-#include <sys/socket.h>
-int recvmsg(int sockfd, struct msghdr *msg, int flags);
-/*
-  int sockfd                  // socket descriptor
-  const struct msghdr* msg    // message header
-  int flags                   // transmission control
-
-  The sendmsg() and recvmsg() system calls are the most general
-  purpose of the socket I/O system calls. The sendmsg() system call
-  can do everything that is done by write(), send() and sendto(); the
-  recvmsg() system call can do everything that is done by read recv()
-  and recvfrom().
-
-  In addition:
-  - perform scatter-gather I/O as with readv() and
-    writev()
-  - transmit messages containing domain-specific anciallary
-    data (also known as control information).
-
-  The linux Programming Interface, Kerrisk, 2010, p.1284
-*/
-
-
-/*
   sendfile()
 */
 #include <sys/sendfile.h>
 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
 /*
+  Parameters:
   int out_fd                  // TODO   
   int in_fd                   //  
   off_t *offset               //  
   size_t count                //  
 
   Returns number of bytes transferred, or -1 on error
+
 
   The sendfile() system call transfers bytes from the file referred to
   by the descriptor in_fd to the file referred to by the descriptor
@@ -944,14 +1058,20 @@ ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
 #include <unistd.h>
 int close(int fd);
 /*
-  int sockfd                  // socket (file) descriptor
+  Parameters:
+  int sockfd // socket (file) descriptor
+
+  Returns 0 on success, -1 on error - an error here is usefull to
+  detect/debug a double close
 
   errors:
     EBADF                     // fd is not a open file descriptor
     EINTR                     // was interrupted by a signal
     EIO                       // io error occurred
 
-  closes the socket
+
+  Closes the socket and socket file descriptors, for both reading and
+  writing
 */
 
 // Example: close()
@@ -966,9 +1086,9 @@ close(s);
 #include <sys/socket.h>
 int shutdown(int s, int how);
 /*
+  Parameters:
   int s                       // socket descriptor
   int how                     // shutdown mode
-
 
   values for how:
     SHUT_RD                   // further receptions dissallowed
@@ -976,13 +1096,15 @@ int shutdown(int s, int how);
     SHUT_RDWR                 // further receptions and
                               // transmissions disallowed
 
+  Returns...
+  Upon successful completion, shutdown() shall return 0; otherwise, -1
+
   errors:
     EBADF                     // s is not a valid descriptor
     ENOTCONN                  // the specified socket is not connected
     ENOTSOCK                  // s is a file, not a socket
 
 
-  NB:
   shutdown() closes the stream, not the FD - close closes the FDs
   altogether; shutdown() can be used to close just the read or just
   write stream, and keep the other open
@@ -993,6 +1115,8 @@ shutdown(s, SHUT_WR);
 // */
 
 
+
+// htons(), htonl(), ntohs(), ntohl()
 
 /*
   htons() - host to network short [byteorder]
@@ -1018,8 +1142,33 @@ unsigned long int htonl(unsigned long int hostlong);
   return:  network-byte-order
 */
 
+
 /*
-  Example: htonl()
+  network to host short [byteorder]
+*/
+#include <netinet/in.h>
+unsigned short int ntohs(unsigned short int netshort);
+/*
+  unsigned short int netshort // network-byte-order
+
+  return:  host-byte-order
+*/
+
+
+/*
+  ntohl() - network to host long [byteorder]
+*/
+#include <netinet/in.h>
+unsigned long int ntohl(unsigned long int netlong);
+/*
+  unsigned long int netlong   // network-byte-order
+
+  return:  host-byte-order
+*/
+
+
+/*
+  Example: htonl(), htons()...
   Assignment by the server
 */
 struct sockaddr_in server;
@@ -1036,33 +1185,6 @@ if (bind(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
 
 
 
-
-/*
-  network to host short [byteorder]
-*/
-#include <netinet/in.h>
-unsigned short int ntohs(unsigned short int netshort);
-/*
-  unsigned short int netshort // network-byte-order
-
-  return:  host-byte-order
-*/
-
-
-
-/*
-  ntohl() - network to host long [byteorder]
-*/
-#include <netinet/in.h>
-unsigned long int ntohl(unsigned long int netlong);
-/*
-  unsigned long int netlong   // network-byte-order
-
-  return:  host-byte-order
-*/
-
-
-
 /*
   getsockname()
 */
@@ -1070,9 +1192,14 @@ unsigned long int ntohl(unsigned long int netlong);
 #include <sys/socket.h>
 int getsockname(int s, struct sockaddr *name, socklen_t *namelen);
 /*
+  Parameter:
   int s                       // socket descriptor
   struct sockaddr* name       // name of the socket to return
   socklen_t* namelen          // length of the name
+
+  Returns..
+  Upon successful completion, 0 shall be returned, the address
+  argument shall point to the address of the socket
 
   errors:
     EBADF                     // not a valid socket descriptor
@@ -1081,6 +1208,12 @@ int getsockname(int s, struct sockaddr *name, socklen_t *namelen);
     ENOBUFS                   // insufficient resources available in
                               //   the system
     ENOTSOCK                  // s is a file, not a socket
+
+
+  The getsockname() function shall retrieve the locally-bound name of
+  the specified socket, store this address in the sockaddr structure
+  pointed to by the address argument, and store the length of this
+  address in the object pointed to by the address_len argument.
 */
 
 // Example: getsockname()
@@ -1100,9 +1233,13 @@ getsockname(s, (struct sockaddr *)&addr, &len);
 #include <sys/socket.h>
 int getpeername(int s, struct sockaddr *name, socklen_t *namelen);
 /*
+  Parameter:
   int s                       // socket descriptor
   struct sockaddr* name       // name of the socket to return
   socklen_t* namelen          // length of the name
+
+  Returns...
+  Upon successful completion, 0 shall be returned, otherwise, -1
 
   errors:
     EBADF                     // not a valid socket descriptor
@@ -1112,6 +1249,12 @@ int getpeername(int s, struct sockaddr *name, socklen_t *namelen);
                               //   in the system
     ENOTCONN                  // socket is not connected
     ENOTSOCK                  // s is a file, not a socket
+
+
+  The getpeername() function shall retrieve the peer address of the
+  specified socket, store this address in the sockaddr structure
+  pointed to by the address argument, and store the length of this
+  address in the object pointed to by the address_len argument.
 */
 
 // Example: getpeername()
@@ -1134,7 +1277,26 @@ int getaddrinfo(const char *node, const char *service,
 		const struct addrinfo *hints,
 		struct addrinfo **res);
 /*
-  given a hostname and/or a service name, getaddrinfo() returns a set
+  Parameters:
+  char *node                  //  
+  char *service               //  
+  struct addrinfo *hints      //  
+  struct addrinfo **res       //  
+
+  Returns 0 if it succeeds, or one of the following nonzero error codes
+
+
+  Given node and service, which identify an Internet host and a
+  service, getaddrinfo() returns one or more addrinfo structures, each
+  of which contains an Internet address that can be specified in a
+  call to bind(2) or connect(2). The getaddrinfo() function combines
+  the functionality provided by the gethostbyname(3) and get‐
+  servbyname(3) functions into a single interface, but unlike the
+  latter functions, getaddrinfo() is reentrant and allows programs to
+  eliminate IPv4-versus-IPv6 de‐ pendencies.
+
+
+  Given a hostname and/or a service name, getaddrinfo() returns a set
   of strucutres containing the corresponding binary IP address(es) and
   port number
 
@@ -1144,10 +1306,7 @@ int getaddrinfo(const char *node, const char *service,
   NB: getaddrinfo() allocates a struct addrinfo, to be free'd by
   freeaddrinfo()
 
-
-  prefer getaddrinfo(), avoid old replacements!
-
-  DEPRECATED:
+  DEPRECATED: getaddrinfo() replaces the following functions
   - gethostbyname()
   - getservbyname()
 */
@@ -1173,6 +1332,8 @@ int getnameinfo(const struct sockaddr *addr, socklen_t addrlen,
 		char *host, socklen_t hostlen,
 		char *serv, socklen_t servlen, int flags);
 /*
+  
+
   converts a socket address to a corresponding host and service, in a
   protocol-independent manner
 
@@ -1190,6 +1351,7 @@ int getnameinfo(const struct sockaddr *addr, socklen_t addrlen,
 #include <sys/socket.h>
 int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
 /*
+  Parameters:
   int s                       // socket descriptor
   int level                   // SOL_SOCKET level
   int optname                 // name of a option
@@ -1213,6 +1375,7 @@ int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
 int setsockopt(int s, int level, int optname, const void *optval,
 	       socklen_t optlen);
 /*
+  Parameters:
   int s                       // socket descriptor
   int level                   // SOL_SOCKET level
   int optname                 // name of a option
@@ -1236,6 +1399,7 @@ int setsockopt(int s, int level, int optname, const void *optval,
 #include <arpa/inet.h>
 int inet_pton(int af, const char *src, void *dst);
 /*
+  Parameters:
   const char* cp              // internet host address to binary
                               //   data and stores it in
   struct in_addr* pin         // ...this address structure
@@ -1258,6 +1422,7 @@ int inet_pton(int af, const char *src, void *dst);
 const char *inet_ntop(int af, const void *src,
                              char *dst, socklen_t size);
 /*
+  Parameters:
   avoid using old replacements!
 
   DEPRECATED:
@@ -1267,7 +1432,7 @@ const char *inet_ntop(int af, const void *src,
 
 
 /*
-  fcntl()
+ fcntl()
 */
 // TODO         
 
