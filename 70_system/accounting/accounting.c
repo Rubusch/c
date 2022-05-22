@@ -3,8 +3,8 @@
 
   usage:
   $ sudo su
-    root@raspberrypi:/usr/src/github__c/70_system/accounting# touch pacct
-    root@raspberrypi:/usr/src/github__c/70_system/accounting# ./accounting.elf pacct
+  # touch pacct
+  # ./accounting.elf pacct
     process accounting enabled
     READY.
 

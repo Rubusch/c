@@ -1,20 +1,31 @@
-SOURCE = accounting.c
-TARGET = $(SOURCE:.c=.elf)
-OBJECTS = $(SOURCE:.c=.o)
+ACCT_SOURCE = accounting.c
+ACCT = $(ACCT_SOURCE:.c=.elf)
+ACCT_OBJECTS = $(ACCT_SOURCE:.c=.o)
+
+ACCT_VIEWER_SOURCE = accounting_viewer.c
+ACCT_VIEWER = $(ACCT_VIEWER_SOURCE:.c=.elf)
+ACCT_VIEWER_OBJECTS = $(ACCT_VIEWER_SOURCE:.c=.o)
+
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -std=c99 -pedantic -Werror
+CFLAGS = -g -Wall -std=gnu99 -pedantic -Werror
 RM = rm -f
+
+all: $(ACCT) $(ACCT_VIEWER)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
+$(ACCT): $(ACCT_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(ACCT_OBJECTS)
 
-all: $(TARGET)
+$(ACCT_VIEWER): $(ACCT_VIEWER_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(ACCT_VIEWER_OBJECTS)
+
+
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~
+	$(RM) $(ACCT_OBJECTS) $(ACCT) $(ACCT_VIEWER_OBJECTS) $(ACCT_VIEWER) core *~
 
+.PHONY: all clean $(ACCT) $(ACCT_VIEWER)
 
