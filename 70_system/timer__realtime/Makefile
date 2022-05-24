@@ -20,6 +20,6 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~
+	$(RM) $(OBJECTS) $(TARGET) tlpi/get_num.o *~
 
-
+.PHONY: all clean
