@@ -417,6 +417,7 @@ jobs:
       - run: cd ./70_system/uname && make && ./*.elf
       - run: cd ./70_system/rc5_inputstring && make
       - run: cd ./70_system/select01 && make
+      - run: cd ./70_system/select02 && make
       - run: cd ./70_system/stat && make && ./*.elf ./text.txt
       - run: cd ./70_system/acl && make
       - run: cd ./70_system/directory && make
