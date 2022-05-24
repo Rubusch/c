@@ -6,7 +6,46 @@
     READY.
 
 
-  Using the clone() system call to create a child process.
+  The clone() flags bit-mask values
+
+  CLONE_CHILD_CLEARTID        clear ctid when child calls exec() or _exit()
+  CLONE_CHILD_SETTID          write thread ID of child into ctid
+  CLONE_FILES                 parent and child share table of open FDs
+  CLONE_FS                    parent and child share attributes related to FS
+  CLONE_IO                    child shares parent's I/O context
+  CLONE_NEWIPC                child gets new system V IPC namespace
+  CLONE_NEWNET                child gets new network namespace
+  CLONE_NEWNS                 child gets copy of parent's mount namespace
+  CLONE_NEWPID                child gets new process-ID namespace
+  CLONE_NEWUSER               child gets new user-ID namespace
+  CLONE_NEWUTS                child gets new UTS namespace
+  CLONE_PARENT                make child's parent same as caller's parent
+  CLONE_PARENT_SETTID         write thread ID of child into ptid
+  CLONE_PID                   obsolete flag used only by system boot process
+  CLONE_PTRACE                if parent is being traced, then trace child also
+  CLONE_SETTLS                tls describes thread-local storage for child
+  CLONE_SIGHAND               parent and child share signal dispositions
+  CLONE_SYSVSEM               parent and child share semaphore undo values
+  CLONE_THREAD                place child in same thread group as parent
+  CLONE_UNTRACED              can't force CLONE_PTRACE on child
+  CLONE_VFORK                 parent is suspended until child calls exec() or _exit()
+  CLONE_VM                    parent and child share virtual memory
+
+  Linux implements fork() via clone().
+
+  In Linux, fork() is implemented through the use of copy-on-write
+  memory pages. Copy-on-write (or COW) is a technique to delay or
+  altogether prevent copying of the data, memory pages, etc.
+
+  The difference between thread, lightweight process, process, etc. is
+  mainly a difference of CLONE_ flags applied at the specific clone()
+  e.g. in fork(), vfork() or pthread_create().
+
+  reference: Linux Kernel Development, R. Love, 2011, p 30ff
+
+
+  The demo shows using the clone() system call to create a child
+  process.
 
   - Open a file descriptor for /dev/null that will be closed by the
     child
@@ -35,7 +74,7 @@
     write() succeds or fails.
 
 
-  based on The Linux Programming Interface, Michael Kerrisk, 2010, p.601
+  references: The Linux Programming Interface, Michael Kerrisk, 2010, p.601
  */
 #define _GNU_SOURCE
 
