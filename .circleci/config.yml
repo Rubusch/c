@@ -208,12 +208,12 @@ jobs:
       - run: cd ./30_pthreads/pthread__condition-var01 && make && ./*.elf
       - run: cd ./30_pthreads/pthread__condition-var02 && make && ./*.elf
       - run: cd ./30_pthreads/pthread__condition-timed && make
-      - run: cd ./30_pthreads/pthread__mutex01 && make && ./*.exe
+      - run: cd ./30_pthreads/pthread__mutex00 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__mutex01 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__mutex02 && make && ./*.elf
       - run: cd ./30_pthreads/pthread__restaurant && make && ./*.exe
       - run: cd ./30_pthreads/pthread__signalhandler01 && make && ./*.exe
       - run: cd ./30_pthreads/pthread__hello_world && make && ./*.exe
-      - run: cd ./30_pthreads/pthread__mutex00 && make && ./*.exe
-      - run: cd ./30_pthreads/pthread__mutex02 && make && ./*.exe
       - run: cd ./30_pthreads/pthread__producer-consumer && make && ./*.exe ./source.txt ./destination.txt
       - run: cd ./30_pthreads/pthread__rwlock && make && ./*.exe
       - run: cd ./30_pthreads/semaphore && make && ./*.exe
