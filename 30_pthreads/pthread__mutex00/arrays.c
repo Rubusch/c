@@ -1,11 +1,12 @@
-// Arrays.c
 /*
-  demonstrates the protection of a common data structure, used by several
-threads
+  Arrays
 
-  take a look on the order in which the working threads are handling the data
-structure
-//*/
+  Demonstrates the protection of a common data structure, used by
+  several threads
+
+  Take a look on the order in which the working threads are handling
+  the data structure
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,7 +94,7 @@ int main()
 
 /*
    thread implementation
-//*/
+*/
 void *add_to_value(void *arg)
 {
 	// safe cast: void* -> intptr_t -> int
@@ -102,12 +103,13 @@ void *add_to_value(void *arg)
 	printf("\nthread %d: was called..\nlock\taction\n", (inval / 2));
 
 	/*
-    set the mutex on writing into the data structure
-    set a value to both structures and unlock - repeat
-    this procedure 5 times (at least once per entry)
+	  set the mutex on writing into the data structure
+	  set a value to both structures and unlock - repeat
+	  this procedure 5 times (at least once per entry)
 
-    observe the order of the working threads on the structure in the output!
-  //*/
+	  observe the order of the working threads on the structure in
+	  the output!
+	*/
 	int idx = 0;
 	for (idx = 0; idx < 5; ++idx) {
 		pthread_mutex_lock(&data.data_lock[idx % 5]);
