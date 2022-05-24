@@ -1,12 +1,12 @@
 // pthread_mutex.c
 /*
 
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <unistd.h>
 #include <pthread.h>
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
