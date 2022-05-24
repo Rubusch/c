@@ -1,6 +1,7 @@
-// select.c
 /*
-  select example of the manpage
+  select() - IO multiplexing
+
+  reference: manpage
 */
 
 #include <stdlib.h>
