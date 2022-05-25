@@ -27,6 +27,7 @@
 
   demonstrates using a real-time timer; getitimer() and setitimer()
 
+  references:
   based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 482
  */
 
