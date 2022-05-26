@@ -198,7 +198,6 @@ jobs:
       - run: cd ./20_interprocess-communication/unixsocket__demo01/server && make
 
 ## 30: pthreads
-      - run: cd ./30_pthreads/pthread__join02 && make && ./*.exe
       ## signalhandler02 seems to show different timings and, in case
       ## dies already by signal instead of run to the end -> true for build
       - run: cd ./30_pthreads/pthread__signalhandler02 && make
@@ -237,7 +236,9 @@ jobs:
 
   ## travis seems to have trouble with the following, thus just compiling
       - run: cd ./30_pthreads/pthread__join00 && make
-      - run: cd ./30_pthreads/pthread__join01 && make && ./*.exe
+      - run: cd ./30_pthreads/pthread__join01 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__join02 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__join03 && make
 
 ## 40: sockets and networking
       - run: cd ./40_sockets/canbus__01 && make
