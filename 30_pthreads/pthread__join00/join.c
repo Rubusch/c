@@ -1,5 +1,6 @@
-// join.c
 /*
+  join
+
 - pthread_attr_init()
 
   sets up the pthread_attr_t object, to a default set of parameters,
@@ -36,7 +37,7 @@
   "joinable" or "joined" and the thread allocated memory before
   (memory leak if not!). If you explicitely "detached" the thread
   before, the memory is automatically freed!
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +54,7 @@ void *thr_add(void *);
 
 /*
   main
-//*/
+*/
 int main()
 {
 	puts("POSIX threads: join demo");
@@ -74,7 +75,7 @@ int main()
 
       Only when disabling the joining, it is necessary to set up the
       attributes to PTHREAD_CREATE_DETACHED.
-    //*/
+    */
 		pthread_attr_t attr_add;
 		pthread_attr_init(&attr_add);
 		// try to uncomment this line!
@@ -85,7 +86,7 @@ int main()
 
       created with *pthread_attr_t == NULL, this uses the default
       setting: PTHREAD_CRATE_JOINABLE
-    //*/
+    */
 		puts("MAIN: create thread tid_add");
 		if (0 !=
 		    pthread_create(&tid_add, &attr_add, thr_add, &tid_main)) {
@@ -101,7 +102,7 @@ int main()
 
       Just to see what happens without JOIN, comment out the paragraph
       below by removing the "// * /"
-    //*/
+    */
 		int return_status = 0;
 		if (0 > pthread_join(tid_add, (void *)&return_status)) {
 			perror("MAIN: pthread_join failed");
@@ -125,7 +126,7 @@ int main()
 
       joining is a form of blocking another thread and, thus a form of
       synchronization!
-    //*/
+    */
 		printf("MAIN: %d / 2 ", value);
 		value /= 2;
 		printf("= %d\n", value);
@@ -147,7 +148,7 @@ int main()
 	  allocated memory should be freed in case the thread crashes
 	  (objects on the thread's stack are usually not destroyed as
 	  well, a SIGSEGV is the logical consequence!
-	//*/
+	*/
 	puts("\nREADY.");
 	exit(EXIT_SUCCESS);
 }
@@ -158,7 +159,7 @@ int main()
   here nothing special, this is just the executed code of thr_add
   thr_add returns 22 (which needs to be typedef-ed to void*, since
   POSIX threads demand here a void* as return type
-//*/
+*/
 void *thr_add(void *arg)
 {
 	puts("ADD: started");
