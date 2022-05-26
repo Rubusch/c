@@ -1,6 +1,6 @@
-// pthread_join.c
 /*
-//*/
+   	pthread_join.c
+*/
 
 #include <math.h>
 #include <stdio.h>
@@ -11,12 +11,22 @@
 
 #define NTHREADS 10
 
-void *thread_function(void *);
-
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 int counter = 0;
 
-int main(int argc, char **argv)
+void*
+thread_function(void *dummy)
+{
+	printf("thread number %d\n", abs(pthread_self()));
+	pthread_mutex_lock(&mutex);
+	counter++;
+	pthread_mutex_unlock(&mutex);
+
+	pthread_exit(NULL);
+}
+
+int
+main(int argc, char *argv[])
 {
 	pthread_t thread_id[NTHREADS];
 	int idx = 0;
@@ -41,12 +51,3 @@ int main(int argc, char **argv)
 	pthread_exit(NULL);
 }
 
-void *thread_function(void *dummy)
-{
-	printf("thread number %d\n", abs(pthread_self()));
-	pthread_mutex_lock(&mutex);
-	counter++;
-	pthread_mutex_unlock(&mutex);
-
-	pthread_exit(NULL);
-}

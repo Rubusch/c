@@ -5,7 +5,7 @@
   start the program with the given number of threads to run
   each thread will wait on the previous thread,
   an output will be demonstrated when the threads exit
-//*/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
