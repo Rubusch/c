@@ -10,15 +10,13 @@ RM = rm -f
 %.c%.o:
 	$(CC) -c $(CFLAGS) $<
 
-
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
-.PHONY: $(TARGET) clean
+.PHONY: $(TARGET) clean all
 
