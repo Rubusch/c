@@ -183,6 +183,7 @@ jobs:
       - run: cd ./20_interprocess-communication/signal__sighandler-asynch-rt-signals && make
       - run: cd ./20_interprocess-communication/signal__sighandler-synch-signals && make
       - run: cd ./20_interprocess-communication/signal__catching-SIGHUP && make
+      - run: cd ./20_interprocess-communication/signal__catching-SIGHUP-when-terminal-disconnect && make
       - run: cd ./20_interprocess-communication/signal__read-signals && make
       - run: cd ./20_interprocess-communication/signal__sigaltstack && make
       - run: cd ./20_interprocess-communication/signal__sigsuspend && make
