@@ -16,6 +16,6 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
-	-$(RM) $(TARGET) $(OBJECTS) *~
+	-$(RM) $(TARGET) $(OBJECTS) *~ *.log
 
 .PHONY: clean all
