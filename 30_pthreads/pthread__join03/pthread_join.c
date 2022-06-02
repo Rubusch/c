@@ -70,7 +70,7 @@ static struct {
 static void*
 thread_func(void *arg)
 {
-	int idx = (int) arg;
+	int idx = *((int*) &arg);
 	int ret;
 
 	sleep(thread[idx].sleep_time);  // simulate doing some work
