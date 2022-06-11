@@ -121,7 +121,10 @@ main(int argc, char *argv[])
 	for (idx=0; idx < argc - 1; idx++) {
 		thread[idx].sleep_time = get_int(argv[idx + 1], GN_NONNEG, NULL);
 		thread[idx].state = TS_ALIVE;
-		ret = pthread_create(&thread[idx].tid, NULL, thread_func, ((void*) idx));
+//		ret = pthread_create(&thread[idx].tid, NULL, thread_func, ((void*) idx));
+
+		void* tmp = (void*) idx;
+		ret = pthread_create(&thread[idx].tid, NULL, thread_func, tmp);
 		if (0 != ret) {
 			fprintf(stderr, "pthread_create() failed\n");
 			exit(EXIT_FAILURE);
