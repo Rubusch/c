@@ -121,9 +121,18 @@ main(int argc, char *argv[])
 	for (idx=0; idx < argc - 1; idx++) {
 		thread[idx].sleep_time = get_int(argv[idx + 1], GN_NONNEG, NULL);
 		thread[idx].state = TS_ALIVE;
-//		ret = pthread_create(&thread[idx].tid, NULL, thread_func, ((void*) idx));
 
-		void* tmp = (void*) (long) idx; // explicit casting to smaller type
+		// NB: casting an int to (void*) may result in an
+		// "int-to-pointer-cast" Warning
+		//
+		// the official way to avoid this is to cast first to
+		// a corresponding primitive type, then to void*
+		//
+		// ...instead of
+		//ret = pthread_create(&thread[idx].tid, NULL, thread_func, ((void*) idx));
+		//
+		// do something like...
+		void* tmp = (void*) (long) idx; // explicit cast to different type
 		ret = pthread_create(&thread[idx].tid, NULL, thread_func, tmp);
 		if (0 != ret) {
 			fprintf(stderr, "pthread_create() failed\n");
