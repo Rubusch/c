@@ -123,7 +123,7 @@ main(int argc, char *argv[])
 		thread[idx].state = TS_ALIVE;
 //		ret = pthread_create(&thread[idx].tid, NULL, thread_func, ((void*) idx));
 
-		void* tmp = (void*) idx;
+		void* tmp = (void*) (long) idx; // explicit casting to smaller type
 		ret = pthread_create(&thread[idx].tid, NULL, thread_func, tmp);
 		if (0 != ret) {
 			fprintf(stderr, "pthread_create() failed\n");
