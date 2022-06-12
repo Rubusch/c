@@ -25,6 +25,33 @@
   signal to the process group that did not create
 
 
+   Job Control States (jobs/fg/bg):
+
+   command
+    +------------+      1. CTRL-c (SIGINT)            +------------+
+    | Running in |- - - - - - - - - - - - - - - - - ->| Terminated |
+    | foreground |`\    2. CTRL-\ (SIGQUIT)           |            |
+    +----------.-+  `\                                 +-.----------+
+          A    |\     `\                               ,/|   A
+          |      \      ``\                          ,/      |
+          |       `\       ``\               kill ,,/        |
+          |         ``\       ``\              ,,/           |
+          |         fg ``\       ```\       ,,/              |
+          fg    (SIGCONT) ``\        ```\ /                 kill
+          |                  ``\      ,/ ```\                |
+	  |                     ``\ /        ``\  CTRL-z     |
+          |                    ,,/ ```\         ``\ (SIGTSTP)|
+          |                 ,,/        ```\        `\        |
+          |              ,,/               ``\       `\      |
+   command| &        ,,/                      ``\      `\|   |
+    +------------+.,/                             `\,. +-'----------+
+    | Running in |<--------- bg (SIGCONT) ------------| Stopped in |
+    | background |----------------------------------->| background |
+    +------------+     1. kill -STOP (SIGSTOP)        +------------+
+                       2. terminal read (SIGTTIN)
+                       3. terminal write (+TOSTOP) (SIGTTOU)
+
+
   Demonstrates that when the shell receives SIGHUP, it in turn sends
   SIGHUP to the jobs it has created. The main task of this program is
   to create a child process, and then have both the parent and the

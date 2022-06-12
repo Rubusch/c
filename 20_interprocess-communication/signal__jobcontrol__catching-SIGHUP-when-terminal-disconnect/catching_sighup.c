@@ -37,6 +37,32 @@
      CTRL-z SIGSTP   -> job to background (bg)
             SIGCONT  -> job to foreground (fg)
 
+   Job Control States (jobs/fg/bg):
+
+   command
+    +------------+      1. CTRL-c (SIGINT)            +------------+
+    | Running in |- - - - - - - - - - - - - - - - - ->| Terminated |
+    | foreground |`\    2. CTRL-\ (SIGQUIT)           |            |
+    +----------.-+  `\                                 +-.----------+
+          A    |\     `\                               ,/|   A
+          |      \      ``\                          ,/      |
+          |       `\       ``\               kill ,,/        |
+          |         ``\       ``\              ,,/           |
+          |         fg ``\       ```\       ,,/              |
+          fg    (SIGCONT) ``\        ```\ /                 kill
+          |                  ``\      ,/ ```\                |
+	  |                     ``\ /        ``\  CTRL-z     |
+          |                    ,,/ ```\         ``\ (SIGTSTP)|
+          |                 ,,/        ```\        `\        |
+          |              ,,/               ``\       `\      |
+   command| &        ,,/                      ``\      `\|   |
+    +------------+.,/                             `\,. +-'----------+
+    | Running in |<--------- bg (SIGCONT) ------------| Stopped in |
+    | background |----------------------------------->| background |
+    +------------+     1. kill -STOP (SIGSTOP)        +------------+
+                       2. terminal read (SIGTTIN)
+                       3. terminal write (+TOSTOP) (SIGTTOU)
+
 
   references:
   based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 712
