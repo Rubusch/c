@@ -383,6 +383,9 @@ jobs:
       - run: cd ./70_system/fork__sharing-syncing-via-signals && make
       - run: cd ./70_system/fork__cli-command && make
       - run: cd ./70_system/fork && make
+      - run: cd ./70_system/fork__orphan && make
+      - run: cd ./70_system/fork__zombie && make
+      - run: cd ./70_system/fork__zombie-reaper && make
       - run: cd ./70_system/execl && make
       - run: cd ./70_system/execlp && make
       - run: cd ./70_system/execv && make
