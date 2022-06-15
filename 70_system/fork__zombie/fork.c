@@ -1,6 +1,14 @@
 /*
   usage:
-                  
+  $ ./fork.elf
+    parent PID=1595
+    child (PID=1596) exiting
+     1595 pts/3    00:00:00 fork.elf
+     1596 pts/3    00:00:00 fork.elf <defunct>
+    after sending SIGKILL to zombie (PID=1596):
+     1595 pts/3    00:00:00 fork.elf
+     1596 pts/3    00:00:00 fork.elf <defunct>
+    READY.
 
 
   zombie - if a parent creates a child, but fails to perform a
