@@ -1,8 +1,3 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = daemon.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.elf)

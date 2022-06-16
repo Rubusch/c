@@ -1,8 +1,3 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = fork.c
 TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
@@ -15,11 +10,11 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) #-lrt
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 all: $(TARGET)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
-
+.PHONY: all clean
