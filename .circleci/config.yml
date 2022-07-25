@@ -405,6 +405,7 @@ jobs:
       - run: cd ./70_system/wait__status && make
       - run: cd ./70_system/start_javaprg && make
       - run: cd ./70_system/pid && make
+      - run: cd ./70_system/schedule__priority && make
       - run: cd ./70_system/sharedobject__dynamic-fixed && make
       - run: cd ./70_system/sharedobject__dynamic-shared && make
       - run: cd ./70_system/sharedobject__static-lib && make
