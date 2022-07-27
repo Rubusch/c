@@ -280,7 +280,7 @@ size_t recvfrom(int sockfd, void *data, size_t data_len, unsigned int flags,
   errors:
     some - man 2 recvfrom
 
-  The recvform() and sendto(0 system calls receive and send datagrams
+  The recvform() and sendto() system calls receive and send datagrams
   on a datagram socket. The socket does not need to be connected
   (datagram = connectionless)
 
@@ -330,7 +330,7 @@ ssize_t sendto(int sockfd, const void *data, size_t data_len, int flags,
   errors:
     see "man 2 send"
 
-  The recvform() and sendto(0 system calls receive and send datagrams
+  The recvform() and sendto() system calls receive and send datagrams
   on a datagram socket. The socket does not need to be connected
   (datagram = connectionless)
 
