@@ -15,6 +15,6 @@ $(TARGET): $(OBJECTS)
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) core *~
+	$(RM) $(OBJECTS) $(TARGET) *~
 
-
+.PHONY: clean all
