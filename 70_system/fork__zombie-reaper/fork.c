@@ -33,7 +33,8 @@
   catch it by installing a signal handler.
 
 
-  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 557
+  based on The Linux Programming Interface, Michael Kerrisk, 2010,
+  p. 557
  */
 #define _POSIX_C_SOURCE 200809L
 
