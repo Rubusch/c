@@ -41,7 +41,7 @@
   system() calls and args might make the software non-portable.
 
 
-  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 581
+  Based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 581
 */
 
 #define _POSIX_C_SOURCE 200809L
