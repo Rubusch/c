@@ -419,6 +419,7 @@ jobs:
       - run: cd ./70_system/sharedobject__dynamic-fixed && make
       - run: cd ./70_system/sharedobject__dynamic-shared && make
       - run: cd ./70_system/sharedobject__static-lib && make
+      - run: cd ./70_system/sharedobject__dlopen-search-symbol && make
       - run: cd ./70_system/timer && make
       - run: cd ./70_system/timer__time-measuring && make
       - run: cd ./70_system/timer__realtime && make
