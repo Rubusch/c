@@ -1,17 +1,32 @@
-// pipe.c
 /*
   pipe() - low level pipes
   int pipe(int fd[2])
   fd[0]    reading
   fd[1]    writing
 
+  The main program calls pipe() to create a pipe, and then calls
+  fork() to create a child. After the fork(), the parent process
+  closes its file descriptor for the read end of the pipe, and writes
+  the string given as the program's command-line argument to the write
+  end of the pipe. The parent then closes the write end of the pipe,
+  and calls wait() to wait for the child to terminate. After closing
+  its file descriptor for the write end of the pipe, the child process
+  enters a loop where it reads blocks of data (of up to BUF_SIZE
+  bytes) from the pipe and writes them to standard output. When the
+  child encounters end-of-file on the pipe, it exits the loop, writes
+  a trailing newline character, closes its descriptor for the read end
+  of the pipe, and terminates.
+
   - communication: read(), write()
   - to be closed with close(int fd)
 
-  Tages a message as argument to send over a named pipe (or its first characters).
+  Takes a message as argument to send over a named pipe (or its first
+  characters).
+
   ---
   References:
   developer manpages
+  The Linux Programming Interface, Michael Kerrisk, 2010, p. 896
 */
 
 #define _XOPEN_SOURCE 600
@@ -55,10 +70,10 @@ int main(int argc, char **argv)
 	} else if (0 == cpid) {
 		/* child code - read from pipe */
 
-		// close unused write - idx == 1 // write
+		// close unused write - idx == 1
 		close(pfd[1]);
 
-		// read out of pipe - idx == 0 // read
+		// read out of pipe - idx == 0
 		fprintf(stderr, "reading: "); // needs to be stderr (unbuffered)
 		while (0 < read(pfd[0], &buf, 1)) {
 			write(STDOUT_FILENO, &buf, 1);
@@ -69,7 +84,7 @@ int main(int argc, char **argv)
 		close(pfd[0]);
 
 		fprintf(stdout, "child READY.\n");
-		exit(EXIT_SUCCESS);
+		_exit(EXIT_SUCCESS);
 
 	} else {
 		/* parent code */
@@ -88,6 +103,6 @@ int main(int argc, char **argv)
 		wait(NULL);
 
 		fprintf(stdout, "parent READY.\n");
-		exit(EXIT_SUCCESS);
+		_exit(EXIT_SUCCESS);
 	}
 }
