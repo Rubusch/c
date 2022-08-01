@@ -345,7 +345,6 @@ jobs:
 
 ## 70: system
       - run: cd ./70_system/clone && make
-      - run: cd ./70_system/capabilities__demo && make
       - run: cd ./70_system/jmp__setjmp01 && make && ./*.elf
       - run: cd ./70_system/jmp__setjmp02 && make && ./*.elf
       - run: cd ./70_system/jmp__setjmp03 && make && ./*.elf
@@ -403,6 +402,7 @@ jobs:
       - run: cd ./70_system/killpg && make
       - run: cd ./70_system/system && make
       - run: cd ./70_system/system__demo && make
+      - run: cd ./70_system/login__password-capabilities && make
       - run: cd ./70_system/login__utmpx-dump && make
       - run: cd ./70_system/login__utmpx-login && make
       - run: cd ./70_system/login__lastlog && make
