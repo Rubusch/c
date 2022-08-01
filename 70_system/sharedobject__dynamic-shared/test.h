@@ -1,7 +1,7 @@
 // test.h
 /*
   header for plugin library
-//*/
+*/
 
 #ifndef TEST_H
 #define TEST_H
@@ -13,6 +13,8 @@ extern "C" {
 
 // functions
 void test(int *);
+
+void hello();}
 
 /******* embed C++ code *******/
 #ifdef __cplusplus

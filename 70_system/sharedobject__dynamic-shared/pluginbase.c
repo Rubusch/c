@@ -19,7 +19,7 @@
 
 
   now compile main program
-  > gcc -rdynamic -o plugin.exe pluginbase.c -ldl
+  > gcc -rdynamic -o plugin.elf pluginbase.c -ldl
 
 
   experiment: replace the libplugin.so.1.0 placed under /opt/lib, as
@@ -30,9 +30,9 @@
   as root
   > mv libplugin.so.1.0 /opt/lib
 
-  run plugin.exe
-  ./plugin.exe
-//*/
+  run plugin.elf
+  $ ./plugin.elf
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +43,7 @@
 
 /*
   main
-//*/
+*/
 int main()
 {
 	void *lib_handle;

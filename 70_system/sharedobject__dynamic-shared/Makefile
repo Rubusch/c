@@ -18,7 +18,7 @@
 ##
 ##
 ##  now compile main program
-##  > gcc -rdynamic -o plugin.exe pluginbase.c -ldl
+##  > gcc -rdynamic -o plugin.elf pluginbase.c -ldl
 ##
 ##
 ## makefile:
@@ -35,7 +35,7 @@
 ## > export LD_LIBRARY_PATH=/opt/lib:$LD_LIBRARY_PATH
 ##
 ## build final
-## > make plugin.exe
+## > make plugin.elf
 ##
 
 OBJ1 = test1.o
@@ -57,9 +57,6 @@ SOURCE = pluginbase.c
 CC = gcc
 
 
-
-
-
 LDPATH = /opt/lib
 RM = rm -f
 
@@ -74,7 +71,6 @@ RM = rm -f
 #	$(OBJ1) $(TLIB1)
 
 
-
 $(TLIB2): $(OBJ2)
 	gcc $(CFLAGS2B) -o $(FILENAME2) $(OBJ2)
 
@@ -85,9 +81,10 @@ libplugin.so.2.0:
 	$(OBJ2) $(TLIB2)
 
 
-plugin.exe:
+plugin.elf:
 	$(CC) -Wall -rdynamic -o $@ $(SOURCE) -ldl
 
 
+
 clean:
-	$(RM) $(OBJ1) $(OBJ2) $(TLIB1) $(TLIB2) $(FILENAME1) $(FILENAME2) plugin.exe *~ core
+	$(RM) $(OBJ1) $(OBJ2) $(TLIB1) $(TLIB2) $(FILENAME1) $(FILENAME2) plugin.elf *~ core
