@@ -404,6 +404,7 @@ jobs:
       - run: cd ./70_system/system && make
       - run: cd ./70_system/system__demo && make
       - run: cd ./70_system/login__utmpx-dump && make
+      - run: cd ./70_system/login__utmpx-login && make
       - run: cd ./70_system/accounting && make
       - run: cd ./70_system/vfork && make
       - run: cd ./70_system/wait && make
