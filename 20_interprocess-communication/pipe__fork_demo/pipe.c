@@ -23,7 +23,7 @@
   Takes a message as argument to send over a named pipe (or its first
   characters).
 
-  ---
+
   References:
   developer manpages
   The Linux Programming Interface, Michael Kerrisk, 2010, p. 896
