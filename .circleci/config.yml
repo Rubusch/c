@@ -142,8 +142,8 @@ jobs:
       - run: cd ./00_language-basics/input__getch && make
 
 ## 20: ipc
-      - run: cd ./20_interprocess-communication/pipe__formatted_pinging/itchy && make
-      - run: cd ./20_interprocess-communication/pipe__formatted_pinging/scratchy && make && ./*.exe
+      - run: cd ./20_interprocess-communication/pipe__formatted-ping/itchy && make
+      - run: cd ./20_interprocess-communication/pipe__formatted-ping/scratchy && make && ./*.exe
       - run: cd ./20_interprocess-communication/pipe__half_duplex_named_pipe/receiver && make
       - run: cd ./20_interprocess-communication/pipe__half_duplex_named_pipe/sender && make
       - run: cd ./20_interprocess-communication/pipe__process-syncing-return && make
