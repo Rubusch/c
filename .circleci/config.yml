@@ -146,7 +146,7 @@ jobs:
       - run: cd ./20_interprocess-communication/pipe__formatted_pinging/scratchy && make && ./*.exe
       - run: cd ./20_interprocess-communication/pipe__half_duplex_named_pipe/receiver && make
       - run: cd ./20_interprocess-communication/pipe__half_duplex_named_pipe/sender && make
-      - run: cd ./20_interprocess-communication/pipe__low_level_pinging && make
+      - run: cd ./20_interprocess-communication/pipe__process-syncing-return && make
       - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/receiver && make
       - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/sender && make
       - run: cd ./20_interprocess-communication/sharedmemory__demo/itchy && make
