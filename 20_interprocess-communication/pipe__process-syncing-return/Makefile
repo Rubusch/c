@@ -1,10 +1,10 @@
 SOURCE = lowlevelpipe.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 %.c%.o:

@@ -1,6 +1,9 @@
-// itchy.c
 /*
-  low level piping - pipe()
+  process synchronization - pipe()
+
+  usage:
+  TODO        
+
 
   #include <unistd.h>
   int pipe(int fildes[2]);
@@ -9,8 +12,12 @@
   fd[0]    reading
   fd[1]    writing
 
-   - communication: read(), write() and only used at fork()
-   - to be closed with close(int fd)
+  Demonstrates how to fork a process and obtain a returned value via
+  pipe.
+
+
+  References:
+  The Linux Programming Interface, Michael Kerrisk, 2010, p. 897
 */
 
 #define _XOPEN_SOURCE 600
@@ -23,6 +30,7 @@
 #include <unistd.h>
 
 #define BUF_SIZE 64
+
 
 void childcode(int *pfd)
 {
@@ -45,7 +53,7 @@ void childcode(int *pfd)
 	close(pfd[0]);
 
 	fprintf(stderr, "%s done!\n", ME);
-	exit(EXIT_SUCCESS);
+	_exit(EXIT_SUCCESS);
 }
 
 void parentcode(int *pfd)
@@ -67,7 +75,6 @@ void parentcode(int *pfd)
 
 	sleep(1); // just some delay to quit - because of the display
 	fprintf(stderr, "%s done!\n", ME);
-	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -88,10 +95,8 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	} else if (pid == 0) {
 		childcode(pfd);
-	} else {
-		parentcode(pfd);
 	}
 
-	fprintf(stderr, "never executed code\n");
+	parentcode(pfd);
 	exit(EXIT_SUCCESS);
 }
