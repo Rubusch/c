@@ -153,7 +153,7 @@ jobs:
       - run: cd ./20_interprocess-communication/sharedmemory__demo/scratchy && make
       - run: cd ./20_interprocess-communication/unixsocket__demo02/unixclient && make
       - run: cd ./20_interprocess-communication/unixsocket__demo02/unixserver && make
-      - run: cd ./20_interprocess-communication/pipe__fork_demo && make
+      - run: cd ./20_interprocess-communication/pipe__fork-demo && make
       - run: cd ./20_interprocess-communication/pipe__popen01 && make
       - run: cd ./20_interprocess-communication/messagequeue__demo/receive && make
       - run: cd ./20_interprocess-communication/messagequeue__demo/send && make
