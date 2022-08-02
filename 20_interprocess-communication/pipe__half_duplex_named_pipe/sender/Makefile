@@ -1,6 +1,6 @@
 SOURCE = sender.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 INC += -I../
 
 .PREFIXES = .c .o

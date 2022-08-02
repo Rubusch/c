@@ -6,7 +6,7 @@
 $ make -C ./itchy
 $ make -C ./scratchy
 $ cd ./scratchy
-$ ./scratchy.exe
+$ ./scratchy.elf
 SCRATCHY: started
 ITCHY: started
 ITCHY: received commandline argument "Scratchyargument"

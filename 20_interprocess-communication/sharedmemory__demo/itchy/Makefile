@@ -1,11 +1,11 @@
 SOURCE = itchy.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 INC += -I../
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99 -pedantic
+CFLAGS = -g -Wall -Werror -std=gnu99 -pedantic
 RM = rm -f
 
 %.c%.o:
