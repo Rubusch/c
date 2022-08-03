@@ -18,7 +18,7 @@
     parent: READY.
 
 
-  zombie - if a parent creates a child, but fails to perform a
+  zombie - If a parent creates a child, but fails to perform a
   'wait()', then an entry for the zombie child will be maintained
   indefinitely in the kernel's process table. if a large number of
   such zombie children are created, they will eventually fill the
@@ -28,12 +28,12 @@
   for it to exit), at which time the zombies are adopted and waited on
   by 'init', and consequently removed from the system.
 
-  the SIGCHLD signal is sent to a parent process whenever one of its
+  The SIGCHLD signal is sent to a parent process whenever one of its
   children terminates. by default, this signal is ignored, but we can
   catch it by installing a signal handler.
 
 
-  based on The Linux Programming Interface, Michael Kerrisk, 2010,
+  Based on The Linux Programming Interface, Michael Kerrisk, 2010,
   p. 557
  */
 #define _POSIX_C_SOURCE 200809L

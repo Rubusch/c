@@ -1,6 +1,8 @@
-// popen.c
 /*
   popen() - formated pipes to other programs
+
+
+  Demonstrates the use of popen() and pclose().
 
   FILE* popen(char* command, char* type)
 
