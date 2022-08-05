@@ -96,8 +96,7 @@ main(int argc, char *argv[])
 	}
 
 	while (true) {   // read request and send responses
-		if (read(fd_server, &req, sizeof(req))
-			!= sizeof(req)) {
+		if (read(fd_server, &req, sizeof(req)) != sizeof(req)) {
 			fprintf(stderr, "fatal: error reading request\n");
 			continue;  // either partial read or error
 		}
@@ -120,8 +119,7 @@ main(int argc, char *argv[])
 		*/
 
 		resp.seqnum = seqnum;
-		if (write(fd_client, &resp, sizeof(resp))
-		    != sizeof(resp)) {
+		if (write(fd_client, &resp, sizeof(resp)) != sizeof(resp)) {
 			fprintf(stderr, "fatal: error writing to FIFO %s\n",
 				fifo_client);
 		}
@@ -131,6 +129,7 @@ main(int argc, char *argv[])
 		}
 
 		seqnum += req.seqlen;   // update our sequence number
+		fprintf(stderr, "server: seqnum %d\n", seqnum);
 	}
 
 	fprintf(stderr, "READY.\n");

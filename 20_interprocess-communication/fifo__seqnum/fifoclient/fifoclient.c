@@ -106,6 +106,7 @@ main(int argc, char *argv[])
 		fprintf(stderr, "can't read from server\n");
 		exit(EXIT_FAILURE);
 	}
+	fprintf(stderr, "client: seqnum %d\n", resp.seqnum);
 
 	fprintf(stderr, "READY.\n");
 	exit(EXIT_SUCCESS);
