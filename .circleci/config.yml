@@ -451,6 +451,7 @@ jobs:
       - run: cd ./70_system/directory__dirname-basename && make
       - run: cd ./70_system/inotify && make
       - run: cd ./70_system/virt-mem__memory-protection && make && ./*.elf
+      - run: cd ./70_system/virt-mem__mlock && make && ./*.elf
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
