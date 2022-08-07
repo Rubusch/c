@@ -10,11 +10,11 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) tlpi/get_num.c -o $@ $(OBJECTS) #-lrt
+	$(CC) $(CFLAGS) tlpi/get_num.c -o $@ $(OBJECTS)
 
 all: $(TARGET)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
-
+.PHONY: all clean
