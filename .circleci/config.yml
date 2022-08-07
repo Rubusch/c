@@ -411,6 +411,7 @@ jobs:
       - run: cd ./70_system/login__utmpx-login && make
       - run: cd ./70_system/login__lastlog && make
       - run: cd ./70_system/mmap__cat && make
+      - run: cd ./70_system/mmap__cat-offset && make
       - run: cd ./70_system/accounting && make
       - run: cd ./70_system/vfork && make
       - run: cd ./70_system/wait && make
