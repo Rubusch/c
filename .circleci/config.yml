@@ -150,29 +150,27 @@ jobs:
       - run: cd ./20_interprocess-communication/pipe__half-duplex-named-pipe/receiver && make
       - run: cd ./20_interprocess-communication/pipe__half-duplex-named-pipe/sender && make
       - run: cd ./20_interprocess-communication/pipe__process-syncing-return && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/receiver && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/sender && make
-      - run: cd ./20_interprocess-communication/sharedmemory__demo/itchy && make
-      - run: cd ./20_interprocess-communication/sharedmemory__demo/scratchy && make
-      - run: cd ./20_interprocess-communication/unixsocket__demo02/unixclient && make
-      - run: cd ./20_interprocess-communication/unixsocket__demo02/unixserver && make
       - run: cd ./20_interprocess-communication/pipe__fork-demo && make
       - run: cd ./20_interprocess-communication/pipe__popen01 && make
       - run: cd ./20_interprocess-communication/pipe__popen02 && make && ./*.elf
+      - run: cd ./20_interprocess-communication/sharedmemory__demo/itchy && make
+      - run: cd ./20_interprocess-communication/sharedmemory__demo/scratchy && make
+      - run: cd ./20_interprocess-communication/sharedmemory__shmctl && make
+      - run: cd ./20_interprocess-communication/sharedmemory__shmget && make
+      - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmclient && make
+      - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmserver && make
+      - run: cd ./20_interprocess-communication/sharedmemory__shm_attach_detach__TODO && make
+      - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/receiver && make
+      - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/sender && make
       - run: cd ./20_interprocess-communication/messagequeue__demo/receive && make
       - run: cd ./20_interprocess-communication/messagequeue__demo/send && make
       - run: cd ./20_interprocess-communication/messagequeue__experimental && make
       - run: cd ./20_interprocess-communication/messagequeue__msgctl && make
       - run: cd ./20_interprocess-communication/messagequeue__msgget && make
-      - run: cd ./20_interprocess-communication/sharedmemory__shmctl && make
-      - run: cd ./20_interprocess-communication/sharedmemory__shmget && make
-      - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmclient && make
-      - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmserver && make
       - run: cd ./20_interprocess-communication/messagequeue__demo__commented/kirk && make
       - run: cd ./20_interprocess-communication/messagequeue__demo__commented/spock && make
       - run: cd ./20_interprocess-communication/messagequeue__common_message_struct/client && make
       - run: cd ./20_interprocess-communication/messagequeue__common_message_struct/server && make
-      - run: cd ./20_interprocess-communication/sharedmemory__shm_attach_detach__TODO && make
       - run: cd ./20_interprocess-communication/signal__alarm__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_handler && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_sigaction && make
@@ -204,6 +202,8 @@ jobs:
       - run: cd ./20_interprocess-communication/signal__trap__DEPRECATED && make
       - run: cd ./20_interprocess-communication/unixsocket__demo01/client && make
       - run: cd ./20_interprocess-communication/unixsocket__demo01/server && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo02/unixclient && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo02/unixserver && make
 
 ## 30: pthreads
       ## signalhandler02 seems to show different timings and, in case
