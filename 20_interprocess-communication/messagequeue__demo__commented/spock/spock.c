@@ -1,5 +1,7 @@
 // spock.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   works "serverlike" and waits for input
 
   Must be compiled with:

@@ -1,5 +1,7 @@
 // msgctl.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   message queue testing grounds - msgctl()
 
   use with a corresponding "client"

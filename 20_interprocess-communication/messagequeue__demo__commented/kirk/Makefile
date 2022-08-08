@@ -1,6 +1,6 @@
 SOURCE = kirk.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -14,7 +14,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600
 
 
 clean:

@@ -1,5 +1,7 @@
 // message_rec.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   reads the message from the queue
 
   ftok -> 'B', project ID, an int

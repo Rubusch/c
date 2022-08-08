@@ -1,4 +1,5 @@
 // client.c
+// System-v Message Queue (deprected, prefer POSIX Message Queues)
 
 #define _XOPEN_SOURCE 600
 

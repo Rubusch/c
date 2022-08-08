@@ -1,5 +1,6 @@
 // kirk.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
 
   Must be compiled with:
   -D _SVID_SOURCE=1 -D _XOPEN_SOURCE=600

@@ -1,6 +1,6 @@
 SOURCE = client.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 INCLUDES += -I../
 
 .PREFIXES = .c .o
@@ -15,7 +15,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _XOPEN_SOURCE=600 -D _GNU_SOURCE
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -D _XOPEN_SOURCE=600 -D _GNU_SOURCE
 
 
 clean:

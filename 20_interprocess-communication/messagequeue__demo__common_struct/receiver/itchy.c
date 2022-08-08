@@ -1,5 +1,7 @@
 // itchy.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   message queue - receiver
 
   the receiving client in a messagequeue

@@ -1,5 +1,7 @@
 // msgget.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   message queue testing grounds - msgget()
 */
 

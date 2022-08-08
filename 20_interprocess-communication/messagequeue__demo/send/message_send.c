@@ -1,5 +1,7 @@
 // message_send.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   creates a message queue and sends one message to the queue
 
   - the message queue is created with a basic key and message flag

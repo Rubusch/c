@@ -3,7 +3,7 @@
 ## Usage
 
 ```
-$ ./mq_sample.exe
+$ ./mq_sample.elf
 build messagequeue
 
 your options are:

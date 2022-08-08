@@ -1,19 +1,23 @@
 // mq_sample.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   demonstrates msgsnd() and msgrcv() and works more or less - this is
   experimental grounds!!!
 
   <sys/msg.h> includes a definition of struct msgbuf with the mtext field
   defined as: char mtext[1]
 
-  therefore, this definition is only a template, not a structure definition that
-  you can use directly, unless you want only to send and receive messages of 0 or
-  1 byte. To handle this, malloc an area big enough to obtain the template - the
-  size of the mtext template field + the size of the mtext field wanted. Then you
-  can use the pointer returned by malloc as a struct msgbuf with an mtext field of
-  the size you want. Note also that sizeof(msg_ptr->mtext is valid even though
-  msg_ptr isn't pointing to anything yet. Sizeof doesn't de-reference msg_ptr, but
-  uses its type to figure out what you are asking about.
+  Therefore, this definition is only a template, not a structure
+  definition that you can use directly, unless you want only to send
+  and receive messages of 0 or 1 byte. To handle this, malloc an area
+  big enough to obtain the template - the size of the mtext template
+  field + the size of the mtext field wanted. Then you can use the
+  pointer returned by malloc as a struct msgbuf with an mtext field of
+  the size you want. Note also that sizeof(msg_ptr->mtext is valid
+  even though msg_ptr isn't pointing to anything yet. Sizeof doesn't
+  de-reference msg_ptr, but uses its type to figure out what you are
+  asking about.
 */
 
 #define _XOPEN_SOURCE 600

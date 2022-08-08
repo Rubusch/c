@@ -1,5 +1,7 @@
 // scratchy.c
 /*
+  System-v Message Queue (deprected, prefer POSIX Message Queues)
+
   messagequeue - sender
 */
 
