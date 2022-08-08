@@ -145,6 +145,7 @@ jobs:
       - run: cd ./20_interprocess-communication/fifo__seqnum/fifoserver && make
       - run: cd ./20_interprocess-communication/fifo__seqnum/fifoclient && make
       - run: cd ./20_interprocess-communication/posix-mq__create && make
+      - run: cd ./20_interprocess-communication/posix-mq__getattr && make
       - run: cd ./20_interprocess-communication/pipe__connect-ls-and-wc && make
       - run: cd ./20_interprocess-communication/pipe__formatted-ping/itchy && make
       - run: cd ./20_interprocess-communication/pipe__formatted-ping/scratchy && make && ./*.elf
