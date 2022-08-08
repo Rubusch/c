@@ -160,17 +160,6 @@ jobs:
       - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmclient && make
       - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmserver && make
       - run: cd ./20_interprocess-communication/sharedmemory__shm_attach_detach__TODO && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/receiver && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo__common_struct/sender && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo/receive && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo/send && make
-      - run: cd ./20_interprocess-communication/messagequeue__experimental && make
-      - run: cd ./20_interprocess-communication/messagequeue__msgctl && make
-      - run: cd ./20_interprocess-communication/messagequeue__msgget && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo__commented/kirk && make
-      - run: cd ./20_interprocess-communication/messagequeue__demo__commented/spock && make
-      - run: cd ./20_interprocess-communication/messagequeue__common_message_struct/client && make
-      - run: cd ./20_interprocess-communication/messagequeue__common_message_struct/server && make
       - run: cd ./20_interprocess-communication/signal__alarm__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_handler && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_sigaction && make
@@ -452,6 +441,21 @@ jobs:
       - run: cd ./70_system/inotify && make
       - run: cd ./70_system/virt-mem__memory-protection && make && ./*.elf
       - run: cd ./70_system/virt-mem__mlock && make && ./*.elf 32 8 3 
+
+## 80 unix and system-v, the museum
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__common_struct/receiver && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__common_struct/sender && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo/receive && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo/send && make
+      - run: cd ./80_unix-and-system-v/messagequeue__experimental && make
+      - run: cd ./80_unix-and-system-v/messagequeue__msgctl && make
+      - run: cd ./80_unix-and-system-v/messagequeue__msgget && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__commented/kirk && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__commented/spock && make
+      - run: cd ./80_unix-and-system-v/messagequeue__common_message_struct/client && make
+      - run: cd ./80_unix-and-system-v/messagequeue__common_message_struct/server && make
+
+
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
