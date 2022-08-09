@@ -5,10 +5,28 @@
   $ ./posix-mq__create/create.elf -cx /mq
     READY.
 
-  $ ./posix-mq__getattr/getattr.elf /mq
-    maximum number of messages on queue:    10
-    maximum message size:                   8192
-    number of messages currently on queue:  0
+  $ ./posix-mq__send/send.elf /mq msg-a 5
+    READY.
+
+  $ ./posix-mq__send/send.elf /mq msg-b 0
+    READY.
+
+  $ ./posix-mq__send/send.elf /mq msg-c 10
+    READY.
+
+  $ ./posix-mq__receive/receive.elf /mq
+    read 5 bytes; priority = 10
+    msg-c
+    READY.
+
+  $ ./posix-mq__receive/receive.elf /mq
+    read 5 bytes; priority = 5
+    msg-a
+    READY.
+
+  $ ./posix-mq__receive/receive.elf /mq
+    read 5 bytes; priority = 0
+    msg-b
     READY.
 
   $ ./posix-mq__unlink/unlink.elf /mq
@@ -58,7 +76,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if (argc <= argc + 1) {
+	if (argc <= optind + 1) {
 		usage(argv[0]);
 	}
 
