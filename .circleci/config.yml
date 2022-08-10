@@ -160,13 +160,6 @@ jobs:
       - run: cd ./20_interprocess-communication/pipe__fork-demo && make
       - run: cd ./20_interprocess-communication/pipe__popen01 && make
       - run: cd ./20_interprocess-communication/pipe__popen02 && make && ./*.elf
-      - run: cd ./20_interprocess-communication/sharedmemory__demo/itchy && make
-      - run: cd ./20_interprocess-communication/sharedmemory__demo/scratchy && make
-      - run: cd ./20_interprocess-communication/sharedmemory__shmctl && make
-      - run: cd ./20_interprocess-communication/sharedmemory__shmget && make
-      - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmclient && make
-      - run: cd ./20_interprocess-communication/sharedmemory__server_client/shmserver && make
-      - run: cd ./20_interprocess-communication/sharedmemory__shm_attach_detach__TODO && make
       - run: cd ./20_interprocess-communication/signal__alarm__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_handler && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_sigaction && make
@@ -461,6 +454,13 @@ jobs:
       - run: cd ./80_unix-and-system-v/messagequeue__demo__commented/spock && make
       - run: cd ./80_unix-and-system-v/messagequeue__common_message_struct/client && make
       - run: cd ./80_unix-and-system-v/messagequeue__common_message_struct/server && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__demo/itchy && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__demo/scratchy && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__shmctl && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__shmget && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__server_client/shmclient && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__server_client/shmserver && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__shm_attach_detach__TODO && make
 
 
 ## devkit lib
