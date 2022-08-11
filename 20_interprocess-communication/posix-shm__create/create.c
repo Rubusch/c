@@ -6,7 +6,12 @@
   Shows how to use the program to create a 10'000 byte shared memory
   object, and then use ls to show this object in /dev/shm
 
-  TODO              
+  $ ./create.elf -c /demo_shm 10000
+    READY.
+
+  $ ls -l /dev/shm/
+    total 0
+    -rw------- 1 pi pi 10000 Aug 11 23:22 demo_shm
 
 
   The listing provides a simple example of the use of shm_open(),

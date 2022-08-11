@@ -2,8 +2,28 @@
   POSIX shared memory - read
 
   usage:
+  $ ./create.elf -c /demo_shm 10000
+    READY.
 
-  TODO              
+  $ ls -l /dev/shm/
+    total 0
+    -rw------- 1 pi pi 10000 Aug 11 23:22 demo_shm
+
+  $ ./write.elf /demo_shm 'hello'
+    resized to 5 bytes
+    copying 5 bytes
+    READY.
+
+  $ ls -l /dev/shm
+    total 4
+    -rw------- 1 pi pi 5 Aug 11 23:24 demo_shm
+
+  $ ./read.elf /demo_shm
+    hello
+    READY.
+
+  $ ./unlink.elf /demo_shm
+    READY.
 
 
   The program displays the string in the existing shared memory object
