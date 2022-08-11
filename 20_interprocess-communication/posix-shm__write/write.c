@@ -1,5 +1,5 @@
 /*
-  POSIX messagequeue - create
+  POSIX shared memory - write
 
   usage:
 
