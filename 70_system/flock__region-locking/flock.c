@@ -24,7 +24,7 @@
 
 #include <fcntl.h>
 
-/*
+/**
   private: lock a file region (private; public interfaces below)
 */
 static int
@@ -80,6 +80,8 @@ region_is_locked(int fd, int type, int whence, int start, int len)
 	}
 	return ret;
 }
+/* --- */
+
 
 int
 main(int argc, char *argv[])
