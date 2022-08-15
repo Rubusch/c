@@ -164,18 +164,14 @@ jobs:
       - run: cd ./20_interprocess-communication/pipe__fork-demo && make
       - run: cd ./20_interprocess-communication/pipe__popen01 && make
       - run: cd ./20_interprocess-communication/pipe__popen02 && make && ./*.elf
-      - run: cd ./20_interprocess-communication/signal__alarm__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_handler && make
       - run: cd ./20_interprocess-communication/signal__alarm__via_sa_sigaction && make
       - run: cd ./20_interprocess-communication/signal__demo/itchy && make
       - run: cd ./20_interprocess-communication/signal__demo/scratchy && make
-      - run: cd ./20_interprocess-communication/signal__demo__DEPRECATED/itchy && make
-      - run: cd ./20_interprocess-communication/signal__demo__DEPRECATED/scratchy && make
       - run: cd ./20_interprocess-communication/signal__kill && make
       - run: cd ./20_interprocess-communication/signal__sigaction01 && make
       - run: cd ./20_interprocess-communication/signal__sigaction02__backtrace && make
       - run: cd ./20_interprocess-communication/signal__sighandler && make
-      - run: cd ./20_interprocess-communication/signal__sighandler__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__sighandler-nonlocal-goto && make
       - run: cd ./20_interprocess-communication/signal__sighandler-asynch-rt-signals && make
       - run: cd ./20_interprocess-communication/signal__sighandler-synch-signals && make
@@ -186,13 +182,9 @@ jobs:
       - run: cd ./20_interprocess-communication/signal__sigsuspend && make
       - run: cd ./20_interprocess-communication/signal__signalizer && make
       - run: cd ./20_interprocess-communication/signal__sigmask && make
-      - run: cd ./20_interprocess-communication/signal__sigmask__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__signal_talking && make
-      - run: cd ./20_interprocess-communication/signal__signal_talking__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__syscall && make
-      - run: cd ./20_interprocess-communication/signal__syscall__DEPRECATED && make
       - run: cd ./20_interprocess-communication/signal__trap && make
-      - run: cd ./20_interprocess-communication/signal__trap__DEPRECATED && make
       - run: cd ./20_interprocess-communication/unixsocket__demo01/client && make
       - run: cd ./20_interprocess-communication/unixsocket__demo01/server && make
       - run: cd ./20_interprocess-communication/unixsocket__demo02/unixclient && make
@@ -469,7 +461,14 @@ jobs:
       - run: cd ./80_unix-and-system-v/sharedmemory__server_client/shmclient && make
       - run: cd ./80_unix-and-system-v/sharedmemory__server_client/shmserver && make
       - run: cd ./80_unix-and-system-v/sharedmemory__shm_attach_detach__TODO && make
-
+      - run: cd ./80_unix-and-system-v/signal__demo__DEPRECATED/scratchy && make
+      - run: cd ./80_unix-and-system-v/signal__demo__DEPRECATED/itchy && make
+      - run: cd ./80_unix-and-system-v/signal__alarm__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__sighandler__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__sigmask__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__signal_talking__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__syscall__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__trap__DEPRECATED && make
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
