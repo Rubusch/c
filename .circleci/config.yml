@@ -189,6 +189,8 @@ jobs:
       - run: cd ./20_interprocess-communication/unixsocket__demo01/server && make
       - run: cd ./20_interprocess-communication/unixsocket__demo02/unixclient && make
       - run: cd ./20_interprocess-communication/unixsocket__demo02/unixserver && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo03/unixclient && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo03/unixserver && make
 
 ## 30: pthreads
       ## signalhandler02 seems to show different timings and, in case
