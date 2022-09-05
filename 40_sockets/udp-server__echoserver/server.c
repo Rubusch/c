@@ -1,5 +1,6 @@
-// server.c
 /*
+  server
+
   simple udp echo server example
 
 
@@ -56,6 +57,7 @@
 #include <sys/wait.h> /* waitpid(), SIGINT,... */
 #include <sys/resource.h> /* getrusage(), struct rusage,... */
 #include <time.h> /* time(), ctime() */
+#include <stdbool.h>
 #include <errno.h>
 
 /*
@@ -206,7 +208,7 @@ int main(int argc, char **argv)
 		char msg[MAXLINE];
 
 		len = sizeof(cliaddr);
-		while (1) {
+		while (true) {
 			// reset message
 			memset(msg, '\0', sizeof(msg));
 

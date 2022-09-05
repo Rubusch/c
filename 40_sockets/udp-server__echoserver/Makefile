@@ -1,21 +1,22 @@
 SOURCE = server.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c11 -pedantic
+CFLAGS = -g -Wall -Werror -std=gnu11 -pedantic
 RM = rm -f
 
 %.c%.o:
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+.PHONY: all clean
+
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
-.PHONY: all clean
