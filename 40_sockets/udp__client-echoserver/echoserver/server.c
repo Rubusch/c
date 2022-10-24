@@ -42,24 +42,23 @@ become_daemon(int flags)
 {
 	int maxfd, fd;
 
-	switch (fork()) { // become background process
+	switch (fork()) {  // become background process
 	case -1: return -1;
-	case 0: break;                // child falls through...
+	case 0: break;     // child falls through...
 	default:
-		sleep(1);
-		_exit(EXIT_SUCCESS); // ...while parent terminates
+		return 0;  // ...while parent terminates
 	}
 
 	if (-1 == setsid()) { // become leader of new session
 		return -1;
 	}
 
-	switch (fork()) { // ensure we are not session leader
+	switch (fork()) {  // ensure we are not session leader
 	case -1: return -1;
 	case 0: break;
 	default:
 		sleep(1);
-		_exit(EXIT_SUCCESS);
+		return 0;
 	}
 
 	if (!(flags & BD_NO_UMASK0)) {
