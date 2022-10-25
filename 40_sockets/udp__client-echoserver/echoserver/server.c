@@ -213,7 +213,8 @@ main(int argc, char* argv[])
 
 	sockfd = inet_bind(SERVICE, SOCK_DGRAM, NULL);
 	if (-1 == sockfd) {
-		syslog(LOG_ERR, "SERVER - could not create server socket (%s)", strerror(errno));
+		syslog(LOG_ERR, "SERVER - could not create server socket (%s)",
+		       strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 
