@@ -110,6 +110,10 @@
 
 /*
   struct addrinfo
+
+  struct addrinfo is returned by getaddrinfo(), and contains, on
+  success, a linked list of such structs for a specified hostname
+  and/or service (no port, which is accessible by ai_addr->sa_port)
 */
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -157,7 +161,8 @@ struct sockaddr_in {
 	unsigned char pad[8]; // fill byte for the sockaddr
 };
 /*
-  newer struct than sockaddr, commonly used sockaddr_in
+  sockaddr_in is a newer struct than sockaddr, commonly used is
+  sockaddr_in
 
   be aware of big/little endian values when using values for "port"
   with more than one byte
