@@ -48,8 +48,6 @@ int main(int argc, char **argv)
 	uint8_t data[8];
 	memset(data, 0, sizeof(data));
 
-
-
 	// initialization
 	my_id.fields.messagetype = 0x7f;
 	my_id.fields.prio = 0x01;
@@ -63,22 +61,17 @@ int main(int argc, char **argv)
 	fprintf(stderr, "frame: %03x#%02x.%02x.%02x.%02x.%02x.%02x.%02x.%02x\n",
 		header, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
-
 	// copy in case of a field
 	protocol_id_t transfer = { .bits = *(uint16_t*) &my_id };
 	header = transfer.bits;
 
-
 	// copy in case of an array
 	memcpy(data, (uint8_t*) &my_payload.fields, sizeof(my_payload.fields));
-
-
 
 	fprintf(stderr, "frame: %03x#%02x.%02x.%02x.%02x.%02x.%02x.%02x.%02x\n",
 		header, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
 	fprintf(stderr, "sizeof(my_payload) = %d, sizeof(my_id) = %d\n", sizeof(my_payload), sizeof(my_id));
-
 
 	fprintf(stderr, "READY.\n");
 	return EXIT_SUCCESS;
