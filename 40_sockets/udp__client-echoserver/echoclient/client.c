@@ -80,6 +80,8 @@ int main(int argc, char **argv)
 
 	/*
 	  construct server address from first command-line argument
+
+	  NB: "SERVICE" here means port number!
 	*/
 
 	sockfd = inet_connect(argv[1], SERVICE, SOCK_DGRAM);
