@@ -7,7 +7,12 @@
 #include <signal.h>
 
 
-#define SERVICE "echo"
+/*
+  "service" - service describes the port number here,
+  client and server may use udp, but need to share
+  a port number
+ */
+#define SERVICE "270976"
 #define BUF_SIZE 500
 #define IS_ADDR_STR_LEN 4096
 

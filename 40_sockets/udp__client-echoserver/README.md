@@ -8,6 +8,10 @@ Based on The Linux Programming Interface, Michael Kerrisk, 2010,
 p. 1240 ff  
 
 
+Client and server implement the echo server by struct addrinfo, a
+queue for struct addrinfo instances. As an alternative struct
+sockaddr_in would be a generalized but unqueued approach
+
 ## Usage
 
 In the server folder  
