@@ -32,6 +32,7 @@ int inet_connect(const char *host, const char* service, int type)
 	hints.ai_next = NULL;
 	hints.ai_family = AF_UNSPEC;  // allows IPv4 or IPv6
 	hints.ai_socktype = type;
+//	hints.ai_flags = AI_PASSIVE;
 
 	res = getaddrinfo(host, service, &hints, &result);
 	if (0 != res) {

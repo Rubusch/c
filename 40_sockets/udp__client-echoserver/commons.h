@@ -12,7 +12,7 @@
   client and server may use udp, but need to share
   a port number
  */
-#define SERVICE "270976"
+#define SERVICE "27976"
 #define BUF_SIZE 500
 #define IS_ADDR_STR_LEN 4096
 
