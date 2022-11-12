@@ -119,6 +119,7 @@ inet_passive_socket(const char *service, int type,
 	hints.ai_family = AF_UNSPEC;  /* allows IPv4 or IPv6 */
 	hints.ai_flags = AI_PASSIVE;  /* use wildcard IP address */
 
+	// init 'result'
 	res = getaddrinfo(NULL, service, &hints, &result);
 	if (0 != res) {
 		return -1;
@@ -173,12 +174,6 @@ inet_passive_socket(const char *service, int type,
 	return (rp == NULL) ? -1 : sockfd;
 }
 
-int
-inet_bind(const char *service, int type, socklen_t *addrlen)
-{
-	return inet_passive_socket(service, type, addrlen, false, 0);
-}
-
 char*
 inet_address_str(const struct sockaddr *addr, socklen_t addrlen,
 		 char *addr_str, int addr_str_len)
@@ -211,7 +206,14 @@ main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	sockfd = inet_bind(SERVICE, SOCK_DGRAM, NULL);
+	// inet_bind()
+	//
+	// obtain a list of "struct addrinfo" instances by getaddrinfo()
+	// walk and listen() throuth the list and accept incoming connection
+	// requests
+	//
+	// NB: "SERVICE" is here the port
+	sockfd = inet_passive_socket(SERVICE, SOCK_DGRAM, NULL, false, 0);
 	if (-1 == sockfd) {
 		syslog(LOG_ERR, "SERVER - could not create server socket (%s)",
 		       strerror(errno));
@@ -224,6 +226,8 @@ main(int argc, char* argv[])
 
 	while (true) {
 		len = sizeof(claddr);
+
+		// recvfrom()
 		nread = recvfrom(sockfd, buf, BUF_SIZE, 0,
 				 (struct sockaddr*) &claddr, &len);
 		if (-1 == nread) {
@@ -231,9 +235,12 @@ main(int argc, char* argv[])
 			exit(EXIT_FAILURE);
 		}
 
-		if (nread != sendto(sockfd, buf, nread, 0, (struct sockaddr*) &claddr, len)) {
+		// sendto()
+		if (nread != sendto(sockfd, buf, nread, 0
+				    , (struct sockaddr*) &claddr, len)) {
 			syslog(LOG_WARNING, "SERVER - error echoing response to %s (%s)",
-			       inet_address_str((struct sockaddr*) &claddr, len, addr_str, IS_ADDR_STR_LEN),
+			       inet_address_str((struct sockaddr*) &claddr
+						, len, addr_str, IS_ADDR_STR_LEN),
 			       strerror(errno));
 		}
 	}

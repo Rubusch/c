@@ -32,7 +32,7 @@ int inet_connect(const char *host, const char* service, int type)
 	hints.ai_next = NULL;
 	hints.ai_family = AF_UNSPEC;  // allows IPv4 or IPv6
 	hints.ai_socktype = type;
-//	hints.ai_flags = AI_PASSIVE;
+	hints.ai_flags = AI_PASSIVE;
 
 	res = getaddrinfo(host, service, &hints, &result);
 	if (0 != res) {
@@ -46,17 +46,18 @@ int inet_connect(const char *host, const char* service, int type)
 	*/
 
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		// socket()
 		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (-1 == sockfd)
 			continue;  // on error, try next address
 
+		// connect()
 		if (-1 != connect(sockfd, rp->ai_addr, rp->ai_addrlen))
 			break;  // success
 
-		/*
-		  connect failed: close this socket and try next address
-		*/
-
+		// close()
+		//
+		// failed: close this socket and try next address
 		close(sockfd);
 	}
 
@@ -103,11 +104,11 @@ int main(int argc, char **argv)
 		}
 		nread = read(sockfd, buf, BUF_SIZE);
 		if (-1 == nread) {
-			perror("CLIENT - read() failed");
+			perror("CLIENT - read() failed, did you use 'localhost'? Try '127.0.0.1' instead.");
 			exit(EXIT_FAILURE);
 		}
 
-		fprintf(stderr, "CLIENT - [%ld bytes] %.*s\n",
+		fprintf(stderr, "CLIENT - [%ld bytes] '%.*s'\n",
 			(long) nread, (int) nread, buf);
 	}
 
