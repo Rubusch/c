@@ -278,6 +278,8 @@ jobs:
       - run: cd ./40_sockets/udp-client__reliable && make
       - run: cd ./40_sockets/udp-client__simple && make
       - run: cd ./40_sockets/udp-server__echoserver && make
+      - run: cd ./40_sockets/udp__client-echoserver/echoserver && make
+      - run: cd ./40_sockets/udp__client-echoserver/echoclient && make
       - run: cd ./40_sockets/tcp__client-server/tcpserver && make
       - run: cd ./40_sockets/tcp__client-server/tcpclient && make
       - run: cd ./40_sockets/udp-ipv6__client-server/udp-ip6-server && make
