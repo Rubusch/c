@@ -152,6 +152,36 @@ ssize_t lothars__readn(int fd, void *ptr, size_t nbytes)
 	}
 	return res;
 }
+/*
+  readn() - approach of The Linux Programming Interface, M.Kerrisk,
+  2010, p. 1255
+* /
+ssize_t
+readn(int fd, void *vptr, size_t nbytes)
+{
+	ssize_t nread;  // # bytes fetched by last read()
+	size_t total_read;  // total # of bytes read so far
+	char *buf;
+
+	buf = vptr;  // no pointer writhmetic on "void*"
+	for (total_read = 0; total_read < nbytes; ) {
+		nread = read(fd, buf, nbytes - total_read);
+		if (0 == nread) {  // EOF
+			return total_read;  // may be 0 if this is first read()
+		}
+		if (-1 == nread) {
+			if (EINTR == errno) {
+				continue;  // interrupted --> restart read()
+			} else {
+				return -1;  // some other error
+			}
+		}
+		total_read += nread;
+		buf += nread;
+	}
+	return total_read;  // must be 'nbytes' if we get here
+}
+// */
 
 /*
   The recvfrom() function shall receive a message from a
@@ -303,6 +333,33 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 		err_sys("writen error");
 	}
 }
+/*
+  writen() - approach of The Linux Programming Interface, M.Kerrisk,
+  2010, p. 1255
+* /
+ssize_t
+writen(int fd, const void *vptr, size_t nbytes)
+{
+	ssize_t nwritten;  // # of bytes written by last write()
+	size_t total_written;   // total # of bytes written so far
+	const char* buf;
+
+	buf = vptr;  // no pointer arithmetic on "void*"
+	for (total_written = 0; total_written < nbytes; ) {
+		nwritten = write(fd, buf, nbytes - total_written);
+		if (0 >= nwritten) {
+			if (nwritten == -1 && EINTR == errno) {
+				continue;  // interruppted --> restart write()
+			} else {
+				return -1;  // some other error
+			}
+		}
+		total_written += nwritten;
+		buf += nwritten;
+	}
+	return total_written;  // must be 'nbytes' if we get here
+}
+// */
 
 /*
   The sendmsg() function shall send a message through a
