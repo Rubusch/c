@@ -132,6 +132,26 @@ struct addrinfo {
 
 /*
   struct sockaddr
+
+  What is the difference between struct addrinfo and struct sockaddr?
+  ref: https://stackoverflow.com/questions/23401147/what-is-the-difference-between-struct-addrinfo-and-struct-sockaddr
+
+  struct addrinfo is returned by getaddrinfo(), and contains, on
+  success, a linked list of such structs for a specified hostname
+  and/or service.
+
+  The ai_addr member isn't actually a struct sockaddr, because that
+  struct is merely a generic one that contains common members for all
+  the others, and is used in order to determine what type of struct
+  you actually have. Depending upon what you pass to getaddrinfo(),
+  and what that function found out, ai_addr might actually be a
+  pointer to struct sockaddr_in, or struct sockaddr_in6, or whatever
+  else, depending upon what is appropriate for that particular address
+  entry. This is one good reason why they're kept "separate", because
+  that member might point to one of a bunch of different types of
+  structs, which it couldn't do if you tried to hardcode all the
+  members into struct addrinfo, because those different structs have
+  different members.
 */
 #include <sys/types.h>
 #include <sys/socket.h>
