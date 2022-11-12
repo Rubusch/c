@@ -3,6 +3,8 @@
 
   implements a simple tcp echo server as forked concurent server (one
   child per client)
+
+  REFERENCES: Socket API, R. Stevens
 */
 
 #define _GNU_SOURCE /* sync() */
@@ -313,7 +315,7 @@ pid_t lothars__fork(void)
 	return pid;
 }
 
-/********************************************************************************************/
+/******************************************************************************/
 // worker implementation
 
 void worker(int fd_sock)
@@ -341,7 +343,7 @@ void worker(int fd_sock)
 	fprintf(stdout, "READY.\n");
 }
 
-/********************************************************************************************/
+/******************************************************************************/
 
 /*
   main
