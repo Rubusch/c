@@ -8,9 +8,8 @@
 
 
 /*
-  "service" - service describes the port number here,
-  client and server may use udp, but need to share
-  a port number
+  "service" - service describes the port number here, client and
+  server may use tcp, but need to share a port number
  */
 #define SERVICE "27976"
 #define BUF_SIZE 500
