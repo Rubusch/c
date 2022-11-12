@@ -165,20 +165,17 @@ int lothars__socket(int family, int type, int protocol)
 	return res;
 }
 
-/********************************************************************************************/
+/*******************************************************************************/
 // worker implementation
+/*******************************************************************************/
 
-/********************************************************************************************/
-
-/*
-  main - simple udp server
-*/
-int main(int argc, char **argv)
+int
+main(int argc, char *argv[])
 {
-	int fd_sock;
-	struct sockaddr_in servaddr, cliaddr;
-	char port[16];
-	memset(port, '\0', sizeof(port));
+	int sockfd;
+	struct sockaddr_in servaddr; memset(&servaddr, 0, sizeof(servaddr));
+	struct sockaddr_in cliaddr;
+	char port[16]; memset(port, '\0', sizeof(port));
 
 	if (2 != argc) {
 		fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -189,15 +186,18 @@ int main(int argc, char **argv)
 	fprintf(stdout, "port: '%s'\n", port);
 
 	// socket
-	fd_sock = lothars__socket(AF_INET, SOCK_DGRAM, 0);
+	sockfd = lothars__socket(AF_INET, SOCK_DGRAM, 0);
 
-	memset(&servaddr, 0, sizeof(servaddr));
+	// struct sockaddr_in
+	//
+	// alternative is go via getaddrinfo() and struct sockaddrinfo
+	// instances for a list walkthrough on all devices
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(atoi(port));
 
 	// bind
-	lothars__bind(fd_sock, (struct sockaddr *)&servaddr, sizeof(servaddr));
+	lothars__bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
 	// worker
 	{
@@ -213,12 +213,12 @@ int main(int argc, char **argv)
 			memset(msg, '\0', sizeof(msg));
 
 			// receive
-			n_bytes = lothars__recvfrom(fd_sock, msg, MAXLINE, 0,
+			n_bytes = lothars__recvfrom(sockfd, msg, MAXLINE, 0,
 						    pcliaddr, &len);
 			fprintf(stdout, "%s", msg);
 
 			// send
-			lothars__sendto(fd_sock, msg, n_bytes, 0, pcliaddr,
+			lothars__sendto(sockfd, msg, n_bytes, 0, pcliaddr,
 					len);
 		}
 	}
