@@ -109,7 +109,7 @@ inet_passive_socket(const char *service, int type,
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
-	int sockfd, optval, res;
+	int sockfd = -1, optval, res;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_canonname = NULL;
@@ -238,11 +238,10 @@ main(int argc, char *argv[])
 
 	// inet_listen()
 	lfd = inet_passive_socket(SERVICE, SOCK_STREAM, NULL, true, 10);
-
 	if (-1 == lfd) {
 		syslog(LOG_ERR, "could not create server socket (%s)",
 		       strerror(errno));
-		exit(EXIT_FAILURE);
+//		exit(EXIT_FAILURE);
 	}
 
 	while (true) {

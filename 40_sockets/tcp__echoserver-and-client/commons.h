@@ -11,10 +11,10 @@
   client and server may use udp, but need to share
   a port number
  */
-#define SERVICE "27976"
+#define SERVICE "27978"
 //#define SERVICE "echo"
 #define BUF_SIZE 4096
-#define IS_ADDR_STR_LEN 4096  
+
 
 /*
   become_daemon()

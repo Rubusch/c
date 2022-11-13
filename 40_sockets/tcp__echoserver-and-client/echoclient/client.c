@@ -5,7 +5,7 @@
   Based on The Linux Programming Interface, Michael Kerrisk, 2010,
   p. 1258
 */
-                
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
