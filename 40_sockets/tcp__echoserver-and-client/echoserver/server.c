@@ -17,13 +17,21 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <sys/stat.h> /* open(), umask() */
+#include <fcntl.h>    /* open() */
 #include <signal.h>
+
 #include <syslog.h>
+
+#include <sys/types.h>  /* getaddrinfo() */
 #include <sys/wait.h>
+#include <sys/socket.h>  /* getaddrinfo() */
+#include <netdb.h> /* getaddrinfo() */
 
 #include "commons.h"
 
 #include "tlpi/get_num.h"
+
 
 static const char *LOG_FILE = "/tmp/ds.log";
 
@@ -229,7 +237,7 @@ main(int argc, char *argv[])
 	}
 
 	// inet_listen()
-	lfd = inet_passive_socket(SERVICE, 10, NULL, true, 0);
+	lfd = inet_passive_socket(SERVICE, SOCK_STREAM, NULL, true, 10);
 
 	if (-1 == lfd) {
 		syslog(LOG_ERR, "could not create server socket (%s)",

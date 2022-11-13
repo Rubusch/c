@@ -101,7 +101,6 @@ become_daemon(int flags)
 }
 /* --- */
 
-
 static int
 inet_passive_socket(const char *service, int type,
 		    socklen_t *addrlen, bool do_listen,
