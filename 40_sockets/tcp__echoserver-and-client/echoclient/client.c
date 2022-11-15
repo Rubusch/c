@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 		}
 		nread = read(sockfd, buf, BUF_SIZE);
 		if (-1 == nread) {
-			perror("CLIENT - read() failed, did you use 'localhost'? Try '127.0.0.1' instead.");
+			perror("CLIENT - read() failed, did you use 'localhost'? Try '127.0.0.1' instead. Error");
 			exit(EXIT_FAILURE);
 		}
 
