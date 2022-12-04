@@ -38,7 +38,7 @@ static void err_doit(int errnoflag, const char *fmt, va_list ap)
 	errno_save = errno; // value caller might want printed
 
 	vsnprintf(buf, MAXLINE, fmt, ap); // safe
-	//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
+//	vsprintf(buf, fmt, ap); // alternatively, if no vsnprintf() available, not safe
 
 	n_len = strlen(buf);
 	if (errnoflag) {

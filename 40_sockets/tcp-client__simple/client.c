@@ -1,9 +1,10 @@
 // client.c
 /*
   tcp server types - TCP testing client for all server types
-*/
 
-/* struct addressinfo (ai) and getaddressinfo (gai) will need _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE */
+  struct addressinfo (ai) and getaddressinfo (gai) will need
+  _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -241,7 +242,7 @@ void lothars__writen(int fd, void *ptr, size_t nbytes)
 	}
 }
 
-/********************************************************************************************/
+/******************************************************************************/
 // worker implementation
 
 void worker__echo_cli(FILE *fp, int fd_sock)
@@ -261,7 +262,7 @@ void worker__echo_cli(FILE *fp, int fd_sock)
 	}
 }
 
-/********************************************************************************************/
+/******************************************************************************/
 
 /*
   main()
@@ -270,7 +271,7 @@ void worker__echo_cli(FILE *fp, int fd_sock)
 
   a tcp server is expected, serverip and port needs to be provided
 */
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
 	int fd_sock;
 	struct sockaddr_in servaddr;

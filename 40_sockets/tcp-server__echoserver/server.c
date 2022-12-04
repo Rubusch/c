@@ -389,7 +389,7 @@ int main(int argc, char *argv[])
 			lothars__close(&fd_listen);
 			worker(fd_conn);
 			fprintf(stdout, "READY.\n");
-			exit(EXIT_SUCCESS);
+			_exit(EXIT_SUCCESS);
 		}
 
 		lothars__close(&fd_conn);
