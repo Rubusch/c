@@ -27,13 +27,13 @@
 #include <sys/wait.h>
 #include <sys/socket.h>  /* getaddrinfo() */
 #include <netdb.h> /* getaddrinfo() */
-
 #include "commons.h"
-
 #include "tlpi/get_num.h"
 
+#define BUF_SIZE 100
 
-static const char *LOG_FILE = "/tmp/ds.log";
+//static const char *LOG_FILE = "/tmp/ds.log";
+static const char *LOG_FILE = "/dev/null";
 
 /*
   returns 0 on success, -1 on error
@@ -46,10 +46,10 @@ become_daemon(int flags)
 	switch (fork()) {  // become background process
 	case -1: return -1;
 	case 0: break;     // child falls through...
-	default:
-		return 0;  // ...while parent terminates
+	default: _exit(EXIT_SUCCESS);  // ...while parent terminates (updated)
 	}
 
+	/* child */
 	if (-1 == setsid()) { // become leader of new session
 		return -1;
 	}
@@ -58,8 +58,7 @@ become_daemon(int flags)
 	case -1: return -1;
 	case 0: break;
 	default:
-		sleep(1);
-		return 0;
+		_exit(EXIT_SUCCESS);  // (updated)
 	}
 
 	if (!(flags & BD_NO_UMASK0)) {
@@ -104,13 +103,15 @@ become_daemon(int flags)
 
 static int
 inet_passive_socket(const char *service, int type,
-		    socklen_t *addrlen, bool do_listen,
-		    int backlog)
+		    socklen_t *addrlen, bool do_listen)
 {
+	int backlog;
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 	int sockfd = -1, optval, res;
 
+	syslog(LOG_WARNING, "SERVER: %s() - start", __func__);
+	syslog(LOG_WARNING, "SERVER: %s() - port: %s", __func__, service);
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
@@ -160,6 +161,12 @@ inet_passive_socket(const char *service, int type,
 	}
 
 	if (rp != NULL && do_listen) {
+		char *ptr = NULL;
+		// can override 2nd argument with environment variable
+		if (NULL != (ptr = getenv("LISTENQ"))) {
+			backlog = atoi(ptr);
+		}
+
 		if (-1 == listen(sockfd, backlog)) {
 			freeaddrinfo(result);
 			return -1;
@@ -200,17 +207,20 @@ handle_request(int cfd)
 	char buf[BUF_SIZE];
 	ssize_t nread;
 
+	syslog(LOG_WARNING, "SERVER: %s() -  start", __func__);
 	while (0 < (nread = read(cfd, buf, BUF_SIZE))) {
+		syslog(LOG_WARNING, "SERVER: %s() - buf = '%s'\n",
+		       __func__, buf);
 		if (nread != write(cfd, buf, nread)) {
-			syslog(LOG_ERR, "write() failed: %s",
-			       strerror(errno));
+			syslog(LOG_ERR, "SERVER: %s() - write() failed: %s",
+			       __func__, strerror(errno));
 			exit(EXIT_FAILURE);
 		}
 	}
 
 	if (-1 == nread) {
-		syslog(LOG_ERR, "error from read(): %s",
-		       strerror(errno));
+		syslog(LOG_ERR, "SERVER: %s() - error from read(): %s",
+		       __func__, strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 }
@@ -219,11 +229,12 @@ handle_request(int cfd)
 int
 main(int argc, char *argv[])
 {
-	int lfd, cfd;
+	int listenfd, connfd;
 	struct sigaction sa;
 
 	if (-1 == become_daemon(0)) {
-		perror("become_daemon()");
+		syslog(LOG_ERR, "SERVER: %s() - become_daemon(): %s",
+		       __func__, strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 
@@ -231,46 +242,54 @@ main(int argc, char *argv[])
 	sa.sa_flags = SA_RESTART;
 	sa.sa_handler = grim_reaper;
 	if (-1 == sigaction(SIGCHLD, &sa, NULL)) {
-		syslog(LOG_ERR, "error from sigaction(): %s",
-		       strerror(errno));
+		syslog(LOG_ERR, "SERVER: %s() - error from sigaction(): %s",
+		       __func__, strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 
 	// inet_listen()
-	lfd = inet_passive_socket(SERVICE, SOCK_STREAM, NULL, true, 10);
-	if (-1 == lfd) {
-		syslog(LOG_ERR, "could not create server socket (%s)",
-		       strerror(errno));
-//		exit(EXIT_FAILURE);
+	//
+	// NB: SERVICE is the port listening, check
+	// $ netstat -lt
+	syslog(LOG_WARNING, "SERVER: %s() - listen()", __func__);
+	listenfd = inet_passive_socket(SERVICE, SOCK_STREAM, NULL, true);
+	if (-1 == listenfd) {
+		syslog(LOG_ERR, "SERVER: %s() - could not create server socket (%s)", __func__, strerror(errno));
+		exit(EXIT_FAILURE);
 	}
 
-	while (true) {
-		cfd = accept(lfd, NULL, NULL); // wait for connection
-		if (-1 == cfd) {
-			syslog(LOG_ERR, "failure in accept(): %s",
-			       strerror(errno));
-			exit(EXIT_FAILURE);
-		}
+	socklen_t clilen;
+	struct sockaddr_in cliaddr;
+	do {
+		// accept
+		syslog(LOG_WARNING, "SERVER: %s() - accept(), waiting...", __func__);
+		clilen = sizeof(cliaddr);
+		connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen);
+		syslog(LOG_WARNING, "SERVER: %s() - accept(), accepted!", __func__);
 
-		/*
-		  handle each client request in a new child process
-		*/
-
-		switch (fork()) {
-		case -1: /* error */
-			syslog(LOG_ERR, "can't create child (%s)",
-			       strerror(errno));
-			close(cfd);  // give up on this client
-			break;
-
-		case 0: /* child */
-			close(lfd);  // unneeded copy of listening socket
-			handle_request(cfd);
-			_exit(EXIT_SUCCESS);
-
-		default: /* parent */
-			close(cfd);  // unneeeded copy of connected socket
+		syslog(LOG_WARNING, "SERVER: %s() - fork()", __func__);
+		switch(fork()) {
+		case -1:
+			syslog(LOG_ERR, "SERVER: %s() - can't create child (%s)",
+			       __func__, strerror(errno));
+			_exit(EXIT_FAILURE);
+		case 0: break;
+		default:
 			break;
 		}
-	}
+
+		// child
+		syslog(LOG_WARNING, "SERVER: %s() - child", __func__);
+		close(listenfd);
+		syslog(LOG_WARNING,
+		       "SERVER: %s() - child of accepted connection socket",
+		       __func__);
+		handle_request(connfd);
+		_exit(EXIT_SUCCESS);
+
+	} while (1);
+	close(connfd);  // unneeeded copy of connected socket
+
+	syslog(LOG_WARNING, "SERVER: %s() - exit()", __func__);
+	exit(EXIT_SUCCESS);
 }

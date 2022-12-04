@@ -12,9 +12,7 @@
   a port number
  */
 #define SERVICE "27978"
-//#define SERVICE "echo"
-#define BUF_SIZE 4096
-
+//#define SERVICE "echo" /* as root */
 
 /*
   become_daemon()
