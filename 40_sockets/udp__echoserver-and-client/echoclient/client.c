@@ -1,7 +1,6 @@
 /*
   unix socket - client
 
-
   Based on The Linux Programming Interface, Michael Kerrisk, 2010,
   p. 1242
 */
@@ -73,14 +72,15 @@ main(int argc, char *argv[])
 {
 	int sfd;
 	ssize_t nread;
-	char buf[BUF_SIZE];
-
-	if (2 != argc) {
+	char buf[BUF_SIZE]; memset(buf, '\0', sizeof(buf));
+	if (2 > argc) {
 		fprintf(stderr, "usage:\n$ %s host\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	sfd = inet_connect(argv[1], SERVICE, SOCK_STREAM);
+	fprintf(stderr, "CLIENT: argv[1] = '%s'\n",
+		argv[1]);
+	sfd = inet_connect(argv[1], SERVICE, SOCK_DGRAM);
 	if (-1 == sfd) {
 		perror("inet_connect()");
 		exit(EXIT_FAILURE);
@@ -97,16 +97,20 @@ main(int argc, char *argv[])
 				fprintf(stderr, "exit on EOF or error\n");
 				break;
 			}
-			fprintf(stderr "%.*s", (int) nread, buf);
+			fprintf(stderr, "[%ld bytes] %.*s\n",
+				(long) nread, (int) nread, buf);
 		}
 		_exit(EXIT_SUCCESS);
 
 	default: /* parent - write contents of stdin to socket */
 		while (true) {
+			// read in INPUT
 			nread = read(STDIN_FILENO, buf, BUF_SIZE);
 			if (0 >= nread) {
 				break;
 			}
+
+			// send it to the server
 			if (nread != write(sfd, buf, nread)) {
 				fprintf(stderr, "write() failed");
 				exit(EXIT_FAILURE);

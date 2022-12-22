@@ -234,6 +234,8 @@ main(int argc, char* argv[])
 			perror("recvfrom()");
 			exit(EXIT_FAILURE);
 		}
+		fprintf(stderr, "SERVER: recvfrom(sockfd, %s, %ld, 0, &claddr, &len)\n",
+			buf, (long) BUF_SIZE);
 
 		// sendto()
 		if (nread != sendto(sockfd, buf, nread, 0
@@ -243,6 +245,8 @@ main(int argc, char* argv[])
 						, len, addr_str, IS_ADDR_STR_LEN),
 			       strerror(errno));
 		}
+		fprintf(stderr, "SERVER: sendto(sockfd, '%s', %ld, 0, &claddr, len)\n",
+			buf, (long) nread);
 	}
 
 	fprintf(stderr, "SERVER - READY.\n");

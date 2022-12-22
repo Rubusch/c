@@ -44,17 +44,21 @@ pointer of the `struct addrinfo` instance(s).
 In the server folder  
 
 ```
+## terminal #1                              terminal #2
+
 $ sudo ./server.elf
   [1] 2832
-```
 
-In the client folder  
+                                            $ ./client.elf 127.0.0.1 < ./input.txt
+                                                CLIENT: argv[1] = '127.0.0.1'
 
-```
-$ ./client.elf 127.0.0.1 hello world
-    CLIENT - [5 bytes] 'hello'
-    CLIENT - [5 bytes] 'world'
-    CLIENT - done!
+    SERVER: recvfrom(sockfd, Hello Work!
+    , 500, 0, &claddr, &len)
+    SERVER: sendto(sockfd, 'Hello Work!
+    ', 12, 0, &claddr, len)
+
+
+                                                [12 bytes] Hello Work!
 ```
 
 NB: Don't forget to kill the server which is running as a daemon in the background.  
