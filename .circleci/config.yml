@@ -284,6 +284,7 @@ jobs:
       - run: cd ./40_sockets/tcp__client-server/tcpclient && make
       - run: cd ./40_sockets/udp-ipv6__client-server/udp-ip6-server && make
       - run: cd ./40_sockets/udp-ipv6__client-server/udp-ip6-client && make
+      - run: cd ./40_sockets/linux-sockets__getsocknames && make
 
 ## 50: bootloader and low level C
 ## certain examples won't run w/o nasm or installed ASM compiler tooling
