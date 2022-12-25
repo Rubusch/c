@@ -1,7 +1,7 @@
 SOURCE = traceroute.c
 HEADERS = traceroute.h
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -14,9 +14,9 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -pthread
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: all clean

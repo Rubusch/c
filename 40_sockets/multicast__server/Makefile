@@ -1,7 +1,6 @@
-# Makefile
 SOURCE = mcastserver.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -17,6 +16,6 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: all clean

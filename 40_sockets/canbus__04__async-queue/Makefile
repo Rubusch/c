@@ -1,8 +1,4 @@
-## Makefile (simple)
-##
-## @author: Lothar Rubusch <L.Rubusch@gmail.com>
-## @license: GPLv3
-TARGET = can_demo.exe
+TARGET = can_demo.elf
 SOURCE = main.c can_interface.c
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
@@ -14,9 +10,9 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ *.log core
+	$(RM) $(OBJECTS) $(TARGET) *~ *.log

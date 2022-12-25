@@ -1,9 +1,3 @@
-## Makefile
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3
-## @date: 2013-april-28
-
 SOURCE = client.c
 OBJECTS = $(SOURCE:.c=.o)
 TARGET = $(SOURCE:.c=.elf)
@@ -23,4 +17,3 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
-

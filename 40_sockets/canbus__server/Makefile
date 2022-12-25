@@ -1,14 +1,10 @@
-## Makefile (simple)
-##
-## @author: Lothar Rubusch <L.Rubusch@gmail.com>
-## @license: GPLv3
-TARGET = can_beacon.exe
+TARGET = can_beacon.elf
 SOURCE = can_interface.c can_frame.c
 
 HEADERS_TEST = -I. -Iunittest
-TARGET_TEST = test.exe
-TARGET_BASIC_TEST = basictest.exe
-TARGET_BASIC_TEST_AND_MEMORY = basictest_and_memory.exe
+TARGET_TEST = test.elf
+TARGET_BASIC_TEST = basictest.elf
+TARGET_BASIC_TEST_AND_MEMORY = basictest_and_memory.elf
 
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
@@ -41,16 +37,16 @@ $(TARGET_BASIC_TEST):
 ## memory checks (address sanitizer)
 ##
 ## to be started as follows (or similar):
-## $ export LD_PRELOAD=libasan.so.5 && ./basictest_and_memory.exe
+## $ export LD_PRELOAD=libasan.so.5 && ./basictest_and_memory.elf
 ##
 ## compile then as follows
-## $ unset LD_PRELOAD && make basictest_and_memory.exe
+## $ unset LD_PRELOAD && make basictest_and_memory.elf
 $(TARGET_BASIC_TEST_AND_MEMORY):
 	$(CC) $(CFLAGS) -DTESTING -DBASICTEST -o $@ unittest/test.c ${HEADERS_TEST} $(SOURCE) $(LDFLAGS)  -fsanitize=address -fno-omit-frame-pointer -pthread
 
 
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ *.log core *.exe *.o *.xml ./unittest/*~
+	$(RM) $(OBJECTS) $(TARGET) *~ *.log core *.elf *.o *.xml ./unittest/*~
 
 .PHONY: clean all $(TARGET_TEST) $(TARGET_BASIC_TEST) $(TARGET_BASIC_TEST_AND_MEMORY)

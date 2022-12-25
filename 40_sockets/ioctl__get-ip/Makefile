@@ -1,12 +1,6 @@
-## Makefile
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3
-## @date: 2013-april-28
-
 SOURCE = getip.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -22,6 +16,6 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: all clean

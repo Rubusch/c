@@ -1,9 +1,5 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
 SOURCE = canbus.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
@@ -14,11 +10,9 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
-
-
+	$(RM) $(OBJECTS) $(TARGET) *~

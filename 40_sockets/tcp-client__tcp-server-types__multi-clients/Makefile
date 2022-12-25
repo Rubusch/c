@@ -1,8 +1,6 @@
-# Makefile (simple)
-
 SOURCE = client.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -15,7 +13,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -pthread
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
