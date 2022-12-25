@@ -1,8 +1,9 @@
 /*
-   retrieve and converte calender times
-   demonstrate the effect of locale settings
+   Retrieve and converte calender times
+   Demonstrate the effect of locale settings
 
-   based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 199
+   Based on The Linux Programming Interface, Michael Kerrisk, 2010,
+   p. 199
  */
 
 #define _XOPEN_SOURCE

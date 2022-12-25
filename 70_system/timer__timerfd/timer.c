@@ -14,9 +14,9 @@
       READY.
 
 
-  demonstrates the use of the timerfd API
+  Demonstrates the use of the timerfd API
 
-  this program takes two command-line arguments. the first argument is
+  This program takes two command-line arguments. the first argument is
   mandatory, and specifies the initial time and interval for a
   timer. this argument is interpreted using the itimerspec_from_str()
   function shown in other examples, too. the second argument, which
@@ -25,7 +25,7 @@
   default for this argument is 1.
 
 
-  based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 510
+  Based on The Linux Programming Interface, Michael Kerrisk, 2010, p. 510
  */
 #define _POSIX_C_SOURCE 200809L
 
