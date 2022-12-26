@@ -452,8 +452,8 @@ jobs:
       - run: cd ./70_system/inotify && make
       - run: cd ./70_system/virt-mem__memory-protection && make && ./*.elf
       - run: cd ./70_system/virt-mem__mlock && make && ./*.elf 32 8 3 
-      - run: cd ./70_system/change_interrupt_character && make
-      - run: cd ./70_system/change_disable_echoing && make
+      - run: cd ./70_system/terminal__change-interrupt-character && make
+      - run: cd ./70_system/terminal__disable-echoing && make
 
 ## 80 unix and system-v, the museum
       - run: cd ./80_unix-and-system-v/messagequeue__demo__common_struct/receiver && make
