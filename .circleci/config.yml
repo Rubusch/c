@@ -443,6 +443,8 @@ jobs:
       - run: cd ./70_system/rc5_inputstring && make
       - run: cd ./70_system/select01 && make
       - run: cd ./70_system/select02 && make
+      - run: cd ./70_system/select__poll && make
+      - run: cd ./70_system/select__epoll && make
       - run: cd ./70_system/stat && make && ./*.elf ./text.txt
       - run: cd ./70_system/acl && make
       - run: cd ./70_system/directory && make
@@ -451,7 +453,7 @@ jobs:
       - run: cd ./70_system/directory__dirname-basename && make
       - run: cd ./70_system/inotify && make
       - run: cd ./70_system/virt-mem__memory-protection && make && ./*.elf
-      - run: cd ./70_system/virt-mem__mlock && make && ./*.elf 32 8 3 
+      - run: cd ./70_system/virt-mem__mlock && make && ./*.elf 32 8 3
       - run: cd ./70_system/terminal__change-interrupt-character && make
       - run: cd ./70_system/terminal__disable-echoing && make
       - run: cd ./70_system/terminal__tty-functions && make
