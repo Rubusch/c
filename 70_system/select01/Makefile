@@ -17,5 +17,3 @@ all: $(TARGET)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
-
-

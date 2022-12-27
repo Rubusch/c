@@ -52,7 +52,8 @@
     best performance
     not portable among other UNIXes
 
-  reference: The Linux Programming Interface, Michael Kerrisk, 2010, p. 1334
+  references:
+  The Linux Programming Interface, Michael Kerrisk, 2010, p. 1334
 */
 
 #include <stdlib.h>

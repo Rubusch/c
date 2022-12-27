@@ -19,4 +19,3 @@ clean:
 	$(RM) $(OBJECTS) $(TARGET) tlpi/get_num.o *~
 
 .PHONY: all clean
-
