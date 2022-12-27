@@ -91,7 +91,6 @@ main(int argc, char *argv[])
 	*/
 
 	npipes = get_int(argv[1], GN_GT_0, "npipes");    
-//	pfds = calloc(npipes, sizeof(int[2])); // TODO     
 	pfds = calloc(npipes, sizeof(*pfds));
 	if (NULL == pfds) {
 		perror("calloc(pfds)");
