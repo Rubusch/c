@@ -445,6 +445,7 @@ jobs:
       - run: cd ./70_system/select02 && make
       - run: cd ./70_system/select__poll && make
       - run: cd ./70_system/select__epoll && make
+      - run: cd ./70_system/select__self-pipe-trick && make
       - run: cd ./70_system/stat && make && ./*.elf ./text.txt
       - run: cd ./70_system/acl && make
       - run: cd ./70_system/directory && make
