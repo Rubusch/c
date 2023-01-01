@@ -11,7 +11,7 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $(SOURCE) $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
 
 all: $(TARGET)
 
