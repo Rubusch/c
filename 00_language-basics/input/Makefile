@@ -1,5 +1,5 @@
 SOURCE = main.c console_input.c
-TARGET = input.exe
+TARGET = input.elf
 #HEADERS = console_input.h
 OBJECTS = $(SOURCE:.c=.o)
 

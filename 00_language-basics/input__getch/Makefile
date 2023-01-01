@@ -1,5 +1,5 @@
 SOURCE = getch.c
-TARGET = opengetch.exe
+TARGET = opengetch.elf
 OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o

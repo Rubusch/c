@@ -1,5 +1,5 @@
 SOURCE = file.c
-TARGET = copy.exe
+TARGET = copy.elf
 HEADERS = fo.h
 OBJECTS = $(SOURCE:.c=.o)
 

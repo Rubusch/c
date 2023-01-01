@@ -1,7 +1,3 @@
-# Makefile
-#
-#
-
 SOURCE = Valgrind_double_free.c
 OBJECTS = ${SOURCE:.c=.o}
 
@@ -13,12 +9,12 @@ RM = rm -f
 .c.o:
 	${CC} ${CFLAGS} -c $<
 
-Valgrind_double_free.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+Valgrind_double_free.elf: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS}
 
-all: Valgrind_double_free.exe
+all: Valgrind_double_free.elf
 
 clean:
-	${RM} Valgrind_double_free.exe *~ *.o core
+	${RM} Valgrind_double_free.elf *~ *.o
 
 

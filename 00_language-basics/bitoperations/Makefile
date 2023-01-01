@@ -1,14 +1,5 @@
-## Makefile (simple)
-##
-## @author: Lothar Rubusch
-## @email: L.Rubusch@gmx.ch
-## @license: GPLv3
-##
-## use -O, -O1, -O2 for optimization
-
-
 SOURCE = bitoperations.c lotharlib/console_input.c
-TARGET = bitoperations.exe
+TARGET = bitoperations.elf
 HEADERS = lotharlib/console_input.h
 OBJECTS = $(SOURCE:.c=.o)
 

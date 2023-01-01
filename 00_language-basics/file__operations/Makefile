@@ -1,5 +1,5 @@
 SOURCE = main.c fo.c
-TARGET = file.exe
+TARGET = file.elf
 HEADERS = fo.h
 OBJECTS = $(SOURCE:.c=.o)
 

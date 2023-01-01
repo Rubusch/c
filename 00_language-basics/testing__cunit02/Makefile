@@ -1,5 +1,5 @@
 SOURCE = test__main.c
-TARGET = ${SOURCE:.c=.exe}
+TARGET = ${SOURCE:.c=.elf}
 OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o

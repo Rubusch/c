@@ -1,5 +1,5 @@
 SOURCE = fseek.c
-TARGET = fseek.exe
+TARGET = fseek.elf
 OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o

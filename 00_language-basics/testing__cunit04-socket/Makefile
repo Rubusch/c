@@ -1,11 +1,11 @@
 SOURCEFILE = canbus.c
 SOURCE = ./canbus__01/$(SOURCEFILE)
 
-TARGET = $(SOURCEFILE:.c=.exe)
-OBJECTS = $(SOURCEFILE:.c=.o)  
+TARGET = $(SOURCEFILE:.c=.elf)
+OBJECTS = $(SOURCEFILE:.c=.o)
 
 SOURCETEST = test__canbus.c
-TARGETTEST = $(SOURCETEST:.c=.exe)
+TARGETTEST = $(SOURCETEST:.c=.elf)
 
 .PREFIXES = .c .o
 CC ?= gcc

@@ -1,4 +1,4 @@
-TARGET = input.exe
+TARGET = input.elf
 SOURCE = input.c
 OBJECTS = $(SOURCE:.c=.o)
 

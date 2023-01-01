@@ -1,5 +1,5 @@
 SOURCE = input.c
-TARGET = input.exe
+TARGET = input.elf
 OBJECTS = ${SOURCE:.c=.o}
 
 .PREFIXES = .c .o

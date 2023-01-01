@@ -1,5 +1,5 @@
 SOURCE = fsetposition.c
-TARGET = fsetposition.exe
+TARGET = fsetposition.elf
 OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o

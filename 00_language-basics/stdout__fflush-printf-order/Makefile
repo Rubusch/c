@@ -1,8 +1,3 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = fflush.c
 OBJECTS = ${SOURCE:.c=.o}
 
@@ -14,10 +9,10 @@ RM = rm -f
 .c.o:
 	${CC} ${CFLAGS} -c $<
 
-fflush.exe: ${OBJECTS}
-	${CC} ${CFLAGS} -o $@ ${OBJECTS} -lm
+fflush.elf: ${OBJECTS}
+	${CC} ${CFLAGS} -o $@ ${OBJECTS}
 
-all: fflush.exe
+all: fflush.elf
 
 clean:
-	${RM} $(OBJECTS) fflush.exe *~ core
+	${RM} $(OBJECTS) fflush.elf *~

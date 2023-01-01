@@ -1,7 +1,7 @@
 SOURCE = main.c foo.c
 HEADERS = foo.h
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = scope.exe
+TARGET = scope.elf
 
 .PREFIXES = .c .o
 CC = gcc
@@ -14,7 +14,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
 	$(RM) $(TARGET) $(OBJECTS) *~

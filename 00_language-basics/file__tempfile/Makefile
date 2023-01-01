@@ -1,5 +1,5 @@
 SOURCE = tempfile.c
-TARGET = tf.exe
+TARGET = tf.elf
 OBJECTS = $(SOURCE:.c=.o)
 
 .PREFIXES = .c .o

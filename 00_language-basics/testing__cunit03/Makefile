@@ -1,10 +1,10 @@
 SOURCE = utility.c
 
 SOURCEMAIN = main.c
-TARGET = $(SOURCEMAIN:.c=.exe)
+TARGET = $(SOURCEMAIN:.c=.elf)
 
 SOURCETEST = test__utility.c
-TARGETTEST = $(SOURCETEST:.c=.exe)
+TARGETTEST = $(SOURCETEST:.c=.elf)
 
 OBJECTS = $(SOURCE:.c=.o)
 
