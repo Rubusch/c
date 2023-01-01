@@ -70,62 +70,62 @@ jobs:
       - run: date
 
 ## 00: basics
-      - run: cd ./00_language-basics/atoi02 && make && ./*.exe
-      - run: cd ./00_language-basics/2dim__pointer-to-pointer && make && ./*.exe
-      - run: cd ./00_language-basics/pointer__arithmetics && make && ./*.exe
-      - run: cd ./00_language-basics/atoi01 && make && ./*.exe
-      - run: cd ./00_language-basics/2dim__array-of-array && make && ./*.exe
-      - run: cd ./00_language-basics/argumentlist && make && ./*.exe
-      - run: cd ./00_language-basics/2dim__pointer-to-array && make && ./*.exe
-      - run: cd ./00_language-basics/void-pointer && make && ./*.exe
-      - run: cd ./00_language-basics/allocation && make && ./*.exe
-      - run: cd ./00_language-basics/hello-world && make && ./*.exe
-      - run: cd ./00_language-basics/string__cmp && make && ./*.exe
-      - run: cd ./00_language-basics/string-to-int-to-string && make && ./*.exe
-      - run: cd ./00_language-basics/struct && make && ./*.exe
-      - run: cd ./00_language-basics/pointer__assignment && make && ./*.exe
-      - run: cd ./00_language-basics/preprocessor && make && ./*.exe
-      - run: cd ./00_language-basics/memfoo_functions && make && ./*.exe
-      - run: cd ./00_language-basics/function-pointer__typedefed && make && ./*.exe
-      - run: cd ./00_language-basics/compiler_configuration && make && ./*.exe
-      - run: cd ./00_language-basics/printf__x32-x64 && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point01 && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point02__initialization && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point03__calculating && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point04__comparison-absolute-epsilon && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point05__comparison-relative-epsilon && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point06__comparison-ulp-float && make && ./*.exe
-      - run: cd ./00_language-basics/floating-point07__comparison-ulp-double && make && ./*.exe
+      - run: cd ./00_language-basics/atoi02 && make && ./*.elf
+      - run: cd ./00_language-basics/2dim__pointer-to-pointer && make && ./*.elf
+      - run: cd ./00_language-basics/pointer__arithmetics && make && ./*.elf
+      - run: cd ./00_language-basics/atoi01 && make && ./*.elf
+      - run: cd ./00_language-basics/2dim__array-of-array && make && ./*.elf
+      - run: cd ./00_language-basics/argumentlist && make && ./*.elf
+      - run: cd ./00_language-basics/2dim__pointer-to-array && make && ./*.elf
+      - run: cd ./00_language-basics/void-pointer && make && ./*.elf
+      - run: cd ./00_language-basics/allocation && make && ./*.elf
+      - run: cd ./00_language-basics/hello-world && make && ./*.elf
+      - run: cd ./00_language-basics/string__cmp && make && ./*.elf
+      - run: cd ./00_language-basics/string-to-int-to-string && make && ./*.elf
+      - run: cd ./00_language-basics/struct && make && ./*.elf
+      - run: cd ./00_language-basics/pointer__assignment && make && ./*.elf
+      - run: cd ./00_language-basics/preprocessor && make && ./*.elf
+      - run: cd ./00_language-basics/memfoo_functions && make && ./*.elf
+      - run: cd ./00_language-basics/function-pointer__typedefed && make && ./*.elf
+      - run: cd ./00_language-basics/compiler_configuration && make && ./*.elf
+      - run: cd ./00_language-basics/printf__x32-x64 && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point01 && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point02__initialization && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point03__calculating && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point04__comparison-absolute-epsilon && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point05__comparison-relative-epsilon && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point06__comparison-ulp-float && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point07__comparison-ulp-double && make && ./*.elf
 
 ## needs extended GNU resources
-##      - run: cd ./00_language-basics/types && make && ./*.exe
-      - run: cd ./00_language-basics/c11__alignof && make && ./*.exe
-      - run: cd ./00_language-basics/c11__compound_literal && make && ./*.exe
+##      - run: cd ./00_language-basics/types && make && ./*.elf
+      - run: cd ./00_language-basics/c11__alignof && make && ./*.elf
+      - run: cd ./00_language-basics/c11__compound_literal && make && ./*.elf
 
   ## interactive example (just building)
       - run: cd ./00_language-basics/function-pointer && make
 
 
 ## 00: techniques
-      - run: cd ./00_language-basics/attribute__lto && make && ./*.exe
-      - run: cd ./00_language-basics/attribute__unused && make && ./*.exe
-      - run: cd ./00_language-basics/endianness && make && ./*.exe
-      - run: cd ./00_language-basics/file__syscalls && make && ./*.exe
-      - run: cd ./00_language-basics/file__operations && make && ./*.exe
-      - run: cd ./00_language-basics/file__tempfile && make && ./*.exe
+      - run: cd ./00_language-basics/attribute__lto && make && ./*.elf
+      - run: cd ./00_language-basics/attribute__unused && make && ./*.elf
+      - run: cd ./00_language-basics/endianness && make && ./*.elf
+      - run: cd ./00_language-basics/file__syscalls && make && ./*.elf
+      - run: cd ./00_language-basics/file__operations && make && ./*.elf
+      - run: cd ./00_language-basics/file__tempfile && make && ./*.elf
       - run: cd ./00_language-basics/file__bypass-buffer-cache && make
-      - run: cd ./00_language-basics/stdout__fflush-printf-order && make && ./*.exe
-      - run: cd ./00_language-basics/debug__mtrace && make && ./*.exe
-#      - run: cd ./00_language-basics/debug__valgrind-double-free && make && ./*.exe ## has to fail
-      - run: cd ./00_language-basics/debug__valgrind-invalid-pointer && make && ./*.exe
-#      - run: cd ./00_language-basics/debug__valgrind-mem-leak01 && make && ./*.exe
-      - run: cd ./00_language-basics/debug__valgrind-mem-leak02 && make && ./*.exe
-      - run: cd ./00_language-basics/debug__valgrind-uninitialized && make && ./*.exe
+      - run: cd ./00_language-basics/stdout__fflush-printf-order && make && ./*.elf
+      - run: cd ./00_language-basics/debug__mtrace && make && ./*.elf
+#      - run: cd ./00_language-basics/debug__valgrind-double-free && make && ./*.elf ## has to fail
+      - run: cd ./00_language-basics/debug__valgrind-invalid-pointer && make && ./*.elf
+#      - run: cd ./00_language-basics/debug__valgrind-mem-leak01 && make && ./*.elf
+      - run: cd ./00_language-basics/debug__valgrind-mem-leak02 && make && ./*.elf
+      - run: cd ./00_language-basics/debug__valgrind-uninitialized && make && ./*.elf
 
   ## interactive and/or need fixes
       - run: cd ./00_language-basics/testing__cunit01 && make
-      - run: cd ./00_language-basics/testing__cunit02 && make && ./*.exe
-      - run: cd ./00_language-basics/testing__cunit03 && make && ./*.exe
+      - run: cd ./00_language-basics/testing__cunit02 && make && ./*.elf
+      - run: cd ./00_language-basics/testing__cunit03 && make && ./*.elf
       - run: cd ./00_language-basics/testing__cunit04-socket && make
       - run: cd ./00_language-basics/bitoperations && make
       - run: cd ./00_language-basics/input && make
