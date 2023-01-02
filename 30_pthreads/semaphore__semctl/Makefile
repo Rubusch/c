@@ -1,9 +1,5 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
 SOURCE = semctl.c console_input.c
-TARGET = semctl.exe
+TARGET = semctl.elf
 OBJECTS = $(SOURCE:.c=.o)
 HEADERS = console_input.h
 .PREFIXES = .c .o
@@ -17,8 +13,7 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
-
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
+	$(RM) $(OBJECTS) $(TARGET) *~

@@ -1,12 +1,5 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-#
-# -std=c99 -pedantic can cause problems with PTHREADS
-
-
 SOURCE = prod_cons.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
 CC = gcc
 CFLAGS += -g -Wall -pedantic -Werror
@@ -16,11 +9,9 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -pthread
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -pthread
 
 all: $(TARGET)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
-
-

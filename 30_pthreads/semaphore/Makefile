@@ -1,10 +1,5 @@
-# Makefile (simple)
-#
-# use -O, -O1, -O2 for optimization
-
-
 SOURCE = semaphore.c
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 OBJECTS = $(SOURCE:.c=.o)
 .PREFIXES = .c .o
 CC = gcc
@@ -15,11 +10,9 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm -D _SVID_SOURCE -D _XOPEN_SOURCE
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -D _SVID_SOURCE -D _XOPEN_SOURCE
 
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJECTS) $(TARGET) *~ core
-
-
+	$(RM) $(OBJECTS) $(TARGET) *~
