@@ -18,7 +18,7 @@ p. 1169
 In the server folder  
 
 ```
-$ ./server.exe &
+$ ./server.elf &
   [1] 2534
 ```
 

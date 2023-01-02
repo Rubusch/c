@@ -1,6 +1,6 @@
 SOURCE = signal_syscall.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -21,4 +21,3 @@ clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: $(TARGET) clean
-

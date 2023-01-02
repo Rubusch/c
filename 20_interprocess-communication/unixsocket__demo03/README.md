@@ -18,7 +18,7 @@ p. 1169
 In the server folder  
 
 ```
-$ ./server.exe > b &
+$ ./server.elf > b &
 [1] 4501
 
 $ ls -lF /tmp/unixdomain-transfer
@@ -38,7 +38,7 @@ Now stop the server
 
 ```
 $ kill %1
-[1]+  Terminated              ./server.exe > b  (wd: /usr/src/github__c/20_interprocess-communication/unixsocket__demo03/unixserver)
+[1]+  Terminated              ./server.elf > b  (wd: /usr/src/github__c/20_interprocess-communication/unixsocket__demo03/unixserver)
 
 $ diff a ../unixserver/b
   <empty>

@@ -1,8 +1,6 @@
-## NB: this needs '-rdynamic' to be set to show the function names
-##
 SOURCE = sigaction.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -23,4 +21,3 @@ clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: $(TARGET) clean
-

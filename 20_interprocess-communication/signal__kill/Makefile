@@ -1,6 +1,6 @@
 SOURCE = signal_kill.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = $(SOURCE:.c=.exe)
+TARGET = $(SOURCE:.c=.elf)
 
 .PREFIXES = .c .o
 CC = gcc
@@ -14,11 +14,10 @@ RM = rm -f
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET) *~
 
 .PHONY: $(TARGET) clean
-

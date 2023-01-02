@@ -1,6 +1,6 @@
 SOURCE = scratchy.c ../lotharlib/console_input.c
 OBJECTS = $(SOURCE:.c=.o)
-TARGET = scratchy.exe
+TARGET = scratchy.elf
 INC += -I../lotharlib/
 
 .PREFIXES = .c .o
