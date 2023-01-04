@@ -490,5 +490,5 @@ jobs:
 
 ## devkit lib
       - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
-      - run: cd ./lothars-devkit-library && make && tests=$(ls | egrep ".exe$") && for item in ${tests[*]}; do ./${item}; done
+      - run: cd ./lothars-devkit-library && make && tests=$(ls | egrep ".elf$") && for item in ${tests[*]}; do ./${item}; done
 
