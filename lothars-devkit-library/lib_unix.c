@@ -150,6 +150,11 @@ void lothars__gettimeofday(struct timeval *tv)
 
   #include <sys/ioctl.h>
 
+  Be aware that it is possible for the ioctl system call to return a
+  -1 value while errno = EINTR. In this case, it would not mean an
+  error but simply that the system call was interrupted, in which case
+  it should be tried again.
+
   @fd: The file descriptor on the stream.
   @request: The ioctl() request (see manpages).
   @arg: An optional argument.
@@ -157,9 +162,9 @@ void lothars__gettimeofday(struct timeval *tv)
 int lothars__ioctl(int fd, int request, void *arg)
 {
 	int res;
-	if (-1 == (res = ioctl(fd, request, arg))) {
-		err_sys("%s() error", __func__);
-	}
+	do {
+		res = ioctl(fd, request, arg);
+	} while (-1 == res && EINTR == errno);
 	return res; // streamio of I_LIST returns value
 }
 
