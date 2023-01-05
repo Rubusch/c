@@ -155,6 +155,28 @@ void lothars__gettimeofday(struct timeval *tv)
   error but simply that the system call was interrupted, in which case
   it should be tried again.
 
+
+  -> Interruption of system calls and library functions by signal
+     handlers
+
+  If a blocked call to one of the following interfaces is
+  interrupted by a signal handler, then the call is automatically
+  restarted after the signal handler returns if the SA_RESTART flag
+  was used; otherwise the call fails with the error EINTR:
+
+  read(2), readv(2), write(2), writev(2), and ioctl(2) calls on
+  "slow" devices.  A "slow" device is one where the I/O call may
+  block for an indefinite time, for example, a terminal, pipe, or
+  socket.  If an I/O call on a slow device has already
+  transferred some data by the time it is interrupted by a signal
+  handler, then the call will return a success status (normally,
+  the number of bytes transferred).  Note that a (local) disk is
+  not a slow device according to this definition; I/O operations
+  on disk devices are not interrupted by signals.
+
+  reference:
+  https://man7.org/linux/man-pages/man7/signal.7.html
+
   @fd: The file descriptor on the stream.
   @request: The ioctl() request (see manpages).
   @arg: An optional argument.
