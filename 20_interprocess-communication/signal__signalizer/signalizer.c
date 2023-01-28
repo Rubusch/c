@@ -38,7 +38,8 @@ static sighandler_t signal_add(int signum, sighandler_t signalhandler)
  * previously associated with the signal is stored in the location
  * pointed to by the argument oact. If the argument act is a null
  * pointer, signal handling is unchanged; thus, the call can be used
- * to enquire about the current handling of a given signal. */
+ * to enquire about the current handling of a given signal.
+ */
 	ret = sigaction(signum, NULL, &sa); // set old sig handler
 	if (0 > ret) {
 		perror("sigaction failed");
