@@ -38,9 +38,9 @@ EXAMPLE
 
 What's the difference between the following three pointer declarations in C:
 
-I)	void * const myPointer1;
-II)	void const *myPointer2;
-		or const void *myPointer3;
+I)  void* const myPointer1;  // read: void* is const
+II)  void const *myPointer2; // read: void is const
+ or const void *myPointer3;  // same as 'void const *'
 
 And which one is used to prevent:
 
@@ -58,7 +58,9 @@ myPointer2 is a pointer to a const void.
 myPointer3 is a pointer to a void const.
 
 myPointer1 is a const pointer, so its value cannot be modified.
-myPointer2 and myPointer3 are the same thing and not helpful here.
+myPointer2 and myPointer3 are the same thing.
+
+
 
 
 
