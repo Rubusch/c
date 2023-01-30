@@ -174,7 +174,7 @@ jobs:
       - run: cd ./20_interprocess-communication/signal__sighandler && make
       - run: cd ./20_interprocess-communication/signal__sighandler-nonlocal-goto && make
       - run: cd ./20_interprocess-communication/signal__sighandler-asynch-rt-signals && make
-      - run: cd ./20_interprocess-communication/signal__sighandler-message-passing && make && ./*.elf
+      - run: cd ./20_interprocess-communication/signal__sighandler-message-passing__func && make && ./*.elf
       - run: cd ./20_interprocess-communication/signal__sighandler-synch-signals && make
       - run: cd ./20_interprocess-communication/signal__jobcontrol__catching-SIGHUP && make
       - run: cd ./20_interprocess-communication/signal__jobcontrol__catching-SIGHUP-when-terminal-disconnect && make
