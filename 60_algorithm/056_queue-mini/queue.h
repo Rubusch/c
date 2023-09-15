@@ -22,10 +22,6 @@ typedef struct node_s {
 
 typedef node_t* node_p;
 
-node_p _queue_first;
-node_p _queue_head;
-int _queue_size;
-
 #define QUEUE_MAX_SIZE 10
 
 void print_dot(const char* filename);

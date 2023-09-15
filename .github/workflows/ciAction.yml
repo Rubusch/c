@@ -314,7 +314,7 @@ jobs:
       - run: cd ./60_algorithm/053_stack-mini && make basictest.elf && ./*.elf
       - run: cd ./60_algorithm/000_stack-macro-lifo && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/055_queue && make basictest.exe && ./*.exe
-      - run: cd ./60_algorithm/056_queue-mini && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/056_queue-mini && make basictest.elf && ./*.elf
       - run: cd ./60_algorithm/000_queue-macro-fifo && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/060_hashing && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/061_hashtable && make basictest.exe && ./*.exe

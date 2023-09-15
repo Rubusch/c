@@ -15,6 +15,10 @@
 
 #include "queue.h"
 
+static node_p _queue_first;
+static node_p _queue_head;
+static int _queue_size;
+
 /*
   dotty printer
  */
