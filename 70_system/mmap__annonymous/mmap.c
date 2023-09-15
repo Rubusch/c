@@ -82,7 +82,8 @@
 int
 main(int argc, char *argv[])
 {
-	int *addr;  // pointer to shared memory region
+	int *addr = NULL;  // pointer to shared memory region
+	int *res = NULL;
 
 #ifdef USE_MAP_ANON  /* use MAP_ANONYMOUS */
         /*     mmap(addr, lenth      , prot                , flags                   , fd, offset);  */
@@ -125,7 +126,8 @@ main(int argc, char *argv[])
 		(*addr)++;
 
 		// MAP_FAILED is "(void*) -1"
-		if (MAP_FAILED == (char*) munmap(addr, sizeof(*addr))) {
+		res = (int*) munmap(addr, sizeof(*addr));
+		if (MAP_FAILED == res) {
 			perror("munmap()");
 			_exit(EXIT_FAILURE);
 		}
