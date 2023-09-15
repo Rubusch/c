@@ -54,9 +54,6 @@ jobs:
           sudo apt-get install -y clang clang-tools clang-format
 
       - name: install cmake
-        environment:
-          TZ: "America/Los_Angeles"
-          DEBIAN_FRONTEND: "noninteractive"
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake
