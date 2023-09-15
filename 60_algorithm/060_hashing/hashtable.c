@@ -4,6 +4,7 @@
 
 #include "hashtable.h"
 
+static int has[MAX+1][2];
 
 int search(unsigned int key)
 {
@@ -13,7 +14,6 @@ int search(unsigned int key)
 		return 0;
 	}
 }
-
 
 void insert(unsigned int arr[], int size)
 {

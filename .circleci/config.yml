@@ -333,7 +333,7 @@ jobs:
       - run: cd ./60_algorithm/055_queue && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/056_queue-mini && make basictest.elf && ./*.elf
       - run: cd ./60_algorithm/000_queue-macro-fifo && make basictest.exe && ./*.exe
-      - run: cd ./60_algorithm/060_hashing && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/060_hashing && make basictest.elf && ./*.elf
       - run: cd ./60_algorithm/061_hashtable && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/062_hashtable-extension_amortized-cost-analysis && make && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/070_binary-search-tree && make basictest.exe && ./*.exe

@@ -43,8 +43,6 @@
 
 #define MAX 10
 
-int has[MAX+1][2];
-
 
 int search(unsigned int key);
 void insert(unsigned int arr[], int size);
