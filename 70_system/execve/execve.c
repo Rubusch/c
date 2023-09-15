@@ -34,7 +34,10 @@
 #include <unistd.h>
 
 #define BUF_SIZ 1024
-int readFile(char filename[FILENAME_MAX], char ***listOfEnvVars,
+// NB: setting here something like filename[FILENAME_MAX] needs
+// E.X.A.C.T.L.Y. the specified size, else a dynamically, shorter
+// allocated pointer would provoke a overflow
+int readFile(char filename[], char ***listOfEnvVars,
 	     int *numberOfEnvVars)
 {
 	if (0 == strlen(filename))
