@@ -4,6 +4,10 @@
 
 #include "linkedlist.h"
 
+static node_p _list_first;
+static node_p _list_head;
+static int _list_size;
+
 
 /*
   dotty printer
@@ -101,7 +105,12 @@ void list_delete(node_p ptr)
 	if (0 == list_size()) {
 		_list_first = NULL;
 		_list_head = NULL;
-		fprintf(stderr, "ptr != NULL, but the list is empty??!!!\n");
+		// NB: trigraph: originally the text of fprintf()
+		// ended with a "??!!!", anything followed a "??" can
+		// be an instruction to a compiler, a so called
+		// "trigraph", compilers may warn about this, even in
+		// quoted text of a printf()
+		fprintf(stderr, "ptr != NULL, but the list is empty?!\n");
 		return;
 	}
 
