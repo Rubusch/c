@@ -30,6 +30,11 @@ unsigned int lothars__if_nametoindex(const char *name)
   placed in the buffer pointed to by ifname. The buffer must allow for
   the storage of at least IF_NAMESIZE bytes.
 
+  NB: setting here something like filename[IF_NAMESIZE] needs
+  E.X.A.C.T.L.Y. the specified size, else a dynamically, shorter
+  allocated pointer as passed argument would provoke a overflow!!
+
+
   #include <net/if.h>
 
   @index: The index of the interface.
@@ -38,7 +43,7 @@ unsigned int lothars__if_nametoindex(const char *name)
   Returns the name of the interface also as return field, or NULL in
   case of error (the wrapper will abort the program).
 */
-char *lothars__if_indextoname(unsigned int index, char name[IF_NAMESIZE])
+char *lothars__if_indextoname(unsigned int index, char *name)
 {
 	char *ptr = NULL;
 	if (NULL == (ptr = if_indextoname(index, name))) {
