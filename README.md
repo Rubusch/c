@@ -1,3 +1,4 @@
+[![ci](https://github.com/Rubusch/c/actions/workflows/ciAction.yml/badge.svg)](https://github.com/Rubusch/c/actions/workflows/ciAction.yml)
 [![CircleCI](https://circleci.com/gh/Rubusch/c.svg?style=shield)](https://circleci.com/gh/Rubusch/c)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
