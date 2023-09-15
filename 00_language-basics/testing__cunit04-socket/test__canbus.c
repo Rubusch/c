@@ -7,6 +7,9 @@
 
 #include "test__canbus.h"
 
+static int global_argc;
+static char** global_argv;
+
 int init_suite_success(void) { return 0; }
 int clean_suite_success(void) { return 0; }
 

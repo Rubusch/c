@@ -39,8 +39,7 @@ int testee(void);
 /* hook for: "int main(int argc, char* argv[])" */
 int tester(int argc, char* argv[]);
 int testee(int argc, char* argv[]);
-int global_argc;
-char** global_argv;
+
 #define TESTING_SETUP					\
 	return tester(argc, argv);			\
 	}						\
@@ -49,8 +48,8 @@ char** global_argv;
 
 
 /* probe command line arguments */
-char testing_probe__ifname[16];
-int testing_probe__ifname__switch;
+static char testing_probe__ifname[16];
+static int testing_probe__ifname__switch;
 #define TESTING_PROBE__IFNAME						\
 	if (testing_probe__ifname__switch) {				\
 		strncpy(testing_probe__ifname, ifname, strlen(ifname));		\
