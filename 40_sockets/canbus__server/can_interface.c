@@ -38,6 +38,11 @@ static struct ifreq ifr;
 
 static struct can_frame *frame_ptr = NULL;
 
+static struct can_frame *test__frame;
+static int test__tx_nbytes;
+static int test__rx_ret;
+
+
 static void canif__failure(char* msg, const char* func)
 {
 	char message[BUFSIZ];

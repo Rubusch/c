@@ -12,6 +12,10 @@
 #include <time.h>
 #include <stdarg.h>
 
+static struct can_frame *test__frame;
+static int test__tx_nbytes;
+static int test__rx_ret;
+
 
 void test_printf(const char* msg, ...)
 {
@@ -528,10 +532,11 @@ int main(void)
 	/* utilities */
 	TEST_start(pSuite, "empty queues", test_queue_empty)
 		TEST_append(pSuite, "interface setup", test_canif_interface)
-		TEST_append(pSuite, "tx single", test_tx_single)
-		TEST_append(pSuite, "tx multiple", test_tx_multiple)
-		TEST_append(pSuite, "rx single", test_rx_single)
-		TEST_append(pSuite, "rx multiple", test_rx_multiple)
+// TODO needs hardware
+//		TEST_append(pSuite, "tx single", test_tx_single)
+//		TEST_append(pSuite, "tx multiple", test_tx_multiple)
+//		TEST_append(pSuite, "rx single", test_rx_single)
+//		TEST_append(pSuite, "rx multiple", test_rx_multiple)
 	TEST_end();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

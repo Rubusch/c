@@ -95,9 +95,9 @@ int canif__recv(pdu_p *pdu);
 // NB: in general don't use static here, used for unittests
 // NB: basictest.elf: use static, since linker error on some setups
 // NB: WTF!
-static struct can_frame *test__frame;
-static int test__tx_nbytes;
-static int test__rx_ret;
+//struct can_frame *test__frame;
+//int test__tx_nbytes;
+//int test__rx_ret;
 
 # endif /* TESTING */
 
