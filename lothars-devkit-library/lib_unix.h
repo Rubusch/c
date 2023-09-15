@@ -66,7 +66,7 @@ void *lothars__malloc(size_t);
 int lothars__mkstemp(char *);
 void *lothars__mmap(void *, size_t, int, int, int, off_t);
 int lothars__open(const char *, int, mode_t);
-void lothars__pipe(int *fds);
+void lothars__pipe(int fds[2]);
 void lothars__sigaddset(sigset_t *, int);
 void lothars__sigdelset(sigset_t *, int);
 void lothars__sigemptyset(sigset_t *);
