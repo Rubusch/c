@@ -53,13 +53,15 @@ jobs:
          sudo apt-get update
          sudo apt-get install -y clang clang-tools clang-format
 
-#    - name: install cmake
-#      environment:
-#        TZ: "America/Los_Angeles"
-#        DEBIAN_FRONTEND: "noninteractive"
-#      run: sudo apt-get update && sudo apt-get install -y cmake'
+     - name: install cmake
+       environment:
+         TZ: "America/Los_Angeles"
+         DEBIAN_FRONTEND: "noninteractive"
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y cmake
 
-#    - run: data
+     - run: data
 
 ## 00: basics
      - run: cd ./00_language-basics/atoi02 && make && ./*.elf
