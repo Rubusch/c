@@ -125,7 +125,7 @@ main(int argc, char *argv[])
 		(*addr)++;
 
 		// MAP_FAILED is "(void*) -1"
-		if (MAP_FAILED == munmap(addr, sizeof(*addr))) {
+		if (MAP_FAILED == (char*) munmap(addr, sizeof(*addr))) {
 			perror("munmap()");
 			_exit(EXIT_FAILURE);
 		}
