@@ -11,57 +11,480 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-     - name: install build-essential
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y build-essential
+      - name: install build-essential
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
 
-     - name: install acl lib
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y libacl1-dev
+      - name: install acl lib
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libacl1-dev
 
-     - name: install caps lib (classic, not -ng)
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y libcap-dev
+      - name: install caps lib (classic, not -ng)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcap-dev
 
-     - name: install gcc/g++
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y gcc g++
+      - name: install gcc/g++
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc g++
 
-     - name: install nasm
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y nasm
+      - name: install nasm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm
 
-     - name: install libc6-dev
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y libc6-dev
+      - name: install libc6-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libc6-dev
 
-     - name: install cunit
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y libcunit1-ncurses-dev
+      - name: install cunit
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcunit1-ncurses-dev
 
-     - name: install clang
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y clang clang-tools clang-format
+      - name: install clang
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang clang-tools clang-format
 
-     - name: install cmake
-       environment:
-         TZ: "America/Los_Angeles"
-         DEBIAN_FRONTEND: "noninteractive"
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y cmake
+      - name: install cmake
+        environment:
+          TZ: "America/Los_Angeles"
+          DEBIAN_FRONTEND: "noninteractive"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
 
-     - run: data
+      - run: data
 
 ## 00: basics
-     - run: cd ./00_language-basics/atoi02 && make && ./*.elf
+      - run: cd ./00_language-basics/atoi02 && make && ./*.elf
+      - run: cd ./00_language-basics/2dim__pointer-to-pointer && make && ./*.elf
+      - run: cd ./00_language-basics/pointer__arithmetics && make && ./*.elf
+      - run: cd ./00_language-basics/atoi01 && make && ./*.elf
+      - run: cd ./00_language-basics/2dim__array-of-array && make && ./*.elf
+      - run: cd ./00_language-basics/argumentlist && make && ./*.elf
+      - run: cd ./00_language-basics/2dim__pointer-to-array && make && ./*.elf
+      - run: cd ./00_language-basics/void-pointer && make && ./*.elf
+      - run: cd ./00_language-basics/allocation && make && ./*.elf
+      - run: cd ./00_language-basics/hello-world && make && ./*.elf
+      - run: cd ./00_language-basics/string__cmp && make && ./*.elf
+      - run: cd ./00_language-basics/string-to-int-to-string && make && ./*.elf
+      - run: cd ./00_language-basics/struct && make && ./*.elf
+      - run: cd ./00_language-basics/pointer__assignment && make && ./*.elf
+      - run: cd ./00_language-basics/preprocessor && make && ./*.elf
+      - run: cd ./00_language-basics/memfoo_functions && make && ./*.elf
+      - run: cd ./00_language-basics/function-pointer__typedefed && make && ./*.elf
+      - run: cd ./00_language-basics/compiler_configuration && make && ./*.elf
+      - run: cd ./00_language-basics/printf__x32-x64 && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point01 && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point02__initialization && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point03__calculating && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point04__comparison-absolute-epsilon && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point05__comparison-relative-epsilon && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point06__comparison-ulp-float && make && ./*.elf
+      - run: cd ./00_language-basics/floating-point07__comparison-ulp-double && make && ./*.elf
+
+## needs extended GNU resources
+##      - run: cd ./00_language-basics/types && make && ./*.elf
+      - run: cd ./00_language-basics/c11__alignof && make && ./*.elf
+      - run: cd ./00_language-basics/c11__compound_literal && make && ./*.elf
+
+  ## interactive example (just building)
+      - run: cd ./00_language-basics/function-pointer && make
+
+
+## 00: techniques
+      - run: cd ./00_language-basics/attribute__lto && make && ./*.elf
+      - run: cd ./00_language-basics/attribute__unused && make && ./*.elf
+      - run: cd ./00_language-basics/endianness && make && ./*.elf
+      - run: cd ./00_language-basics/file__syscalls && make && ./*.elf
+      - run: cd ./00_language-basics/file__operations && make && ./*.elf
+      - run: cd ./00_language-basics/file__tempfile && make && ./*.elf
+      - run: cd ./00_language-basics/file__bypass-buffer-cache && make
+      - run: cd ./00_language-basics/stdout__fflush-printf-order && make && ./*.elf
+      - run: cd ./00_language-basics/debug__mtrace && make && ./*.elf
+#      - run: cd ./00_language-basics/debug__valgrind-double-free && make && ./*.elf ## has to fail
+      - run: cd ./00_language-basics/debug__valgrind-invalid-pointer && make && ./*.elf
+#      - run: cd ./00_language-basics/debug__valgrind-mem-leak01 && make && ./*.elf
+      - run: cd ./00_language-basics/debug__valgrind-mem-leak02 && make && ./*.elf
+      - run: cd ./00_language-basics/debug__valgrind-uninitialized && make && ./*.elf
+
+  ## interactive and/or need fixes
+      - run: cd ./00_language-basics/testing__cunit01 && make
+      - run: cd ./00_language-basics/testing__cunit02 && make && ./*.elf
+      - run: cd ./00_language-basics/testing__cunit03 && make && ./*.elf
+      - run: cd ./00_language-basics/testing__cunit04-socket && make
+      - run: cd ./00_language-basics/bitoperations && make
+      - run: cd ./00_language-basics/input && make
+      - run: cd ./00_language-basics/input__fgets-digit && make
+      - run: cd ./00_language-basics/input__fgets-number && make
+      - run: cd ./00_language-basics/input__fgetc-number && make
+      - run: cd ./00_language-basics/input__fgetc-string && make
+      - run: cd ./00_language-basics/input__choice && make
+      - run: cd ./00_language-basics/file__filesize && make
+      - run: cd ./00_language-basics/file__fseek-position && make
+      - run: cd ./00_language-basics/stdin__fflush-undefined && make
+      - run: cd ./00_language-basics/file__fsetpos && make
+      - run: cd ./00_language-basics/file__move && make
+      - run: cd ./00_language-basics/input__getch && make
+
+## 20: ipc
+      - run: cd ./20_interprocess-communication/fifo__seqnum/fifoserver && make
+      - run: cd ./20_interprocess-communication/fifo__seqnum/fifoclient && make
+      - run: cd ./20_interprocess-communication/posix-mq__create && make
+      - run: cd ./20_interprocess-communication/posix-mq__getattr && make
+      - run: cd ./20_interprocess-communication/posix-mq__unlink && make
+      - run: cd ./20_interprocess-communication/posix-mq__send && make
+      - run: cd ./20_interprocess-communication/posix-mq__receive && make
+      - run: cd ./20_interprocess-communication/posix-mq__notify && make
+      - run: cd ./20_interprocess-communication/posix-mq__notify-thread && make
+      - run: cd ./20_interprocess-communication/posix-shm__create && make
+      - run: cd ./20_interprocess-communication/posix-shm__write && make
+      - run: cd ./20_interprocess-communication/posix-shm__read && make
+      - run: cd ./20_interprocess-communication/posix-shm__unlink && make
+      - run: cd ./20_interprocess-communication/pipe__connect-ls-and-wc && make
+      - run: cd ./20_interprocess-communication/pipe__formatted-ping/itchy && make
+      - run: cd ./20_interprocess-communication/pipe__formatted-ping/scratchy && make && ./*.elf
+      - run: cd ./20_interprocess-communication/pipe__half-duplex-named-pipe/receiver && make
+      - run: cd ./20_interprocess-communication/pipe__half-duplex-named-pipe/sender && make
+      - run: cd ./20_interprocess-communication/pipe__process-syncing-return && make
+      - run: cd ./20_interprocess-communication/pipe__fork-demo && make
+      - run: cd ./20_interprocess-communication/pipe__popen01 && make
+      - run: cd ./20_interprocess-communication/pipe__popen02 && make && ./*.elf
+      - run: cd ./20_interprocess-communication/signal__alarm__via_sa_handler && make
+      - run: cd ./20_interprocess-communication/signal__alarm__via_sa_sigaction && make
+      - run: cd ./20_interprocess-communication/signal__demo/itchy && make
+      - run: cd ./20_interprocess-communication/signal__demo/scratchy && make
+      - run: cd ./20_interprocess-communication/signal__kill && make
+      - run: cd ./20_interprocess-communication/signal__sigaction01 && make
+      - run: cd ./20_interprocess-communication/signal__sigaction02__backtrace && make
+      - run: cd ./20_interprocess-communication/signal__sighandler && make
+      - run: cd ./20_interprocess-communication/signal__sighandler-nonlocal-goto && make
+      - run: cd ./20_interprocess-communication/signal__sighandler-asynch-rt-signals && make
+      - run: cd ./20_interprocess-communication/signal__sighandler-message-passing__func && make && ./*.elf
+      - run: cd ./20_interprocess-communication/signal__sighandler-message-passing__text && make && ./*.elf
+      - run: cd ./20_interprocess-communication/signal__sighandler-synch-signals && make
+      - run: cd ./20_interprocess-communication/signal__jobcontrol__catching-SIGHUP && make
+      - run: cd ./20_interprocess-communication/signal__jobcontrol__catching-SIGHUP-when-terminal-disconnect && make
+      - run: cd ./20_interprocess-communication/signal__read-signals && make
+      - run: cd ./20_interprocess-communication/signal__sigaltstack && make
+      - run: cd ./20_interprocess-communication/signal__sigsuspend && make
+      - run: cd ./20_interprocess-communication/signal__signalizer && make
+      - run: cd ./20_interprocess-communication/signal__sigmask && make
+      - run: cd ./20_interprocess-communication/signal__signal_talking && make
+      - run: cd ./20_interprocess-communication/signal__syscall && make
+      - run: cd ./20_interprocess-communication/signal__trap && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo01/client && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo01/server && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo02/unixclient && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo02/unixserver && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo03/unixclient && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo03/unixserver && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo04/unixclient && make
+      - run: cd ./20_interprocess-communication/unixsocket__demo04/unixserver && make
+
+## 30: pthreads
+      ## signalhandler02 seems to show different timings and, in case
+      ## dies already by signal instead of run to the end -> true for build
+      - run: cd ./30_pthreads/pthread__signalhandler02 && make
+      - run: cd ./30_pthreads/pthread__stack-management && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__create && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__condition-var00 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__condition-var01 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__condition-var02 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__condition-timed && make
+      - run: cd ./30_pthreads/pthread__mutex00 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__mutex01 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__mutex02 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__restaurant && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__signalhandler01 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__hello_world && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__producer-consumer && make && ./*.elf ./source.txt ./destination.txt
+      - run: cd ./30_pthreads/pthread__rwlock && make && ./*.elf
+      - run: cd ./30_pthreads/semaphore && make && ./*.elf
+      - run: cd ./30_pthreads/semaphore__semctl && make
+#      - run: cd ./30_pthreads/semaphore__semget && make
+      - run: cd ./30_pthreads/semaphore__ipc-synchronization && make && ./*.elf
+
+  ## needs command line arguments
+      - run: cd ./30_pthreads/pthread__passing-arguments01 && make
+      - run: cd ./30_pthreads/pthread__passing-arguments02 && make
+      - run: cd ./30_pthreads/pthread__passing-arguments03 && make
+      - run: cd ./30_pthreads/pthread__six-threads && make
+      - run: cd ./30_pthreads/pthread__deadlock && make
+      - run: cd ./30_pthreads/pthread__manythreads && make
+
+  ## server, thus waiting for connection
+      - run: cd ./30_pthreads/pthread__socket-server && make
+
+  ## thread cancellation, to be watched on top
+      - run: cd ./30_pthreads/pthread__posix-cancellation && make
+
+  ## travis seems to have trouble with the following, thus just compiling
+      - run: cd ./30_pthreads/pthread__join00 && make
+      - run: cd ./30_pthreads/pthread__join01 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__join02 && make && ./*.elf
+      - run: cd ./30_pthreads/pthread__join03 && make
+
+## 40: sockets and networking
+      - run: cd ./40_sockets/canbus__01 && make
+      - run: cd ./40_sockets/canbus__02__receive-timed-wait && make
+      - run: cd ./40_sockets/canbus__03__async-callback && make
+      - run: cd ./40_sockets/canbus__04__async-queue && make
+      - run: cd ./40_sockets/canbus__server && make basictest.elf && ./*.elf
+      - run: cd ./40_sockets/ioctl__get-ip && make
+      - run: cd ./40_sockets/ioctl__interface-information && make
+      - run: cd ./40_sockets/ioctl__interface-mac && make
+      - run: cd ./40_sockets/ioctl__interface-names && make
+      - run: cd ./40_sockets/multicast__client && make
+      - run: cd ./40_sockets/multicast__sender-and-receiver && make
+      - run: cd ./40_sockets/multicast__server && make
+#      - run: cd ./40_sockets/multicast__sntp-client__TODO && make
+      - run: cd ./40_sockets/raw-sockets__tcp && make
+      - run: cd ./40_sockets/raw-sockets__udp && make
+      - run: cd ./40_sockets/raw-sockets__ping && make
+      - run: cd ./40_sockets/raw-sockets__traceroute && make
+      - run: cd ./40_sockets/raw-sockets__synflooding && make
+      - run: cd ./40_sockets/tcp-client__portscanner && make
+      - run: cd ./40_sockets/tcp-client__sending-xml && make
+      - run: cd ./40_sockets/tcp-client__simple && make
+      - run: cd ./40_sockets/tcp-client__SO_LINGER && make
+      - run: cd ./40_sockets/tcp-client__tcp-server-types__multi-clients && make
+      - run: cd ./40_sockets/tcp-server__echoserver && make
+      - run: cd ./40_sockets/tcp-server__echoserver-poll && make
+      - run: cd ./40_sockets/tcp-server__echoserver-select && make
+      - run: cd ./40_sockets/tcp-server-types__0-tcp-iterative-server && make
+      - run: cd ./40_sockets/tcp-server-types__1-tcp-concurrent-server-one-child-per-client && make
+      - run: cd ./40_sockets/tcp-server-types__2a-tcp-preforked-no-locking-around-accept && make
+      - run: cd ./40_sockets/tcp-server-types__2b-tcp-preforked-no-locking-around-accept-using-select && make
+      - run: cd ./40_sockets/tcp-server-types__3-tcp-preforked-server-file-locking-around-accept && make
+      - run: cd ./40_sockets/tcp-server-types__4-tcp-preforked-server-thread-locking-around-accept && make
+      - run: cd ./40_sockets/tcp-server-types__5-tcp-preforked-server-descriptor-passing && make
+      - run: cd ./40_sockets/tcp-server-types__6-tcp-concurrent-server-on-thread-per-client && make
+      - run: cd ./40_sockets/tcp-server-types__7-tcp-prethreaded-server-per-thread-calls-accept && make
+      - run: cd ./40_sockets/tcp-server-types__8-tcp-prethreaded-server-main-thread-calls-accept && make
+      - run: cd ./40_sockets/tcp-udp-server__echoserver && make
+      - run: cd ./40_sockets/udp-client__reliable && make
+      - run: cd ./40_sockets/udp-client__simple && make
+      - run: cd ./40_sockets/udp-server__echoserver && make
+      - run: cd ./40_sockets/udp__echoserver-and-client/echoserver && make
+      - run: cd ./40_sockets/udp__echoserver-and-client/echoclient && make
+      - run: cd ./40_sockets/tcp__client-server/tcpserver && make
+      - run: cd ./40_sockets/tcp__client-server/tcpclient && make
+      - run: cd ./40_sockets/udp-ipv6__client-server/udp-ip6-server && make
+      - run: cd ./40_sockets/udp-ipv6__client-server/udp-ip6-client && make
+      - run: cd ./40_sockets/linux-sockets__getsocknames && make
+
+## 50: bootloader and low level C
+## certain examples won't run w/o nasm or installed ASM compiler tooling
+      #- run: cd ./50_embedded/000__x86-64-nasm__hello-world && make && ./*.exe
+      #- run: cd ./50_embedded/010__x86-64-nasm__hello-world && make && ./*.exe
+      #- run: cd ./50_embedded/020__x86-64-nasm__hello-world-function-call && make && ./*.exe
+      #- run: cd ./50_embedded/030__x86-64-nasm__hello-world-stack && make && ./*.exe
+      #- run: cd ./50_embedded/040__x86-64-nasm__hello-world-strings && make && ./*.exe
+      #- run: cd ./50_embedded/050__x86-64-nasm__hello-world-macros && make && ./*.exe
+      #- run: cd ./50_embedded/053__x86-64-nasm__hello-world-macros-struc && make && ./*.exe
+      #- run: cd ./50_embedded/060__x86-64-nasm__hello-world && make && ./*.exe
+      #- run: cd ./50_embedded/070__x86-64-nasm__hello-world-fpu && make && ./*.exe
+      #- run: cd ./50_embedded/100__x86-gas__booting__16bit-real-mode && make && ./*.exe
+      #- run: cd ./50_embedded/110__x86-gas__booting__start-by-init && make && ./*.exe
+      #- run: cd ./50_embedded/120__x86-gas__booting__jump-to-init && make && ./*.exe
+      #- run: cd ./50_embedded/130__x86-gas__booting__reboot-by-reset && make && ./*.exe
+      #- run: cd ./50_embedded/140__x86-gas__booting__print-letter && make && ./*.exe
+      #- run: cd ./50_embedded/150__x86-gas__booting__print-string && make && ./*.exe
+      #- run: cd ./50_embedded/160__x86-gas__booting__print-string-loop && make && ./*.exe
+      #- run: cd ./50_embedded/170__x86-gas__booting__nasm-print-string && make && ./*.exe
+
+## 60: algorithms
+## (instead of a main, mostly a unittest based on cunit is implemented)
+## references: Algorithms by Cormen/Leiserson/Rivest/Stein
+      - run: cd ./60_algorithm/000_matrix && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/000_matrix-macro && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/001_insertionsort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/002_mergesort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/005_divide-and-conquer-preparations && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/006_divide-and-conquer && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/007_square-matrix-multiply && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/008_square-matrix-multiply-recursive_strassen-method && make && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/010_randomized-algorithm && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/020_heapsort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/025_quicksort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/030_countingsort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/035_radixsort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/040_bucketsort && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/045_order-statistics && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/050_linked-list && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/052_stack && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/053_stack-mini && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/000_stack-macro-lifo && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/055_queue && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/056_queue-mini && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/000_queue-macro-fifo && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/060_hashing && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/061_hashtable && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/062_hashtable-extension_amortized-cost-analysis && make && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/070_binary-search-tree && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/075_red-black-tree && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/080_dynamic-programming_rod-cutting && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/081_dynamic-programming_matrix-chaining && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/082_dynamic-programming_longest-common-subsequence && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/083_dynamic-programming_optimal-binary-searchtree && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/090_greedy_huffman-codes && make basictest.exe && ./*.exe
+
+## 70: system
+      - run: cd ./70_system/clone && make
+      - run: cd ./70_system/jmp__setjmp01 && make && ./*.elf
+      - run: cd ./70_system/jmp__setjmp02 && make && ./*.elf
+      - run: cd ./70_system/jmp__setjmp03 && make && ./*.elf
+      - run: cd ./70_system/pid_credentials && make && ./*.elf
+      - run: cd ./70_system/ptrace__010-fork-show-all-instructions && make
+      - run: cd ./70_system/ptrace__020-fork-syswrite-peekuser && make
+      - run: cd ./70_system/ptrace__021-fork-syswrite-peekuser-getregs && make
+      - run: cd ./70_system/ptrace__030-fork-syswrite-peekuser-peekdata-pokedata && make
+      - run: cd ./70_system/ptrace__031-fork-syswrite-getregs-peekdata-pokedata && make
+      - run: cd ./70_system/ptrace__032-fork-getregs-show-syscalls && make
+      - run: cd ./70_system/ptrace__033-fork-getregs-show-syscalls-peekdata-pokedata-change-syswrite && make
+      - run: cd ./70_system/ptrace__034-fork-getregs-show-syscalls-results && make
+      - run: cd ./70_system/ptrace__035-fork-getregs-show-syscalls-inject-result-eperm && make
+      - run: cd ./70_system/ptrace__040-fork-syswrite-getregs-peektext-singlestep && make
+      - run: cd ./70_system/ptrace__041-fork-syswrite-getregs-peektext-singlestep-all-instructions && make
+      - run: cd ./70_system/ptrace__050-attach-detatch && make
+      - run: cd ./70_system/ptrace__051-attach-stop-restart-detach && make
+      - run: cd ./70_system/ptrace__052-attach-stop-inject-restart-detach && make
+      - run: cd ./70_system/ptrace__053-attach-stop-inject-reestablish-restart-detach && make
+      - run: cd ./70_system/ptrace__060-injection-replace && make
+      - run: cd ./70_system/ptrace__070-injection-shift-to-next-free-space && make
+      - run: cd ./70_system/ptrace__100-debugger-loop-instructions && make
+      - run: cd ./70_system/ptrace__110-debugger-watchpoint && make
+      - run: cd ./70_system/ptrace__120-debugger-proc && make
+#      - run: cd ./70_system/ptrace__130-debugger-singlestep-multithreading__FIXME && make
+      - run: cd ./70_system/asm__00-hello-world && make
+      - run: cd ./70_system/asm__01-add-numbers && make
+      - run: cd ./70_system/asm__02-add-numbers && make
+      - run: cd ./70_system/asm__03-compare-values && make
+      - run: cd ./70_system/asm__04-set-clear-bit && make
+      - run: cd ./70_system/asm__05-strcpy && make
+      - run: cd ./70_system/asm__06-move-block && make
+      - run: cd ./70_system/asm__07-syscall && make
+      - run: cd ./70_system/asm__08-eval-sys-exit && make
+      - run: cd ./70_system/asm__09-syscall-generic && make
+      - run: cd ./70_system/asm__10-string-section && make
+      - run: cd ./70_system/fork__simple && make
+      - run: cd ./70_system/fork__sharing && make
+      - run: cd ./70_system/fork__sharing-syncing-via-signals && make
+      - run: cd ./70_system/fork__cli-command && make
+      - run: cd ./70_system/fork && make
+      - run: cd ./70_system/fork__orphan && make
+      - run: cd ./70_system/fork__zombie && make
+      - run: cd ./70_system/fork__zombie-reaper && make
+      - run: cd ./70_system/fork__daemon && make
+      - run: cd ./70_system/flock && make
+      - run: cd ./70_system/flock__fcntl-locking && make
+      - run: cd ./70_system/flock__region-locking && make
+      - run: cd ./70_system/flock__pid-locking && make
+      - run: cd ./70_system/execl && make
+      - run: cd ./70_system/execlp && make
+      - run: cd ./70_system/execv && make
+      - run: cd ./70_system/execve && make
+      - run: cd ./70_system/execvp && make
+      - run: cd ./70_system/exit__exit-handler && make
+      - run: cd ./70_system/exit__close-on-exit && make
+      - run: cd ./70_system/gid-and-pid && make
+      - run: cd ./70_system/kill && make
+      - run: cd ./70_system/killpg && make
+      - run: cd ./70_system/system && make
+      - run: cd ./70_system/system__demo && make
+      - run: cd ./70_system/login__password && make
+      - run: cd ./70_system/login__password-capabilities && make
+      - run: cd ./70_system/login__utmpx-dump && make
+      - run: cd ./70_system/login__utmpx-login && make
+      - run: cd ./70_system/login__lastlog && make
+      - run: cd ./70_system/mmap__cat && make
+      - run: cd ./70_system/mmap__cat-offset && make
+      - run: cd ./70_system/mmap__annonymous && make && ./*.elf
+      - run: cd ./70_system/accounting && make
+      - run: cd ./70_system/vfork && make
+      - run: cd ./70_system/wait && make
+      - run: cd ./70_system/waitpid && make
+      - run: cd ./70_system/wait__status && make
+      - run: cd ./70_system/start_javaprg && make
+      - run: cd ./70_system/pid && make
+      - run: cd ./70_system/schedule__priority && make
+      - run: cd ./70_system/schedule__modify-policy && make
+      - run: cd ./70_system/schedule__policy && make
+      - run: cd ./70_system/sharedobject__dynamic-fixed && make
+      - run: cd ./70_system/sharedobject__dynamic-shared && make
+      - run: cd ./70_system/sharedobject__static-lib && make
+      - run: cd ./70_system/sharedobject__dlopen-search-symbol && make
+      - run: cd ./70_system/timer && make
+      - run: cd ./70_system/timer__time-measuring && make
+      - run: cd ./70_system/timer__realtime && make
+      - run: cd ./70_system/timer__timed-read && make
+      - run: cd ./70_system/timer__notification && make
+      - run: cd ./70_system/timer__timerfd && make && ./*.elf 1:1 10
+      - run: cd ./70_system/time__process-cpu-times && make && ./*.elf
+      - run: cd ./70_system/time__calender-time && make
+      - run: cd ./70_system/time__timezones && make
+      - run: cd ./70_system/time__timezones-locale && make
+      - run: cd ./70_system/time__nanosleep && make
+      - run: cd ./70_system/sysconf && make && ./*.elf
+      - run: cd ./70_system/uname && make && ./*.elf
+      - run: cd ./70_system/rc5_inputstring && make
+      - run: cd ./70_system/select01 && make
+      - run: cd ./70_system/select02 && make
+      - run: cd ./70_system/select__poll && make
+      - run: cd ./70_system/select__epoll && make
+      - run: cd ./70_system/select__self-pipe-trick && make
+      - run: cd ./70_system/stat && make && ./*.elf ./text.txt
+      - run: cd ./70_system/acl && make
+      - run: cd ./70_system/directory && make
+      - run: cd ./70_system/directory__nftw && make
+      - run: cd ./70_system/directory__realpath && make
+      - run: cd ./70_system/directory__dirname-basename && make
+      - run: cd ./70_system/inotify && make
+      - run: cd ./70_system/virt-mem__memory-protection && make && ./*.elf
+      - run: cd ./70_system/virt-mem__mlock && make && ./*.elf 32 8 3
+      - run: cd ./70_system/terminal__change-interrupt-character && make
+      - run: cd ./70_system/terminal__disable-echoing && make
+      - run: cd ./70_system/terminal__tty-functions && make
+      - run: cd ./70_system/terminal__signal-driven-io && make
+
+## 80 unix and system-v, the museum
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__common_struct/receiver && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__common_struct/sender && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo/receive && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo/send && make
+      - run: cd ./80_unix-and-system-v/messagequeue__experimental && make
+      - run: cd ./80_unix-and-system-v/messagequeue__msgctl && make
+      - run: cd ./80_unix-and-system-v/messagequeue__msgget && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__commented/kirk && make
+      - run: cd ./80_unix-and-system-v/messagequeue__demo__commented/spock && make
+      - run: cd ./80_unix-and-system-v/messagequeue__common_message_struct/client && make
+      - run: cd ./80_unix-and-system-v/messagequeue__common_message_struct/server && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__demo/itchy && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__demo/scratchy && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__shmctl && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__shmget && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__server_client/shmclient && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__server_client/shmserver && make
+      - run: cd ./80_unix-and-system-v/sharedmemory__shm_attach_detach__TODO && make
+      - run: cd ./80_unix-and-system-v/signal__demo__DEPRECATED/scratchy && make
+      - run: cd ./80_unix-and-system-v/signal__demo__DEPRECATED/itchy && make
+      - run: cd ./80_unix-and-system-v/signal__alarm__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__sighandler__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__sigmask__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__signal_talking__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__syscall__DEPRECATED && make
+      - run: cd ./80_unix-and-system-v/signal__trap__DEPRECATED && make
+
+## devkit lib
+      - run: cd ./lothars-devkit-library/tlpi && make basictest.elf && ./*.elf
+      - run: cd ./lothars-devkit-library && make && tests=$(ls | egrep ".elf$") && for item in ${tests[*]}; do ./${item}; done
+
