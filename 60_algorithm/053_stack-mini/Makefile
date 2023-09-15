@@ -1,7 +1,7 @@
 SOURCE = stack.c
 HEADERS_TEST = -I. -Iunittest
-TARGET_TEST = test.exe
-TARGET_BASIC_TEST = basictest.exe
+TARGET_TEST = test.elf
+TARGET_BASIC_TEST = basictest.elf
 
 OBJECTS = $(SOURCE:.c=.o)
 

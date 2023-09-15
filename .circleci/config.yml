@@ -328,7 +328,7 @@ jobs:
       - run: cd ./60_algorithm/045_order-statistics && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/050_linked-list && make basictest.elf && ./*.elf
       - run: cd ./60_algorithm/052_stack && make basictest.exe && ./*.exe
-      - run: cd ./60_algorithm/053_stack-mini && make basictest.exe && ./*.exe
+      - run: cd ./60_algorithm/053_stack-mini && make basictest.elf && ./*.elf
       - run: cd ./60_algorithm/000_stack-macro-lifo && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/055_queue && make basictest.exe && ./*.exe
       - run: cd ./60_algorithm/056_queue-mini && make basictest.exe && ./*.exe

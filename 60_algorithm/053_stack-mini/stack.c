@@ -13,6 +13,10 @@
 
 #include "stack.h"
 
+static node_p _stack_first;
+static node_p _stack_head;
+static int _stack_size;
+
 /*
   dotty printer
  */

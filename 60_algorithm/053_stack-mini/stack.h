@@ -22,10 +22,6 @@ typedef struct node_s {
 
 typedef node_t* node_p;
 
-node_p _stack_first;
-node_p _stack_head;
-int _stack_size;
-
 #define STACK_MAX_SIZE 10
 
 void print_dot(const char* filename);
