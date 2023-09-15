@@ -34,7 +34,7 @@ char*); extern void* memset(void*, const void*, size_t);
   sets a valid read/write file pointer, 0 - ok, -1 - failed
 //*/
 // CHECKED - OK
-int get_read_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
+int get_read_write_file_pointer(FILE **fp, char filename[])
 {
 #ifdef DEBUG
 	printf("\tfo::get_read_write_file_pointer(**fp, filename[])\n");
@@ -58,7 +58,7 @@ int get_read_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   sets a valid read FILE*, 0 - ok, -1 - failed
 //*/
 // CHECKED - OK
-int get_read_file_pointer(FILE **fp, char filename[FILENAME_MAX])
+int get_read_file_pointer(FILE **fp, char filename[])
 {
 #ifdef DEBUG
 	printf("\tfo::get_read_file_pointer(**fp, filename[])\n");
@@ -82,7 +82,7 @@ int get_read_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   sets a write file pointer, 0 - ok, -1 - failed
 //*/
 // CHECKED - OK
-int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
+int get_write_file_pointer(FILE **fp, char filename[])
 {
 #ifdef DEBUG
 	printf("\tfo::get_write_file_pointer(**fp, filename[])\n");
@@ -111,7 +111,7 @@ int get_write_file_pointer(FILE **fp, char filename[FILENAME_MAX])
   sets an append file pointer, 0 - ok, -1 - failed
 //*/
 // CHECKED - OK
-int get_append_file_pointer(FILE **fp, char filename[FILENAME_MAX])
+int get_append_file_pointer(FILE **fp, char filename[])
 {
 #ifdef DEBUG
 	printf("\tfo::get_append_file_pointer(**fp, filename[])\n");

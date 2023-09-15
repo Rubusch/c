@@ -15,14 +15,11 @@
 #include <string.h>
 #include <unistd.h> /* unlink */
 
-// in case set a limit if not defined, or fallback
-//#define FILENAME_MAX
-
 // FILE pointer to a stream
-int get_read_write_file_pointer(FILE **, char[FILENAME_MAX]);
-int get_read_file_pointer(FILE **, char[FILENAME_MAX]);
-int get_write_file_pointer(FILE **, char[FILENAME_MAX]);
-int get_append_file_pointer(FILE **, char[FILENAME_MAX]);
+int get_read_write_file_pointer(FILE **, char[]);
+int get_read_file_pointer(FILE **, char[]);
+int get_write_file_pointer(FILE **, char[]);
+int get_append_file_pointer(FILE **, char[]);
 
 // close a FILE pointer to a stream
 int close_stream(FILE **);
