@@ -45,8 +45,6 @@
 /* data, if MGMT the data[0] byte */
 #define CANIF_MGMT_TERM 0x15 /* e.g. $> cansend can0 410#15 */
 
-pid_t pid_listener;
-
 /**
    start the interface socket, bind it to the name and unique
    identifier; in case fork off the server thread (listener thread)
@@ -64,7 +62,6 @@ int canif__send(const uint32_t *can_id, const uint8_t *can_dlc, uint8_t data[]);
 /**
    registeres callback and triggeres when frames are incoming
  */
-int (*canif__on_receive)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]);
 void canif__register_recv(int (*recv_cb)(uint32_t can_id, uint8_t can_dlc,
 					 uint8_t data[]));
 

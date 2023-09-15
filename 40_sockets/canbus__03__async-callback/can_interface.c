@@ -13,6 +13,9 @@
    private interface
 */
 
+static pid_t pid_listener;
+static int (*canif__on_receive)(uint32_t can_id, uint8_t can_dlc, uint8_t data[]);
+
 #if defined CANIF__DEBUG
 
 static void canif__print(const char *func, const struct can_frame *frame)
