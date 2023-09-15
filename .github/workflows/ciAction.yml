@@ -61,7 +61,5 @@ jobs:
 
 #    - run: data
 
-     - name: build and test
-
 ## 00: basics
      - run: cd ./00_language-basics/atoi02 && make && ./*.elf
