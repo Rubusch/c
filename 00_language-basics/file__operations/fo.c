@@ -710,7 +710,7 @@ unsigned int number_of_characters_in_static_temp()
   - should work ;)
 //*/
 // CHECKED - OK
-int create_tmp(FILE **fp, char szTmp[L_tmpnam])
+int create_tmp(FILE **fp, char szTmp[])
 {
 #ifdef DEBUG
 	printf("\tcreate_tmp(**fp, szTmp[])\n");
