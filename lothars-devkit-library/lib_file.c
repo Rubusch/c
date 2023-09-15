@@ -135,12 +135,16 @@ int lothars__fopen(FILE **fp, char *path, const char *mode)
   The wrapper inits a valid FILE file pointer to read and write.
 
   @fp: The file pointer to be initialized.
-  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  @path: The path, can be set to FILENAME_MAX (Linux system wide file
   path length limit, for ext4 4096 bytes).
+
+  NB: setting here something like filename[FILENAME_MAX] needs
+  E.X.A.C.T.L.Y. the specified size, else a dynamically, shorter
+  allocated pointer as passed argument would provoke a overflow!!
 
   Returns 0 for ok, or -1 when failed.
 */
-int lothars__fopen_rw(FILE **fp, char path[FILENAME_MAX])
+int lothars__fopen_rw(FILE **fp, char path[])
 {
 	return lothars__fopen(fp, path, "rw+");
 }
@@ -149,12 +153,16 @@ int lothars__fopen_rw(FILE **fp, char path[FILENAME_MAX])
   The wrapper inits a valid FILE file pointer to read.
 
   @fp: The file pointer to be initialized.
-  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  @path: The path, can be set to FILENAME_MAX (Linux system wide file
   path length limit, for ext4 4096 bytes).
+
+  NB: setting here something like filename[FILENAME_MAX] needs
+  E.X.A.C.T.L.Y. the specified size, else a dynamically, shorter
+  allocated pointer as passed argument would provoke a overflow!!
 
   Returns 0 for ok, or -1 when failed.
 */
-int lothars__fopen_r(FILE **fp, char path[FILENAME_MAX])
+int lothars__fopen_r(FILE **fp, char path[])
 {
 	return lothars__fopen(fp, path, "r");
 }
@@ -163,12 +171,16 @@ int lothars__fopen_r(FILE **fp, char path[FILENAME_MAX])
   The wrapper inits a valid FILE file pointer to write.
 
   @fp: The file pointer to be initialized.
-  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  @path: The path, can be set to FILENAME_MAX (Linux system wide file
   path length limit, for ext4 4096 bytes).
+
+  NB: setting here something like filename[FILENAME_MAX] needs
+  E.X.A.C.T.L.Y. the specified size, else a dynamically, shorter
+  allocated pointer as passed argument would provoke a overflow!!
 
   Returns 0 for ok, or -1 when failed.
 */
-int lothars__fopen_w(FILE **fp, char path[FILENAME_MAX])
+int lothars__fopen_w(FILE **fp, char path[])
 {
 	return lothars__fopen(fp, path, "w");
 }
@@ -177,12 +189,16 @@ int lothars__fopen_w(FILE **fp, char path[FILENAME_MAX])
   The wrapper inits a valid FILE file pointer to append.
 
   @fp: The file pointer to be initialized.
-  @path: The path, limited to FILENAME_MAX (Linux system wide file
+  @path: The path, can be set to FILENAME_MAX (Linux system wide file
   path length limit, for ext4 4096 bytes).
+
+  NB: setting here something like filename[FILENAME_MAX] needs
+  E.X.A.C.T.L.Y. the specified size, else a dynamically, shorter
+  allocated pointer as passed argument would provoke a overflow!!
 
   Returns 0 for ok, or -1 when failed.
 */
-int lothars__fopen_a(FILE **fp, char path[FILENAME_MAX])
+int lothars__fopen_a(FILE **fp, char path[])
 {
 	return lothars__fopen(fp, path, "a");
 }
