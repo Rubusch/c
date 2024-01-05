@@ -251,11 +251,11 @@ int lothars__fopen_a(FILE **fp, char path[])
 
   Returns 0 if successful, or -1 alternatively.
 */
-int read_char(FILE *fp, char **content, unsigned long int *content_size)
+int read_char(FILE *fp, char **content, size_t *content_size)
 {
 	int ch = 0;
 	unsigned long int idx = 0;
-	const unsigned long int INITIAL_SIZE = *content_size;
+	const size_t INITIAL_SIZE = *content_size;
 
 	if (NULL == fp) {
 		fprintf(stderr, "%s() error: fp was NULL\n", __func__);
@@ -291,7 +291,7 @@ int read_char(FILE *fp, char **content, unsigned long int *content_size)
   Therefore the magic number of e.g. 128 tokens is necessary here!!!
 */
 int read_without_spaces(FILE *fp, char **content,
-			unsigned long int *content_size)
+			size_t *content_size)
 {
 	if (NULL == fp) {
 		fprintf(stderr, "%s() error: fp was NULL\n", __func__);
@@ -327,9 +327,18 @@ int read_without_spaces(FILE *fp, char **content,
 
   reads the whole file linewise into a char* with a buffer of the
   given size
+
+  @fp: the file pointer to the opened file
+
+  @content: make sure *content points to NULL, will be
+      (over)allocated (otherwise)
+      NB: content[] elements _must_ be free'd after usage!
+
+  @content_size: can be 0, will be set when reading
+
 */
 // CHECKED - OK
-int read_linewise(FILE *fp, char **content, unsigned long int *content_size)
+int read_linewise(FILE *fp, char **content, size_t *content_size)
 {
 #ifdef DEBUG
 	printf("\tfo::read_linewise(*fp, **content, *content_size)\n");
@@ -340,37 +349,25 @@ int read_linewise(FILE *fp, char **content, unsigned long int *content_size)
 #endif
 	if (fp == NULL)
 		return -1;
+//* // approach: GNU, POSIX.1-2008
+	ssize_t nread;
+	const size_t INITIAL_SIZE = *content_size;
+	char *line = NULL;
+
+	while ((nread = getline(&line, content_size, fp)) != -1) {
+		strncat(*content, line, INITIAL_SIZE);        
+// FIXME: position to concat string does not match  
+	}
+
+//	if (line) free(line); // FIXME:   munmap_chunk(): invalid pointer
+//	line = NULL;
+fprintf(stderr, "\n%s:%d - %s() XXX\n", __FILE__, __LINE__, __func__);         
+	return 0;
+/*/
 	memset(*content, '\0', *content_size);
 	unsigned long idx = 0;
-	const unsigned long int INITIAL_SIZE = *content_size;
-	rewind(fp);
-	/*
-	  #ifdef __unix__
-	  int c;
-	  size_t *tp = NULL;
-	  char **gptr = NULL;
-
-	  if((gptr = malloc(sizeof(*gptr))) == NULL) return -1;
-	  *gptr = NULL;
-
-	  // use getline() - unix, NOT ANSI!!! function not present!!!
-	  while( (c=getline(gptr, tp, fp)) > 0){
-	  idx += strlen(*gptr);
-	  if(idx >= (*content_size-2)){
-	  if(get_more_space(content, content_size, INITIAL_SIZE) == -1){
-	  fprintf(stderr, "fo::read_linewise(*fp, char**, unsigned long int*) -
-	  Failed!\n"); exit(EXIT_FAILURE);
-	  }
-	  }
-	  strncat( *content, *gptr, strlen(*gptr));
-	  }
-	  *content_size = strlen(*content) + 1;
-
-	  if(tp != NULL) free(tp); // dangerous!
-	  free(gptr); // dangerous!
-	  return 0;
-	  #endif
-	//*/
+	const size_t INITIAL_SIZE = *content_size;
+	//rewind(fp); // sets the fp position to the begin of the file
 	char *pBuf = NULL;
 	if ((pBuf = calloc(INITIAL_SIZE, sizeof(*pBuf))) == NULL)
 		;
@@ -393,6 +390,7 @@ int read_linewise(FILE *fp, char **content, unsigned long int *content_size)
 	}
 	free(pBuf);
 	return 0;
+//*/
 }
 
 /*
@@ -1054,7 +1052,7 @@ int read_lines_with_pattern(FILE *fp, char *lines,
 
   Returns 0 in case of success and -1 in case of error.
 */
-int get_more_space(char **str, unsigned long int *str_size,
+int get_more_space(char **str, size_t *str_size,
 		   const unsigned long int nbytes)
 {
 	char *tmp = NULL;

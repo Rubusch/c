@@ -383,7 +383,7 @@ TEST__BEGIN(read_char)
 	char buf[] = "bico meh mini big\n"; // size: 19 (inclusively
 		// the \n and \0)
 	char *content = NULL;
-	unsigned long int content_size = 7; // is going to be
+	size_t content_size = 7; // is going to be
 		// increased by number of
 		// reallocated memory,
 		// let's start with 7
@@ -436,7 +436,7 @@ TEST__BEGIN(read_without_spaces)
 	char buf[] = "bico meh mini big\n"; // size: 19 (inclusively
 		// the \n and \0)
 	char *content = NULL;
-	unsigned long int content_size = 7;
+	size_t content_size = 7;
 	int ret = -1;
 
 	unlink(file); // cleanup artifacts
@@ -487,7 +487,7 @@ TEST__BEGIN(read_linewise)
 	char recitativ_s[] = "Indes schenkt Gott ein gut Gewissen";
 	char chorale[] = "Was Gott tut, das ist wohlgetan";
 	char *content = NULL;
-	unsigned long int content_size = 7;
+	size_t content_size = 7;
 	char expected[231];
 	memset(expected, '\0', sizeof(expected));
 	int ret = -1;
@@ -543,9 +543,12 @@ TEST__BEGIN(read_linewise)
 	assert(NULL != f);
 	ret = read_linewise(f, &content, &content_size);
 	assert(0 == ret);
+
+fprintf(stderr, "XXX content '%s' [%s]\n", content, expected);
 	assert(0 == strncmp(content, expected, sizeof(expected)));
+//fprintf(stderr, "XXX content_size '%d' [%d]\n", content_size, 231);
 	assert(231 == content_size);
-	//printf("BBB content '%s', %ld\n", content, content_size);
+	//printf("BBB content '%s', %d\n", content, content_size);
 
 	// close
 	assert(0 == fclose(f));

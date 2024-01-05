@@ -64,9 +64,9 @@ int lothars__fopen_rw(FILE **, char[]);
 int lothars__fopen_r(FILE **, char[]);
 int lothars__fopen_w(FILE **, char[]);
 int lothars__fopen_a(FILE **, char[]);
-int read_char(FILE *, char **, unsigned long int *);
-int read_without_spaces(FILE *, char **, unsigned long int *);
-int read_linewise(FILE *, char **, unsigned long int *);
+int read_char(FILE *, char **, size_t *);
+int read_without_spaces(FILE *, char **, size_t *);
+int read_linewise(FILE *, char **, size_t *);
 int read_blockwise(FILE *, char *, const unsigned int);
 int write_char(FILE *, char *, const unsigned long int);
 int write_formated(FILE *, char *); // no size due to formatating opts
@@ -93,6 +93,6 @@ int read_nth_line(FILE *, char *, const unsigned long int,
 int read_lines(FILE *, char *, const unsigned long int, const unsigned long int,
 	       const unsigned long int);
 int read_lines_with_pattern(FILE *, char *, const unsigned long int, char *);
-int get_more_space(char **, unsigned long int *, const unsigned long int);
+int get_more_space(char **, size_t *, const unsigned long int);
 
 #endif
