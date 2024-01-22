@@ -1,5 +1,5 @@
 /*
-  Running just one instance of a program
+  Running just one/single/unique instance of a program
 
 
   usage:
