@@ -56,8 +56,6 @@ int main(int argc, char **argv)
 	my_payload.fields.byte3b = 0xb; // NB: the half of the byte it appears to be
 	my_payload.fields.byte4567 = 0x12345678; // NB: ordering - big endian / little endian
 
-
-
 	fprintf(stderr, "frame: %03x#%02x.%02x.%02x.%02x.%02x.%02x.%02x.%02x\n",
 		header, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
