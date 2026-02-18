@@ -5,7 +5,7 @@
  * @license: GPLv3
  *
  * demonstrates the use of an argument list with variable size
-//*/
+ */
 
 #include <stdarg.h>
 #include <stdio.h>
