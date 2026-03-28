@@ -1,1 +1,0 @@
-../000_queue-macro-fifo/queue.h

@@ -1,1 +1,0 @@
-../050_linked-list/linkedlist.h

@@ -1,1 +1,0 @@
-../../60_algorithm/000_queue-macro-fifo/queue.h
